@@ -7,7 +7,10 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>Keep Exploring Web Admin</p>
-        <p>Server web: https://web-app.duuk7ot2ayt8v.amplifyapp.com/</p>
+        <p>
+          Server web:
+          http://keep-exploring-web-admin.s3-website.us-east-2.amazonaws.com/
+        </p>
         <p>Server backend: https://web-app.duuk7ot2ayt8v.amplifyapp.com/</p>
         <p>Server db: https://web-app.duuk7ot2ayt8v.amplifyapp.com/</p>
         <a
