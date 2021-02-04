@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
   return res.send({
     "app-name": "Keep Exploring",
     "server-db": "13.58.149.178:27017",
-    "server-nodejs":"",
+    "server-nodejs":"http://keep-exploring-backend.eba-naub3qt7.us-east-2.elasticbeanstalk.com/",
     "server-react":"",
   });
 });
