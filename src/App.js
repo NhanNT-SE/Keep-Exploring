@@ -1,5 +1,5 @@
 import logo from "./logo.svg";
-import "./App.css";
+import "./App.scss";
 import MainPage from "./pages/main-page/main-page";
 import LoginPage from "./pages/login-page/login-page";
 
