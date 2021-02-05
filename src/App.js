@@ -1,27 +1,13 @@
 import logo from "./logo.svg";
 import "./App.css";
+import MainPage from "./pages/main-page/main-page";
+import LoginPage from "./pages/login-page/login-page";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Keep Exploring Web Admin</p>
-        <p>
-          Server web:
-          http://keep-exploring-web-admin.s3-website.us-east-2.amazonaws.com/
-        </p>
-        <p>Server backend: https://web-app.duuk7ot2ayt8v.amplifyapp.com/</p>
-        <p>Server db: https://web-app.duuk7ot2ayt8v.amplifyapp.com/</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <MainPage />
+      <LoginPage />
     </div>
   );
 }
