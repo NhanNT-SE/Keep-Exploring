@@ -1,13 +1,13 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import AcUnit from "@material-ui/icons/AcUnit";
+import "./styles/login-page.scss";
 function LoginPage() {
   return (
-    <div>
+    <div className="login-page">
       <Button variant="contained" color="primary">
         Hello World
       </Button>
-      <AcUnit />
+      <img src='/images/logo.png'/>
     </div>
   );
 }
