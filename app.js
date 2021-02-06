@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const cors = require('cors')
+const cors = require('cors');
 const userRouter = require('./src/Route/UserRoute');
 const postRouter = require('./src/Route/PostRoute');
 const addressRouter = require('./src/Route/AddressRoute');
@@ -11,7 +11,7 @@ const commentRouter = require('./src/Route/CommentRoute');
 const apiDocRouter = require('./src/Route/APIDocsRoute');
 
 // const mongoString = 'mongodb+srv://admin:doanhnhangroup@cluster0.jqsm5.mongodb.net/user?retryWrites=true&w=majority';
-const mongoString = "mongodb://nhannt:nhannt1905@13.58.149.178:27017/";
+const mongoString = 'mongodb://nhannt:nhannt1905@13.58.149.178:27017/keep-exploring?authSource=admin&w=1';
 const port = process.env.PORT || 3000;
 const app = express();
 
