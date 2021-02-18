@@ -1,2 +1,22 @@
 .login-page{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    .content{
+        background: white;
+        display: flex;
+        padding: 30px 30px 20px;
+        border-radius: 8px;
+        flex-direction: column;
+        max-width: 540px;
+        form{
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            >*{
+                margin: 8px 0px ;
+            }
+        }
+    }
 }
