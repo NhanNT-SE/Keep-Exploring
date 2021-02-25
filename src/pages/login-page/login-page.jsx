@@ -1,16 +1,17 @@
-import Button from "@material-ui/core/Button";
-import React from "react";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Divider from "@material-ui/core/Divider";
-import "./styles/login-page.scss";
-import { useForm } from "react-hook-form";
-import InputField from "custom-fields/input-field";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
+import CheckBoxField from "custom-fields/checkbox-field";
+import InputField from "custom-fields/input-field";
+import React from "react";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import "./styles/login-page.scss";
 const schema = yup.object().shape({
-  email: yup.string().min(8),
+  email: yup
+    .string()
+    .required("Email address is a required field")
+    .email("Invalid email address"),
   password: yup
     .string()
     .matches(
@@ -19,10 +20,11 @@ const schema = yup.object().shape({
     ),
 });
 function LoginPage() {
-  const { handleSubmit, control, errors } = useForm({
+  const { handleSubmit, control, errors, register } = useForm({
     defaultValues: {
       email: "",
       password: "",
+      remember: false,
     },
     resolver: yupResolver(schema),
     mode: "all",
@@ -31,7 +33,7 @@ function LoginPage() {
   return (
     <div className="login-page">
       <div className="content">
-        <img src="/images/logo-text.png" />
+        <p className="content-title">Keep Exploring Admin</p>
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputField
             name="email"
@@ -48,9 +50,12 @@ function LoginPage() {
             message={errors.password ? errors.password.message : ""}
             type="password"
           />
-          <FormControlLabel
-            control={<Checkbox name="remember me" color="primary" />}
-            label="remember me  ?"
+          <CheckBoxField
+            name="remember"
+            control={control}
+            label="remember me?"
+            defaultValue={false}
+            inputRef={register}
           />
           <Button variant="contained" color="primary" type="submit">
             Sign in

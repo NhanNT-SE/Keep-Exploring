@@ -1,7 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useController } from "react-hook-form";
 import { TextField } from "@material-ui/core";
+import React from "react";
+import { useController } from "react-hook-form";
 function InputField(props) {
   const { field, meta } = useController(props);
   const { message } = props;
