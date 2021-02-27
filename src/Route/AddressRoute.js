@@ -1,13 +1,17 @@
 const express = require('express');
 const addressController = require('../Controllers/AddressController');
+const passport = require('passport');
 
+require('../middleware/passport');
 const router = express.Router();
 
 //GET Method
-router.get('/list', addressController.getAddressList);
+router.get('/', addressController.getAddressList);
 
 //POST Method
-router.post('/add', addressController.createAdress);
-router.post('/delete', addressController.deleteAddress);
+router.post('/', addressController.createAdress);
+
+//Delete Method
+router.delete('/:idPost', addressController.deleteAddress);
 
 module.exports = router;
