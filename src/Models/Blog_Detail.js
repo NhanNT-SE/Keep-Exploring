@@ -3,17 +3,21 @@ const Schema = mongoose.Schema;
 
 const BlogDetail_Schema = new Schema(
 	{
-		id_Post: {
-			type: Schema.Types.ObjectId,
-			ref: 'Blog',
-		},
-		img: {
+		_id: {
 			type: String,
 		},
-		content: {
-			type: String,
-		},
+		detail_list: [
+			{
+				img: {
+					type: String,
+				},
+				content: {
+					type: String,
+				},
+			},
+		],
 	},
+	{ _id: false },
 	{ collection: 'Blog_Detail' }
 );
 

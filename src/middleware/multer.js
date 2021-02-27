@@ -1,7 +1,7 @@
 const multer = require('multer');
 
 //The disk storage engine gives you full control on storing files to disk.
-const storage = multer.diskStorage({
+const storagePost = multer.diskStorage({
 	destination: function (req, file, callback) {
 		callback(null, 'src/images/post');
 	},
@@ -10,4 +10,8 @@ const storage = multer.diskStorage({
 	},
 });
 
+const uploadPost = multer({ storage: storagePost });
 
+module.exports = {
+	uploadPost,
+};

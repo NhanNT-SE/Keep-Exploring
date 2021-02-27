@@ -14,12 +14,7 @@ const BlogSchema = new Schema(
 		img: {
 			type: String,
 		},
-		blog_details: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'Blog_Detail',
-			},
-		],
+		
 		status: {
 			type: String,
 			enum: ['pending', 'done', 'need_update'],
