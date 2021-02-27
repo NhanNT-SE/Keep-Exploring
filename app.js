@@ -16,7 +16,7 @@ const blogRouter = require('./src/Route/BlogRoute');
 const mongoString = 'mongodb://nhannt:nhannt1905@13.58.149.178:27017/keep-exploring?authSource=admin&w=1';
 const port = process.env.PORT || 3000;
 const app = express();
-
+app.use(express.static('src/public'));
 app.use(bodyParser.json());
 app.use(
 	bodyParser.urlencoded({
