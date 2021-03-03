@@ -3,8 +3,10 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import CheckBoxField from "custom-fields/checkbox-field";
 import InputField from "custom-fields/input-field";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
+import { actionLogin, actionLogout } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
 const schema = yup.object().shape({
@@ -20,6 +22,8 @@ const schema = yup.object().shape({
     ),
 });
 function LoginPage() {
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
   const { handleSubmit, control, errors, register } = useForm({
     defaultValues: {
       email: "",
@@ -30,6 +34,19 @@ function LoginPage() {
     mode: "all",
   });
   const onSubmit = (data) => console.log(data);
+  const login = () => {
+    const userLogin = {
+      id: "PS10674",
+      name: "Nguyen Trong Nhan",
+      email: "nhannt.se1905@gmail.com",
+    };
+    dispatch(actionLogin(userLogin));
+  };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   return (
     <div className="login-page">
       <div className="content">
@@ -65,6 +82,7 @@ function LoginPage() {
             variant="contained"
             color="primary"
             style={{ backgroundColor: "#3B5998" }}
+            onClick={login}
           >
             Sign in with facebook
           </Button>
