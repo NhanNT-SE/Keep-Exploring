@@ -1,10 +1,9 @@
 import { all } from "redux-saga/effects";
-import { sagaLogin } from "./handlers/user";
-const sagaAuth = [];
+import { sagaLogin, sagaLogout } from "./handlers/user";
 const sagaBlog = [];
 const sagaPost = [];
-const sagaUser = [sagaLogin()];
-const sagaList = sagaAuth.concat(sagaBlog, sagaBlog, sagaPost, sagaUser);
+const sagaUser = [sagaLogin(), sagaLogout()];
+const sagaList = sagaUser.concat(sagaBlog, sagaBlog, sagaPost);
 
 export default function* rootSaga() {
   yield all(sagaList);

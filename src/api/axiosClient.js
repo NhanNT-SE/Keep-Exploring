@@ -20,8 +20,9 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("Error axios:", error);
-    throw error;
+    console.log("Axios error: ", error);
+    const err = error.response.data.error;
+    throw err;
   }
 );
 

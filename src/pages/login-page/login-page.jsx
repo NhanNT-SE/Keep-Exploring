@@ -1,12 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";
 import InputField from "custom-fields/input-field";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector, useDispatch } from "react-redux";
-import { actionLogin, actionLogout } from "redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
 const schema = yup.object().shape({
@@ -14,41 +16,56 @@ const schema = yup.object().shape({
     .string()
     .required("Email address is a required field")
     .email("Invalid email address"),
-  password: yup
-    .string()
-    .matches(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
-    ),
+  password: yup.string().required().min(6),
+  // .matches(
+  //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+  //   "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+  // ),
 });
-function LoginPage() {
+function LoginPage(props) {
   const user = useSelector((state) => state.user.user);
+  const loading = useSelector((state) => state.user.loading);
+  const [email, setEmail] = useState("admin@email.com");
+  const [password, setPassword] = useState("123456");
+  const history = useHistory();
   const dispatch = useDispatch();
-  const { handleSubmit, control, errors, register } = useForm({
+  const { handleSubmit, control, errors, register, setValue } = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email,
+      password,
       remember: false,
     },
     resolver: yupResolver(schema),
     mode: "all",
   });
-  const onSubmit = (data) => console.log(data);
-  const login = () => {
-    const userLogin = {
-      id: "PS10674",
-      name: "Nguyen Trong Nhan",
-      email: "nhannt.se1905@gmail.com",
-    };
+
+  const onSubmit = (data) => {
+    const userLogin = { email, password };
+
     dispatch(actionLogin(userLogin));
   };
 
+  const handlerOnChange = (e, name, callBack) => {
+    const { value } = e.target;
+    setValue(name, value);
+    callBack(value);
+  };
+  const loginFacebook = () => {
+    console.log("Login with Facebook");
+  };
+  const loginGoogle = () => {
+    console.log("Login with Google");
+  };
   useEffect(() => {
-    console.log(user);
+    if (user) {
+      history.push("/home");
+    }
   }, [user]);
 
   return (
     <div className="login-page">
+      {loading && <LoadingComponent />}
+
       <div className="content">
         <p className="content-title">Keep Exploring Admin</p>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -58,6 +75,7 @@ function LoginPage() {
             placeholder="Email"
             label="Email address"
             message={errors.email ? errors.email.message : ""}
+            onChange={(e) => handlerOnChange(e, "email", setEmail)}
           />
           <InputField
             name="password"
@@ -66,6 +84,7 @@ function LoginPage() {
             label="Password"
             message={errors.password ? errors.password.message : ""}
             type="password"
+            onChange={(e) => handlerOnChange(e, "password", setPassword)}
           />
           <CheckBoxField
             name="remember"
@@ -82,7 +101,7 @@ function LoginPage() {
             variant="contained"
             color="primary"
             style={{ backgroundColor: "#3B5998" }}
-            onClick={login}
+            onClick={loginFacebook}
           >
             Sign in with facebook
           </Button>
@@ -90,6 +109,7 @@ function LoginPage() {
             variant="contained"
             color="primary"
             style={{ backgroundColor: "#dd4b39" }}
+            onClick={loginGoogle}
           >
             Sign in with google
           </Button>
