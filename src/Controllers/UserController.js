@@ -68,7 +68,6 @@ const signUp = async (req, res) => {
 		var imgUser;
 		if (file) {
 			imgUser = file.filename;
-			console.log('imgUser: ', imgUser);
 		} else {
 			imgUser = 'avatar-default.png';
 		}
