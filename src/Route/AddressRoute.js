@@ -7,6 +7,7 @@ const router = express.Router();
 
 //GET Method
 router.get('/', addressController.getAddressList);
+router.get('/province', addressController.getPostbyAddress);
 
 //POST Method
 router.post('/', addressController.createAdress);

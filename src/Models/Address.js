@@ -5,7 +5,7 @@ const addressSchema = new Schema(
 	{
 		idPost: {
 			type: Schema.Types.ObjectId,
-            required: true,
+            // required: true,
             ref:"Post"
 		},
 		province: {
