@@ -36,9 +36,9 @@ router.get('/:idPost', postController.getPost);
 router.post('/', passport.authenticate('jwt'), upload.array('image_post', 20), postController.createPost);
 
 //Put Method
-router.put('/like', passport.authenticate('jwt'), postController.likePost);
-router.put('/status', passport.authenticate('jwt'), postController.updateStatus);
-router.put('/:idPost', passport.authenticate('jwt'), upload.array('image_post', 20), postController.updatePost);
+router.put('/like', passport.authenticate('jwt', { session: false }), postController.likePost);
+router.put('/status', passport.authenticate('jwt', { session: false }), postController.updateStatus);
+router.put('/:idPost', passport.authenticate('jwt', { session: false }), upload.array('image_post', 20), postController.updatePost);
 
 //Delete Method
 router.delete('/delete/:postID', postController.deletePost);

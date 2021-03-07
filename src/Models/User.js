@@ -13,7 +13,7 @@ const UserSchema = new Schema(
 		},
 		displayName: {
 			type: String,
-			// required: true
+			required: true
 		},
 		role: {
 			type: String,
@@ -33,13 +33,13 @@ const UserSchema = new Schema(
 	{ collection: 'User' }
 );
 
-UserSchema.methods.joiValidate = function (obj) {
-    const Joi = require('@hapi/joi');
-    	const schema = {
-		email: Joi.string().email().required(),
-		pass: Joi.string().min(6).required(),
-	};
-	return Joi.validate(obj, schema);
-};
+// UserSchema.methods.joiValidate = function (obj) {
+//     const Joi = require('@hapi/joi');
+//     	const schema = {
+// 		email: Joi.string().email().required(),
+// 		pass: Joi.string().min(6).required(),
+// 	};
+// 	return Joi.validate(obj, schema);
+// };
 
 module.exports = mongoose.model('User', UserSchema);

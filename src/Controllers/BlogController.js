@@ -130,6 +130,7 @@ const updateStatus = async (req, res) => {
 			if (blogFound) {
 				blogFound.status = status;
 				await Blog.findByIdAndUpdate(idBlog, blogFound);
+				
 				return res.status(200).send('Cap nhat trang thai thanh cong');
 			}
 

@@ -1,122 +1,136 @@
-const User = require("../Models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const User = require('../Models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
-const { JWT_SECRET } = require("../config/index");
-var userRole;
+const { JWT_SECRET } = require('../config/index');
 
-const checkRoleAdmin = async (req, res) => {
-  try {
-    const { token } = req.cookies;
+const getProfile = async (req, res) => {
+	try {
+		const user = req.user;
+		if (user) {
+			const profile = await User.findById(user._id);
+			return res.status(200).send(profile);
+		}
 
-    jwt.verify(token, JWT_SECRET, (err, data) => {
-      if (err) {
-        return res.status(500).send(err.message);
-      }
-      checkRole(data.id).then(() => {
-        if (userRole == "admin") {
-          return res.json("thanh cong vao admin page");
-        }
-        return res.json("ban khong co quyen admin");
-      });
-    });
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
+		return res.status(201).send(null);
+	} catch (error) {
+		return res.status(500).send(error.message);
+	}
+};
+
+const logOut = async (req, res) => {
+	try {
+		const user = req.user;
+		if (user) {
+			req.logout();
+			return res.status(200).send(null);
+		}
+		return res.status(201).send(null);
+	} catch (error) {
+		return res.status(500).send(error.message);
+	}
 };
 
 const signIn = async (req, res) => {
-  try {
-    console.log("sign-in");
-    const { email, pass } = req.body;
-    const user = await User.findOne({ email });
+	try {
+		const { email, pass } = req.body;
+		const user = await User.findOne({ email });
 
-    if (user) {
-      const checkPass = await bcrypt.compare(pass, user.pass);
-      if (checkPass) {
-        // Synchronous Sign with default (HMAC SHA256)
-        var token = await jwt.sign({ id: user._id }, JWT_SECRET, {
-          expiresIn: "1h",
-        });
+		//Kiem tra xem user co ton tai khong
+		if (user) {
+			const checkPass = await bcrypt.compare(pass, user.pass);
 
-        //Set Header authorization
-        res.setHeader("Authorization", "Bearer " + token);
-        return res.status(200).send({
-          status: 200,
-          data: `Bearer ${token}`,
-          message: "Login successfully",
-          error: null,
-        });
-      }
-      return res.send({
-        status: 202,
-        data: null,
-        message: "Your password incorrect",
-        error: null,
-      });
-    }
-    return res.send({
-      status: 202,
-      data: null,
-      msg: "This user not exists",
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send("loi server:" + e.message);
-  }
+			//Kiem tra password dung thi tra ve status code 200
+			if (checkPass) {
+				// Synchronous Sign with default (HMAC SHA256)
+				var token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '20d' });
+
+				//Set Header authorization
+				res.setHeader('Authorization', 'Bearer ' + token);
+				return res.status(200).send(user);
+			}
+
+			//Password sai thi tra ve status code 201
+			return res.status(201).send();
+		}
+
+		//User khong ton tai thi tra ve status code 202
+		return res.status(202).send();
+	} catch (e) {
+		return res.status(500).send('loi server:' + e.message);
+	}
 };
 
 const signUp = async (req, res) => {
-  try {
-    const file = req.file;
-    var avatar;
-    if (file) {
-      avatar = file.filename;
-    } else {
-      avatar = "avatar-default.png";
-    }
+	try {
+		const file = req.file;
+		var imgUser;
+		if (file) {
+			imgUser = file.filename;
+			console.log('imgUser: ', imgUser);
+		} else {
+			imgUser = 'avatar-default.png';
+		}
+		const user = req.body;
 
-    const user = req.body;
-    //Validate by joi
-    // const uservalidate = new User(user)
-    // var err = uservalidate.joiValidate(user);
-    // if (err)
-    // {
-    // 	return res.json(err);
-    // }
+		const userFound = await User.findOne({ email: user.email });
+		if (userFound) {
+			return res.status(201).send(userFound);
+		}
 
-    const userFound = await User.findOne({ email: user.email });
-    if (userFound) {
-      return res.status(201).send("Tai khoan da ton tai");
-    }
+		const salt = await bcrypt.genSalt(10);
+		const passHashed = await bcrypt.hash(user.pass, salt);
 
-    const salt = await bcrypt.genSalt(10);
-    const passHashed = await bcrypt.hash(user.pass, salt);
+		var newUser = new User({
+			...req.body,
+			imgUser,
+			pass: passHashed,
+		});
 
-    var newUser = {
-      ...req.body,
-      pass: passHashed,
-    };
-
-    // console.log(newUser);
-    await new User(newUser).save();
-    return res.status(200).send("Tao tai khoan thanh cong");
-  } catch (e) {
-    return res.status(202).send(e.message);
-  }
+		await newUser.save();
+		return res.status(200).send(newUser);
+	} catch (e) {
+		return res.status(202).send(e.message);
+	}
 };
 
-const checkRole = async (idUser) => {
-  try {
-    const user = await User.findById(idUser);
-    return (userRole = user.role);
-  } catch (error) {
-    return error.message;
-  }
+const updateProfile = async (req, res) => {
+	try {
+		const file = req.file;
+		const user = req.user;
+		const userFound = await User.findById(user._id);
+		var avatar;
+
+		if (!user) {
+			return res.status(201).send(null);
+		}
+
+		//Kiem tra nguoi dung muon doi avata hay khong
+		if (file) {
+			//Kiem tra truoc do nguoi dung da co avtar chua hay su dung avatar mac dinh
+			if (userFound.imgUser !== 'avatar-default.png') {
+				fs.unlinkSync('src/public/images/user/' + user.imgUser);
+			}
+			avatar = file.filename;
+		} else {
+			avatar = userFound.imgUser;
+		}
+
+		const newUser = {
+			...req.body,
+			imgUser: avatar,
+		};
+
+		await User.findByIdAndUpdate(user._id, newUser);
+		return res.status(200).send(newUser);
+	} catch (error) {}
 };
 
 module.exports = {
-  signIn,
-  signUp,
-  checkRoleAdmin,
+	getProfile,
+	logOut,
+	signIn,
+	signUp,
+	updateProfile,
 };

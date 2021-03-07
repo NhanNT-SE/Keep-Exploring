@@ -22,9 +22,16 @@ const createPost = async (req, res) => {
 		});
 
 		await post.save();
+
+		//Tim address de push idPost vao
+		const addressID = req.body.address;
+		const addressPost = await Address.findById(addressID);
+		addressPost.idPost = post._id;
+		await addressPost.save();
+
 		return res.status(200).send(post);
 	} catch (error) {
-		return res.status(202).send(error.message);
+		return res.status(500).send(error.message);
 	}
 };
 
@@ -181,7 +188,7 @@ const updatePost = async (req, res) => {
 					status: 'pending',
 				};
 				await Post.findByIdAndUpdate(idPost, newPost);
-				return res.status(200).send('success');
+				return res.status(200).send(newPost);
 			}
 
 			//Neu khong phai owner bai viet thi tra ve status code 201
