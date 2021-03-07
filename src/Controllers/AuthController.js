@@ -3,7 +3,7 @@ const User = require("../Models/User");
 const Token = require("../Models/Token");
 const bcrypt = require("bcryptjs");
 
-const accessTokenLife = "1h";
+const accessTokenLife = "1d";
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenLife = "365d";
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
@@ -39,9 +39,19 @@ const login = async (req, res) => {
           token.refreshToken = refreshToken;
         }
         await token.save();
+        const result = {
+          accessToken,
+          refreshToken,
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          displayName: user.displayName,
+          imageUser: user.imgUser,
+        };
         return res.status(200).send({
           status: 200,
-          data: token,
+          data: result,
           message: "Login successfully",
           error: null,
         });
@@ -67,13 +77,13 @@ const refreshToken = async (req, res) => {
   try {
     const { refreshToken, userId } = req.body;
     const token = await Token.findById(userId);
-    if (token && token.refreshToken) {
+    if (token && token.refreshToken === refreshToken) {
       const decoded = await jwtHelper.verifyToken(
         refreshToken,
         refreshTokenSecret
       );
       const userData = decoded.data;
-      console.log("user decode", decoded);
+      // console.log("user decode", decoded);
       const accessToken = await jwtHelper.generateToken(
         userData,
         accessTokenSecret,
@@ -101,10 +111,11 @@ const logout = async (req, res) => {
     const { userId } = req.body;
     const token = await Token.findById(userId);
     token.refreshToken = null;
+    token.accessToken = null;
     await token.save();
     return res.send({
       status: 200,
-      data: token,
+      data: null,
       msg: "Logout successfully",
     });
   } catch (error) {}

@@ -32,19 +32,23 @@ app.post("/login", AuthController.login);
 app.post("/refresh-token", AuthController.refreshToken);
 app.post("/logout", AuthController.logout);
 app.use(jwtHelper.isAuth);
-app.get("/testAuth", (req, res) => {
-	const friends = [
-		{
-		  name: "Cat: Russian Blue",
-		},
-		{
-		  name: "Cat: Maine Coon",
-		},
-		{
-		  name: "Cat: Balinese",
-		},
-	  ];
-	  return res.status(200).send(friends);
+app.get("/testAuth", (req, res, next) => {
+  try {
+    const friends = [
+      {
+        name: "Cat: Russian Blue",
+      },
+      {
+        name: "Cat: Maine Coon",
+      },
+      {
+        name: "Cat: Balinese",
+      },
+    ];
+    return res.status(200).send({ data: friends });
+  } catch (error) {
+    next(error);
+  }
 });
 //
 app.use("/api-doc", apiDocRouter);
@@ -68,5 +72,20 @@ mongoose
   .catch((err) => {
     console.error(`Error connecting to the database. \n${err}`);
   });
+
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.send({
+    error: {
+      status: error.status || 500,
+      message: error.message,
+    },
+  });
+});
 
 app.listen(port, console.log(`start on port ${port}`));

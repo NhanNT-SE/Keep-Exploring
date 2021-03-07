@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const Token = require("../Models/Token");
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
@@ -21,38 +22,44 @@ const generateToken = async (user, secretSignature, tokenLife) => {
   }
 };
 
-const verifyToken = async (token, secretKey) => {
+const verifyToken = async (token, secretKey, cb) => {
   try {
     const verify = await jwt.verify(token, secretKey);
     return verify;
   } catch (error) {
-    console.log("Verify Token Error:", error);
+    cb(error);
   }
 };
 
 const isAuth = async (req, res, next) => {
-  const tokenFromClient =
-    req.body.token || req.query.token || req.headers["authorization"];
+  const tokenFromClient = req.headers["authorization"];
   if (tokenFromClient) {
     try {
-      const decoded = await verifyToken(tokenFromClient, accessTokenSecret);
-      req.jwtDecoded = decoded;
-      next();
+      const decoded = await verifyToken(
+        tokenFromClient,
+        accessTokenSecret,
+        (err) => {
+          err.status = 401;
+          return next(err);
+        }
+      );
+      const token = await Token.findById(decoded.data._id);
+      if (token.accessToken === tokenFromClient) {
+        req.jwtDecoded = decoded;
+        return next();
+      }
+      let err = new Error();
+      err.status = 401;
+      err.message = "Invalid Token";
+      return next(err);
     } catch (error) {
-      return res.send({
-        status: 401,
-        data: null,
-        message: error.message,
-        error: null,
-      });
+      next(error);
     }
   } else {
-    return res.send({
-      status: 401,
-      data: null,
-      message: "No token provided.",
-      error: null,
-    });
+    let err = new Error();
+    err.message = "No token provided.";
+    err.status = 401;
+    return next(err);
   }
 };
 module.exports = {
