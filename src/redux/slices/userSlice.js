@@ -7,6 +7,7 @@ const userSlice = createSlice({
     loading: false,
     msg: "",
     err: "",
+    isRefreshingToken: false,
   },
   reducers: {
     actionLogin(state) {
@@ -15,6 +16,15 @@ const userSlice = createSlice({
     actionLogout(state) {
       state.loading = true;
       state.msg = "Logout successfully";
+    },
+
+    actionRefreshToken() {},
+
+    actionRefreshTokenEnded(state) {
+      state.isRefreshingToken = false;
+    },
+    actionRefreshTokenStarted: (state) => {
+      state.isRefreshingToken = true;
     },
     actionSetErr(state, action) {
       const { payload } = action;
@@ -33,6 +43,9 @@ const userSlice = createSlice({
 export const {
   actionLogin,
   actionLogout,
+  actionRefreshToken,
+  actionRefreshTokenEnded,
+  actionRefreshTokenStarted,
   actionSetUser,
   actionSetErr,
 } = userSlice.actions;

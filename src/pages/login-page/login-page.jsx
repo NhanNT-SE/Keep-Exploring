@@ -1,6 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import localStorageService from "api/localStorageService";
+import postApi from "api/postApi";
 import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";
 import InputField from "custom-fields/input-field";
@@ -8,14 +10,13 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { actionLogin } from "redux/slices/userSlice";
+import { actionGetAllPost } from "redux/slices/postSlice";
+import { actionLogin, actionLogout } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
 const schema = yup.object().shape({
-  email: yup
-    .string()
-    .required("Email address is a required field")
-    .email("Invalid email address"),
+  email: yup.string().required("Email address is a required field"),
+  // .email("Invalid email address"),
   password: yup.string().required().min(6),
   // .matches(
   //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
@@ -23,45 +24,63 @@ const schema = yup.object().shape({
   // ),
 });
 function LoginPage(props) {
+  let userObj;
   const user = useSelector((state) => state.user.user);
   const loading = useSelector((state) => state.user.loading);
-  const [email, setEmail] = useState("admin@email.com");
+  const [email, setEmail] = useState("admin");
   const [password, setPassword] = useState("123456");
+  const [remember, setRemember] = useState(() => {
+    const userStorage = localStorageService.getUser();
+    if (userStorage) {
+      userObj = JSON.parse(userStorage);
+      return userObj.remember;
+    }
+    return false;
+  });
   const history = useHistory();
   const dispatch = useDispatch();
+
   const { handleSubmit, control, errors, register, setValue } = useForm({
     defaultValues: {
       email,
       password,
-      remember: false,
     },
     resolver: yupResolver(schema),
     mode: "all",
   });
 
   const onSubmit = (data) => {
-    const userLogin = { email, password };
-
+    const userLogin = { email, pass: password };
+    if (data.remember) {
+      localStorageService.setUser(data);
+    } else {
+      localStorageService.clearUser();
+    }
     dispatch(actionLogin(userLogin));
   };
 
   const handlerOnChange = (e, name, callBack) => {
-    const { value } = e.target;
-    setValue(name, value);
-    callBack(value);
+    const { value, checked } = e.target;
+    setValue(name, value || checked);
+    callBack(value || checked);
   };
   const loginFacebook = () => {
-    console.log("Login with Facebook");
+    console.log("Facebook");
   };
   const loginGoogle = () => {
-    console.log("Login with Google");
+    console.log("Google");
   };
   useEffect(() => {
-    if (user) {
+    if (userObj) {
+      const userLogin = { email: userObj.email, pass: userObj.password };
+      dispatch(actionLogin(userLogin));
+    }
+  }, []);
+  useEffect(() => {
+    if (user && user.role ==="admin") {
       history.push("/home");
     }
   }, [user]);
-
   return (
     <div className="login-page">
       {loading && <LoadingComponent />}
@@ -90,7 +109,7 @@ function LoginPage(props) {
             name="remember"
             control={control}
             label="remember me?"
-            defaultValue={false}
+            defaultChecked={remember}
             inputRef={register}
           />
           <Button variant="contained" color="primary" type="submit">

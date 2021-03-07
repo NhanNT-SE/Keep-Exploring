@@ -4,9 +4,9 @@ import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import store from "store";
+import rootSore from "rootStore";
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={rootSore}>
     <App />
   </Provider>,
   document.getElementById("root")
