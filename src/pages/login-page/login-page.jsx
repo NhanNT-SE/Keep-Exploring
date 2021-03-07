@@ -27,8 +27,8 @@ function LoginPage(props) {
   let userObj;
   const user = useSelector((state) => state.user.user);
   const loading = useSelector((state) => state.user.loading);
-  const [email, setEmail] = useState("admin");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(() => {
     const userStorage = localStorageService.getUser();
     if (userStorage) {
