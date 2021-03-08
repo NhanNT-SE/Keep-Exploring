@@ -8,7 +8,10 @@ const { JWT_SECRET } = require('../config/index');
 const opts = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
 	secretOrKey: JWT_SECRET,
+<<<<<<< HEAD
+=======
 	ignoreExpiration: true,
+>>>>>>> c5140b92034d8033313ffeb8ffc757fd48b1a331
 };
 
 passport.use(
@@ -20,7 +23,12 @@ passport.use(
 		// } catch (error) {
 		// 	done(error, false);
 		// }
+<<<<<<< HEAD
+
+		User.findOne({ id: jwt_payload.sub }, function (err, user) {
+=======
 		User.findById(jwt_payload.id, function (err, user) {
+>>>>>>> c5140b92034d8033313ffeb8ffc757fd48b1a331
 			if (err) {
 				return done(err, false);
 			}
