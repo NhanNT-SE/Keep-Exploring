@@ -10,7 +10,7 @@ const router = express.Router();
 //The disk storage engine gives you full control on storing files to disk.
 const storage = multer.diskStorage({
 	destination: function (req, file, callback) {
-		callback(null, 'src/images/post');
+		callback(null, 'src/public/images/user');
 	},
 	filename: function (req, file, callback) {
 		callback(null, Date.now() + '-' + file.originalname);
@@ -19,15 +19,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-//GET Medthod
-router.get('/', (req, res) => {
-	res.status(200).send('thanh cong');
-});
+//GET Method
+router.get('/', passport.authenticate('jwt', { session: false }), userController.getProfile);
+router.get('/logOut', passport.authenticate('jwt', { session: false }), userController.logOut);
 
 //POST Method
 router.post('/signUp', upload.single('image_user'), userController.signUp);
 router.post('/signIn', userController.signIn);
-router.post('/checkAdmin', passport.authenticate('jwt', { session: false }), userController.checkRoleAdmin);
+
+//PUT Method
+router.put(
+	'/',
+	passport.authenticate('jwt', { session: false }),
+	upload.single('image_user'),
+	userController.updateProfile
+);
 
 module.exports = router;
 

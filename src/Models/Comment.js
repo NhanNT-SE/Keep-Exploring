@@ -22,7 +22,7 @@ const commentSchema = new Schema(
 			default: Date.now(),
 		},
 		imgs: {
-			type: String,
+			type: [String],
 		},
 	},
 	{ collection: 'Comment' }
