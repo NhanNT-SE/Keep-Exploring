@@ -38,8 +38,6 @@ app.use('/address', addressRouter);
 app.use('/comment', commentRouter);
 app.use('/blog', blogRouter);
 
-//Config next() function
-
 //Kết nối với mongo database
 mongoose
 	.connect(mongoString, {
@@ -54,5 +52,23 @@ mongoose
 	.catch((err) => {
 		console.error(`Error connecting to the database. \n${err}`);
 	});
+
+//Config next() function
+// Handler 404 error page not found
+app.use((req, res, next) => {
+	const error = new Error('Not found');
+	error.status = 404;
+	next(error);
+});
+// Handler custom error page not found
+app.use((error, req, res, next) => {
+	res.status(error.status || 500);
+	res.status(error.status).send({
+		error: {
+			status: error.status || 500,
+			message: error.message,
+		},
+	});
+});
 
 app.listen(port, console.log(`start on port ${port}`));

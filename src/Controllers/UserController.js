@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-const { JWT_SECRET } = require('../config/index');
+const { JWT_SECRET, REFRESH_TOKEN_SECRET } = require('../config/index');
+const RefreshToken = require('../Models/RefreshToken');
 
 const getProfile = async (req, res) => {
 	try {
@@ -32,7 +33,7 @@ const logOut = async (req, res) => {
 	}
 };
 
-const signIn = async (req, res) => {
+const signIn = async (req, res, next) => {
 	try {
 		const { email, pass } = req.body;
 		const user = await User.findOne({ email });
@@ -44,21 +45,31 @@ const signIn = async (req, res) => {
 			//Kiem tra password dung thi tra ve status code 200
 			if (checkPass) {
 				// Synchronous Sign with default (HMAC SHA256)
-				var token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '20d' });
+				var accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '30m' });
+				var refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: '15d' });
+				const token = new RefreshToken({
+					accessToken,
+					refreshToken,
+				});
+				// console.log(refresh_token_data);
 
-				//Set Header authorization
-				res.setHeader('Authorization', 'Bearer ' + token);
-				return res.status(200).send(user);
+				await token.save();
+
+				// //Set Header authorization
+				// res.setHeader('Authorization', accessToken);
+				// res.setHeader('RefreshToken', refreshToken);
+				return res.status(200).send({user,token});
 			}
 
 			//Password sai thi tra ve status code 201
-			return res.status(201).send();
+			next({ status: 202, message: 'password khong dung' });
 		}
 
 		//User khong ton tai thi tra ve status code 202
-		return res.status(202).send();
+		next({ status: 202, message: 'user khong ton tai' });
 	} catch (e) {
-		return res.status(500).send('loi server:' + e.message);
+		// return res.status(500).send(e.message);
+		next({ status: 500, message: e.message });
 	}
 };
 
