@@ -4,32 +4,16 @@ const postSlice = createSlice({
   initialState: {
     postList: [],
     activeId: "",
-    isLoading: false,
-    err: "",
   },
   reducers: {
-    actionGetAllPost: (state, action) => {
-      state.isLoading = true;
-    },
-    actionSetPosts: (state, action) => {
+    actionGetAllPost: () => {},
+    actionSetPostList: (state, action) => {
       state.postList = action.payload;
-      state.isLoading = false;
-      state.err = "";
-    },
-    actionGetPostSuccess: (state) => {
-      state.isLoading = false;
-      state.err = "";
-    },
-    actionGetPostFail: (state, action) => {
-      state.isLoading = false;
-      state.err = action.payload;
     },
   },
 });
 export const {
   actionGetAllPost,
-  actionGetPostFail,
-  actionGetPostSuccess,
-  actionSetPosts,
+  actionSetPostList,
 } = postSlice.actions;
 export default postSlice.reducer;

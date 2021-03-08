@@ -8,7 +8,8 @@ import { actionLogout } from "redux/slices/userSlice";
 import "./styles/main-page.scss";
 function MainPage() {
   const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.user.loading);
+  const loadingStore = useSelector((state) => state.common.isLoading);
+  const errStore = useSelector((state) => state.common.isError);
   const postList = useSelector((state) => state.post.postList);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ function MainPage() {
   }, [user]);
   return (
     <div className="main-page">
-      {loading && <LoadingComponent />}
+      {loadingStore && <LoadingComponent />}
       <button onClick={logOut}>Logout</button>
     </div>
   );

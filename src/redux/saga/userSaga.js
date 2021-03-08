@@ -3,17 +3,22 @@ import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
 import { call, put, takeLatest } from "redux-saga/effects";
 import {
+  actionFailed,
+  actionLoading,
+  actionSuccess,
+} from "redux/slices/commonSlice";
+import {
   actionLogin,
   actionLogout,
   actionRefreshToken,
   actionRefreshTokenEnded,
-  actionSetErr,
   actionSetUser,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 
 function* handlerLogin(action) {
   try {
+    yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
     localStorageService.setToken(data.accessToken, data.refreshToken);
@@ -21,27 +26,31 @@ function* handlerLogin(action) {
       "Authorization"
     ] = localStorageService.getAccessToken();
     yield put(actionSetUser(data));
+    yield put(actionSuccess("Login successfully!"));
   } catch (error) {
     console.log("user slice: ", error);
-    yield put(actionSetErr(error.message));
+    yield put(actionFailed(error.message));
   }
 }
 function* handleLogout() {
   try {
+    yield put(actionLoading("Loading logout user ...!"));
     const userState = rootStore.getState();
     const { user } = userState.user;
     if (user && user._id) {
       yield call(() => userApi.logout({ userId: user._id }));
       localStorageService.clearStorage();
       yield put(actionSetUser(null));
+      yield put(actionSuccess("Logout successfully"));
     }
   } catch (error) {
     console.log("user slice: ", error);
-    yield put(actionSetErr(error.message));
+    yield put(actionFailed(error.message));
   }
 }
 function* handlerRefreshToken() {
   try {
+    yield put(actionLoading("Loading refresh token ...!"));
     const userState = rootStore.getState();
     const { user, isRefreshingToken } = userState.user;
     if (isRefreshingToken) {
@@ -55,13 +64,13 @@ function* handlerRefreshToken() {
       axiosClient.defaults.headers.common[
         "Authorization"
       ] = localStorageService.getAccessToken();
-
       yield put(actionRefreshTokenEnded());
       yield put({ type: latestAction });
+      yield put(actionSuccess("Refresh token successfully"));
     }
   } catch (error) {
     console.log("user slice: ", error);
-    yield put(actionSetErr(error.message));
+    yield put(actionFailed(error.message));
   }
 }
 // ***** Watcher Functions *****
