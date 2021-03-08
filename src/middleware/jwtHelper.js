@@ -33,6 +33,7 @@ const verifyToken = async (token, secretKey, cb) => {
 
 const isAuth = async (req, res, next) => {
   const tokenFromClient = req.headers["authorization"];
+  const userId = req.headers["userId"];
   if (tokenFromClient) {
     try {
       const decoded = await verifyToken(
@@ -43,6 +44,7 @@ const isAuth = async (req, res, next) => {
           return next(err);
         }
       );
+      
       const token = await Token.findById(decoded.data._id);
       if (token.accessToken === tokenFromClient) {
         req.jwtDecoded = decoded;

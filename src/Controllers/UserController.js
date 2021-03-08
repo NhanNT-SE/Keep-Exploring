@@ -22,7 +22,9 @@ const getProfile = async (req, res) => {
 
 const logOut = async (req, res) => {
 	try {
+		const { idUser } = req.body;
 		const user = req.user;
+
 		if (user) {
 			req.logout();
 			return res.status(200).send(null);
@@ -47,22 +49,27 @@ const signIn = async (req, res, next) => {
 				// Synchronous Sign with default (HMAC SHA256)
 				var accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '30m' });
 				var refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: '15d' });
-				const token = new RefreshToken({
-					accessToken,
-					refreshToken,
-				});
-				// console.log(refresh_token_data);
+
+				let token = await RefreshToken.findById(user._id);
+				if (token) {
+					token.accessToken = accessToken;
+					token.refreshToken = refreshToken;
+				} else {
+					token = new RefreshToken({
+						_id: user._id,
+						accessToken,
+						refreshToken,
+					});
+				}
 
 				await token.save();
 
-				// //Set Header authorization
-				// res.setHeader('Authorization', accessToken);
-				// res.setHeader('RefreshToken', refreshToken);
-				return res.status(200).send({user,token});
+				// return res.status(200).send({ data: { user, token }, err: '', status: '', msg });
+				return res.status(200).send({ user, token });
 			}
 
 			//Password sai thi tra ve status code 201
-			next({ status: 202, message: 'password khong dung' });
+			next({ status: 201, message: 'password khong dung' });
 		}
 
 		//User khong ton tai thi tra ve status code 202

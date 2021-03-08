@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const RefreshTokenSchema = new Schema(
 	{
+		_id: { type: String },
 		accessToken: {
 			type: String,
 		},
