@@ -33,7 +33,7 @@ const verifyToken = async (token, secretKey, cb) => {
 
 const isAuth = async (req, res, next) => {
   const tokenFromClient = req.headers["authorization"];
-  const userId = req.headers["userId"];
+  const userId = req.headers["user-id"];
   if (tokenFromClient) {
     try {
       const decoded = await verifyToken(
@@ -44,16 +44,17 @@ const isAuth = async (req, res, next) => {
           return next(err);
         }
       );
-      
-      const token = await Token.findById(decoded.data._id);
-      if (token.accessToken === tokenFromClient) {
-        req.jwtDecoded = decoded;
-        return next();
-      }
-      let err = new Error();
-      err.status = 401;
-      err.message = "Invalid Token";
-      return next(err);
+      req.jwtDecoded = decoded;
+      return next();
+      // const token = await Token.findById(decoded.data._id);
+      // if (token.accessToken && decoded.data._id === userId) {
+      //   req.jwtDecoded = decoded;
+      //   return next();
+      // }
+      // let err = new Error();
+      // err.status = 401;
+      // err.message = "Invalid Token";
+      // return next(err);
     } catch (error) {
       next(error);
     }
