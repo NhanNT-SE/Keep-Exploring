@@ -20,6 +20,8 @@ const rfToken = async (req, res, next) => {
 
 			return next({ status: 201, message: 'idUser va decode cua refreshToken khong giong nhau' });
 		}
+
+		next({ status: 202, message: 'No token provided or Invalid refresh token !' });
 	} catch (error) {
 		next(error);
 	}
