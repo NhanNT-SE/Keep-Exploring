@@ -1,8 +1,9 @@
 const Post = require('../Models/Post');
 const Address = require('../Models/Address');
 const fs = require('fs');
+const Notification = require('../Models/Notification');
 
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
 	try {
 		const user = req.user;
 		var img_list = new Array();
@@ -29,19 +30,15 @@ const createPost = async (req, res) => {
 		addressPost.idPost = post._id;
 		await addressPost.save();
 
-		return res.status(200).send(post);
+		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'create Post successfully' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
 const deletePost = async (req, res, next) => {
 	try {
-		let err = new Error();
-		err.status = 201;
-		err.message = 'Bai Post khong ton tai';
 		const { postID } = req.params;
-		console.log(postID);
 
 		const postFound = await Post.findById(postID);
 
@@ -53,27 +50,28 @@ const deletePost = async (req, res, next) => {
 			}
 			await Post.findByIdAndDelete(postID);
 			await Address.findOneAndDelete({ idPost: postID });
-			return res.status(200).send('Deleted post');
+
+			return res.status(200).send({ data: null, err: '', status: 200, msg: 'Deleted post' });
 		}
 
-		// return res.status(201).send('Bai Post khong ton tai');
-		return next(err);
+		next({ status: 201, message: 'Bai Post khong ton tai' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const getPost = async (req, res) => {
+const getPost = async (req, res, next) => {
 	try {
 		const { idPost } = req.params;
 		const post = await Post.findById(idPost).populate('owner');
-		return res.status(200).send(post);
+
+		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'get post by id' });
 	} catch (error) {
-		return res.status(202).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const getPostList = async (req, res) => {
+const getPostList = async (req, res, next) => {
 	try {
 		//Kiem tra role nguoi dung
 		const user = req.user;
@@ -81,32 +79,29 @@ const getPostList = async (req, res) => {
 
 		//Neu la admin thi co quyen xem tat ca bai viet
 		if (role == 'admin') {
-			// const postList = await Post.find({});
-			// return res.status(200).send(postList);
-
 			let { status } = req.query;
 			var post_list = [];
 
 			//Neu khong truyen status thi tra ve all post
-			if (status == '') {
+			if (status == '' || status == 'all') {
 				post_list = await Post.find({});
-				return res.status(200).send(post_list);
+				return res.status(200).send({ data: { post_list }, err: '', status: 200, msg: 'list all post ' });
 			}
 
 			//con neu co truyen query thi loc post list theo query
 			post_list = await Post.find({ status: status });
-			return res.status(200).send(post_list);
+			return res.status(200).send({ data: { post_list }, err: '', status: 200, msg: 'list post by status' });
 		}
 
 		//Khong phai admin thi chi xem nhung bai viet co status la done
 		const postList_done = await Post.find({ status: 'done' });
-		return res.status(200).send(postList_done);
+		return res.send({ data: { postList_done }, err: '', status: 200, msg: '' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const likePost = async (req, res) => {
+const likePost = async (req, res, next) => {
 	try {
 		//Lay id bai viet va id nguoi dung tu req
 		const { idPost } = req.body;
@@ -125,18 +120,33 @@ const likePost = async (req, res) => {
 				if ((user._id = like_list[i])) {
 					await postFound.like_list.splice(i, 1);
 					await postFound.save();
-					return res.status(200).send('Da bo like bai viet');
+					return res.send({ data: null, err: '', status: 201, msg: 'Da bo like bai viet' });
 				}
 			}
 			//Con neu nguoi dung chua like bai viet thi push idUser vao like_list
 			await postFound.like_list.push(user._id);
 			await postFound.save();
-			return res.status(201).send('Da like bai viet');
+
+			//Tao notify khi co nguoi like bai viet
+			//Kiem tra co loai thong bao nay cho nguoi dung chua
+
+			// const notifyFoundList = await Notification.findOne({ idPost: postFound._id });
+			// console.log(notifyFoundList);
+
+			// const notify = new Notification({
+			// 	idUser: postFound.owner,
+			// 	idPost: postFound._id,
+			// 	content: 'like',
+			// });
+
+			// await notify.save();
+
+			return res.send({ data: null, err: '', status: 200, msg: 'Da like bai viet' });
 		}
 
-		return res.status(202).send('Bai viet khong ton tai');
+		next({ status: 202, message: 'Bai viet khong ton tai' });
 	} catch (error) {
-		res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
@@ -179,7 +189,7 @@ const updatePost = async (req, res, next) => {
 
 					//Neu so luong hinh upload + so luong hinh o bai viet cu vuot qua gioi han thi tra ve status code 202
 					if (postFound.imgs.lenth - len_deleted + len_files > 20) {
-						return res.status(202).send('So luong hinh anh da vuot qua gioi han la 20');
+						next({ status: 202, message: 'So luong hinh anh da vuot qua gioi han la 20' });
 					}
 
 					//Neu chua vuot gioi han thi thuc hien upload hinh anh len server
@@ -195,18 +205,18 @@ const updatePost = async (req, res, next) => {
 					status: 'pending',
 				};
 				await Post.findByIdAndUpdate(idPost, newPost);
-				return res.status(200).send(newPost);
+				return res.send({ data: { newPost }, status: 200, message: 'Update  successfully' });
 			}
 
 			//Neu khong phai owner bai viet thi tra ve status code 201
-			return res.status(201).send('Ban khong phai owner bai viet nay');
+			next({ status: 201, message: 'Ban khong phai owner bai viet nay' });
 		}
 	} catch (error) {
-		res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const updateStatus = async (req, res) => {
+const updateStatus = async (req, res, next) => {
 	try {
 		const { idPost, status } = req.body;
 
@@ -222,17 +232,17 @@ const updateStatus = async (req, res) => {
 				postFound.status = status;
 
 				await Post.findByIdAndUpdate(idPost, postFound);
-				return res.status(200).send('Cap nhat trang thai thanh cong');
+				return res.send({ data: null, status: 200, message: 'Update Status successfully' });
 			}
 
 			//Neu khong ton tai bai post se tra ve client status code la 201
-			return res.status(201).send('Bai viet khong ton tai');
+			next({ status: 201, message: 'Bai viet khong ton tai' });
 		}
 
 		//Khi role nguoi dung khong phai admin thi tra ve status code la 202
-		return res.status(202).send('Ban khong co quyen cap nhat status blog');
+		next({ status: 202, message: 'Ban khong co quyen cap nhat status Post' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 module.exports = {

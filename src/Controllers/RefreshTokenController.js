@@ -1,6 +1,6 @@
 const RefreshToken = require('../Models/RefreshToken');
 const jwt = require('jsonwebtoken');
-const { REFRESH_TOKEN_SECRET,JWT_SECRET } = require('../config/index');
+const { REFRESH_TOKEN_SECRET, JWT_SECRET } = require('../config/index');
 
 const rfToken = async (req, res, next) => {
 	try {
@@ -15,7 +15,6 @@ const rfToken = async (req, res, next) => {
 			const decode = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
 			if (decode.id == userId) {
 				const newAccessToken = jwt.sign({ id: decode.id }, JWT_SECRET, { expiresIn: '1h' });
-				console.log(newAccessToken);
 				return res.send({ data: { newAccessToken } });
 			}
 
