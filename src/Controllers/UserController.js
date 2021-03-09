@@ -6,32 +6,48 @@ const fs = require('fs');
 const { JWT_SECRET, REFRESH_TOKEN_SECRET } = require('../config/index');
 const RefreshToken = require('../Models/RefreshToken');
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
 	try {
 		const user = req.user;
 		if (user) {
 			const profile = await User.findById(user._id);
-			return res.status(200).send(profile);
+			return res.status(200).send({ data: { profile }, err: '', status: 200, msg: '' });
 		}
 
-		return res.status(201).send(null);
+		next({ status: 201, message: 'user khong ton tai' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const logOut = async (req, res) => {
+const logOut = async (req, res, next) => {
 	try {
-		const { idUser } = req.body;
 		const user = req.user;
+		const userId = user._id;
 
 		if (user) {
+			const token = await RefreshToken.findById(userId);
+			token.refreshToken = null;
+			token.accessToken = null;
+			await token.save();
+
 			req.logout();
-			return res.status(200).send(null);
+			return res.send({
+				status: 200,
+				data: null,
+				msg: 'Logout successfully',
+			});
 		}
-		return res.status(201).send(null);
+
+		next({
+			status: 201,
+			message: 'user khong ton tai',
+		});
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({
+			status: error.status,
+			message: error.message,
+		});
 	}
 };
 
@@ -51,36 +67,43 @@ const signIn = async (req, res, next) => {
 				var refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: '15d' });
 
 				let token = await RefreshToken.findById(user._id);
-				if (token) {
-					token.accessToken = accessToken;
-					token.refreshToken = refreshToken;
-				} else {
+				if (!token) {
 					token = new RefreshToken({
 						_id: user._id,
 						accessToken,
 						refreshToken,
 					});
+				} else {
+					token.accessToken = accessToken;
+					token.refreshToken = refreshToken;
 				}
-
 				await token.save();
 
-				// return res.status(200).send({ data: { user, token }, err: '', status: '', msg });
-				return res.status(200).send({ user, token });
+				return res.status(200).send({
+					data: { user, token },
+					err: '',
+					status: 200,
+				});
 			}
 
 			//Password sai thi tra ve status code 201
-			next({ status: 201, message: 'password khong dung' });
+			next({
+				status: 201,
+				message: 'password khong dung',
+			});
 		}
 
 		//User khong ton tai thi tra ve status code 202
-		next({ status: 202, message: 'user khong ton tai' });
-	} catch (e) {
-		// return res.status(500).send(e.message);
-		next({ status: 500, message: e.message });
+		next({
+			status: 202,
+			message: 'user khong ton tai',
+		});
+	} catch (error) {
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
 	try {
 		const file = req.file;
 		var imgUser;
@@ -93,7 +116,10 @@ const signUp = async (req, res) => {
 
 		const userFound = await User.findOne({ email: user.email });
 		if (userFound) {
-			return res.status(201).send(userFound);
+			next({
+				status: 201,
+				message: 'user da ton tai',
+			});
 		}
 
 		const salt = await bcrypt.genSalt(10);
@@ -106,13 +132,17 @@ const signUp = async (req, res) => {
 		});
 
 		await newUser.save();
-		return res.status(200).send(newUser);
-	} catch (e) {
-		return res.status(202).send(e.message);
+		return res.status(200).send({
+			data: { newUser },
+			message: 'Dang ky thanh cong',
+			status: 200,
+		});
+	} catch (error) {
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next) => {
 	try {
 		const file = req.file;
 		const user = req.user;
@@ -120,7 +150,10 @@ const updateProfile = async (req, res) => {
 		var avatar;
 
 		if (!user) {
-			return res.status(201).send(null);
+			next({
+				status: 201,
+				message: 'user khong ton tai',
+			});
 		}
 
 		//Kiem tra nguoi dung muon doi avata hay khong
@@ -140,8 +173,14 @@ const updateProfile = async (req, res) => {
 		};
 
 		await User.findByIdAndUpdate(user._id, newUser);
-		return res.status(200).send(newUser);
-	} catch (error) {}
+		return res.status(200).send({
+			data: { newUser },
+			message: 'Cap nhat profile thanh cong',
+			status: 200,
+		});
+	} catch (error) {
+		next({ status: error.status, message: error.message });
+	}
 };
 
 module.exports = {

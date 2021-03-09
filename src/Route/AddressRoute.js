@@ -10,9 +10,12 @@ router.get('/', addressController.getAddressList);
 router.get('/province', addressController.getPostbyAddress);
 
 //POST Method
-router.post('/', addressController.createAdress);
+router.post('/', passport.authenticate('jwt', { session: false }), addressController.createAdress);
 
 //Delete Method
-router.delete('/:idPost', addressController.deleteAddress);
+router.delete('/:idPost', passport.authenticate('jwt', { session: false }), addressController.deleteAddress);
+
+//Patch Method
+router.patch('/:idAddress', passport.authenticate('jwt', { session: false }), addressController.updateAddress);
 
 module.exports = router;

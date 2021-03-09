@@ -1,44 +1,41 @@
 const Address = require('../Models/Address');
 
-const createAdress = async (req, res) => {
+const createAdress = async (req, res, next) => {
 	try {
 		const address = new Address({
 			...req.body,
 		});
 		await new Address(address).save();
-		return res.status(200).send(address);
+		return res.send({ data: { address }, status: 200, message: 'Created Address Successfully' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
 	try {
 		const { idPost } = req.params;
 		await Address.deleteOne({ idPost: idPost });
-		return res.status(200).send('Deleted address');
+
+		return res.send({ data: null, status: 200, message: 'Deleted Address' });
 	} catch (error) {
-		return res.status(202).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const getAddressList = async (req, res) => {
+const getAddressList = async (req, res, next) => {
 	try {
 		const addressList = await Address.find({}).populate('idPost');
 		return res.status(200).send(addressList);
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
 	}
 };
 
-const getPostbyAddress = async (req, res) => {
+const getPostbyAddress = async (req, res, next) => {
 	try {
 		const { province } = req.body;
 		var postList = [];
-
-		// await Address.find({ province }).forEach((item) => {
-		// 	postList.push(item);
-		// });
 
 		const addressList = await Address.find({ province }).populate('idPost');
 		addressList.forEach((item) => {
@@ -46,12 +43,32 @@ const getPostbyAddress = async (req, res) => {
 		});
 
 		if ((postList.length = 0)) {
-			return res.status(201).send('Dia diem chua duoc review');
+			next({ status: 201, message: 'Dia diem chua duoc review' });
 		}
 
-		return res.status(200).send(postList);
+		return res.send({ data: { postList }, status: 200, message: '' });
 	} catch (error) {
-		return res.status(500).send(error.message);
+		next({ status: error.status, message: error.message });
+	}
+};
+
+const updateAddress = async (req, res, next) => {
+	try {
+		const { idAddress } = req.params;
+		const addressFound = await Address.findById(idAddress);
+
+		if (addressFound) {
+			const newAddress = {
+				...req.body,
+			};
+
+			await Address.findByIdAndUpdate(idAddress, newAddress);
+			return res.send({ data: { newAddress }, status: 200, message: 'Update Address successfully' });
+		}
+
+		next({ status: 201, message: 'Dia chi khong ton tai' });
+	} catch (error) {
+		next({ status: error.status, message: error.message });
 	}
 };
 
@@ -60,4 +77,5 @@ module.exports = {
 	deleteAddress,
 	getAddressList,
 	getPostbyAddress,
+	updateAddress,
 };

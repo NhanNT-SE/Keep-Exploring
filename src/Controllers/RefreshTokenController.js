@@ -1,6 +1,6 @@
 const RefreshToken = require('../Models/RefreshToken');
 const jwt = require('jsonwebtoken');
-const { REFRESH_TOKEN_SECRET,JWT_SECRET } = require('../config/index');
+const { REFRESH_TOKEN_SECRET, JWT_SECRET } = require('../config/index');
 
 const rfToken = async (req, res, next) => {
 	try {
@@ -15,12 +15,13 @@ const rfToken = async (req, res, next) => {
 			const decode = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
 			if (decode.id == userId) {
 				const newAccessToken = jwt.sign({ id: decode.id }, JWT_SECRET, { expiresIn: '1h' });
-				console.log(newAccessToken);
 				return res.send({ data: { newAccessToken } });
 			}
 
 			return next({ status: 201, message: 'idUser va decode cua refreshToken khong giong nhau' });
 		}
+
+		next({ status: 202, message: 'No token provided or Invalid refresh token !' });
 	} catch (error) {
 		next(error);
 	}
