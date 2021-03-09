@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-const { JWT_SECRET } = require('../config/index');
+const { JWT_SECRET, REFRESH_TOKEN_SECRET } = require('../config/index');
+const RefreshToken = require('../Models/RefreshToken');
 
 const getProfile = async (req, res) => {
 	try {
@@ -21,7 +22,9 @@ const getProfile = async (req, res) => {
 
 const logOut = async (req, res) => {
 	try {
+		const { idUser } = req.body;
 		const user = req.user;
+
 		if (user) {
 			req.logout();
 			return res.status(200).send(null);
@@ -32,7 +35,7 @@ const logOut = async (req, res) => {
 	}
 };
 
-const signIn = async (req, res) => {
+const signIn = async (req, res, next) => {
 	try {
 		const { email, pass } = req.body;
 		const user = await User.findOne({ email });
@@ -44,21 +47,36 @@ const signIn = async (req, res) => {
 			//Kiem tra password dung thi tra ve status code 200
 			if (checkPass) {
 				// Synchronous Sign with default (HMAC SHA256)
-				var token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '20d' });
+				var accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '30m' });
+				var refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: '15d' });
 
-				//Set Header authorization
-				res.setHeader('Authorization', 'Bearer ' + token);
-				return res.status(200).send(user);
+				let token = await RefreshToken.findById(user._id);
+				if (token) {
+					token.accessToken = accessToken;
+					token.refreshToken = refreshToken;
+				} else {
+					token = new RefreshToken({
+						_id: user._id,
+						accessToken,
+						refreshToken,
+					});
+				}
+
+				await token.save();
+
+				// return res.status(200).send({ data: { user, token }, err: '', status: '', msg });
+				return res.status(200).send({ user, token });
 			}
 
 			//Password sai thi tra ve status code 201
-			return res.status(201).send();
+			next({ status: 201, message: 'password khong dung' });
 		}
 
 		//User khong ton tai thi tra ve status code 202
-		return res.status(202).send();
+		next({ status: 202, message: 'user khong ton tai' });
 	} catch (e) {
-		return res.status(500).send('loi server:' + e.message);
+		// return res.status(500).send(e.message);
+		next({ status: 500, message: e.message });
 	}
 };
 
@@ -68,7 +86,6 @@ const signUp = async (req, res) => {
 		var imgUser;
 		if (file) {
 			imgUser = file.filename;
-			console.log('imgUser: ', imgUser);
 		} else {
 			imgUser = 'avatar-default.png';
 		}

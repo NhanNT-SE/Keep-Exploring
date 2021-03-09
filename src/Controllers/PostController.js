@@ -35,13 +35,19 @@ const createPost = async (req, res) => {
 	}
 };
 
-const deletePost = async (req, res) => {
+const deletePost = async (req, res, next) => {
 	try {
+		let err = new Error();
+		err.status = 201;
+		err.message = 'Bai Post khong ton tai';
 		const { postID } = req.params;
+		console.log(postID);
+
 		const postFound = await Post.findById(postID);
-		const len = postFound.imgs.length;
 
 		if (postFound) {
+			const len = postFound.imgs.length;
+
 			for (let i = 0; i < len; i++) {
 				fs.unlinkSync('src/public/images/post/' + postFound.imgs[i]);
 			}
@@ -50,9 +56,10 @@ const deletePost = async (req, res) => {
 			return res.status(200).send('Deleted post');
 		}
 
-		return res.status(201).send('Bai Post khong ton tai');
+		// return res.status(201).send('Bai Post khong ton tai');
+		return next(err);
 	} catch (error) {
-		return res.status(202).send(error.message);
+		return res.status(500).send(error.message);
 	}
 };
 
@@ -133,7 +140,7 @@ const likePost = async (req, res) => {
 	}
 };
 
-const updatePost = async (req, res) => {
+const updatePost = async (req, res, next) => {
 	try {
 		//Lay data tu phia client gui len
 		const { idPost } = req.params;

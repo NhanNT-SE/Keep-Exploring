@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const userController = require('../Controllers/UserController');
+const refreshTokenController = require('../Controllers/RefreshTokenController');
 const passport = require('passport');
 require('../middleware/passport');
 
@@ -26,6 +27,7 @@ router.get('/logOut', passport.authenticate('jwt', { session: false }), userCont
 //POST Method
 router.post('/signUp', upload.single('image_user'), userController.signUp);
 router.post('/signIn', userController.signIn);
+router.post('/refreshToken', refreshTokenController.rfToken);
 
 //PUT Method
 router.put(
