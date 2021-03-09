@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
-const multer = require('multer');
+const multer = require("multer");
 const userRouter = require("./src/Route/UserRoute");
 const postRouter = require("./src/Route/PostRoute");
 const addressRouter = require("./src/Route/AddressRoute");
@@ -14,13 +14,14 @@ const blogRouter = require("./src/Route/BlogRoute");
 const AuthController = require("./src/Controllers/AuthController");
 const jwtHelper = require("./src/middleware/jwtHelper");
 // const mongoString = 'mongodb+srv://admin:doanhnhangroup@cluster0.jqsm5.mongodb.net/user?retryWrites=true&w=majority';
-const mongoString =
-  "mongodb://nhannt:nhannt1905@13.58.149.178:27017/keep-exploring?authSource=admin&w=1";
+// const mongoString =
+//   "mongodb://nhannt:nhannt1905@13.58.149.178:27017/keep-exploring?authSource=admin&w=1";
+const mongoString = "mongodb://localhost/keep-exploring";
 const port = process.env.PORT || 3000;
 const app = express();
 const forms = multer();
 
-app.use(express.static('src/public'));
+app.use(express.static("src/public"));
 app.use(bodyParser.json());
 // app.use(forms.array());
 app.use(

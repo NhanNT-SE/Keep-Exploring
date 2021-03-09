@@ -85,6 +85,7 @@ const signUp = async (req, res) => {
 		var newUser = new User({
 			...req.body,
 			imgUser,
+			role:"user",
 			pass: passHashed,
 		});
 
