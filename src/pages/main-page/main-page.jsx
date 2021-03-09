@@ -9,7 +9,6 @@ import "./styles/main-page.scss";
 function MainPage() {
   const user = useSelector((state) => state.user.user);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const errStore = useSelector((state) => state.common.isError);
   const postList = useSelector((state) => state.post.postList);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -27,9 +26,9 @@ function MainPage() {
     console.log("post list:", postList);
   }, [postList]);
   useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
+    // if (!user) {
+    //   history.push("/login");
+    // }
   }, [user]);
   return (
     <div className="main-page">

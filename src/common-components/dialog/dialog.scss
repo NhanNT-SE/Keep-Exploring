@@ -1,4 +1,42 @@
-.dialog-container {
-  display: flex;
-  flex: 1;
+.dialog-content {
+  .MuiDialog-paper {
+    padding: 0px 20px;
+  }
+  .dialog-header {
+    padding: 0px;
+    text-align: center;
+
+    .icon {
+      font-size: 100px;
+      &-error {
+        color: red;
+      }
+      &-success {
+        color: #4caf50;
+      }
+    }
+    .btn-close{
+      text-align: end;
+      margin-bottom: 8px;
+      button{
+        background-color: red;
+        color: white;
+      }
+    }
+  }
+  .MuiAlert-standardError,
+  .MuiAlert-standardSuccess {
+    background-color: white;
+    font-size: 20px;
+    align-items: center;
+    font-weight: bold;
+  }
+  .MuiAlert {
+    &-standardError {
+      color: red;
+    }
+    &-standardSuccess {
+      color: #4caf50;
+    }
+  }
 }

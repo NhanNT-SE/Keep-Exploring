@@ -6,6 +6,7 @@ import {
   actionFailed,
   actionLoading,
   actionSuccess,
+  actionShowDialog,
 } from "redux/slices/commonSlice";
 import {
   actionLogin,
@@ -27,9 +28,11 @@ function* handlerLogin(action) {
     ] = localStorageService.getAccessToken();
     yield put(actionSetUser(data));
     yield put(actionSuccess("Login successfully!"));
+    yield put(actionShowDialog());
   } catch (error) {
-    console.log("user slice: ", error);
+    console.log("user saga error: ", error);
     yield put(actionFailed(error.message));
+    yield put(actionShowDialog());
   }
 }
 function* handleLogout() {
@@ -44,7 +47,7 @@ function* handleLogout() {
       yield put(actionSuccess("Logout successfully"));
     }
   } catch (error) {
-    console.log("user slice: ", error);
+    console.log("user saga: ", error);
     yield put(actionFailed(error.message));
   }
 }
@@ -69,7 +72,7 @@ function* handlerRefreshToken() {
       yield put(actionSuccess("Refresh token successfully"));
     }
   } catch (error) {
-    console.log("user slice: ", error);
+    console.log("user saga: ", error);
     yield put(actionFailed(error.message));
   }
 }
