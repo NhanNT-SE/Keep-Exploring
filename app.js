@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 const forms = multer();
 
-app.use(express.static('src/public'));
+app.use(express.static("src/public"));
 app.use(bodyParser.json());
 // app.use(forms.array());
 app.use(

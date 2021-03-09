@@ -7,8 +7,8 @@ const accessTokenLife = "1d";
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenLife = "365d";
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
-
-const login = async (req, res) => {
+const sleep = require("util").promisify(setTimeout);
+const login = async (req, res, next) => {
   try {
     const { email, pass } = req.body;
     const user = await User.findOne({ email });
@@ -49,28 +49,22 @@ const login = async (req, res) => {
           displayName: user.displayName,
           imageUser: user.imgUser,
         };
+        // return res.status(200).send({
+        //   status: 200,
+        //   data: result,
+        // });
+        await sleep(1000);
         return res.status(200).send({
           status: 200,
           data: result,
-          message: "Login successfully",
-          error: null,
         });
       }
-      return res.send({
-        status: 202,
-        data: null,
-        message: "Your password incorrect",
-        error: null,
-      });
+      customErr(201, "Your password incorrect");
     }
-    return res.send({
-      status: 202,
-      data: null,
-      msg: "This user not exists",
-    });
+    customErr(201, "this user is not exists");
   } catch (e) {
     console.log(e);
-    return res.status(500).send("loi server:" + e.message);
+    next(e);
   }
 };
 const refreshToken = async (req, res) => {
@@ -120,6 +114,13 @@ const logout = async (req, res) => {
     });
   } catch (error) {}
 };
+const customErr = (status, message) => {
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
+};
+
 module.exports = {
   login,
   logout,
