@@ -39,19 +39,28 @@ const createPost = async (req, res, next) => {
 const deletePost = async (req, res, next) => {
 	try {
 		const { postID } = req.params;
+		const user = req.user;
 
 		const postFound = await Post.findById(postID);
 
 		if (postFound) {
-			const len = postFound.imgs.length;
+			if (user._id == postFound.owner.toString() || user.role == 'admin') {
+				const len = postFound.imgs.length;
 
-			for (let i = 0; i < len; i++) {
-				fs.unlinkSync('src/public/images/post/' + postFound.imgs[i]);
+				for (let i = 0; i < len; i++) {
+					fs.unlinkSync('src/public/images/post/' + postFound.imgs[i]);
+				}
+				await Post.findByIdAndDelete(postID);
+				await Address.findOneAndDelete({ idPost: postID });
+
+				return res.status(200).send({ data: null, err: '', status: 200, msg: 'Deleted post' });
 			}
-			await Post.findByIdAndDelete(postID);
-			await Address.findOneAndDelete({ idPost: postID });
 
-			return res.status(200).send({ data: null, err: '', status: 200, msg: 'Deleted post' });
+			console.log(user._id);
+			console.log(postFound.owner);
+			console.log(user.role);
+
+			return next({ status: 202, message: 'Ban khong phai owner bai viet/ admin' });
 		}
 
 		next({ status: 201, message: 'Bai Post khong ton tai' });
@@ -65,7 +74,10 @@ const getPost = async (req, res, next) => {
 		const { idPost } = req.params;
 		const post = await Post.findById(idPost).populate('owner');
 
-		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'get post by id' });
+		if (post) {
+			return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'get post by id' });
+		}
+		next({ status: 201, message: 'Bai viet khong ton tai' });
 	} catch (error) {
 		next({ status: error.status, message: error.message });
 	}
@@ -247,6 +259,7 @@ const updateStatus = async (req, res, next) => {
 };
 module.exports = {
 	createPost,
+
 	deletePost,
 	getPost,
 	getPostList,

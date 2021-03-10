@@ -30,12 +30,13 @@ router.post('/signIn', userController.signIn);
 router.post('/refreshToken', refreshTokenController.rfToken);
 
 //PUT Method
-router.put(
+router.patch(
 	'/',
 	passport.authenticate('jwt', { session: false }),
 	upload.single('image_user'),
 	userController.updateProfile
 );
+router.patch('/changePass', passport.authenticate('jwt', { session: false }), userController.changePass);
 
 module.exports = router;
 

@@ -6,6 +6,32 @@ const fs = require('fs');
 const { JWT_SECRET, REFRESH_TOKEN_SECRET } = require('../config/index');
 const RefreshToken = require('../Models/RefreshToken');
 
+const changePass = async (req, res, next) => {
+	try {
+		const { oldPass, newPass } = req.body;
+		const user = req.user;
+
+		const checkPass = await bcrypt.compare(oldPass, user.pass);
+
+		if (checkPass) {
+			const salt = await bcrypt.genSalt(10);
+			const passHashed = await bcrypt.hash(newPass, salt);
+
+			user.pass = passHashed;
+			await user.save();
+			return res.status(200).send({
+				data: null,
+				status: 200,
+				message: 'Doi mat khau thanh cong',
+			});
+		}
+
+		return next({ status: 201, message: 'Password khong dung' });
+	} catch (error) {
+		next({ status: error.status, message: error.message });
+	}
+};
+
 const getProfile = async (req, res, next) => {
 	try {
 		const user = req.user;
@@ -35,7 +61,7 @@ const logOut = async (req, res, next) => {
 			return res.send({
 				status: 200,
 				data: null,
-				msg: 'Logout successfully',
+				msg: 'Logout thanh cong',
 			});
 		}
 
@@ -185,6 +211,7 @@ const updateProfile = async (req, res, next) => {
 };
 
 module.exports = {
+	changePass,
 	getProfile,
 	logOut,
 	signIn,

@@ -9,7 +9,7 @@ const createAddress = async (req, res, next) => {
     return res.send({
       data: { address },
       status: 200,
-      message: "Created Address Successfully",
+      message: "Tao dia chi thanh cong",
     });
   } catch (error) {
     next(error);
@@ -21,12 +21,13 @@ const deleteAddress = async (req, res, next) => {
     const { idPost } = req.params;
     await Address.deleteOne({ idPost: idPost });
 
-    return res.send({ data: null, status: 200, message: "Deleted Address" });
+    return res.send({ data: null, status: 200, message: "Da xoa dia diem" });
   } catch (error) {
     next(error);
   }
 };
 
+//Khong dung toi
 const getAddressList = async (req, res, next) => {
   try {
     const addressList = await Address.find({}).populate("idPost");
@@ -71,7 +72,7 @@ const updateAddress = async (req, res, next) => {
       return res.send({
         data: { newAddress },
         status: 200,
-        message: "Update Address successfully",
+        message: "cập nhật địa chỉ thành công",
       });
     }
 
