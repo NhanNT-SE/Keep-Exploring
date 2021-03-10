@@ -1,32 +1,43 @@
-const RefreshToken = require('../Models/RefreshToken');
-const jwt = require('jsonwebtoken');
-const { REFRESH_TOKEN_SECRET, JWT_SECRET } = require('../config/index');
+const RefreshToken = require("../Models/RefreshToken");
+const jwt = require("jsonwebtoken");
+const { REFRESH_TOKEN_SECRET, JWT_SECRET } = require("../config/index");
 
 const rfToken = async (req, res, next) => {
-	try {
-		//Lay accessToken va refreshToken tu header cua user gui len
-		const { refreshToken, userId } = req.body;
+  try {
+    //Lay accessToken va refreshToken tu header cua user gui len
+    const { refreshToken, userId } = req.body;
 
-		//Kiem tra accessToken co ton tai hay khong
-		const tokenFound = await RefreshToken.findById(userId);
+    //Kiem tra accessToken co ton tai hay khong
+    const tokenFound = await RefreshToken.findById(userId);
 
-		if (tokenFound && refreshToken === tokenFound.refreshToken) {
-			//decode ra data cua user
-			const decode = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-			if (decode.id == userId) {
-				const newAccessToken = jwt.sign({ id: decode.id }, JWT_SECRET, { expiresIn: '1h' });
-				return res.send({ data: { newAccessToken } });
-			}
+    if (tokenFound && refreshToken === tokenFound.refreshToken) {
+      //decode ra data cua user
+      const decode = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+      if (decode.id == userId) {
+        const newAccessToken = jwt.sign({ id: decode.id }, JWT_SECRET, {
+          expiresIn: "1d",
+        });
+        return res.send({
+          data: newAccessToken,
+          status: 200,
+          message: "Refresh token thành công",
+        });
+      }
 
-			return next({ status: 201, message: 'idUser va decode cua refreshToken khong giong nhau' });
-		}
+      handlerCustomError(201, "Refresh Token của bạn không hợp lệ");
+    }
 
-		return next({ status: 202, message: 'Khong co refreshToken nao duoc gui len hoac refreshToken khong hop le' });
-	} catch (error) {
-		next(error);
-	}
+    handlerCustomError(202, "Refresh Token của bạn không hợp lệ");
+  } catch (error) {
+    next(error);
+  }
 };
-
+const handlerCustomError = (status, message) => {
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
+};
 module.exports = {
-	rfToken,
+  rfToken,
 };

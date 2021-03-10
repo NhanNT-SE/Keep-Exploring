@@ -33,7 +33,13 @@ const createBlog = async (req, res, next) => {
       detail_list,
     });
     await blog_detail.save();
-    return res.status(200).send(blog_detail);
+    return res
+      .status(200)
+      .send({
+        status: 200,
+        data: blog_detail,
+        message: "Tạo bài viết thành công",
+      });
   } catch (error) {
     next(error);
   }
@@ -60,11 +66,10 @@ const deleteBlog = async (req, res, next) => {
       return res.status(200).send({
         status: 200,
         data: null,
-        message: "Deleted blog successfully",
+        message: "Xóa bài viết thành công",
       });
     }
-    // return res.status(201).send("Bai Blog khong ton tai");
-    handlerCustomError(201, "This blog doesn't exists ");
+    handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -110,7 +115,7 @@ const likeBlog = async (req, res, next) => {
           await blogFound.save();
           return res.status(200).send({
             status: 200,
-            message: "dislike",
+            message: "Đã bỏ thích bài viết",
             data: null,
           });
         }
@@ -118,12 +123,14 @@ const likeBlog = async (req, res, next) => {
       //Con neu nguoi dung chua like bai viet thi push idUser vao like_list va return status code 201
       await blogFound.like_list.push(user._id);
       await blogFound.save();
-      return res.status(201).send({ status: 201, data: null, message: "like" });
+      return res
+        .status(201)
+        .send({ status: 201, data: null, message: "Đã thích bài viết" });
     }
 
     //Neu bai viet khong ton tai thi tra ve res code 202
     // return res.status(202).send("Bai viet khong ton tai");
-    handlerCustomError("This post doesn't exists");
+    handlerCustomError(202, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -146,17 +153,20 @@ const updateStatus = async (req, res, next) => {
 
         return res
           .status(200)
-          .send({ status: 200, data: null, message: "Update successfully" });
+          .send({
+            status: 200,
+            data: null,
+            message: "Cập nhật trạng thái thành công",
+          });
       }
 
       //Neu khong ton tai blog se tra ve client status code la 201
       //   return res.status(201).send("Bai viet khong ton tai");
-      handlerCustomError(201, "this post doesn't exists");
+      handlerCustomError(201, "Bài viết không tồn tại");
     }
 
     //Khi role nguoi dung khong phai admin thi tra ve status code la 202
-    // return res.status(202).send("Ban khong co quyen cap nhat status blog");
-    handlerCustomError(401, "You don't have permission for this action");
+    handlerCustomError(401, "Bạn không có quyền để thực hiện hành động này");
   } catch (error) {
     next(error);
   }
@@ -171,12 +181,24 @@ const getAll = async (req, res, next) => {
     //Neu la admin thi co quyen xem tat ca bai viet
     if (role == "admin") {
       const blogList = await Blog.find({});
-      return res.status(200).send(blogList);
+      return res
+        .status(200)
+        .send({
+          status: 200,
+          data: blogList,
+          message: "Lấy dữ liệu thành công",
+        });
     }
 
     //Khong phai admin thi chi xem nhung bai viet co status la done
     const blogList_done = await Blog.find({ status: "done" });
-    return res.status(200).send(blogList_done);
+    return res
+      .status(200)
+      .send({
+        status: 200,
+        data: blogList_done,
+        message: "Lấy dữ liệu thành công",
+      });
   } catch (error) {
     next(error);
   }

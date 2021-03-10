@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // GET Method
-router.get('/getByPost', commentController.getCommentbyPost);
+router.get('/getByPost', commentController.getCommentByPost);
 
 //POST Method
 router.post(
@@ -28,7 +28,7 @@ router.post(
 	upload.array('image_comment', 10),
 	commentController.createCommentPost
 );
-router.post('/deleteByPost', commentController.deleteCommentbyPost);
-router.post('/deletebyId/:idComment', commentController.deleteCommentbyID);
+router.post('/deleteByPost', commentController.deleteCommentByPost);
+router.post('/deletebyId/:idComment', commentController.deleteCommentByID);
 
 module.exports = router;
