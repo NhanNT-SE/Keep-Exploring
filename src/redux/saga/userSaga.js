@@ -1,12 +1,14 @@
 import axiosClient from "api/axiosClient";
 import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, delay, put, takeLatest } from "redux-saga/effects";
+import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
 import {
   actionFailed,
   actionLoading,
   actionSuccess,
   actionShowDialog,
+  actionHideDialog,
 } from "redux/slices/commonSlice";
 import {
   actionLogin,
@@ -23,32 +25,22 @@ function* handlerLogin(action) {
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
     localStorageService.setToken(data.accessToken, data.refreshToken);
-    axiosClient.defaults.headers.common[
-      "Authorization"
-    ] = localStorageService.getAccessToken();
+    yield call(() => handlerSuccessSaga("Login successfully!"));
     yield put(actionSetUser(data));
-    yield put(actionSuccess("Login successfully!"));
-    yield put(actionShowDialog());
   } catch (error) {
     console.log("user saga error: ", error);
-    yield put(actionFailed(error.message));
-    yield put(actionShowDialog());
+    yield call(() => handlerFailSaga(error));
   }
 }
 function* handleLogout() {
   try {
     yield put(actionLoading("Loading logout user ...!"));
-    const userState = rootStore.getState();
-    const { user } = userState.user;
-    if (user && user._id) {
-      yield call(() => userApi.logout({ userId: user._id }));
-      localStorageService.clearStorage();
-      yield put(actionSetUser(null));
-      yield put(actionSuccess("Logout successfully"));
-    }
+    yield call(userApi.logout);
+    yield call(() => handlerSuccessSaga("Logout successfully!"));
+    yield put(actionSetUser(null));
   } catch (error) {
     console.log("user saga: ", error);
-    yield put(actionFailed(error.message));
+    yield call(() => handlerFailSaga(error));
   }
 }
 function* handlerRefreshToken() {
@@ -66,14 +58,14 @@ function* handlerRefreshToken() {
       localStorageService.setAccessToken(data.accessToken);
       axiosClient.defaults.headers.common[
         "Authorization"
-      ] = localStorageService.getAccessToken();
+      ] = `Bearer ${localStorageService.getAccessToken()}`;
       yield put(actionRefreshTokenEnded());
       yield put({ type: latestAction });
-      yield put(actionSuccess("Refresh token successfully"));
+      yield call(() => handlerSuccessSaga("Refresh token successfully!"));
     }
   } catch (error) {
     console.log("user saga: ", error);
-    yield put(actionFailed(error.message));
+    yield call(() => handlerFailSaga(error));
   }
 }
 // ***** Watcher Functions *****

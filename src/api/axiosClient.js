@@ -20,7 +20,7 @@ axiosClient.interceptors.request.use(async (config) => {
   try {
     const accessToken = localStorageService.getAccessToken();
     if (accessToken) {
-      config.headers["Authorization"] = accessToken;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     return config;
   } catch (error) {

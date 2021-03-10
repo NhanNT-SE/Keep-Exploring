@@ -1,4 +1,5 @@
 import localStorageService from "api/localStorageService";
+import DialogComponent from "common-components/dialog/dialog";
 import LoadingComponent from "common-components/loading/loading";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,13 +27,14 @@ function MainPage() {
     console.log("post list:", postList);
   }, [postList]);
   useEffect(() => {
-    // if (!user) {
-    //   history.push("/login");
-    // }
+    if (!user) {
+      history.push("/login");
+    }
   }, [user]);
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
+      <DialogComponent />
       <button onClick={logOut}>Logout</button>
     </div>
   );

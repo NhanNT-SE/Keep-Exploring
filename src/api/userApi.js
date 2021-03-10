@@ -2,15 +2,15 @@ import axiosClient from "./axiosClient";
 
 const userApi = {
   login: (user) => {
-    const url = "/login";
+    const url = "/user/signIn";
     return axiosClient.post(url, user);
   },
-  logout: (payload) => {
-    const url = "/logout";
-    return axiosClient.post(url, payload);
+  logout: () => {
+    const url = "/user/logout";
+    return axiosClient.get(url);
   },
   refreshToken: (data) => {
-    const url = "/refresh-token";
+    const url = "/refreshToken";
     return axiosClient.post(url, data);
   },
 };

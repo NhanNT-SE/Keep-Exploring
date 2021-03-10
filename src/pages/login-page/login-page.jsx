@@ -77,19 +77,9 @@ function LoginPage(props) {
     }
   }, []);
   useEffect(() => {
-    let timeOutCloseDialog = null;
     if (user && user.role === "admin") {
-      timeOutCloseDialog = setTimeout(() => {
-        history.push("/home");
-        dispatch(actionHideDialog());
-      }, 2000);
+      history.push("/home");
     }
-    if (!user) {
-      dispatch(actionHideDialog());
-    }
-    return () => {
-      clearTimeout(timeOutCloseDialog);
-    };
   }, [user]);
   return (
     <div className="login-page">

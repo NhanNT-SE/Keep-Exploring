@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 
 const postApi = {
   getAll: () => {
-    const url = "/testAuth";
+    const url = "/post";
     return axiosClient.get(url);
   },
 };
