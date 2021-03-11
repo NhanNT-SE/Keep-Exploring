@@ -4,6 +4,7 @@ const User = require('../Models/User');
 const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { JWT_SECRET } = require('../config/index');
+const RefreshToken = require('../Models/RefreshToken');
 
 const opts = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
@@ -13,24 +14,22 @@ const opts = {
 
 passport.use(
 	'jwt',
-	new JwtStrategy(opts, (jwt_payload, done) => {
-		// try {
-		// 	console.log('payload', payload);
-		// 	return done(null, payload, { message: 'Logged in Successfully' });
-		// } catch (error) {
-		// 	done(error, false);
-		// }
-		User.findById(jwt_payload.id, function (err, user) {
-			if (err) {
-				return done(err, false);
-			}
-			if (user) {
+	new JwtStrategy(opts, async (jwt_payload, done) => {
+		try {
+			const user = await User.findById(jwt_payload.id);
+			const token = await RefreshToken.findById(jwt_payload.id);
+			if (user && token.accessToken) {
 				return done(null, user);
-			} else {
-				return done(null, false);
-				// or you could create a new account
 			}
-		});
+
+			if (user) {
+				return done({ status: 201, message: 'Người dùng chưa đăng nhập' }, false);
+			}
+
+			return done({ status: 202, message: 'Tài khoản không tồn tại' }, false);
+		} catch (error) {
+			return done(error.message, false);
+		}
 	})
 );
 
