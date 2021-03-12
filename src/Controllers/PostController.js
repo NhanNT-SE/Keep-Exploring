@@ -2,6 +2,7 @@ const Post = require('../Models/Post');
 const Address = require('../Models/Address');
 const fs = require('fs');
 const Notification = require('../Models/Notification');
+const { createNotification } = require('./NotificationController');
 
 const createPost = async (req, res, next) => {
 	try {
@@ -29,6 +30,15 @@ const createPost = async (req, res, next) => {
 		const addressPost = await Address.findById(addressID);
 		addressPost.idPost = post._id;
 		await addressPost.save();
+
+		//Tao notify khi co nguoi tao bai viet
+		const notify = new Notification({
+			idUser: user._id,
+			idPost: post._id,
+			status: 'new',
+			content: 'unmoderated',
+		});
+		await createNotification(notify);
 
 		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'create Post successfully' });
 	} catch (error) {
@@ -66,6 +76,26 @@ const deletePost = async (req, res, next) => {
 		next({ status: 201, message: 'Bai Post khong ton tai' });
 	} catch (error) {
 		next({ status: error.status, message: error.message });
+	}
+};
+
+const getLikeList = async (req, res, next) => {
+	try {
+		const { idPost } = req.body;
+		const postFound = await Post.findById(idPost).populate('like_list');
+		if (!postFound) {
+			handleCustomError(201, 'Bài viết không tồn tại hoặc đã bị xóa');
+		}
+
+		const likeList = postFound.like_list;
+
+		if (!likeList) {
+			handleCustomError(202, 'Chưa có người like bài viết này');
+		}
+
+		return res.send({ data: { likeList }, status: 200, message: 'Danh sách những người like bài viết' });
+	} catch (error) {
+		next(error);
 	}
 };
 
@@ -135,23 +165,19 @@ const likePost = async (req, res, next) => {
 					return res.send({ data: null, err: '', status: 201, msg: 'Da bo like bai viet' });
 				}
 			}
+
+			//Tao notify khi co nguoi like bai viet
+			const notify = new Notification({
+				idUser: postFound.owner.toString(),
+				idPost: idPost,
+				status: 'new',
+				content: 'like',
+			});
+			await createNotification(notify);
+
 			//Con neu nguoi dung chua like bai viet thi push idUser vao like_list
 			await postFound.like_list.push(user._id);
 			await postFound.save();
-
-			//Tao notify khi co nguoi like bai viet
-			//Kiem tra co loai thong bao nay cho nguoi dung chua
-
-			// const notifyFoundList = await Notification.findOne({ idPost: postFound._id });
-			// console.log(notifyFoundList);
-
-			// const notify = new Notification({
-			// 	idUser: postFound.owner,
-			// 	idPost: postFound._id,
-			// 	content: 'like',
-			// });
-
-			// await notify.save();
 
 			return res.send({ data: null, err: '', status: 200, msg: 'Da like bai viet' });
 		}
@@ -244,6 +270,21 @@ const updateStatus = async (req, res, next) => {
 				postFound.status = status;
 
 				await Post.findByIdAndUpdate(idPost, postFound);
+
+				//Tao notify
+				const notify = new Notification({
+					idUser: postFound.owner.toString(),
+					idPost: idPost,
+					status: 'new',
+				});
+				if (status == 'done') {
+					notify.content = 'moderated';
+				} else {
+					notify.content = 'unmoderated';
+				}
+
+				await createNotification(notify);
+
 				return res.send({ data: null, status: 200, message: 'Update Status successfully' });
 			}
 
@@ -257,10 +298,18 @@ const updateStatus = async (req, res, next) => {
 		next({ status: error.status, message: error.message });
 	}
 };
+
+const handleCustomError = (status, message) => {
+	const err = new Error();
+	err.status = status || 500;
+	err.message = message;
+	throw err;
+};
+
 module.exports = {
 	createPost,
-
 	deletePost,
+	getLikeList,
 	getPost,
 	getPostList,
 	likePost,

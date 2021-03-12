@@ -11,6 +11,7 @@ const addressRouter = require('./src/Route/AddressRoute');
 const commentRouter = require('./src/Route/CommentRoute');
 const apiDocRouter = require('./src/Route/APIDocsRoute');
 const blogRouter = require('./src/Route/BlogRoute');
+const notiRouter = require('./src/Route/NotificationRoute');
 
 const mongoString = 'mongodb://supper-admin:supper-admin190705@13.58.149.178:27017/keep-exploring?authSource=admin&w=1';
 const port = process.env.PORT || 3000;
@@ -35,6 +36,7 @@ app.use('/post', postRouter);
 app.use('/address', addressRouter);
 app.use('/comment', commentRouter);
 app.use('/blog', blogRouter);
+app.use('/notification', notiRouter);
 
 //Kết nối với mongo database
 mongoose

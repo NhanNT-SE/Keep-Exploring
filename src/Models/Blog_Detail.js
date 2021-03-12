@@ -17,7 +17,6 @@ const BlogDetail_Schema = new Schema(
 			},
 		],
 	},
-	{ _id: false },
 	{ collection: 'Blog_Detail' }
 );
 

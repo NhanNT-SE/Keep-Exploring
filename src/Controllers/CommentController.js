@@ -1,5 +1,7 @@
 const Comment = require('../Models/Comment');
+const Notification = require('../Models/Notification');
 const Post = require('../Models/Post');
+const { createNotification } = require('./NotificationController');
 
 const createCommentPost = async (req, res) => {
 	try {
@@ -38,6 +40,15 @@ const createCommentPost = async (req, res) => {
 			//Push idComment vao bai Post
 			postFound.comment.push(comment._id);
 			await postFound.save();
+
+			//Tao notify khi co nguoi comment bai viet
+			const notify = new Notification({
+				idUser: postFound.owner.toString(),
+				idPost: idPost,
+				status: 'new',
+				content: 'comment',
+			});
+			await createNotification(notify);
 
 			//Thanh cong tra ve status code 200
 
