@@ -1,3 +1,4 @@
+import { Badge } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
@@ -5,27 +6,26 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles } from "@material-ui/core/styles";
 import {
-  Mail,
-  ChevronRight,
-  ChevronLeft,
   AssignmentInd,
-  PowerSettingsNew,
   BarChart,
-  PictureInPictureAlt,
-  Dashboard,
   CardTravel,
+  ChevronLeft,
+  ChevronRight,
+  Dashboard,
+  Mail,
+  PictureInPictureAlt,
+  PowerSettingsNew,
 } from "@material-ui/icons";
+import localStorageService from "api/localStorageService";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionCloseDrawer, actionOpenDrawer } from "redux/slices/commonSlice";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import "./drawer.scss";
-import { Badge } from "@material-ui/core";
 import { useHistory } from "react-router";
+import { actionCloseDrawer, actionOpenDrawer } from "redux/slices/commonSlice";
 import { actionLogout } from "redux/slices/userSlice";
-import localStorageService from "api/localStorageService";
+import "./drawer.scss";
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: 240,
@@ -129,12 +129,6 @@ function DrawerComponent() {
               <ListItemText primary={item.label} />
             </ListItem>
           ))}
-          {/* <ListItem button key="User">
-            <ListItemIcon>
-              <AssignmentInd />
-            </ListItemIcon>
-            <ListItemText primary="User" />
-          </ListItem> */}
         </List>
         <Divider />
         <div className={classes.toolbar}>

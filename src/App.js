@@ -15,8 +15,8 @@ function App() {
           <Switch>
             <Redirect exact from="/" to="/login" />
             <Route exact path="/login" component={LoginPage} />
-            {/* <ProtectedRoute exact path="/home" component={MainPage} /> */}
-            <Route exact path="/home" component={MainPage} />
+            <ProtectedRoute exact path="/home" component={MainPage} />
+            {/* <Route exact path="/home" component={MainPage} /> */}
             <Route path="*" component={NotFound} />
           </Switch>
         </BrowserRouter>
