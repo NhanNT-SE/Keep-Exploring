@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { actionHideDialog } from "redux/slices/commonSlice";
 import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
@@ -27,8 +26,8 @@ function LoginPage(props) {
   let userObj;
   const user = useSelector((state) => state.user.user);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [email, setEmail] = useState("admin");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(() => {
     const userStorage = localStorageService.getUser();
     if (userStorage) {
@@ -71,10 +70,10 @@ function LoginPage(props) {
     console.log("Google");
   };
   useEffect(() => {
-    // if (userObj) {
-    //   const userLogin = { email: userObj.email, pass: userObj.password };
-    //   dispatch(actionLogin(userLogin));
-    // }
+    if (userObj) {
+      const userLogin = { email: userObj.email, pass: userObj.password };
+      dispatch(actionLogin(userLogin));
+    }
   }, []);
   useEffect(() => {
     if (user && user.role === "admin") {
