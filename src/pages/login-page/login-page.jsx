@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import localStorageService from "api/localStorageService";
-import postApi from "api/postApi";
+import DialogComponent from "common-components/dialog/dialog";
 import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";
 import InputField from "custom-fields/input-field";
@@ -10,8 +10,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { actionGetAllPost } from "redux/slices/postSlice";
-import { actionLogin, actionLogout } from "redux/slices/userSlice";
+import { actionHideDialog } from "redux/slices/commonSlice";
+import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
 const schema = yup.object().shape({
@@ -26,9 +26,9 @@ const schema = yup.object().shape({
 function LoginPage(props) {
   let userObj;
   const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.user.loading);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const loadingStore = useSelector((state) => state.common.isLoading);
+  const [email, setEmail] = useState("admin");
+  const [password, setPassword] = useState("123456");
   const [remember, setRemember] = useState(() => {
     const userStorage = localStorageService.getUser();
     if (userStorage) {
@@ -61,7 +61,7 @@ function LoginPage(props) {
 
   const handlerOnChange = (e, name, callBack) => {
     const { value, checked } = e.target;
-    setValue(name, value || checked);
+    setValue(name, value);
     callBack(value || checked);
   };
   const loginFacebook = () => {
@@ -71,20 +71,20 @@ function LoginPage(props) {
     console.log("Google");
   };
   useEffect(() => {
-    if (userObj) {
-      const userLogin = { email: userObj.email, pass: userObj.password };
-      dispatch(actionLogin(userLogin));
-    }
+    // if (userObj) {
+    //   const userLogin = { email: userObj.email, pass: userObj.password };
+    //   dispatch(actionLogin(userLogin));
+    // }
   }, []);
   useEffect(() => {
-    if (user && user.role ==="admin") {
+    if (user && user.role === "admin") {
       history.push("/home");
     }
   }, [user]);
   return (
     <div className="login-page">
-      {loading && <LoadingComponent />}
-
+      {loadingStore && <LoadingComponent />}
+      <DialogComponent />
       <div className="content">
         <p className="content-title">Keep Exploring Admin</p>
         <form onSubmit={handleSubmit(onSubmit)}>

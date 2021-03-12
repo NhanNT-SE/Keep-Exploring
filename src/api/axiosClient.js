@@ -20,7 +20,7 @@ axiosClient.interceptors.request.use(async (config) => {
   try {
     const accessToken = localStorageService.getAccessToken();
     if (accessToken) {
-      config.headers["Authorization"] = accessToken;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     return config;
   } catch (error) {
@@ -30,16 +30,23 @@ axiosClient.interceptors.request.use(async (config) => {
 axiosClient.interceptors.response.use(
   (response) => {
     if (response && response.data) {
+      const { error } = response.data;
+      if (error) {
+        throw error;
+      }
+
       return response.data;
     }
+
     return response;
   },
   (error) => {
-    const err = error.response.data.error;
-    if (err.message === "jwt expired") {
+    const err = error.response.data.error || error;
+    if (error.message === "jwt expired") {
       rootStore.dispatch(actionRefreshTokenStarted());
       rootStore.dispatch(actionRefreshToken());
     }
+    console.log("error axios", err);
     throw err;
   }
 );
