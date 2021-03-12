@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 const forms = multer();
 
-app.use(express.static("src/public"));
+app.use(express.static('src/public'));
 app.use(bodyParser.json());
 // app.use(forms.array());
 app.use(
@@ -28,6 +28,7 @@ app.use(
 app.use(passport.initialize());
 app.use(cors());
 
+//Routers
 app.use('/api-doc', apiDocRouter);
 app.use('/user', userRouter);
 app.use('/post', postRouter);
