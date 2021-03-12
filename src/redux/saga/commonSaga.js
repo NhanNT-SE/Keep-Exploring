@@ -13,7 +13,7 @@ export function* handlerSuccessSaga(message) {
   yield put(actionHideDialog());
 }
 export function* handlerFailSaga(error) {
-  yield put(actionFailed(error.message));
+  yield put(actionFailed(error.message || error));
   yield put(actionShowDialog());
   yield delay(2000);
   yield put(actionHideDialog());
