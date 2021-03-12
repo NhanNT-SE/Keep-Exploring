@@ -12,7 +12,7 @@ const commentRouter = require('./src/Route/CommentRoute');
 const apiDocRouter = require('./src/Route/APIDocsRoute');
 const blogRouter = require('./src/Route/BlogRoute');
 
-const mongoString = 'mongodb://supper-admin:supper-admin190705@13.58.149.178:27017/keep-exploring?authSource=admin&w=1';
+const mongoString = 'mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1';
 const port = process.env.PORT || 3000;
 const app = express();
 const forms = multer();
@@ -51,13 +51,11 @@ mongoose
 		console.error(`Error connecting to the database. \n${err}`);
 	});
 
-// Handler 404 error page not found
 app.use((req, res, next) => {
 	const error = new Error('Not found');
 	error.status = 404;
 	next(error);
 });
-// Handler custom error page not found
 app.use((error, req, res, next) => {
 	res.status(error.status || 500);
 	res.send({

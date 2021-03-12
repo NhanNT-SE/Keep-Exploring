@@ -105,9 +105,17 @@ const signIn = async (req, res, next) => {
           token.refreshToken = refreshToken;
         }
         await token.save();
-
         return res.status(200).send({
-          data: { ...user, accessToken, refreshToken },
+          data: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            displayName: user.displayName,
+            imageUser: user.imgUser,
+            accessToken,
+            refreshToken,
+          },
           status: 200,
           message: "Đăng nhập thành công",
         });
@@ -118,7 +126,7 @@ const signIn = async (req, res, next) => {
     }
 
     //User khong ton tai thi tra ve status code 202
-   handlerCustomError(202,"Người dùng không tồn tại")
+    handlerCustomError(202, "Người dùng không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -137,7 +145,10 @@ const signUp = async (req, res, next) => {
 
     const userFound = await User.findOne({ email: user.email });
     if (userFound) {
-      handlerCustomError(201,"Email này đã được sử dụng, vui lòng sử dụng email khác")
+      handlerCustomError(
+        201,
+        "Email này đã được sử dụng, vui lòng sử dụng email khác"
+      );
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -152,7 +163,7 @@ const signUp = async (req, res, next) => {
 
     await newUser.save();
     return res.status(200).send({
-      data:  newUser ,
+      data: newUser,
       message: "Đăng ký thành công",
       status: 200,
     });
@@ -169,7 +180,7 @@ const updateProfile = async (req, res, next) => {
     let avatar;
 
     if (!user) {
-      handlerCustomError(201,"Người dùng không tồn tại");
+      handlerCustomError(201, "Người dùng không tồn tại");
     }
 
     //Kiem tra nguoi dung muon doi avata hay khong
@@ -190,7 +201,7 @@ const updateProfile = async (req, res, next) => {
 
     await User.findByIdAndUpdate(user._id, newUser);
     return res.status(200).send({
-      data:  newUser ,
+      data: newUser,
       message: "Cap nhật thông tin cá nhân thành công",
       status: 200,
     });

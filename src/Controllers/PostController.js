@@ -101,7 +101,7 @@ const getPostList = async (req, res, next) => {
       let post_list = [];
 
       //Neu khong truyen status thi tra ve all post
-      if (status == "" || status == "all") {
+      if (!status || status == "" || status == "all") {
         post_list = await Post.find({});
         return res.status(200).send({
           data: post_list,
