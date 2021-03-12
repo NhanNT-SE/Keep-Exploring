@@ -1,10 +1,12 @@
+import { makeStyles } from "@material-ui/core/styles";
 import localStorageService from "api/localStorageService";
 import DialogComponent from "common-components/dialog/dialog";
+import DrawerComponent from "common-components/drawer/drawer";
+import HeaderComponent from "common-components/header/header";
 import LoadingComponent from "common-components/loading/loading";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { actionGetAllPost } from "redux/slices/postSlice";
 import { actionLogout } from "redux/slices/userSlice";
 import "./styles/main-page.scss";
 function MainPage() {
@@ -19,23 +21,16 @@ function MainPage() {
     localStorageService.clearUser();
   };
 
-  useEffect(() => {
-    dispatch(actionGetAllPost());
-    localStorageService.setLatestAction(actionGetAllPost().type);
-  }, []);
-  useEffect(() => {
-    console.log("post list:", postList);
-  }, [postList]);
-  useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
-  }, [user]);
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
       <DialogComponent />
-      <button onClick={logOut}>Logout</button>
+      <HeaderComponent />
+      <DrawerComponent />
+      <main>
+        <div />
+        <div className="content">Hello</div>
+      </main>
     </div>
   );
 }

@@ -1,0 +1,26 @@
+.drawer-container {
+  .drawer-root {
+    @media (min-width: 600px) {
+      .makeStyles-drawerClose-11 {
+        width: 60px;
+      }
+    }
+    .makeStyles-drawerOpen-6 {
+      .makeStyles-toolbar-8 {
+        justify-content: flex-end;
+      }
+    }
+    .makeStyles-drawerClose-7 {
+      .makeStyles-toolbar-8 {
+        justify-content: flex-start;
+      }
+    }
+  }
+  .header-toolbar {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: bold;
+  }
+}

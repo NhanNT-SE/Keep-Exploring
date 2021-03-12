@@ -1,21 +1,17 @@
 import axiosClient from "api/axiosClient";
 import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
-import { call, delay, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
 import {
-  actionFailed,
-  actionLoading,
-  actionSuccess,
-  actionShowDialog,
-  actionHideDialog,
+  actionLoading
 } from "redux/slices/commonSlice";
 import {
   actionLogin,
   actionLogout,
   actionRefreshToken,
   actionRefreshTokenEnded,
-  actionSetUser,
+  actionSetUser
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 

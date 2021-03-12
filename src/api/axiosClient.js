@@ -8,8 +8,8 @@ import rootStore from "rootStore";
 import localStorageService from "./localStorageService";
 
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL_DEV,
-  // baseURL: process.env.REACT_APP_BASE_URL_PRO,
+  // baseURL: process.env.REACT_APP_BASE_URL_DEV,
+  baseURL: process.env.REACT_APP_BASE_URL_PRO,
   headers: {
     "content-type": "application/json",
   },

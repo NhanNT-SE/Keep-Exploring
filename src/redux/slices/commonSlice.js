@@ -7,6 +7,7 @@ const commonSlice = createSlice({
     isSuccess: false,
     message: "",
     isShowDialog: false,
+    isOpenDrawer: false,
   },
   reducers: {
     actionFailed: (state, action) => {
@@ -33,6 +34,12 @@ const commonSlice = createSlice({
     actionHideDialog: (state) => {
       state.isShowDialog = false;
     },
+    actionOpenDrawer: (state) => {
+      state.isOpenDrawer = true;
+    },
+    actionCloseDrawer: (state) => {
+      state.isOpenDrawer = false;
+    },
   },
 });
 
@@ -42,5 +49,7 @@ export const {
   actionSuccess,
   actionShowDialog,
   actionHideDialog,
+  actionOpenDrawer,
+  actionCloseDrawer,
 } = commonSlice.actions;
 export default commonSlice.reducer;
