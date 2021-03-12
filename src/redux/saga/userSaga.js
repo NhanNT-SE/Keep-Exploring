@@ -3,15 +3,13 @@ import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
-import {
-  actionLoading
-} from "redux/slices/commonSlice";
+import { actionLoading } from "redux/slices/commonSlice";
 import {
   actionLogin,
   actionLogout,
   actionRefreshToken,
   actionRefreshTokenEnded,
-  actionSetUser
+  actionSetUser,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 
@@ -20,9 +18,15 @@ function* handlerLogin(action) {
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
-    localStorageService.setToken(data.accessToken, data.refreshToken);
-    yield call(() => handlerSuccessSaga("Login successfully!"));
-    yield put(actionSetUser(data));
+    if (data.role !== "admin") {
+      yield call(() =>
+        handlerFailSaga("You don't have permission to access this page")
+      );
+    } else {
+      localStorageService.setToken(data.accessToken, data.refreshToken);
+      yield call(() => handlerSuccessSaga("Login successfully!"));
+      yield put(actionSetUser(data));
+    }
   } catch (error) {
     console.log("user saga error: ", error);
     yield call(() => handlerFailSaga(error));
