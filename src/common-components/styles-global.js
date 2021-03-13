@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const drawerWidth = 240;
 export const STYLES_GLOBAL = makeStyles((theme) => ({
   appBar: {
-    zIndex: theme.zIndex.drawer + 1,
+    zIndex: `${theme.zIndex.drawer + 1} !important`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -10,7 +10,7 @@ export const STYLES_GLOBAL = makeStyles((theme) => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: `calc(100% - ${drawerWidth}px) !important`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
