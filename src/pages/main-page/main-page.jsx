@@ -15,9 +15,7 @@ import {
   Redirect,
   Route,
   Switch,
-  useHistory,
-  useLocation,
-  useRouteMatch,
+  useHistory
 } from "react-router-dom";
 import "./styles/main-page.scss";
 function MainPage() {
