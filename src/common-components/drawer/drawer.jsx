@@ -66,11 +66,11 @@ function DrawerComponent() {
           }),
         }}
       >
+        <div className={`${classes.toolbar} header-toolbar`}>
+          ADMIN DASHBOARD
+        </div>
+        <Divider />
         <List>
-          <div className={`${classes.toolbar} header-toolbar`}>
-            ADMIN DASHBOARD
-          </div>
-          <Divider />
           {[
             { label: "Dashboard", url: "/home", icon: <Dashboard /> },
             { label: "User", url: "/user", icon: <AssignmentInd /> },
