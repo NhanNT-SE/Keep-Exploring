@@ -20,7 +20,7 @@ function* handlerLogin(action) {
     const { data } = response;
     if (data.role !== "admin") {
       yield call(() =>
-        handlerFailSaga("You don't have permission to access this page")
+        handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")
       );
     } else {
       localStorageService.setToken(data.accessToken, data.refreshToken);

@@ -11,12 +11,7 @@ import StatisticsPage from "pages/statistics-page/statistics-page";
 import UserPage from "pages/user-page/user-page";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-  Redirect,
-  Route,
-  Switch,
-  useHistory
-} from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import "./styles/main-page.scss";
 function MainPage() {
   const loadingStore = useSelector((state) => state.common.isLoading);
@@ -25,9 +20,9 @@ function MainPage() {
   const history = useHistory();
 
   useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
+    // if (!user) {
+    //   history.push("/login");
+    // }
   }, [user]);
 
   return (
@@ -36,17 +31,18 @@ function MainPage() {
       <DialogComponent />
       <HeaderComponent />
       <DrawerComponent />
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <Switch>
-          <Route exact path="/home" component={HomePage}></Route>
-          <Route exact path="/user" component={UserPage}></Route>
-          <Route exact path="/post" component={PostPage}></Route>
-          <Route exact path="/blog" component={BlogPage}></Route>
-          <Route exact path="/notify" component={NotifyPage}></Route>
-          <Route exact path="/statistics" component={StatisticsPage}></Route>
-          <Redirect from="*" to="/home" />
-        </Switch>
+      <main className={`${classes.content} page-container`}>
+        <div>
+          <Switch>
+            <Route exact path="/home" component={HomePage}></Route>
+            <Route exact path="/user" component={UserPage}></Route>
+            <Route exact path="/post" component={PostPage}></Route>
+            <Route exact path="/blog" component={BlogPage}></Route>
+            <Route exact path="/notify" component={NotifyPage}></Route>
+            <Route exact path="/statistics" component={StatisticsPage}></Route>
+            <Redirect from="*" to="/home" />
+          </Switch>
+        </div>
       </main>
     </div>
   );

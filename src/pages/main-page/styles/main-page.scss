@@ -3,4 +3,17 @@
   flex: 1;
   justify-content: center;
   background-color: white;
+  .page-container > div {
+    margin: 16px;
+    margin-top: 64px;
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 80px);
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 16px;
+    > div {
+      flex: 1;
+    }
+  }
 }

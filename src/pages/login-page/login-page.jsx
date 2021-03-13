@@ -70,15 +70,15 @@ function LoginPage(props) {
     console.log("Google");
   };
   useEffect(() => {
-    if (userObj) {
-      const userLogin = { email: userObj.email, pass: userObj.password };
-      dispatch(actionLogin(userLogin));
-    }
+    // if (userObj) {
+    //   const userLogin = { email: userObj.email, pass: userObj.password };
+    //   dispatch(actionLogin(userLogin));
+    // }
   }, []);
   useEffect(() => {
-    if (user && user.role === "admin") {
-      history.push("/home");
-    }
+    // if (user && user.role === "admin") {
+    //   history.push("/home");
+    // }
   }, [user]);
   return (
     <div className="login-page">

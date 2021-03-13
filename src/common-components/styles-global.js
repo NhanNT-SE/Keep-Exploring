@@ -53,9 +53,13 @@ export const STYLES_GLOBAL = makeStyles((theme) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
-  
+
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    overflow: "hidden",
+    height: "calc(100% - 2px)",
+    display: "flex",
+    padding: "0px",
   },
 }));
