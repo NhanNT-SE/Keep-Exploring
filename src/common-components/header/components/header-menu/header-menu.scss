@@ -1,0 +1,41 @@
+.header-menu-container {
+  display: flex;
+  border-radius: 50%;
+  border: 1px solid;
+  margin-left: 16px;
+  .custom-menu {
+    top: 4px !important;
+    left: -16px !important;
+  }
+  .MuiAvatar-root {
+    width: 35px;
+    height: 35px;
+  }
+  .info {
+    height: 120px;
+    border-bottom: 1px solid #f2f2f2;
+    display: flex;
+    padding: 0px 8px;
+    align-items: center;
+    &-image {
+      img {
+        width: 80px;
+      }
+    }
+    &-text {
+      p {
+        margin: 0px;
+        font-variant: all-petite-caps;
+        &.display-name {
+          color: #333;
+          font-weight: 900;
+        }
+        &.email {
+          font-size: 13px;
+          color: #999;
+          font-style: italic;
+        }
+      }
+    }
+  }
+}

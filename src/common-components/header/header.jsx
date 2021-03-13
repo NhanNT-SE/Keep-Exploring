@@ -1,37 +1,21 @@
-import { AppBar, IconButton, Toolbar, Typography } from "@material-ui/core";
+import {
+  AppBar,
+  Badge,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { makeStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
+import { Menu, Mail, Notifications } from "@material-ui/icons";
 import clsx from "clsx";
+import { STYLES_GLOBAL } from "common-components/styles-global";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionOpenDrawer } from "redux/slices/commonSlice";
+import HeaderMenu from "./components/header-menu/header-menu";
 import "./header.scss";
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: 240,
-    width: `calc(100% - ${240}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  hide: {
-    display: "none",
-  },
-}));
 function HeaderComponent() {
-  const classes = useStyles();
+  const classes = STYLES_GLOBAL();
   const open = useSelector((state) => state.common.isOpenDrawer);
   const dispatch = useDispatch();
   return (
@@ -53,12 +37,23 @@ function HeaderComponent() {
               [classes.hide]: open,
             })}
           >
-            <MenuIcon />
+            <Menu />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Mini variant drawer
+            Keep Exploring
           </Typography>
         </Toolbar>
+        <div className="button-container">
+          <Badge badgeContent={4} color="secondary">
+            <Mail />
+          </Badge>
+          <Badge badgeContent={4} color="secondary">
+            <Notifications />
+          </Badge>
+          <div className="user-action">
+            <HeaderMenu />
+          </div>
+        </div>
       </AppBar>
     </div>
   );
