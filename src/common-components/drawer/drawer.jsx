@@ -68,7 +68,7 @@ function DrawerComponent() {
       >
         <List>
           <div className={`${classes.toolbar} header-toolbar`}>
-            ADMIN DASHBOARD
+           { open && <p>ADMIN DASHBOARD</p>}
           </div>
           <Divider />
           {[
