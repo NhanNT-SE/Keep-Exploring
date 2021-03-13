@@ -1,4 +1,3 @@
-import { Badge } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
@@ -6,7 +5,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { makeStyles } from "@material-ui/core/styles";
 import {
   AssignmentInd,
   BarChart,
@@ -14,54 +12,25 @@ import {
   ChevronLeft,
   ChevronRight,
   Dashboard,
-  Mail,
+  MailOutline,
   PictureInPictureAlt,
   PowerSettingsNew,
 } from "@material-ui/icons";
 import localStorageService from "api/localStorageService";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import { STYLES_GLOBAL } from "common-components/styles-global";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { actionCloseDrawer, actionOpenDrawer } from "redux/slices/commonSlice";
 import { actionLogout } from "redux/slices/userSlice";
+import DrawerTooltip from "./components/drawer-tooltip/drawer-tooltip";
 import "./drawer.scss";
-const useStyles = makeStyles((theme) => ({
-  drawer: {
-    width: 240,
-    flexShrink: 0,
-    whiteSpace: "nowrap",
-  },
-  drawerOpen: {
-    width: 240,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: "hidden",
-    width: theme.spacing(7) + 1,
-    [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9) + 1,
-    },
-  },
-  toolbar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-  },
-}));
+
 function DrawerComponent() {
-  const user = useSelector((state) => state.user.user);
-  const classes = useStyles();
+  const classes = STYLES_GLOBAL();
   const open = useSelector((state) => state.common.isOpenDrawer);
+  const [active, setActive] = useState(0);
   const dispatch = useDispatch();
   const history = useHistory();
   const toggleDrawer = () => {
@@ -70,17 +39,16 @@ function DrawerComponent() {
     }
     return dispatch(actionOpenDrawer());
   };
-  const onItemClick = (url) => {
+  const onItemClick = (url, index) => {
+    setActive(index);
     if (url === "/logout") {
       dispatch(actionLogout());
       localStorageService.clearUser();
+    } else {
+      history.push(url);
     }
   };
-  useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
-  }, [user]);
+
   return (
     <div className="drawer-container">
       <Drawer
@@ -109,23 +77,27 @@ function DrawerComponent() {
             { label: "Post", url: "/post", icon: <PictureInPictureAlt /> },
             { label: "Blog", url: "/blog", icon: <CardTravel /> },
             {
-              label: "Notify",
+              label: "Notification",
               url: "/notify",
-              icon: (
-                <Badge badgeContent={4} color="secondary">
-                  <Mail />
-                </Badge>
-              ),
+              icon: <MailOutline />,
             },
             { label: "Statistics", url: "/statistics", icon: <BarChart /> },
             { label: "Logout", url: "/logout", icon: <PowerSettingsNew /> },
-          ].map((item) => (
+          ].map((item, index) => (
             <ListItem
               button
               key={item.label}
-              onClick={() => onItemClick(item.url)}
+              onClick={() => onItemClick(item.url, index)}
+              className={active === index ? "active-link" : ""}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
+              {open ? (
+                <ListItemIcon>{item.icon}</ListItemIcon>
+              ) : (
+                <DrawerTooltip title={item.label} placement="right">
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                </DrawerTooltip>
+              )}
+
               <ListItemText primary={item.label} />
             </ListItem>
           ))}
