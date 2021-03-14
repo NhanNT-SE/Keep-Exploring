@@ -24,10 +24,11 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
 }));
-function HeaderMenu() {
+function HeaderMenu(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
+  const { user } = props;
   const dispatch = useDispatch();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -68,7 +69,12 @@ function HeaderMenu() {
           aria-haspopup="true"
           className={classes.avatar}
           onClick={handleToggle}
-          src={process.env.PUBLIC_URL + "/images/avatar1.png"}
+          src={
+            user
+              ? user.imageUser
+              : `${process.env.PUBLIC_URL}/images/avatar1.png`
+          }
+          alt="avatar"
         />
 
         <Popper
@@ -97,13 +103,23 @@ function HeaderMenu() {
                     <div className="info">
                       <div className="info-image">
                         <img
-                          src={process.env.PUBLIC_URL + "/images/avatar1.png"}
+                          src={
+                            user
+                              ? user.imageUser
+                              : `${process.env.PUBLIC_URL}/images/avatar1.png`
+                          }
                           alt="avatar"
                         />
                       </div>
                       <div className="info-text">
-                        <p className="display-name">Supper Admin</p>
-                        <p className="email">supper-admin@keep-exploring.com</p>
+                        <p className="display-name">
+                          {user ? user.displayName : " Supper Admin"}
+                        </p>
+                        <p className="email">
+                          {user
+                            ? user.email
+                            : " supper-admin@keep-exploring.com"}
+                        </p>
                       </div>
                     </div>
                     <MenuItem onClick={handleClose}>

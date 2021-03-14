@@ -27,12 +27,13 @@ import { actionLogout } from "redux/slices/userSlice";
 import DrawerTooltip from "./components/drawer-tooltip/drawer-tooltip";
 import "./drawer.scss";
 
-function DrawerComponent() {
+function DrawerComponent(props) {
   const classes = STYLES_GLOBAL();
   const open = useSelector((state) => state.common.isOpenDrawer);
   const [active, setActive] = useState(0);
   const dispatch = useDispatch();
   const history = useHistory();
+  const {user} = props;
   const toggleDrawer = () => {
     if (open) {
       return dispatch(actionCloseDrawer());
@@ -67,7 +68,7 @@ function DrawerComponent() {
         }}
       >
         <div className={`${classes.toolbar} header-toolbar`}>
-          ADMIN DASHBOARD
+          {user? `Hello ${user.displayName}`:"ADMIN DASHBOARD" }
         </div>
         <Divider />
         <List>

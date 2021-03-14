@@ -15,15 +15,24 @@ import rootStore from "rootStore";
 
 function* handlerLogin(action) {
   try {
+    const rootState = rootStore.getState();
+    const {isRemember} = rootState.common;
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
+    data.imageUser = `${process.env.REACT_APP_URL_IMAGE}/user/${data.imageUser}`;
     if (data.role !== "admin") {
       yield call(() =>
-        handlerFailSaga("You don't have permission to access this page")
+        handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")
       );
     } else {
       localStorageService.setToken(data.accessToken, data.refreshToken);
+      localStorageService.setUser({
+        email: data.email,
+        displayName: data.displayName,
+        imageUser: data.imageUser,
+        remember: isRemember,
+      });
       yield call(() => handlerSuccessSaga("Login successfully!"));
       yield put(actionSetUser(data));
     }

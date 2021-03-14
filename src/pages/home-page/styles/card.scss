@@ -1,0 +1,21 @@
+.card-container {
+  height: 40%;
+  width: 30%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  button {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 0px 16px;
+  }
+  .title {
+    font-weight: 900;
+    font-variant: all-petite-caps;
+    font-size: large;
+    color: #6192fc;
+    text-shadow: 1px 1px black;
+
+  }
+}
