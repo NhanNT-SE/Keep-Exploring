@@ -10,12 +10,15 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { actionSetIsRemember } from "redux/slices/commonSlice";
 import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./styles/login-page.scss";
 const schema = yup.object().shape({
-  email: yup.string().required("Email address is a required field"),
-  // .email("Invalid email address"),
+  email: yup
+    .string()
+    .required("Email address is a required field")
+    .email("Invalid email address"),
   password: yup.string().required().min(6),
   // .matches(
   //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
@@ -23,22 +26,13 @@ const schema = yup.object().shape({
   // ),
 });
 function LoginPage(props) {
-  let userObj;
   const user = useSelector((state) => state.user.user);
+  const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(() => {
-    const userStorage = localStorageService.getUser();
-    if (userStorage) {
-      userObj = JSON.parse(userStorage);
-      return userObj.remember;
-    }
-    return false;
-  });
+  const [email, setEmail] = useState("admin@keep-exploring.com");
+  const [password, setPassword] = useState("123456");
   const history = useHistory();
   const dispatch = useDispatch();
-
   const { handleSubmit, control, errors, register, setValue } = useForm({
     defaultValues: {
       email,
@@ -50,11 +44,6 @@ function LoginPage(props) {
 
   const onSubmit = (data) => {
     const userLogin = { email, pass: password };
-    if (data.remember) {
-      localStorageService.setUser(data);
-    } else {
-      localStorageService.clearUser();
-    }
     dispatch(actionLogin(userLogin));
   };
 
@@ -70,15 +59,14 @@ function LoginPage(props) {
     console.log("Google");
   };
   useEffect(() => {
-    // if (userObj) {
-    //   const userLogin = { email: userObj.email, pass: userObj.password };
-    //   dispatch(actionLogin(userLogin));
-    // }
+    if (user && user.remember) {
+      history.push("/home");
+    }
   }, []);
   useEffect(() => {
-    // if (user && user.role === "admin") {
-    //   history.push("/home");
-    // }
+    if (user && user.role === "admin") {
+      history.push("/home");
+    }
   }, [user]);
   return (
     <div className="login-page">
@@ -108,8 +96,9 @@ function LoginPage(props) {
             name="remember"
             control={control}
             label="remember me?"
-            defaultChecked={remember}
+            checked={isRemember}
             inputRef={register}
+            onChange={(e) => dispatch(actionSetIsRemember(e.target.checked))}
           />
           <Button variant="contained" color="primary" type="submit">
             Sign in

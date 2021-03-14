@@ -1,3 +1,4 @@
+import localStorageService from "api/localStorageService";
 import DialogComponent from "common-components/dialog/dialog";
 import DrawerComponent from "common-components/drawer/drawer";
 import HeaderComponent from "common-components/header/header";
@@ -18,19 +19,19 @@ function MainPage() {
   const user = useSelector((state) => state.user.user);
   const classes = STYLES_GLOBAL();
   const history = useHistory();
-
+  const userStorage = JSON.parse(localStorageService.getUser());
   useEffect(() => {
-    // if (!user) {
-    //   history.push("/login");
-    // }
+    if (!userStorage) {
+      history.push("/login");
+    }
   }, [user]);
 
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
       <DialogComponent />
-      <HeaderComponent />
-      <DrawerComponent />
+      <HeaderComponent user={user} />
+      <DrawerComponent user={user} />
       <main className={`${classes.content} page-container`}>
         <div>
           <Switch>

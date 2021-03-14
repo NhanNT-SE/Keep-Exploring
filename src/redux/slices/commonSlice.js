@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import localStorageService from "api/localStorageService";
+const userStorage = JSON.parse(localStorageService.getUser());
 const commonSlice = createSlice({
   name: "common",
   initialState: {
@@ -8,6 +10,7 @@ const commonSlice = createSlice({
     message: "",
     isShowDialog: false,
     isOpenDrawer: false,
+    isRemember: userStorage ? userStorage.remember : false,
   },
   reducers: {
     actionFailed: (state, action) => {
@@ -40,6 +43,9 @@ const commonSlice = createSlice({
     actionCloseDrawer: (state) => {
       state.isOpenDrawer = false;
     },
+    actionSetIsRemember: (state, action) => {
+      state.isRemember = action.payload;
+    },
   },
 });
 
@@ -51,5 +57,6 @@ export const {
   actionHideDialog,
   actionOpenDrawer,
   actionCloseDrawer,
+  actionSetIsRemember,
 } = commonSlice.actions;
 export default commonSlice.reducer;

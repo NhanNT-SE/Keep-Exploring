@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import localStorageService from "api/localStorageService";
+const userStorage = JSON.parse(localStorageService.getUser());
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: null,
+    user: userStorage ? userStorage : null,
     isRefreshingToken: false,
   },
   reducers: {

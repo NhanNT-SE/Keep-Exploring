@@ -6,6 +6,7 @@
   .custom-menu {
     top: 4px !important;
     left: -16px !important;
+    min-width: 350px;
   }
   .MuiAvatar-root {
     width: 35px;
@@ -17,6 +18,7 @@
     display: flex;
     padding: 0px 8px;
     align-items: center;
+   
     &-image {
       img {
         width: 80px;
@@ -26,6 +28,7 @@
       p {
         margin: 0px;
         font-variant: all-petite-caps;
+        margin-left: 16px;
         &.display-name {
           color: #333;
           font-weight: 900;

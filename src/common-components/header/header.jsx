@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionOpenDrawer } from "redux/slices/commonSlice";
 import HeaderMenu from "./components/header-menu/header-menu";
 import "./header.scss";
-function HeaderComponent() {
+function HeaderComponent(props) {
   const classes = STYLES_GLOBAL();
   const open = useSelector((state) => state.common.isOpenDrawer);
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ function HeaderComponent() {
             <Notifications />
           </Badge>
           <div className="user-action">
-            <HeaderMenu />
+            <HeaderMenu user={props.user} />
           </div>
         </div>
       </AppBar>
