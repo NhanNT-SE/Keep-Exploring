@@ -1,0 +1,35 @@
+.table-post-container {
+  flex: 1;
+  height: 100%;
+  .p-datatable {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .p-datatable-scrollable {
+      &-wrapper{
+        flex: 1;
+        overflow: hidden;
+      }
+      &-view {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      &-header{
+        overflow: unset;
+      }
+    }
+  }
+  .p-datatable-header {
+    padding: 0px;
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0px 16px;
+      i {
+        cursor: pointer;
+      }
+    }
+  }
+}
