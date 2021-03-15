@@ -10,6 +10,12 @@ import React, { useRef, useState } from "react";
 import "./table-post.scss";
 import postList from "../../post-list.json";
 import { Fragment } from "react";
+import { useDispatch } from "react-redux";
+import {
+  actionSetSelectedPost,
+  actionSetSelectedPostList,
+} from "redux/slices/postSlice";
+import { useHistory } from "react-router";
 function TablePostComponent() {
   const toast = useRef(null);
   const dt = useRef(null);
@@ -27,42 +33,26 @@ function TablePostComponent() {
     { field: "created_on", header: "Date" },
   ];
   const [posts, setPosts] = useState(postList);
-  const [postDialog, setPostDialog] = useState(false);
   const [deletePostDialog, setDeletePostDialog] = useState(false);
   const [deletePostsDialog, setDeletePostsDialog] = useState(false);
   const [post, setPost] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedColumns, setSelectedColumns] = useState(columns);
-
-  const hideDeleteProductDialog = () => {
-    setDeletePostDialog(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const editPost = (post) => {
+    dispatch(actionSetSelectedPost(post));
+    history.push(`post/${post.id}`);
   };
-
-  const hideDeleteProductsDialog = () => {
-    setDeletePostsDialog(false);
-  };
-
-  const editProduct = (post) => {
-    setPost({ ...post });
-    setPostDialog(true);
-  };
-
-  const confirmDeletePost = (post) => {
-    console.log(post);
-    setPost(post);
-    setDeletePostDialog(true);
-  };
-
-  const deleteProduct = () => {
+  const deletePost = () => {
     let _posts = posts.filter((val) => val.id !== post.id);
     setPosts(_posts);
     setDeletePostDialog(false);
     setPost(null);
+    dispatch(actionSetSelectedPost(null));
     toast.current.show({
       severity: "success",
       summary: "Successful",
@@ -70,7 +60,24 @@ function TablePostComponent() {
       life: 3000,
     });
   };
+  const hideDeletePostDialog = () => {
+    dispatch(actionSetSelectedPost(null));
+    setDeletePostDialog(false);
+  };
 
+  const hideDeletePostsDialog = () => {
+    setDeletePostsDialog(false);
+  };
+  const confirmDeletePost = (post) => {
+    dispatch(actionSetSelectedPost(post));
+    setPost(post);
+    setDeletePostDialog(true);
+  };
+
+  const confirmDeleteSelected = () => {
+    setDeletePostsDialog(true);
+  };
+  // ***** Set column to display *****
   const onColumnToggle = (event) => {
     let selectedColumns = event.value;
     let orderedSelectedColumns = columns.filter((col) =>
@@ -78,16 +85,12 @@ function TablePostComponent() {
     );
     setSelectedColumns(orderedSelectedColumns);
   };
-
-  const confirmDeleteSelected = () => {
-    setDeletePostsDialog(true);
-  };
-
   const deleteSelectedProducts = () => {
     let _posts = posts.filter((val) => !selectedPosts.includes(val));
     setPosts(_posts);
     setDeletePostsDialog(false);
     setSelectedPosts(null);
+    dispatch(actionSetSelectedPostList(null));
     toast.current.show({
       severity: "success",
       summary: "Successful",
@@ -95,7 +98,7 @@ function TablePostComponent() {
       life: 3000,
     });
   };
-
+  // ***** Custom body do display data for each colum *****
   const ratingBodyTemplate = (rowData) => {
     return <Rating value={rowData.rating} readOnly cancel={false} />;
   };
@@ -140,7 +143,7 @@ function TablePostComponent() {
         <Button
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success p-mr-2"
-          onClick={() => editProduct(rowData)}
+          onClick={() => editPost(rowData)}
         />
         <Button
           icon="pi pi-trash"
@@ -150,7 +153,7 @@ function TablePostComponent() {
       </div>
     );
   };
-
+  // ***** Custom header table *****
   const header = (
     <div className="table-header">
       <MultiSelect
@@ -169,20 +172,20 @@ function TablePostComponent() {
       />
     </div>
   );
-
+  // ***** Custom layout for Dialog *****
   const deletePostDialogFooter = (
     <Fragment>
       <Button
         label="No"
         icon="pi pi-times"
         className="p-button-text"
-        onClick={hideDeleteProductDialog}
+        onClick={hideDeletePostDialog}
       />
       <Button
         label="Yes"
         icon="pi pi-check"
         className="p-button-text"
-        onClick={deleteProduct}
+        onClick={deletePost}
       />
     </Fragment>
   );
@@ -192,7 +195,7 @@ function TablePostComponent() {
         label="No"
         icon="pi pi-times"
         className="p-button-text"
-        onClick={hideDeleteProductsDialog}
+        onClick={hideDeletePostsDialog}
       />
       <Button
         label="Yes"
@@ -202,6 +205,7 @@ function TablePostComponent() {
       />
     </Fragment>
   );
+  // ***** handler filter on change dropdown *****
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "status", "equals");
     setSelectedStatus(e.value);
@@ -214,6 +218,7 @@ function TablePostComponent() {
     dt.current.filter(e.value, "rating", "equals");
     setSelectedRating(e.value);
   };
+  // ***** Custom layout for custom filter column *****
   const statusItemTemplate = (option) => {
     return (
       <span className={`post-status status-${option}`}>
@@ -227,7 +232,7 @@ function TablePostComponent() {
   const ratingItemTemplate = (option) => {
     return <span>{option}</span>;
   };
-
+  // ***** Custom filter column *****
   const statusFilter = (
     <Dropdown
       value={selectedStatus}
@@ -261,7 +266,7 @@ function TablePostComponent() {
       showClear
     />
   );
-
+  // ***** Load column dynamic *****
   const dynamicColumns = selectedColumns.map((col, i) => {
     return (
       <Column
@@ -301,14 +306,16 @@ function TablePostComponent() {
         ref={dt}
         value={posts}
         selection={selectedPosts}
-        onSelectionChange={(e) => setSelectedPosts(e.value)}
+        onSelectionChange={(e) => {
+          dispatch(actionSetSelectedPostList(e.value));
+          setSelectedPosts(e.value);
+        }}
         dataKey="id"
         paginator
         resizableColumns={true}
         rows={10}
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-        globalFilter={globalFilter}
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} posts"
         header={header}
         scrollable
         scrollHeight="calc(100% - 200px)"
@@ -318,6 +325,7 @@ function TablePostComponent() {
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
         ></Column>
+
         <Column body={actionBodyTemplate} style={{ width: "115px" }}></Column>
         {dynamicColumns}
       </DataTable>
@@ -328,7 +336,7 @@ function TablePostComponent() {
         header="Confirm"
         modal
         footer={deletePostDialogFooter}
-        onHide={hideDeleteProductDialog}
+        onHide={hideDeletePostDialog}
       >
         <div className="confirmation-content">
           <i
@@ -348,15 +356,15 @@ function TablePostComponent() {
         header="Confirm"
         modal
         footer={deletePostsDialogFooter}
-        onHide={hideDeleteProductsDialog}
+        onHide={hideDeletePostsDialog}
       >
         <div className="confirmation-content">
           <i
             className="pi pi-exclamation-triangle p-mr-3"
             style={{ fontSize: "2rem" }}
           />
-          {post && (
-            <span>Are you sure you want to delete the selected products?</span>
+          {posts && (
+            <span>Are you sure you want to delete the selected posts?</span>
           )}
         </div>
       </Dialog>
