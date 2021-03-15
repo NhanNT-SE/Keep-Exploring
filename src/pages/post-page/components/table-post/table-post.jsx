@@ -4,12 +4,13 @@ import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { Rating } from "primereact/rating";
 import { Toast } from "primereact/toast";
-import { Paginator } from 'primereact/paginator';
+import { Dropdown } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 import React, { useRef, useState } from "react";
 import "./table-post.scss";
 import postList from "../../post-list.json";
+import { Fragment } from "react";
 function TablePostComponent() {
-  console.log(postList);
   let emptyProduct = {
     id: null,
     name: "",
@@ -21,7 +22,21 @@ function TablePostComponent() {
     rating: 0,
     inventoryStatus: "INSTOCK",
   };
-
+  const toast = useRef(null);
+  const dt = useRef(null);
+  const statuses = ["pending", "done", "need_update"];
+  const categories = ["hotel", "food", "check_in"];
+  const ratings = [0, 1, 2, 3, 4, 5];
+  const columns = [
+    { field: "owner", header: "Owner" },
+    { field: "title", header: "Title" },
+    { field: "category", header: "Category" },
+    { field: "status", header: "Status" },
+    { field: "desc", header: "Description" },
+    { field: "address", header: "Address" },
+    { field: "rating", header: "Rating" },
+    { field: "created_on", header: "Date" },
+  ];
   const [products, setProducts] = useState(null);
   const [productDialog, setProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
@@ -30,15 +45,10 @@ function TablePostComponent() {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const toast = useRef(null);
-  const dt = useRef(null);
-
-  const formatCurrency = (value) => {
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  };
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedColumns, setSelectedColumns] = useState(columns);
 
   const hideDeleteProductDialog = () => {
     setDeleteProductDialog(false);
@@ -82,6 +92,13 @@ function TablePostComponent() {
 
     return index;
   };
+  const onColumnToggle = (event) => {
+    let selectedColumns = event.value;
+    let orderedSelectedColumns = columns.filter((col) =>
+      selectedColumns.some((sCol) => sCol.field === col.field)
+    );
+    setSelectedColumns(orderedSelectedColumns);
+  };
 
   const confirmDeleteSelected = () => {
     setDeleteProductsDialog(true);
@@ -100,12 +117,6 @@ function TablePostComponent() {
     });
   };
 
-  const onCategoryChange = (e) => {
-    let _product = { ...product };
-    _product["category"] = e.value;
-    setProduct(_product);
-  };
-
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || "";
     let _product = { ...product };
@@ -122,50 +133,66 @@ function TablePostComponent() {
     setProduct(_product);
   };
 
-  const imageBodyTemplate = (rowData) => {
-    return (
-      <img
-        src={`showcase/demo/images/product/${rowData.image}`}
-        onError={(e) =>
-          (e.target.src =
-            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-        }
-        alt={rowData.image}
-        className="product-image"
-      />
-    );
-  };
-
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
-  };
-
   const ratingBodyTemplate = (rowData) => {
     return <Rating value={rowData.rating} readOnly cancel={false} />;
   };
 
   const statusBodyTemplate = (rowData) => {
     return (
-      <span className={`product-badge status-${rowData.status.toLowerCase()}`}>
-        {rowData.status}
-      </span>
+      <React.Fragment>
+        <span className={`post-status status-${rowData.status.toLowerCase()}`}>
+          {rowData.status.toUpperCase().replace("_", " ")}
+        </span>
+      </React.Fragment>
     );
+  };
+
+  const categoryBodyTemplate = (rowData) => {
+    return <span>{rowData.category.toUpperCase().replace("_", " ")}</span>;
+  };
+  const dateBodyTemplate = (rowData) => {
+    const date = new Date(rowData.created_on);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    let dayString = "";
+    let monthString = "";
+    if (day > 10) {
+      dayString = day;
+    } else {
+      dayString = "0" + day;
+    }
+    if (month > 10) {
+      monthString = month;
+    } else {
+      monthString = "0" + month;
+    }
+    const stringDate = dayString + "-" + monthString + "-" + year;
+    return <span>{stringDate}</span>;
   };
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <Fragment>
         <Button
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success p-mr-2"
           onClick={() => editProduct(rowData)}
         />
-      </React.Fragment>
+      </Fragment>
     );
   };
 
   const header = (
     <div className="table-header">
+      <MultiSelect
+        value={selectedColumns}
+        options={columns}
+        optionLabel="header"
+        onChange={onColumnToggle}
+        style={{ width: "20em" }}
+      />
+
       <h5 className="p-m-0">Manage Products</h5>
 
       <i
@@ -180,7 +207,7 @@ function TablePostComponent() {
   );
 
   const deleteProductDialogFooter = (
-    <React.Fragment>
+    <Fragment>
       <Button
         label="No"
         icon="pi pi-times"
@@ -193,10 +220,10 @@ function TablePostComponent() {
         className="p-button-text"
         onClick={deleteProduct}
       />
-    </React.Fragment>
+    </Fragment>
   );
   const deleteProductsDialogFooter = (
-    <React.Fragment>
+    <Fragment>
       <Button
         label="No"
         icon="pi pi-times"
@@ -209,9 +236,100 @@ function TablePostComponent() {
         className="p-button-text"
         onClick={deleteSelectedProducts}
       />
-    </React.Fragment>
+    </Fragment>
+  );
+  const onStatusChange = (e) => {
+    dt.current.filter(e.value, "status", "equals");
+    setSelectedStatus(e.value);
+  };
+  const onCategoryChange = (e) => {
+    dt.current.filter(e.value, "category", "equals");
+    setSelectedCategory(e.value);
+  };
+  const onRatingChange = (e) => {
+    dt.current.filter(e.value, "rating", "equals");
+    setSelectedRating(e.value);
+  };
+  const statusItemTemplate = (option) => {
+    return (
+      <span className={`post-status status-${option}`}>
+        {option.toUpperCase().replace("_", " ")}
+      </span>
+    );
+  };
+  const categoryItemTemplate = (option) => {
+    return <span>{option.toUpperCase().replace("_", " ")}</span>;
+  };
+  const ratingItemTemplate = (option) => {
+    return <span>{option}</span>;
+  };
+
+  const statusFilter = (
+    <Dropdown
+      value={selectedStatus}
+      options={statuses}
+      onChange={onStatusChange}
+      itemTemplate={statusItemTemplate}
+      placeholder="Select a Status"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const ratingFilter = (
+    <Dropdown
+      value={selectedRating}
+      options={ratings}
+      onChange={onRatingChange}
+      itemTemplate={ratingItemTemplate}
+      placeholder="Select rating"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const categoryFilter = (
+    <Dropdown
+      value={selectedCategory}
+      options={categories}
+      onChange={onCategoryChange}
+      itemTemplate={categoryItemTemplate}
+      placeholder="Select a Category"
+      className="p-column-filter"
+      showClear
+    />
   );
 
+  const dynamicColumns = selectedColumns.map((col, i) => {
+    return (
+      <Column
+        key={col.field}
+        field={col.field}
+        filter
+        filterMatchMode="contains"
+        body={
+          col.field === "status"
+            ? statusBodyTemplate
+            : col.field === "rating"
+            ? ratingBodyTemplate
+            : col.field === "category"
+            ? categoryBodyTemplate
+            : col.field === "created_on"
+            ? dateBodyTemplate
+            : null
+        }
+        filterElement={
+          col.field === "status"
+            ? statusFilter
+            : col.field === "category"
+            ? categoryFilter
+            : col.field === "rating"
+            ? ratingFilter
+            : null
+        }
+        sortable
+        header={col.header}
+      />
+    );
+  });
   return (
     <div className="table-post-container">
       <Toast ref={toast} />
@@ -236,27 +354,8 @@ function TablePostComponent() {
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
         ></Column>
-        <Column field="owner" header="User" sortable></Column>
-        <Column field="category" header="Category" sortable></Column>
-        <Column
-          field="status"
-          header="Status"
-          body={statusBodyTemplate}
-          sortable
-        ></Column>
-
-        <Column field="title" header="Title" sortable></Column>
-        <Column field="desc" header="Description" sortable></Column>
-
-        <Column field="address" header="Address" sortable></Column>
-        <Column
-          field="rating"
-          header="Rating"
-          body={ratingBodyTemplate}
-          sortable
-        ></Column>
-        <Column field="created_on" header="Date" sortable></Column>
-        <Column body={actionBodyTemplate} header="Full View"></Column>
+        <Column body={actionBodyTemplate} style={{ width: "70px" }}></Column>
+        {dynamicColumns}
       </DataTable>
 
       <Dialog
@@ -298,9 +397,6 @@ function TablePostComponent() {
         </div>
       </Dialog>
     </div>
-  
-  
-  
   );
 }
 
