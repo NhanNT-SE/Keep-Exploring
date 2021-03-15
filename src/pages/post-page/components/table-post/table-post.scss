@@ -52,7 +52,11 @@
     .p-datatable-scrollable-body {
       table {
         tbody {
-          tr > td {
+          tr  td {
+            .actions-button{
+              display: flex;
+              justify-content: space-around;
+            }
           }
         }
       }
