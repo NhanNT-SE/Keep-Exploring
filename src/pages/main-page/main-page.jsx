@@ -7,6 +7,7 @@ import { STYLES_GLOBAL } from "common-components/styles-global";
 import BlogPage from "pages/blog-page/blog-page";
 import HomePage from "pages/home-page/home-page";
 import NotifyPage from "pages/notify-page/notify-page";
+import PostDetailsPage from "pages/post-page/components/detail-post/post-details";
 import PostPage from "pages/post-page/post-page";
 import StatisticsPage from "pages/statistics-page/statistics-page";
 import UserPage from "pages/user-page/user-page";
@@ -38,6 +39,11 @@ function MainPage() {
             <Route exact path="/home" component={HomePage}></Route>
             <Route exact path="/user" component={UserPage}></Route>
             <Route exact path="/post" component={PostPage}></Route>
+            <Route
+              exact
+              path="/post/:postId"
+              component={PostDetailsPage}
+            ></Route>
             <Route exact path="/blog" component={BlogPage}></Route>
             <Route exact path="/notify" component={NotifyPage}></Route>
             <Route exact path="/statistics" component={StatisticsPage}></Route>

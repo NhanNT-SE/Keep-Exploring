@@ -1,7 +1,13 @@
 import React from "react";
+import TablePostComponent from "./components/table-post/table-post";
 
+import "./post-page.scss";
 function PostPage() {
-  return <div><h1>POST PAGE</h1></div>;
+  return (
+    <div className="post-page-container">
+      <TablePostComponent />
+    </div>
+  );
 }
 
 export default PostPage;
