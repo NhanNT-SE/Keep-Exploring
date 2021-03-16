@@ -1,12 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { Carousel } from "primereact/carousel";
 import { Button } from "primereact/button";
+import { TabView, TabPanel } from "primereact/tabview";
 import "./post-details.scss";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { Tag } from "primereact/tag";
+import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { Avatar } from "primereact/avatar";
+import { InputTextarea } from "primereact/inputtextarea";
+
 function PostDetailsPage() {
+  const statuses = ["pending", "done", "need_update"];
+  const userList = [
+    { id: "User 1", displayName: "New York", imageUser: "NY" },
+    { id: "User 2", displayName: "Rome", imageUser: "RM" },
+    { id: "User 3", displayName: "London", imageUser: "LDN" },
+    { id: "User 4", displayName: "Istanbul", imageUser: "IST" },
+    { id: "User 4", displayName: "Paris", imageUser: "PRS" },
+    { id: "User 5", displayName: "Paris", imageUser: "PRS" },
+    { id: "User 6", displayName: "Paris", imageUser: "PRS" },
+    { id: "User 7", displayName: "Paris", imageUser: "PRS" },
+    { id: "User 8", displayName: "Paris", imageUser: "PRS" },
+  ];
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
+
   const [products, setProducts] = useState([
     {
       id: "1000",
@@ -74,13 +95,34 @@ function PostDetailsPage() {
         "https://i.picsum.photos/id/617/500/500.jpg?hmac=fVME9HnWsD-3FapHlsFCPs3yMpHoZXsyfRXHQcSzTY0",
     },
   ]);
-
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [notify, setNotify] = useState(null);
+  const [urlImageOverlayPanel, setUrlImageOverlayPanel] = useState("");
+  const [isShowDialog, setIsShowDialog] = useState(false);
+  const op = useRef(null);
+  const opLike = useRef(null);
+  const isMounted = useRef(false);
   const history = useHistory();
   useEffect(() => {
-    if (!post || postId != post.id.toString()) {
-      history.push("/post");
+    // if (!post || postId != post.id.toString()) {
+    //   history.push("/post");
+    // }
+  }, []);
+  useEffect(() => {
+    if (isMounted.current) {
+      op.current.hide();
+      opLike.current.hide();
     }
   }, []);
+  useEffect(() => {
+    isMounted.current = true;
+  }, []);
+
+  const onStatusChange = (e) => {
+    if (e.value) {
+      setSelectedStatus(e.value);
+    }
+  };
   const responsiveOptions = [
     {
       breakpoint: "1024px",
@@ -98,8 +140,60 @@ function PostDetailsPage() {
       numScroll: 1,
     },
   ];
+  const hideDialog = () => {
+    setIsShowDialog(false);
+  };
+  const showDialog = () => {
+    setIsShowDialog(true);
+  };
+  const selectedStatusTemplate = (option, props) => {
+    if (option) {
+      return (
+        <div className={`post-status status-${option}`}>
+          {option.toUpperCase().replace("_", " ")}
+        </div>
+      );
+    }
+    return <span>{props.placeholder}</span>;
+  };
+  const statusItemTemplate = (option) => {
+    return (
+      <div className={`post-status status-${option}`}>
+        {option.toUpperCase().replace("_", " ")}
+      </div>
+    );
+  };
+  const renderFooter = () => {
+    return (
+      <div>
+        <Button label="Cancel" icon="pi pi-times" onClick={hideDialog} />
+        <Button
+          label="Delete"
+          icon="pi pi-trash"
+          className="p-button-danger"
+          disabled={notify ? false : true}
+          onClick={hideDialog}
+        />
+        <Button
+          label="Submit"
+          icon="pi pi-check"
+          disabled={notify ? false : true}
+          className="p-button-success"
+          onClick={hideDialog}
+        />
+      </div>
+    );
+  };
 
-  const productTemplate = (product) => {
+  const UserLikeTemplate = () => {
+    return userList.map((item) => (
+      <div className="user-like" onClick={() => console.log(item.displayName)}>
+        <Avatar icon="pi pi-user" className="p-mr-2" shape="circle" />
+        <div>{item.name}</div>
+      </div>
+    ));
+  };
+  const postImageTemplate = (product) => {
     return (
       <div className="product-item">
         <div className="product-item-content">
@@ -108,6 +202,12 @@ function PostDetailsPage() {
             style={{
               backgroundImage: `url(${product.image})`,
             }}
+            onClick={(e) => {
+              setUrlImageOverlayPanel(`url(${product.image})`);
+              op.current.toggle(e);
+            }}
+            aria-haspopup
+            aria-controls="overlay_panel"
           ></div>
         </div>
       </div>
@@ -121,10 +221,157 @@ function PostDetailsPage() {
           numVisible={4}
           numScroll={2}
           responsiveOptions={responsiveOptions}
-          itemTemplate={productTemplate}
+          itemTemplate={postImageTemplate}
         />
+        <OverlayPanel
+          ref={op}
+          showCloseIcon
+          id="overlay_panel"
+          style={{
+            background: urlImageOverlayPanel,
+          }}
+        ></OverlayPanel>
       </div>
-      <div className="post-details-container"></div>
+      <div className="content-container">
+        <TabView className="tab-view-custom">
+          <TabPanel
+            className="tab-content"
+            header="Content"
+            leftIcon="pi pi-calendar"
+          >
+            <div className="header">
+              <Tag className="tag-status" severity="success" value="Done"></Tag>
+              <i
+                className="pi pi-thumbs-up"
+                onClick={(e) => {
+                  opLike.current.toggle(e);
+                }}
+                aria-haspopup
+                aria-controls="overlay_panel_like"
+              >
+                <span>Likes(30)</span>
+              </i>
+              <OverlayPanel ref={opLike} showCloseIcon id="overlay_panel_like">
+                <UserLikeTemplate />
+              </OverlayPanel>
+              <i className="pi pi-comments">
+                <span>Comments(30)</span>
+              </i>
+              <Button
+                icon="pi pi-pencil"
+                className="p-button-rounded p-button-success p-mr-2"
+                onClick={() => setIsShowDialog(true)}
+              />
+            </div>
+            <div className="title">
+              <h3>Tittle</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+            </div>
+            <div className="description">
+              <h3>Description</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+            </div>
+          </TabPanel>
+          <TabPanel
+            header="Comment(25)"
+            className="tab-comment"
+            leftIcon="pi pi-comments"
+          >
+            <p>
+              At vero eos et accusamus et iusto odio dignissimos ducimus qui
+              blanditiis praesentium voluptatum deleniti atque corrupti quos
+              dolores et quas molestias excepturi sint occaecati cupiditate non
+              provident, similique sunt in culpa qui officia deserunt mollitia
+              animi, id est laborum et dolorum fuga. Et harum quidem rerum
+              facilis est et expedita distinctio. Nam libero tempore, cum soluta
+              nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+          </TabPanel>
+        </TabView>
+      </div>
+      <Dialog
+        header="Edit Post"
+        visible={isShowDialog}
+        style={{ width: "50vw" }}
+        footer={renderFooter()}
+        onHide={hideDialog}
+        className="dialog-edit"
+      >
+        <div className="owner">
+          <Avatar
+            label="AV"
+            className="p-mr-2"
+            style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+            shape="circle"
+          />
+          <p>Supper Admin</p>
+        </div>
+        <Dropdown
+          value={selectedStatus}
+          options={statuses}
+          onChange={onStatusChange}
+          placeholder="Select a Status"
+          itemTemplate={statusItemTemplate}
+          valueTemplate={selectedStatusTemplate}
+        />
+        <h5>Send notification for user</h5>
+        <InputTextarea
+          rows={5}
+          cols={30}
+          value={notify}
+          onChange={(e) => setNotify(e.target.value)}
+          placeholder="Send notification for user after update or delete this post"
+          required
+        />
+      </Dialog>
     </div>
   );
 }
