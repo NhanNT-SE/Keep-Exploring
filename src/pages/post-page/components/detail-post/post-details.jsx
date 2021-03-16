@@ -19,11 +19,11 @@ function PostDetailsPage() {
     { id: "User 2", displayName: "Rome", imageUser: "RM" },
     { id: "User 3", displayName: "London", imageUser: "LDN" },
     { id: "User 4", displayName: "Istanbul", imageUser: "IST" },
-    { id: "User 4", displayName: "Paris", imageUser: "PRS" },
     { id: "User 5", displayName: "Paris", imageUser: "PRS" },
-    { id: "User 6", displayName: "Paris", imageUser: "PRS" },
-    { id: "User 7", displayName: "Paris", imageUser: "PRS" },
-    { id: "User 8", displayName: "Paris", imageUser: "PRS" },
+    { id: "User 6", displayName: "Japan", imageUser: "PRS" },
+    { id: "User 7", displayName: "Singapore", imageUser: "PRS" },
+    { id: "User 8", displayName: "Thailand", imageUser: "PRS" },
+    { id: "User 9", displayName: "HongKong", imageUser: "PRS" },
   ];
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
@@ -187,9 +187,9 @@ function PostDetailsPage() {
 
   const UserLikeTemplate = () => {
     return userList.map((item) => (
-      <div className="user-like" onClick={() => console.log(item.displayName)}>
+      <div key={item.id} className="user-like" onClick={() => console.log(item)}>
         <Avatar icon="pi pi-user" className="p-mr-2" shape="circle" />
-        <div>{item.name}</div>
+        <div>{item.displayName}</div>
       </div>
     ));
   };
