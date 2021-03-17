@@ -24,6 +24,9 @@ const NotificaionSchema = new Schema(
 			type: String,
 			enum: ['like', 'comment', 'moderated', 'unmoderated'],
 		},
+		contentAdmin: {
+			type: String,
+		},
 	},
 	{ collection: 'Notification' }
 );

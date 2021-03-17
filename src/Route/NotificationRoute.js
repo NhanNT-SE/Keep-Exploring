@@ -9,6 +9,9 @@ const router = express.Router();
 //GetMethod
 router.get('/', passport.authenticate('jwt', { session: false }), notificationController.getAllbyUser);
 
+//Post Method
+router.post('/admin', passport.authenticate('jwt', { session: false }), notificationController.createNotiByAdmin);
+
 //Patch Method
 router.patch('/status', passport.authenticate('jwt', { session: false }), notificationController.changeSeenStatusNoti);
 router.patch(

@@ -30,7 +30,24 @@ const createNotification = async (notify) => {
 	}
 };
 
+const createNotiByAdmin = async (req, res, next) => {
+	try {
+		const { idUser, contentAdmin } = req.body;
+		const user = req.user;
+		if (user.role !== 'admin') {
+			handleCustomError(201, 'Bạn không phải admin');
+		}
 
+		const notify = new Notification({
+			idUser,
+			contentAdmin,
+		});
+		await notify.save();
+		return res.send({ data: { notify }, status: 200, message: 'Tạo thông báo thành công' });
+	} catch (error) {
+		next(error);
+	}
+};
 
 const changeNewStatusNoti = async (req, res, next) => {
 	try {
@@ -72,9 +89,14 @@ const changeSeenStatusNoti = async (req, res, next) => {
 const deleteNoti = async (req, res, next) => {
 	try {
 		const { idNoti } = req.params;
+		const user = req.user;
+		if (user.role !== 'admin') {
+			return handleCustomError(202, 'Bạn không có quyền xóa thông báo này');
+		}
+
 		const notiFound = await Notification.findById(idNoti);
 		if (!notiFound) {
-			handleCustomError(201, 'Thông báo không tồn tại hoặc đã bị xóa');
+			return handleCustomError(201, 'Thông báo không tồn tại hoặc đã bị xóa');
 		}
 
 		await Notification.findByIdAndDelete(idNoti);
@@ -116,6 +138,7 @@ const handleCustomError = (status, message) => {
 
 module.exports = {
 	createNotification,
+	createNotiByAdmin,
 	changeNewStatusNoti,
 	changeSeenStatusNoti,
 	deleteNoti,
