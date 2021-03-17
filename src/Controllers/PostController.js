@@ -42,7 +42,7 @@ const createPost = async (req, res, next) => {
 
 		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'create Post successfully' });
 	} catch (error) {
-		next({ status: error.status, message: error.message });
+		next(error);
 	}
 };
 
@@ -63,19 +63,15 @@ const deletePost = async (req, res, next) => {
 				await Post.findByIdAndDelete(postID);
 				await Address.findOneAndDelete({ idPost: postID });
 
-				return res.status(200).send({ data: null, err: '', status: 200, msg: 'Deleted post' });
+				return res.status(200).send({ data: null, err: '', status: 200, message: 'Đã xóa bài viết' });
 			}
 
-			console.log(user._id);
-			console.log(postFound.owner);
-			console.log(user.role);
-
-			return next({ status: 202, message: 'Ban khong phai owner bai viet/ admin' });
+			return handleCustomError(202, 'Bạn không phải admin/owner bài viết này');
 		}
 
-		next({ status: 201, message: 'Bai Post khong ton tai' });
+		return handleCustomError(201, 'Bài viết không tồn tại');
 	} catch (error) {
-		next({ status: error.status, message: error.message });
+		next(error);
 	}
 };
 

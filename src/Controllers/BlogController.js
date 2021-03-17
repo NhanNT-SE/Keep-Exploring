@@ -42,13 +42,17 @@ const createBlog = async (req, res, next) => {
 
 const deleteBlog = async (req, res, next) => {
 	try {
-		//Lay id bai viet
+		const user = req.user;
 		const { idBlog } = req.params;
 
 		//Kiem tra xem bai viet co ton tai khong
 		const blogFound = await Blog.findById(idBlog);
 		const detailFound = await Blog_Detail.findById(idBlog);
 		const len = detailFound.detail_list.length;
+
+		if (user.role !== 'admin' && user._id !== blogFound.owner) {
+			return handlerCustomError(201, 'Bạn không phải admin/owner bài viết này');
+		}
 
 		if (blogFound && detailFound) {
 			for (let i = 0; i < len; i++) {

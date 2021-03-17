@@ -30,6 +30,8 @@ const createNotification = async (notify) => {
 	}
 };
 
+
+
 const changeNewStatusNoti = async (req, res, next) => {
 	try {
 		const { idNoti } = req.body;

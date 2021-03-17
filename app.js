@@ -53,21 +53,6 @@ mongoose
 		console.error(`Error connecting to the database. \n${err}`);
 	});
 
-app.use((req, res, next) => {
-	const error = new Error('Not found');
-	error.status = 404;
-	next(error);
-});
-app.use((error, req, res, next) => {
-	res.status(error.status || 500);
-	res.send({
-		error: {
-			status: error.status || 500,
-			message: error.message,
-		},
-	});
-});
-
 //Config next() function
 // Handler 404 error page not found
 app.use((req, res, next) => {
@@ -85,5 +70,7 @@ app.use((error, req, res, next) => {
 		},
 	});
 });
+
+
 
 app.listen(port, console.log(`start on port ${port}`));
