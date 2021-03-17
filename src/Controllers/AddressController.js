@@ -9,7 +9,7 @@ const createAddress = async (req, res, next) => {
     return res.send({
       data: { address },
       status: 200,
-      message: "Tao dia chi thanh cong",
+      message: "Tạo địa chỉ thành công",
     });
   } catch (error) {
     next(error);
@@ -21,17 +21,7 @@ const deleteAddress = async (req, res, next) => {
     const { idPost } = req.params;
     await Address.deleteOne({ idPost: idPost });
 
-    return res.send({ data: null, status: 200, message: "Da xoa dia diem" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-//Khong dung toi
-const getAddressList = async (req, res, next) => {
-  try {
-    const addressList = await Address.find({}).populate("idPost");
-    return res.status(200).send(addressList);
+    return res.send({ data: null, status: 200, message: "Đã xóa địa điểm" });
   } catch (error) {
     next(error);
   }
@@ -43,16 +33,15 @@ const getPostByAddress = async (req, res, next) => {
     var postList = [];
 
     const addressList = await Address.find({ province }).populate("idPost");
-    addressList.forEach((item) => {
-      postList.push(item.idPost);
-    });
-
+    // addressList.forEach((item) => {
+    //   postList.push(item.idPost);
+    // });
+    postList = [...addressList];
     if ((postList.length = 0)) {
-      //   next({ status: 201, message: "Dia diem chua duoc review" });
-      handlerCustomError(201, "Dia diem chua duoc review");
+      handlerCustomError(201, "Địa điểm chưa được review");
     }
 
-    return res.send({ data: { postList }, status: 200, message: "" });
+    return res.send({ data: postList, status: 200, message: "" });
   } catch (error) {
     next(error);
   }
@@ -76,8 +65,7 @@ const updateAddress = async (req, res, next) => {
       });
     }
 
-    // next({ status: 201, message: "Dia chi khong ton tai" });
-    handlerCustomError(201, "Dia chi khong ton tai");
+    handlerCustomError(201, "Địa chỉ không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -91,7 +79,6 @@ const handlerCustomError = (status, message) => {
 module.exports = {
   createAddress,
   deleteAddress,
-  getAddressList,
   getPostByAddress,
   updateAddress,
 };

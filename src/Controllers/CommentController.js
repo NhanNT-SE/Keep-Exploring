@@ -12,8 +12,8 @@ const createCommentPost = async (req, res, next) => {
 		const file = req.file;
 		const user = req.user;
 
-		//Kiem tra bai post con ton tai hay khong
-		const postFound = await Post.findById(idPost);
+    //Kiem tra bai post con ton tai hay khong
+    const postFound = await Post.findById(idPost);
 
 		if (postFound) {
 			//Kiem tra comment co hinh anh hay khong
@@ -31,12 +31,12 @@ const createCommentPost = async (req, res, next) => {
 				img,
 			});
 
-			//Luu comment vao database de lay id
-			await comment.save();
+      //Luu comment vao database de lay id
+      await comment.save();
 
-			//Push idComment vao bai Post
-			postFound.comment.push(comment._id);
-			await postFound.save();
+      //Push idComment vao bai Post
+      postFound.comment.push(comment._id);
+      await postFound.save();
 
 			//Tao notify khi co nguoi comment bai viet
 			const notify = new Notification({
@@ -237,7 +237,6 @@ const handleCustomError = (status, message) => {
 	err.message = message;
 	throw err;
 };
-
 module.exports = {
 	createCommentPost,
 	createCommentBlog,

@@ -6,7 +6,6 @@ require("../middleware/passport");
 const router = express.Router();
 
 //GET Method
-router.get("/", addressController.getAddressList);
 router.get("/province", addressController.getPostByAddress);
 
 //POST Method

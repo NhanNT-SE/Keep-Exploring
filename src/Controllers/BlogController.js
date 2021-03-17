@@ -9,35 +9,42 @@ const createBlog = async (req, res, next) => {
 	try {
 		const { title, content_list } = req.body;
 
-		const user = req.user;
-		const files = req.files;
-		const content_list_json = JSON.parse(content_list);
-		const blog = new Blog({
-			title,
-			owner: user._id,
-		});
-		await blog.save();
+    const user = req.user;
+    const files = req.files;
+    const content_list_json = JSON.parse(content_list);
+    const blog = new Blog({
+      title,
+      owner: user._id,
+    });
+    await blog.save();
 
-		const _id = blog._id;
-		const len = files.length;
-		const detail_list = [];
-		// Gán img+content vào mảng detail_list
-		for (let i = 0; i < len; i++) {
-			let detail = {};
-			detail.img = files[i].filename;
-			detail.content = content_list_json[i];
-			detail_list.push(detail);
-		}
+    const _id = blog._id;
+    const len = files.length;
+    const detail_list = [];
 
-		const blog_detail = new Blog_Detail({
-			_id,
-			detail_list,
-		});
-		await blog_detail.save();
-		return res.status(200).send(blog);
-	} catch (error) {
-		next(error);
-	}
+    // Gán img+content vào mảng detail_list
+    for (let i = 0; i < len; i++) {
+      let detail = {};
+      detail.img = files[i].filename;
+      detail.content = content_list_json[i];
+      detail_list.push(detail);
+    }
+
+    const blog_detail = new Blog_Detail({
+      _id,
+      detail_list,
+    });
+    await blog_detail.save();
+    return res
+      .status(200)
+      .send({
+        status: 200,
+        data: blog_detail,
+        message: "Tạo bài viết thành công",
+      });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deleteBlog = async (req, res, next) => {
@@ -63,11 +70,11 @@ const deleteBlog = async (req, res, next) => {
 			return res.status(200).send({
 				status: 200,
 				data: null,
-				message: 'Deleted blog successfully',
+				message: "Xóa bài viết thành công",
 			});
 		}
 		// return res.status(201).send("Bai Blog khong ton tai");
-		handlerCustomError(201, "This blog doesn't exists ");
+		handlerCustomError(201, "Bài viết không tồn tại");
 	} catch (error) {
 		next(error);
 	}
@@ -113,7 +120,7 @@ const likeBlog = async (req, res, next) => {
 					await blogFound.save();
 					return res.status(200).send({
 						status: 200,
-						message: 'dislike',
+						message: 'Đã bỏ like bài viết',
 						data: null,
 					});
 				}
@@ -136,7 +143,7 @@ const likeBlog = async (req, res, next) => {
 
 		//Neu bai viet khong ton tai thi tra ve res code 202
 		// return res.status(202).send("Bai viet khong ton tai");
-		handlerCustomError("This post doesn't exists");
+		handlerCustomError(202, "Bài viết không tồn tại");
 	} catch (error) {
 		next(error);
 	}
