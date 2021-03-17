@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group>
+        <item
+            android:id="@+id/menu_drawer_Restaurant"
+            android:icon="@drawable/dining_32px"
+            android:title="Restaurants" />
+        <item
+            android:id="@+id/menu_drawer_Accommodations"
+            android:icon="@drawable/hotel_building_32px"
+            android:title="Accommodations" />
+        <item
+            android:id="@+id/menu_drawer_CheckIn"
+            android:icon="@drawable/instagram_32px"
+            android:title="Beautiful Places" />
+        <item
+            android:id="@+id/menu_drawer_Blog"
+            android:icon="@drawable/motorcycle_32px"
+            android:title="Journey Diary" />
+        <item
+            android:id="@+id/menu_drawer_Admin"
+            android:icon="@drawable/microsoft_admin_32px"
+            app:actionViewClass="android.widget.TextView"
+            android:title="Administrators" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/menu_drawer_Information"
+                android:icon="@drawable/contact_32px"
+                android:title="User Information" />
+            <item
+                android:id="@+id/menu_drawer_SignOut"
+                android:icon="@drawable/exit_32px"
+                android:title="Sign Out" />
+            <item
+                android:id="@+id/menu_drawer_Exit"
+                android:icon="@drawable/shutdown_32px"
+                android:title="Exit" />
+        </menu>
+
+    </item>
+</menu>
