@@ -303,9 +303,9 @@ function PostDetailsPage() {
   const isMounted = useRef(false);
   const history = useHistory();
   useEffect(() => {
-    // if (!post || postId != post.id.toString()) {
-    //   history.push("/post");
-    // }
+    if (!post || postId != post.id.toString()) {
+      history.push("/post");
+    }
   }, []);
   useEffect(() => {
     if (isMounted.current) {
