@@ -1,0 +1,24 @@
+.comment {
+  &-item {
+    
+    border: 1px solid #4272d7;
+    margin-bottom: 8px;
+    padding: 0px 16px;
+    border-radius: 4px;
+  }
+  &-header {
+    display: flex;
+    align-items: center;
+    .p-avatar {
+      margin-right: 16px;
+    }
+  }
+  &-user-name {
+    font-weight: 800;
+    cursor: pointer;
+
+  }
+  &-content{
+      margin-bottom: 8px;
+  }
+}

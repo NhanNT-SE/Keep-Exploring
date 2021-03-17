@@ -4,23 +4,6 @@
   height: 100%;
   flex-direction: column;
   .carousel-container {
-    .product-item {
-      .product-item-content {
-        border: 1px solid var(--surface-d);
-        border-radius: 3px;
-        margin: 0.3rem;
-        text-align: center;
-        padding: 4px;
-        cursor: pointer;
-        .image {
-          height: 150px;
-          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16),
-            0 3px 6px rgba(0, 0, 0, 0.23);
-          background-size: 100% 100%;
-          background-repeat: no-repeat;
-        }
-      }
-    }
     #overlay_panel {
       width: 450px;
       height: 450px;
@@ -54,6 +37,7 @@
           flex: 1;
           display: flex;
           flex-direction: column;
+          overflow: hidden;
           .header {
             align-items: center;
             justify-content: space-between;
@@ -64,16 +48,6 @@
               .p-overlaypanel-content {
                 max-height: 250px;
                 overflow: auto;
-                .user-like {
-                  display: flex;
-                  align-items: center;
-                  cursor: pointer;
-                  margin: 8px 0px;
-
-                  .p-avatar {
-                    margin-right: 8px;
-                  }
-                }
               }
               .p-listbox-list-wrapper {
                 max-height: 250px;
@@ -111,6 +85,9 @@
             margin-top: 16px;
             overflow: auto;
           }
+          .comment-container {
+            overflow: auto;
+          }
         }
       }
     }
@@ -131,24 +108,6 @@
       }
       textarea {
         width: 100%;
-      }
-      .p-dropdown {
-        width: 100%;
-        .post-status {
-          padding: 4px 20px;
-          &.status-done {
-            background-color: #c8e6c9;
-            color: #256029;
-          }
-          &.status-pending {
-            background-color: #feedaf;
-            color: #8a5340;
-          }
-          &.status-need_update {
-            background-color: #ffcdd2;
-            color: #c63737;
-          }
-        }
       }
     }
   }
