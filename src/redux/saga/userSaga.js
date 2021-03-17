@@ -1,6 +1,7 @@
 import axiosClient from "api/axiosClient";
 import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
 import { actionLoading } from "redux/slices/commonSlice";
@@ -16,11 +17,11 @@ import rootStore from "rootStore";
 function* handlerLogin(action) {
   try {
     const rootState = rootStore.getState();
-    const {isRemember} = rootState.common;
+    const { isRemember } = rootState.common;
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
-    data.imageUser = `${process.env.REACT_APP_URL_IMAGE}/user/${data.imageUser}`;
+    data.imageUser = `${GLOBAL_VARIABLE.URL_IMAGE}/user/${data.imageUser}`;
     if (data.role !== "admin") {
       yield call(() =>
         handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")

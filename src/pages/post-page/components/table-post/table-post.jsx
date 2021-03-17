@@ -1,41 +1,41 @@
+import {
+  CategoryItemSelectedTemplate,
+  CategoryItemTemplate,
+} from "common-components/template/category-template/category-template";
+import DateBodyTemplate from "common-components/template/date-template/date-template";
+import {
+  RatingBodyTemplate,
+  RatingItemTemplate,
+  RatingSelectedItemTemplate,
+} from "common-components/template/rating-template/rating-template";
+import {
+  SelectedStatusTemplate,
+  StatusBodyTemplate,
+  StatusItemTemplate,
+} from "common-components/template/status-template/status-template";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
-import { Rating } from "primereact/rating";
-import { Toast } from "primereact/toast";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
+import { Toast } from "primereact/toast";
 import React, { useRef, useState } from "react";
-import "./table-post.scss";
-import postList from "../../post-list.json";
-import { Fragment } from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 import {
   actionSetSelectedPost,
   actionSetSelectedPostList,
 } from "redux/slices/postSlice";
-import { useHistory } from "react-router";
+import postList from "../../post-list.json";
+import "./table-post.scss";
 function TablePostComponent() {
   const toast = useRef(null);
   const dt = useRef(null);
-  const statuses = ["pending", "done", "need_update"];
-  const categories = ["hotel", "food", "check_in"];
-  const ratings = [0, 1, 2, 3, 4, 5];
-  const columns = [
-    { field: "owner", header: "Owner" },
-    { field: "title", header: "Title" },
-    { field: "category", header: "Category" },
-    { field: "status", header: "Status" },
-    { field: "desc", header: "Description" },
-    { field: "address", header: "Address" },
-    { field: "rating", header: "Rating" },
-    { field: "created_on", header: "Date" },
-  ];
+  const columns = GLOBAL_VARIABLE.COLUMNS_POST;
   const [posts, setPosts] = useState(postList);
-  const [deletePostDialog, setDeletePostDialog] = useState(false);
   const [deletePostsDialog, setDeletePostsDialog] = useState(false);
-  const [post, setPost] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -47,37 +47,14 @@ function TablePostComponent() {
     dispatch(actionSetSelectedPost(post));
     history.push(`post/${post.id}`);
   };
-  const deletePost = () => {
-    let _posts = posts.filter((val) => val.id !== post.id);
-    setPosts(_posts);
-    setDeletePostDialog(false);
-    setPost(null);
-    dispatch(actionSetSelectedPost(null));
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Product Deleted",
-      life: 3000,
-    });
-  };
-  const hideDeletePostDialog = () => {
-    dispatch(actionSetSelectedPost(null));
-    setDeletePostDialog(false);
-  };
 
   const hideDeletePostsDialog = () => {
     setDeletePostsDialog(false);
-  };
-  const confirmDeletePost = (post) => {
-    dispatch(actionSetSelectedPost(post));
-    setPost(post);
-    setDeletePostDialog(true);
   };
 
   const confirmDeleteSelected = () => {
     setDeletePostsDialog(true);
   };
-  // ***** Set column to display *****
   const onColumnToggle = (event) => {
     let selectedColumns = event.value;
     let orderedSelectedColumns = columns.filter((col) =>
@@ -98,62 +75,21 @@ function TablePostComponent() {
       life: 3000,
     });
   };
-  // ***** Custom body do display data for each colum *****
-  const ratingBodyTemplate = (rowData) => {
-    return <Rating value={rowData.rating} readOnly cancel={false} />;
-  };
-
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className={`post-status status-${rowData.status.toLowerCase()}`}>
-          {rowData.status.toUpperCase().replace("_", " ")}
-        </span>
-      </React.Fragment>
-    );
-  };
 
   const categoryBodyTemplate = (rowData) => {
     return <span>{rowData.category.toUpperCase().replace("_", " ")}</span>;
   };
-  const dateBodyTemplate = (rowData) => {
-    const date = new Date(rowData.created_on);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
-    let dayString = "";
-    let monthString = "";
-    if (day > 10) {
-      dayString = day;
-    } else {
-      dayString = "0" + day;
-    }
-    if (month > 10) {
-      monthString = month;
-    } else {
-      monthString = "0" + month;
-    }
-    const stringDate = dayString + "-" + monthString + "-" + year;
-    return <span>{stringDate}</span>;
-  };
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <div className="actions-button">
-        <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success p-mr-2"
-          onClick={() => editPost(rowData)}
-        />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-danger p-button-rounded p-mr-2"
-          onClick={() => confirmDeletePost(rowData)}
-        />
-      </div>
+      <Button
+        icon="pi pi-pencil"
+        className="p-button-rounded p-button-success p-mr-2"
+        onClick={() => editPost(rowData)}
+      />
     );
   };
-  // ***** Custom header table *****
+
   const header = (
     <div className="table-header">
       <MultiSelect
@@ -172,25 +108,9 @@ function TablePostComponent() {
       />
     </div>
   );
-  // ***** Custom layout for Dialog *****
-  const deletePostDialogFooter = (
-    <Fragment>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        className="p-button-text"
-        onClick={hideDeletePostDialog}
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        className="p-button-text"
-        onClick={deletePost}
-      />
-    </Fragment>
-  );
+
   const deletePostsDialogFooter = (
-    <Fragment>
+    <div>
       <Button
         label="No"
         icon="pi pi-times"
@@ -203,7 +123,7 @@ function TablePostComponent() {
         className="p-button-text"
         onClick={deleteSelectedProducts}
       />
-    </Fragment>
+    </div>
   );
   // ***** handler filter on change dropdown *****
   const onStatusChange = (e) => {
@@ -218,27 +138,14 @@ function TablePostComponent() {
     dt.current.filter(e.value, "rating", "equals");
     setSelectedRating(e.value);
   };
-  // ***** Custom layout for custom filter column *****
-  const statusItemTemplate = (option) => {
-    return (
-      <span className={`post-status status-${option}`}>
-        {option.toUpperCase().replace("_", " ")}
-      </span>
-    );
-  };
-  const categoryItemTemplate = (option) => {
-    return <span>{option.toUpperCase().replace("_", " ")}</span>;
-  };
-  const ratingItemTemplate = (option) => {
-    return <span>{option}</span>;
-  };
-  // ***** Custom filter column *****
+
   const statusFilter = (
     <Dropdown
       value={selectedStatus}
-      options={statuses}
+      options={GLOBAL_VARIABLE.STATUS_LIST}
       onChange={onStatusChange}
-      itemTemplate={statusItemTemplate}
+      itemTemplate={StatusItemTemplate}
+      valueTemplate={SelectedStatusTemplate}
       placeholder="Select a Status"
       className="p-column-filter"
       showClear
@@ -247,10 +154,11 @@ function TablePostComponent() {
   const ratingFilter = (
     <Dropdown
       value={selectedRating}
-      options={ratings}
+      options={GLOBAL_VARIABLE.RATING_LIST}
       onChange={onRatingChange}
-      itemTemplate={ratingItemTemplate}
       placeholder="Select rating"
+      itemTemplate={RatingItemTemplate}
+      valueTemplate={RatingSelectedItemTemplate}
       className="p-column-filter"
       showClear
     />
@@ -258,9 +166,10 @@ function TablePostComponent() {
   const categoryFilter = (
     <Dropdown
       value={selectedCategory}
-      options={categories}
+      options={GLOBAL_VARIABLE.CATEGORY_LIST}
       onChange={onCategoryChange}
-      itemTemplate={categoryItemTemplate}
+      itemTemplate={CategoryItemTemplate}
+      valueTemplate={CategoryItemSelectedTemplate}
       placeholder="Select a Category"
       className="p-column-filter"
       showClear
@@ -276,13 +185,13 @@ function TablePostComponent() {
         filterMatchMode="contains"
         body={
           col.field === "status"
-            ? statusBodyTemplate
+            ? StatusBodyTemplate
             : col.field === "rating"
-            ? ratingBodyTemplate
+            ? RatingBodyTemplate
             : col.field === "category"
             ? categoryBodyTemplate
             : col.field === "created_on"
-            ? dateBodyTemplate
+            ? DateBodyTemplate
             : null
         }
         filterElement={
@@ -326,30 +235,14 @@ function TablePostComponent() {
           headerStyle={{ width: "3rem" }}
         ></Column>
 
-        <Column body={actionBodyTemplate} style={{ width: "115px" }}></Column>
+        <Column
+          body={actionBodyTemplate}
+          header="Edit"
+          style={{ width: "4rem" }}
+        ></Column>
         {dynamicColumns}
       </DataTable>
 
-      <Dialog
-        visible={deletePostDialog}
-        style={{ width: "450px" }}
-        header="Confirm"
-        modal
-        footer={deletePostDialogFooter}
-        onHide={hideDeletePostDialog}
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle p-mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          {post && (
-            <span>
-              Are you sure you want to delete <b>{post.name}</b>?
-            </span>
-          )}
-        </div>
-      </Dialog>
       <Dialog
         visible={deletePostsDialog}
         style={{ width: "450px" }}

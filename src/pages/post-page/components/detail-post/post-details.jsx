@@ -1,24 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router";
-import { Carousel } from "primereact/carousel";
-import { Button } from "primereact/button";
-import { TabView, TabPanel } from "primereact/tabview";
-import "./post-details.scss";
-import { OverlayPanel } from "primereact/overlaypanel";
-import { Tag } from "primereact/tag";
-import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
-import { Avatar } from "primereact/avatar";
-import { InputTextarea } from "primereact/inputtextarea";
-import LikeComponent from "common-components/like/like";
-import { PostImageTemplate } from "common-components/template/post-image-template/post-image-template";
-import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
-import { StatusItemTemplate } from "common-components/template/status-template/status-template";
 import CommentComponent from "common-components/comment/comment";
+import DialogEditPost from "common-components/dialog/dialog-edit-post/dialog-edit-post";
+import OverlayUserLike from "common-components/overlay-panels/ovelay-user-like/overlay-user-like";
+import OverLayPanelImagePost from "common-components/overlay-panels/overlay-image-post/overlay-images-post";
+import { PostImageTemplate } from "common-components/template/post-image-template/post-image-template";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import { Button } from "primereact/button";
+import { Carousel } from "primereact/carousel";
+import { TabPanel, TabView } from "primereact/tabview";
+import { Tag } from "primereact/tag";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useParams } from "react-router";
+import { actionShowDialog } from "redux/slices/commonSlice";
+import "./post-details.scss";
 
 function PostDetailsPage() {
-  const statuses = ["pending", "done", "need_update"];
   const likeList = [
     {
       user_id: "keep-exploring-user-01",
@@ -226,7 +222,6 @@ function PostDetailsPage() {
   ];
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
-
   const [products, setProducts] = useState([
     {
       id: "1000",
@@ -294,18 +289,16 @@ function PostDetailsPage() {
         "https://i.picsum.photos/id/617/500/500.jpg?hmac=fVME9HnWsD-3FapHlsFCPs3yMpHoZXsyfRXHQcSzTY0",
     },
   ]);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [notify, setNotify] = useState("");
   const [urlImageOverlayPanel, setUrlImageOverlayPanel] = useState("");
-  const [isShowDialog, setIsShowDialog] = useState(false);
   const op = useRef(null);
   const opLike = useRef(null);
   const isMounted = useRef(false);
   const history = useHistory();
+  const dispatch = useDispatch();
   useEffect(() => {
-    if (!post || postId != post.id.toString()) {
-      history.push("/post");
-    }
+    // if (!post || postId != post.id.toString()) {
+    //   history.push("/post");
+    // }
   }, []);
   useEffect(() => {
     if (isMounted.current) {
@@ -317,11 +310,6 @@ function PostDetailsPage() {
     isMounted.current = true;
   }, []);
 
-  const onStatusChange = (e) => {
-    if (e.value) {
-      setSelectedStatus(e.value);
-    }
-  };
   const responsiveOptions = [
     {
       breakpoint: "1024px",
@@ -339,34 +327,6 @@ function PostDetailsPage() {
       numScroll: 1,
     },
   ];
-  const hideDialog = () => {
-    setIsShowDialog(false);
-  };
-  const showDialog = () => {
-    setIsShowDialog(true);
-  };
-
-  const renderFooter = () => {
-    return (
-      <div>
-        <Button label="Cancel" icon="pi pi-times" onClick={hideDialog} />
-        <Button
-          label="Delete"
-          icon="pi pi-trash"
-          className="p-button-danger"
-          disabled={notify ? false : true}
-          onClick={hideDialog}
-        />
-        <Button
-          label="Submit"
-          icon="pi pi-check"
-          disabled={notify ? false : true}
-          className="p-button-success"
-          onClick={hideDialog}
-        />
-      </div>
-    );
-  };
 
   return (
     <div className="post-details-container">
@@ -384,14 +344,6 @@ function PostDetailsPage() {
             />
           )}
         />
-        <OverlayPanel
-          ref={op}
-          showCloseIcon
-          id="overlay_panel"
-          style={{
-            background: urlImageOverlayPanel,
-          }}
-        ></OverlayPanel>
       </div>
       <div className="content-container">
         <TabView className="tab-view-custom">
@@ -412,16 +364,15 @@ function PostDetailsPage() {
               >
                 <span>Likes({likeList.length})</span>
               </i>
-              <OverlayPanel ref={opLike} showCloseIcon id="overlay_panel_like">
-                <LikeComponent likeList={likeList} />
-              </OverlayPanel>
               <i className="pi pi-comments">
-                <span>Comments(30)</span>
+                <span>{`Comments(${commentList.length})`}</span>
               </i>
               <Button
                 icon="pi pi-pencil"
                 className="p-button-rounded p-button-success p-mr-2"
-                onClick={() => setIsShowDialog(true)}
+                onClick={() =>
+                  dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST))
+                }
               />
             </div>
             <div className="title">
@@ -492,46 +443,12 @@ function PostDetailsPage() {
           </TabPanel>
         </TabView>
       </div>
-      <Dialog
-        header="Edit Post"
-        visible={isShowDialog}
-        style={{ width: "50vw" }}
-        footer={renderFooter()}
-        onHide={hideDialog}
-        className="dialog-edit"
-      >
-        <div className="owner">
-          <Avatar
-            label="AV"
-            className="p-mr-2"
-            style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
-            shape="circle"
-          />
-          <p>Supper Admin</p>
-        </div>
-        <Dropdown
-          value={selectedStatus}
-          options={statuses}
-          onChange={onStatusChange}
-          placeholder="Select a Status"
-          itemTemplate={(option) => <StatusItemTemplate option={option} />}
-          valueTemplate={(option) => (
-            <SelectedStatusTemplate
-              option={option}
-              placeholder="Select a Status"
-            />
-          )}
-        />
-        <h5>Send notification for user</h5>
-        <InputTextarea
-          rows={5}
-          cols={30}
-          value={notify}
-          onChange={(e) => setNotify(e.target.value)}
-          placeholder="Send notification for user after update or delete this post"
-          required
-        />
-      </Dialog>
+      <DialogEditPost />
+      <OverlayUserLike opLike={opLike} likeList={likeList} />
+      <OverLayPanelImagePost
+        op={op}
+        urlImageOverlayPanel={urlImageOverlayPanel}
+      />
     </div>
   );
 }

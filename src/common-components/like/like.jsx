@@ -7,7 +7,7 @@ function LikeComponent(props) {
   const history = useHistory();
   return likeList.map((item) => (
     <div
-      key={item.id}
+      key={item.user_id}
       className="user-like"
       onClick={() => history.push(`/user/${item.user_id}`)}
     >

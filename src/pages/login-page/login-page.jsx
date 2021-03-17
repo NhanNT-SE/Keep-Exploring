@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import localStorageService from "api/localStorageService";
-import DialogComponent from "common-components/dialog/dialog";
+import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";
 import InputField from "custom-fields/input-field";
@@ -29,8 +29,8 @@ function LoginPage(props) {
   const user = useSelector((state) => state.user.user);
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@keep-exploring.com");
+  const [password, setPassword] = useState("123456");
   const history = useHistory();
   const dispatch = useDispatch();
   const { handleSubmit, control, errors, register, setValue } = useForm({
@@ -71,7 +71,7 @@ function LoginPage(props) {
   return (
     <div className="login-page">
       {loadingStore && <LoadingComponent />}
-      <DialogComponent />
+      <DialogMessage />
       <div className="content">
         <p className="content-title">Keep Exploring Admin</p>
         <form onSubmit={handleSubmit(onSubmit)}>

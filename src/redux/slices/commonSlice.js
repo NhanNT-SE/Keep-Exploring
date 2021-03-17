@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import localStorageService from "api/localStorageService";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
 const userStorage = JSON.parse(localStorageService.getUser());
 const commonSlice = createSlice({
   name: "common",
@@ -8,7 +9,8 @@ const commonSlice = createSlice({
     isLoading: false,
     isSuccess: false,
     message: "",
-    isShowDialog: false,
+    isShowDialogMessage: false,
+    isShowDialogEditPost: false,
     isOpenDrawer: false,
     isRemember: userStorage ? userStorage.remember : false,
   },
@@ -31,11 +33,31 @@ const commonSlice = createSlice({
       state.isSuccess = true;
       state.message = action.payload;
     },
-    actionShowDialog: (state) => {
-      state.isShowDialog = true;
+    actionShowDialog: (state, action) => {
+      const typeDialog = action.payload;
+      switch (typeDialog) {
+        case GLOBAL_VARIABLE.DIALOG_MESSAGE:
+          state.isShowDialogMessage = true;
+          break;
+        case GLOBAL_VARIABLE.DIALOG_EDIT_POST:
+          state.isShowDialogEditPost = true;
+          break;
+        default:
+          break;
+      }
     },
-    actionHideDialog: (state) => {
-      state.isShowDialog = false;
+    actionHideDialog: (state, action) => {
+      const typeDialog = action.payload;
+      switch (typeDialog) {
+        case GLOBAL_VARIABLE.DIALOG_MESSAGE:
+          state.isShowDialogMessage = false;
+          break;
+        case GLOBAL_VARIABLE.DIALOG_EDIT_POST:
+          state.isShowDialogEditPost = false;
+          break;
+        default:
+          break;
+      }
     },
     actionOpenDrawer: (state) => {
       state.isOpenDrawer = true;

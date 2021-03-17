@@ -1,4 +1,5 @@
 import { delay, put } from "@redux-saga/core/effects";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
 import {
   actionFailed,
   actionHideDialog,
@@ -8,13 +9,13 @@ import {
 
 export function* handlerSuccessSaga(message) {
   yield put(actionSuccess(message));
-  yield put(actionShowDialog());
+  yield put(actionShowDialog(GLOBAL_VARIABLE.DIALOG_MESSAGE));
   yield delay(2000);
-  yield put(actionHideDialog());
+  yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_MESSAGE));
 }
 export function* handlerFailSaga(error) {
   yield put(actionFailed(error.message || error));
-  yield put(actionShowDialog());
+  yield put(actionShowDialog(GLOBAL_VARIABLE.DIALOG_MESSAGE));
   yield delay(2000);
-  yield put(actionHideDialog());
+  yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_MESSAGE));
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import GLOBAL_VARIABLE from "common-components/utils/global_variable";
 import queryString from "query-string";
 import {
   actionRefreshToken,
@@ -8,8 +9,8 @@ import rootStore from "rootStore";
 import localStorageService from "./localStorageService";
 
 const axiosClient = axios.create({
-  // baseURL: process.env.REACT_APP_BASE_URL_DEV,
-  baseURL: process.env.REACT_APP_BASE_URL_PRO,
+  // baseURL: GLOBAL_VARIABLE.URL_DEV,
+  baseURL: GLOBAL_VARIABLE.URL_PRODUCTION,
   headers: {
     "content-type": "application/json",
   },

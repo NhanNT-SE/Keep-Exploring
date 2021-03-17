@@ -1,5 +1,5 @@
 import localStorageService from "api/localStorageService";
-import DialogComponent from "common-components/dialog/dialog";
+import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import DrawerComponent from "common-components/drawer/drawer";
 import HeaderComponent from "common-components/header/header";
 import LoadingComponent from "common-components/loading/loading";
@@ -31,7 +31,7 @@ function MainPage() {
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
-      <DialogComponent />
+      <DialogMessage />
       <HeaderComponent user={user} />
       <DrawerComponent user={user} />
       <main className={`${classes.content} page-container`}>

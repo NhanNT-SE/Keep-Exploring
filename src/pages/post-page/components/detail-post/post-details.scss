@@ -3,14 +3,6 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  .carousel-container {
-    #overlay_panel {
-      width: 450px;
-      height: 450px;
-      background-repeat: no-repeat;
-      background-size: "100% 100%";
-    }
-  }
   .content-container {
     flex: 1;
     border-radius: 4px;
@@ -42,17 +34,6 @@
             align-items: center;
             justify-content: space-between;
             display: flex;
-            #overlay_panel_like {
-              min-width: 250px;
-              max-height: 250;
-              .p-overlaypanel-content {
-                max-height: 250px;
-                overflow: auto;
-              }
-              .p-listbox-list-wrapper {
-                max-height: 250px;
-              }
-            }
             .tag-status {
               width: 200px;
             }
@@ -89,25 +70,6 @@
             overflow: auto;
           }
         }
-      }
-    }
-  }
-  .dialog-edit {
-    .p-dialog-content {
-      .owner {
-        flex-direction: row;
-        display: flex;
-        align-items: center;
-        p {
-          margin-left: 16px;
-          font-weight: bold;
-        }
-      }
-      h5 {
-        margin: 8px 0px;
-      }
-      textarea {
-        width: 100%;
       }
     }
   }
