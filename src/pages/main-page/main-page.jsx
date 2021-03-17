@@ -1,4 +1,4 @@
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import DrawerComponent from "common-components/drawer/drawer";
 import HeaderComponent from "common-components/header/header";

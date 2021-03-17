@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";

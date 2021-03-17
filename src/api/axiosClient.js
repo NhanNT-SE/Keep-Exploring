@@ -6,7 +6,7 @@ import {
   actionRefreshTokenStarted,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
-import localStorageService from "./localStorageService";
+import localStorageService from "../utils/localStorageService";
 
 const axiosClient = axios.create({
   // baseURL: GLOBAL_VARIABLE.URL_DEV,

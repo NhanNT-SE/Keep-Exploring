@@ -11,7 +11,7 @@ import { PowerSettingsNew, AccountCircle } from "@material-ui/icons";
 import { Avatar, ListItemIcon, Typography } from "@material-ui/core";
 import "./header-menu.scss";
 import { useDispatch } from "react-redux";
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 import { actionLogout } from "redux/slices/userSlice";
 const useStyles = makeStyles((theme) => ({
   paper: {

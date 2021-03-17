@@ -1,5 +1,5 @@
 import axiosClient from "api/axiosClient";
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 import userApi from "api/userApi";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { call, put, takeLatest } from "redux-saga/effects";

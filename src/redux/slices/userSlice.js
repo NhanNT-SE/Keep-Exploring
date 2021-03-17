@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 const userStorage = JSON.parse(localStorageService.getUser());
 const userSlice = createSlice({
   name: "user",
