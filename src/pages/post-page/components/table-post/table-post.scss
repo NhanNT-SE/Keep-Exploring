@@ -23,6 +23,7 @@
   .p-datatable-scrollable-wrapper .p-datatable-scrollable-view {
     .post-status {
       padding: 4px 20px;
+      width: 100%;
       &.status-done {
         background-color: #c8e6c9;
         color: #256029;
@@ -73,5 +74,8 @@
         cursor: pointer;
       }
     }
+  }
+  .p-toast{
+    z-index: 1202 !important;
   }
 }

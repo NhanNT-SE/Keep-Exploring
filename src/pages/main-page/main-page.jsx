@@ -10,6 +10,7 @@ import NotifyPage from "pages/notify-page/notify-page";
 import PostDetailsPage from "pages/post-page/components/detail-post/post-details";
 import PostPage from "pages/post-page/post-page";
 import StatisticsPage from "pages/statistics-page/statistics-page";
+import UserDetailsPage from "pages/user-page/components/user-details-page/user-details";
 import UserPage from "pages/user-page/user-page";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -38,6 +39,11 @@ function MainPage() {
           <Switch>
             <Route exact path="/home" component={HomePage}></Route>
             <Route exact path="/user" component={UserPage}></Route>
+            <Route
+              exact
+              path="/user/:userId"
+              component={UserDetailsPage}
+            ></Route>
             <Route exact path="/post" component={PostPage}></Route>
             <Route
               exact
