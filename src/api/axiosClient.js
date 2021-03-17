@@ -1,5 +1,5 @@
 import axios from "axios";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import queryString from "query-string";
 import {
   actionRefreshToken,

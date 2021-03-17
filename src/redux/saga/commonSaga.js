@@ -1,5 +1,5 @@
 import { delay, put } from "@redux-saga/core/effects";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import {
   actionFailed,
   actionHideDialog,

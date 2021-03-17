@@ -3,7 +3,7 @@ import DialogEditPost from "common-components/dialog/dialog-edit-post/dialog-edi
 import OverlayUserLike from "common-components/overlay-panels/ovelay-user-like/overlay-user-like";
 import OverLayPanelImagePost from "common-components/overlay-panels/overlay-image-post/overlay-images-post";
 import { PostImageTemplate } from "common-components/template/post-image-template/post-image-template";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Carousel } from "primereact/carousel";
 import { TabPanel, TabView } from "primereact/tabview";
@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import "./post-details.scss";
-
 function PostDetailsPage() {
   const likeList = [
     {
@@ -310,24 +309,6 @@ function PostDetailsPage() {
     isMounted.current = true;
   }, []);
 
-  const responsiveOptions = [
-    {
-      breakpoint: "1024px",
-      numVisible: 3,
-      numScroll: 3,
-    },
-    {
-      breakpoint: "600px",
-      numVisible: 2,
-      numScroll: 2,
-    },
-    {
-      breakpoint: "480px",
-      numVisible: 1,
-      numScroll: 1,
-    },
-  ];
-
   return (
     <div className="post-details-container">
       <div className="carousel-container">
@@ -335,7 +316,7 @@ function PostDetailsPage() {
           value={products}
           numVisible={4}
           numScroll={2}
-          responsiveOptions={responsiveOptions}
+          responsiveOptions={GLOBAL_VARIABLE.RESPONSIVE_OPTIONS}
           itemTemplate={(product) => (
             <PostImageTemplate
               product={product}

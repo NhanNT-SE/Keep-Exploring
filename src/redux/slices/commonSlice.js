@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import localStorageService from "api/localStorageService";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 const userStorage = JSON.parse(localStorageService.getUser());
 const commonSlice = createSlice({
   name: "common",

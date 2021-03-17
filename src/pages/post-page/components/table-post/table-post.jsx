@@ -13,7 +13,7 @@ import {
   StatusBodyTemplate,
   StatusItemTemplate,
 } from "common-components/template/status-template/status-template";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";

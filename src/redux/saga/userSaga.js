@@ -1,7 +1,7 @@
 import axiosClient from "api/axiosClient";
 import localStorageService from "api/localStorageService";
 import userApi from "api/userApi";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
 import { actionLoading } from "redux/slices/commonSlice";

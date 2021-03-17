@@ -1,6 +1,6 @@
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
 import { StatusItemTemplate } from "common-components/template/status-template/status-template";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 

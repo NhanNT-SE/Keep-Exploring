@@ -1,6 +1,6 @@
 import { StatusItemTemplate } from "common-components/template/status-template/status-template";
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
-import GLOBAL_VARIABLE from "common-components/utils/global_variable";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
