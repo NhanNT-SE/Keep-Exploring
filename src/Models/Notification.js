@@ -16,10 +16,16 @@ const NotificaionSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'Post',
 		},
-
+		idBlog: {
+			type: Schema.Types.ObjectId,
+			ref: 'Blog',
+		},
 		content: {
 			type: String,
 			enum: ['like', 'comment', 'moderated', 'unmoderated'],
+		},
+		contentAdmin: {
+			type: String,
 		},
 	},
 	{ collection: 'Notification' }

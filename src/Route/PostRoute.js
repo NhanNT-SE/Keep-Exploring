@@ -30,6 +30,7 @@ const upload = multer({ storage: storage });
 
 //Get Method
 router.get('/', passport.authenticate('jwt'), postController.getPostList);
+router.get('/like', passport.authenticate('jwt', { session: false }), postController.getLikeList);
 router.get('/:idPost', postController.getPost);
 
 //Post Method

@@ -32,9 +32,9 @@ router.get('/', passport.authenticate('jwt'), BlogController.getAll);
 //Post Method
 router.post('/add', passport.authenticate('jwt'), upload.array('image_blog', 10), BlogController.createBlog);
 
-//Put method
-router.put('/status', passport.authenticate('jwt'), BlogController.updateStatus);
-router.put('/like', passport.authenticate('jwt'), BlogController.likeBlog);
+//Patch method
+router.patch('/status', passport.authenticate('jwt'), BlogController.updateStatus);
+router.patch('/like', passport.authenticate('jwt'), BlogController.likeBlog);
 
 //Delete Method
 router.delete('/delete/:idBlog', passport.authenticate('jwt'), BlogController.deleteBlog);

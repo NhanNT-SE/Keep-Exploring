@@ -11,6 +11,7 @@ const addressRouter = require('./src/Route/AddressRoute');
 const commentRouter = require('./src/Route/CommentRoute');
 const apiDocRouter = require('./src/Route/APIDocsRoute');
 const blogRouter = require('./src/Route/BlogRoute');
+const notiRouter = require('./src/Route/NotificationRoute');
 
 const mongoString = 'mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1';
 const port = process.env.PORT || 3000;
@@ -35,6 +36,7 @@ app.use('/post', postRouter);
 app.use('/address', addressRouter);
 app.use('/comment', commentRouter);
 app.use('/blog', blogRouter);
+app.use('/notification', notiRouter);
 
 //Kết nối với mongo database
 mongoose
@@ -51,14 +53,26 @@ mongoose
 		console.error(`Error connecting to the database. \n${err}`);
 	});
 
+<<<<<<< HEAD
+//Config next() function
+// Handler 404 error page not found
+=======
+>>>>>>> back-end
 app.use((req, res, next) => {
 	const error = new Error('Not found');
 	error.status = 404;
 	next(error);
 });
+<<<<<<< HEAD
+// Handler custom error page not found
+app.use((error, req, res, next) => {
+	res.status(error.status || 500);
+	res.status(error.status).send({
+=======
 app.use((error, req, res, next) => {
 	res.status(error.status || 500);
 	res.send({
+>>>>>>> back-end
 		error: {
 			status: error.status || 500,
 			message: error.message,
@@ -66,4 +80,9 @@ app.use((error, req, res, next) => {
 	});
 });
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> back-end
 app.listen(port, console.log(`start on port ${port}`));
