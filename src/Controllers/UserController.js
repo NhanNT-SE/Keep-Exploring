@@ -112,7 +112,7 @@ const signIn = async (req, res, next) => {
             email: user.email,
             role: user.role,
             displayName: user.displayName,
-            imageUser: user.imgUser,
+            imgUser: user.imgUser,
             accessToken,
             refreshToken,
           },

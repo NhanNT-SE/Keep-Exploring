@@ -29,12 +29,7 @@ const uploadPost = multer({ storage: storagePost });
 const uploadBlog = multer({ storage: storageBlog });
 
 // GET Method
-<<<<<<< HEAD
 router.get('/getByPost', commentController.getCommentbyPost);
-router.get('/getByBlog', commentController.getCommentbyPost);
-=======
-router.get('/getByPost', commentController.getCommentByPost);
->>>>>>> back-end
 
 //POST Method
 router.post(
@@ -43,21 +38,7 @@ router.post(
 	uploadPost.single('image_comment'),
 	commentController.createCommentPost
 );
-<<<<<<< HEAD
-router.post(
-	'/blog',
-	passport.authenticate('jwt'),
-	uploadBlog.single('image_comment'),
-	commentController.createCommentBlog
-);
-
-//DELETE Method
-router.delete('/deleteByPost/:idPost', commentController.deleteCommentbyPost);
-router.delete('/deleteByBlog/:idBlog', commentController.deleteCommentbyBlog);
-router.delete('/deletebyId/:idComment', commentController.deleteCommentbyID);
-=======
-router.post('/deleteByPost', commentController.deleteCommentByPost);
-router.post('/deletebyId/:idComment', commentController.deleteCommentByID);
->>>>>>> back-end
+router.post('/deleteByPost', commentController.deleteCommentbyPost);
+router.post('/deletebyId/:idComment', commentController.deleteCommentbyID);
 
 module.exports = router;
