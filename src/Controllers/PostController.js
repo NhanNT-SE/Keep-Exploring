@@ -1,98 +1,116 @@
-const Post = require('../Models/Post');
-const Address = require('../Models/Address');
-const fs = require('fs');
-const Notification = require('../Models/Notification');
-const { createNotification } = require('./NotificationController');
+const Post = require("../Models/Post");
+const Address = require("../Models/Address");
+const fs = require("fs");
+const Notification = require("../Models/Notification");
+const { createNotification } = require("./NotificationController");
 
 const createPost = async (req, res, next) => {
-	try {
-		const user = req.user;
-		var img_list = new Array();
-		var i;
+  try {
+    const user = req.user;
+    var img_list = new Array();
+    var i;
 
-		//Luu string hinh anh vao database
-		const files = req.files;
-		const length = files.length;
-		for (i = 0; i < length; ++i) {
-			img_list.push(files[i].filename);
-		}
+    //Luu string hinh anh vao database
+    const files = req.files;
+    const length = files.length;
+    for (i = 0; i < length; ++i) {
+      img_list.push(files[i].filename);
+    }
 
-		const post = new Post({
-			...req.body,
-			owner: user._id,
-			imgs: img_list,
-		});
+    const post = new Post({
+      ...req.body,
+      owner: user._id,
+      imgs: img_list,
+    });
 
-		await post.save();
+    await post.save();
 
-		//Tim address de push idPost vao
-		const addressID = req.body.address;
-		const addressPost = await Address.findById(addressID);
-		addressPost.idPost = post._id;
-		await addressPost.save();
+    //Tim address de push idPost vao
+    const addressID = req.body.address;
+    const addressPost = await Address.findById(addressID);
+    addressPost.idPost = post._id;
+    await addressPost.save();
 
-		//Tao notify khi co nguoi tao bai viet
-		const notify = new Notification({
-			idUser: user._id,
-			idPost: post._id,
-			status: 'new',
-			content: 'unmoderated',
-		});
-		await createNotification(notify);
+    //Tao notify khi co nguoi tao bai viet
+    const notify = new Notification({
+      idUser: user._id,
+      idPost: post._id,
+      status: "new",
+      content: "unmoderated",
+    });
+    await createNotification(notify);
 
-		return res.status(200).send({ data: { post }, err: '', status: 200, msg: 'create Post successfully' });
-	} catch (error) {
-		next(error);
-	}
+    return res
+      .status(200)
+      .send({
+        data: { post },
+        err: "",
+        status: 200,
+        msg: "create Post successfully",
+      });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deletePost = async (req, res, next) => {
-	try {
-		const { postID } = req.params;
-		const user = req.user;
+  try {
+    const { postID } = req.params;
+    const user = req.user;
 
-		const postFound = await Post.findById(postID);
+    const postFound = await Post.findById(postID);
 
-		if (postFound) {
-			if (user._id == postFound.owner.toString() || user.role == 'admin') {
-				const len = postFound.imgs.length;
+    if (postFound) {
+      if (user._id == postFound.owner.toString() || user.role == "admin") {
+        const len = postFound.imgs.length;
 
-				for (let i = 0; i < len; i++) {
-					fs.unlinkSync('src/public/images/post/' + postFound.imgs[i]);
-				}
-				await Post.findByIdAndDelete(postID);
-				await Address.findOneAndDelete({ idPost: postID });
+        for (let i = 0; i < len; i++) {
+          fs.unlinkSync("src/public/images/post/" + postFound.imgs[i]);
+        }
+        await Post.findByIdAndDelete(postID);
+        await Address.findOneAndDelete({ idPost: postID });
 
-				return res.status(200).send({ data: null, err: '', status: 200, message: 'Đã xóa bài viết' });
-			}
+        return res
+          .status(200)
+          .send({
+            data: null,
+            err: "",
+            status: 200,
+            message: "Đã xóa bài viết",
+          });
+      }
 
-			return handleCustomError(202, 'Bạn không phải admin/owner bài viết này');
-		}
+      return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
+    }
 
-		return handleCustomError(201, 'Bài viết không tồn tại');
-	} catch (error) {
-		next(error);
-	}
+    return handleCustomError(201, "Bài viết không tồn tại");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getLikeList = async (req, res, next) => {
-	try {
-		const { idPost } = req.body;
-		const postFound = await Post.findById(idPost).populate('like_list');
-		if (!postFound) {
-			handleCustomError(201, 'Bài viết không tồn tại hoặc đã bị xóa');
-		}
+  try {
+    const { idPost } = req.body;
+    const postFound = await Post.findById(idPost).populate("like_list");
+    if (!postFound) {
+      handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+    }
 
-		const likeList = postFound.like_list;
+    const likeList = postFound.like_list;
 
-		if (!likeList) {
-			handleCustomError(202, 'Chưa có người like bài viết này');
-		}
+    if (!likeList) {
+      handleCustomError(202, "Chưa có người like bài viết này");
+    }
 
-		return res.send({ data: { likeList }, status: 200, message: 'Danh sách những người like bài viết' });
-	} catch (error) {
-		next(error);
-	}
+    return res.send({
+      data: { likeList },
+      status: 200,
+      message: "Danh sách những người like bài viết",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getPost = async (req, res, next) => {
@@ -124,7 +142,7 @@ const getPostList = async (req, res, next) => {
 
       //Neu khong truyen status thi tra ve all post
       if (!status || status == "" || status == "all") {
-        post_list = await Post.find({});
+        post_list = await Post.find({}).populate("owner",["displayName","imgUser"]);
         return res.status(200).send({
           data: post_list,
           status: 200,
@@ -154,56 +172,56 @@ const getPostList = async (req, res, next) => {
 };
 
 const likePost = async (req, res, next) => {
-	try {
-		//Lay id bai viet va id nguoi dung tu req
-		const { idPost } = req.body;
-		const user = req.user;
+  try {
+    //Lay id bai viet va id nguoi dung tu req
+    const { idPost } = req.body;
+    const user = req.user;
 
-		//Kiem tra bai viet co ton tai hay khong
-		const postFound = await Post.findById(idPost);
-		if (postFound) {
-			//Kiem tra nguoi dung da like bai viet hay chua
-			var i = 0;
-			var like_list = postFound.like_list;
-			const len = like_list.length;
+    //Kiem tra bai viet co ton tai hay khong
+    const postFound = await Post.findById(idPost);
+    if (postFound) {
+      //Kiem tra nguoi dung da like bai viet hay chua
+      var i = 0;
+      var like_list = postFound.like_list;
+      const len = like_list.length;
 
-			for (i; i < len; i++) {
-				//Neu nguoi dung da like bai viet thi doi thanh dislike- remove idUser khoi like_list
-				if ((user._id = like_list[i])) {
-					await postFound.like_list.splice(i, 1);
-					await postFound.save();
+      for (i; i < len; i++) {
+        //Neu nguoi dung da like bai viet thi doi thanh dislike- remove idUser khoi like_list
+        if ((user._id = like_list[i])) {
+          await postFound.like_list.splice(i, 1);
+          await postFound.save();
           return res.send({
             data: null,
             status: 201,
             message: "Đã bỏ thích bài viết",
           });
-				}
-			}
+        }
+      }
 
-			//Tao notify khi co nguoi like bai viet
-			const notify = new Notification({
-				idUser: postFound.owner.toString(),
-				idPost: idPost,
-				status: 'new',
-				content: 'like',
-			});
-			await createNotification(notify);
+      //Tao notify khi co nguoi like bai viet
+      const notify = new Notification({
+        idUser: postFound.owner.toString(),
+        idPost: idPost,
+        status: "new",
+        content: "like",
+      });
+      await createNotification(notify);
 
-			//Con neu nguoi dung chua like bai viet thi push idUser vao like_list
-			await postFound.like_list.push(user._id);
-			await postFound.save();
+      //Con neu nguoi dung chua like bai viet thi push idUser vao like_list
+      await postFound.like_list.push(user._id);
+      await postFound.save();
 
       return res.send({
         data: null,
         status: 200,
         message: "Đã thích bài viết",
       });
-		}
+    }
 
     handlerCustomError(202, "Bài viết không tồn tại");
-	} catch (error) {
-		next(error);
-	}
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updatePost = async (req, res, next) => {
@@ -280,68 +298,68 @@ const updatePost = async (req, res, next) => {
 };
 
 const updateStatus = async (req, res, next) => {
-	try {
-		const { idPost, status } = req.body;
+  try {
+    const { idPost, status } = req.body;
 
-		//Kiem tra role cua nguoi dung, chi co admin moi duoc update status
-		const { role } = req.user;
+    //Kiem tra role cua nguoi dung, chi co admin moi duoc update status
+    const { role } = req.user;
 
-		if (role === 'admin') {
-			//Kiem tra co ton tai bai viet
-			const postFound = await Post.findById(idPost);
+    if (role === "admin") {
+      //Kiem tra co ton tai bai viet
+      const postFound = await Post.findById(idPost);
 
-			//Neu ton tai thi admin cap nhat status,
-			if (postFound) {
-				postFound.status = status;
+      //Neu ton tai thi admin cap nhat status,
+      if (postFound) {
+        postFound.status = status;
 
-				await Post.findByIdAndUpdate(idPost, postFound);
+        await Post.findByIdAndUpdate(idPost, postFound);
 
-				//Tao notify
-				const notify = new Notification({
-					idUser: postFound.owner.toString(),
-					idPost: idPost,
-					status: 'new',
-				});
-				if (status == 'done') {
-					notify.content = 'moderated';
-				} else {
-					notify.content = 'unmoderated';
-				}
+        //Tao notify
+        const notify = new Notification({
+          idUser: postFound.owner.toString(),
+          idPost: idPost,
+          status: "new",
+        });
+        if (status == "done") {
+          notify.content = "moderated";
+        } else {
+          notify.content = "unmoderated";
+        }
 
-				await createNotification(notify);
+        await createNotification(notify);
 
         return res.send({
           data: null,
           status: 200,
           message: "Cập nhật bài viết thành công",
         });
-			}
+      }
 
-			//Neu khong ton tai bai post se tra ve client status code la 201
-	 handlerCustomError(201, "Bài viết không tồn tại");
-		}
+      //Neu khong ton tai bai post se tra ve client status code la 201
+      handlerCustomError(201, "Bài viết không tồn tại");
+    }
 
-		//Khi role nguoi dung khong phai admin thi tra ve status code la 202
+    //Khi role nguoi dung khong phai admin thi tra ve status code la 202
     handlerCustomError(201, "Bạn không có quyền cập nhật trạng thái bài viết");
-	} catch (error) {
-		next(error);
-	}
+  } catch (error) {
+    next(error);
+  }
 };
 
 const handleCustomError = (status, message) => {
-	const err = new Error();
-	err.status = status || 500;
-	err.message = message;
-	throw err;
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
 };
 
 module.exports = {
-	createPost,
-	deletePost,
-	getLikeList,
-	getPost,
-	getPostList,
-	likePost,
-	updatePost,
-	updateStatus,
+  createPost,
+  deletePost,
+  getLikeList,
+  getPost,
+  getPostList,
+  likePost,
+  updatePost,
+  updateStatus,
 };
