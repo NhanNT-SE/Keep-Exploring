@@ -71,7 +71,7 @@ function HeaderMenu(props) {
           onClick={handleToggle}
           src={
             user
-              ? user.imageUser
+              ? user.imgUser
               : `${process.env.PUBLIC_URL}/images/avatar1.png`
           }
           alt="avatar"
@@ -105,7 +105,7 @@ function HeaderMenu(props) {
                         <img
                           src={
                             user
-                              ? user.imageUser
+                              ? user.imgUser
                               : `${process.env.PUBLIC_URL}/images/avatar1.png`
                           }
                           alt="avatar"

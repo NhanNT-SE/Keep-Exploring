@@ -8,6 +8,8 @@ const postSlice = createSlice({
   },
   reducers: {
     actionGetAllPost: () => {},
+    actionGetPost: () => {},
+    actionUpdatePost: () => {},
     actionSetPostList: (state, action) => {
       state.postList = action.payload;
     },
@@ -21,8 +23,10 @@ const postSlice = createSlice({
 });
 export const {
   actionGetAllPost,
+  actionGetPost,
   actionSetPostList,
   actionSetSelectedPost,
   actionSetSelectedPostList,
+  actionUpdatePost,
 } = postSlice.actions;
 export default postSlice.reducer;

@@ -10,7 +10,7 @@ const commonSlice = createSlice({
     isSuccess: false,
     message: "",
     isShowDialogMessage: false,
-    isShowDialogEditPost: false,
+    isShowDialogEditPost: true,
     isOpenDrawer: false,
     isRemember: userStorage ? userStorage.remember : false,
   },

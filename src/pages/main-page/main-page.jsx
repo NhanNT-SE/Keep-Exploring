@@ -27,7 +27,9 @@ function MainPage() {
       history.push("/login");
     }
   }, [user]);
-
+  useEffect(() => {
+    console.log("isloading", loadingStore);
+  }, [loadingStore]);
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}

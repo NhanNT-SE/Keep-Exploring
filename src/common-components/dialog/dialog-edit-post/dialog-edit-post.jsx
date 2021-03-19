@@ -10,7 +10,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog } from "redux/slices/commonSlice";
 import "./dialog-edit-post.scss";
+import { actionUpdatePost } from "redux/slices/postSlice";
 function DialogEditPost(props) {
+  const { post } = props;
+  const { owner } = post;
   const [selectedStatus, setSelectedStatus] = useState(null);
   const isShowDialog = useSelector(
     (state) => state.common.isShowDialogEditPost
@@ -25,6 +28,14 @@ function DialogEditPost(props) {
       setSelectedStatus(e.value);
     }
   };
+  const updatePost = () => {
+    const body = {
+      idPost: post._id,
+      status: selectedStatus,
+      content: notify,
+    };
+    dispatch(actionUpdatePost(body));
+  };
   const renderFooter = () => {
     return (
       <div>
@@ -33,15 +44,15 @@ function DialogEditPost(props) {
           label="Delete"
           icon="pi pi-trash"
           className="p-button-danger"
-          disabled={notify ? false : true}
+          disabled={notify && selectedStatus ? false : true}
           onClick={hideDialog}
         />
         <Button
           label="Submit"
           icon="pi pi-check"
-          disabled={notify ? false : true}
+          disabled={notify && selectedStatus ? false : true}
           className="p-button-success"
-          onClick={hideDialog}
+          onClick={updatePost}
         />
       </div>
     );
@@ -57,22 +68,23 @@ function DialogEditPost(props) {
     >
       <div className="owner">
         <Avatar
-          label="AV"
+          image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${owner.imgUser}`}
+          imageAlt="avatar"
           className="p-mr-2"
           style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
           shape="circle"
         />
-        <p>Supper Admin</p>
+        <p>{owner.displayName}</p>
       </div>
       <Dropdown
         value={selectedStatus}
-        options={GLOBAL_VARIABLE.STATUS_LIST}
+        options={GLOBAL_VARIABLE.STATUS_LIST.filter((e) => e != post.status)}
         onChange={onStatusChange}
-        placeholder="Select a Status"
+        placeholder={post.status.toUpperCase().replace("_", " ")}
         itemTemplate={StatusItemTemplate}
         valueTemplate={SelectedStatusTemplate}
       />
-      <h5>Send notification for user</h5>
+      <h5>Send notification for user: "{owner.displayName}"</h5>
       <InputTextarea
         rows={5}
         cols={30}

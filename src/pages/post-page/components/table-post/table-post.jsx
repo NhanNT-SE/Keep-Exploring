@@ -21,20 +21,21 @@ import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { Toast } from "primereact/toast";
-import React, { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import {
+  actionGetAllPost,
   actionSetSelectedPost,
   actionSetSelectedPostList,
 } from "redux/slices/postSlice";
-import postList from "../../post-list.json";
 import "./table-post.scss";
 function TablePostComponent() {
   const toast = useRef(null);
   const dt = useRef(null);
   const columns = GLOBAL_VARIABLE.COLUMNS_POST;
-  const [posts, setPosts] = useState(postList);
+  const postList = useSelector((state) => state.post.postList);
+  const [posts, setPosts] = useState([]);
   const [deletePostsDialog, setDeletePostsDialog] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
@@ -42,9 +43,10 @@ function TablePostComponent() {
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedColumns, setSelectedColumns] = useState(columns);
   const dispatch = useDispatch();
+
   const history = useHistory();
   const editPost = (post) => {
-    dispatch(actionSetSelectedPost(post));
+    // dispatch(actionSetSelectedPost(post));
     history.push(`post/${post.id}`);
   };
 
@@ -89,7 +91,24 @@ function TablePostComponent() {
       />
     );
   };
+  useEffect(() => {
+    dispatch(actionGetAllPost());
+    dispatch(actionSetSelectedPost(null));
+  }, []);
+  useEffect(() => {
+    const resultList = JSON.parse(JSON.stringify(postList));
+    resultList.forEach((item) => {
+      const { province, ward, district, additional } = item.address;
+      if (additional) {
+        item.address = `${additional}, Phuong ${ward}, ${district}, ${province}`;
+      } else {
+        item.address = `${ward}, ${district}, ${province}`;
+      }
+      item.id = item._id;
+    });
 
+    setPosts(resultList);
+  }, [postList]);
   const header = (
     <div className="table-header">
       <MultiSelect

@@ -21,7 +21,8 @@ function* handlerLogin(action) {
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
-    data.imageUser = `${GLOBAL_VARIABLE.URL_IMAGE}/user/${data.imageUser}`;
+    console.log(data)
+    data.imgUser = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.imgUser}`;
     if (data.role !== "admin") {
       yield call(() =>
         handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")
@@ -31,7 +32,7 @@ function* handlerLogin(action) {
       localStorageService.setUser({
         email: data.email,
         displayName: data.displayName,
-        imageUser: data.imageUser,
+        imgUser: data.imgUser,
         remember: isRemember,
       });
       yield call(() => handlerSuccessSaga("Login successfully!"));
