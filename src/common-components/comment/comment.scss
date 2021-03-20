@@ -1,6 +1,5 @@
 .comment {
   &-item {
-    
     border: 1px solid #4272d7;
     margin-bottom: 8px;
     padding: 0px 16px;
@@ -16,9 +15,16 @@
   &-user-name {
     font-weight: 800;
     cursor: pointer;
-
   }
-  &-content{
-      margin-bottom: 8px;
+  &-content {
+    margin-bottom: 8px;
+  }
+  &-image {
+    width: 250px;
+    height: 250px;
+    background-color: red;
+    margin-bottom: 8px;
+    border: 1px solid;
+    border-radius:4px ;
   }
 }

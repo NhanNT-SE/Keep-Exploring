@@ -46,7 +46,7 @@ function TablePostComponent() {
 
   const history = useHistory();
   const editPost = (post) => {
-    history.push(`post/${post.id}`);
+    history.push(`post/${post._id}`);
   };
 
   const hideDeletePostsDialog = () => {
@@ -97,13 +97,16 @@ function TablePostComponent() {
   useEffect(() => {
     const resultList = JSON.parse(JSON.stringify(postList));
     resultList.forEach((item) => {
-      const { province, ward, district, additional } = item.address;
-      if (additional) {
-        item.address = `${additional}, Phuong ${ward}, ${district}, ${province}`;
+      if (item.address) {
+        const { province, ward, district, additional } = item.address;
+        if (additional) {
+          item.address = `${additional}, Phuong ${ward}, ${district}, ${province}`;
+        } else {
+          item.address = `${ward}, ${district}, ${province}`;
+        }
       } else {
-        item.address = `${ward}, ${district}, ${province}`;
+        item.address = "";
       }
-      item.id = item._id;
     });
 
     setPosts(resultList);
@@ -237,7 +240,7 @@ function TablePostComponent() {
           dispatch(actionSetSelectedPostList(e.value));
           setSelectedPosts(e.value);
         }}
-        dataKey="id"
+        dataKey="_id"
         paginator
         resizableColumns={true}
         rows={10}

@@ -5,7 +5,7 @@ const userApi = {
     const url = "/user/signIn";
     return axiosClient.post(url, user);
   },
-  logout: () => {
+  logout: (userId) => {
     const url = "/user/logout";
     return axiosClient.get(url);
   },

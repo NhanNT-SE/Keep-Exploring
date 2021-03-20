@@ -40,7 +40,7 @@ function DialogEditPost(props) {
   };
   const deletePost = () => {
     const payload = {
-      idPost: post._id,
+      postId: post._id,
       history,
     };
     dispatch(actionDeletePost(payload));

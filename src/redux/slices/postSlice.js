@@ -3,12 +3,14 @@ const postSlice = createSlice({
   name: "post",
   initialState: {
     postList: [],
+    commentList: [],
     selectedPost: null,
     selectedPostList: null,
   },
   reducers: {
     actionDeletePost: () => {},
     actionGetAllPost: () => {},
+    actionGetCommentList: () => {},
     actionGetPost: () => {},
     actionUpdatePost: () => {},
     actionSetPostList: (state, action) => {
@@ -16,6 +18,9 @@ const postSlice = createSlice({
     },
     actionSetSelectedPost: (state, action) => {
       state.selectedPost = action.payload;
+    },
+    actionSetCommentList: (state, action) => {
+      state.commentList = action.payload;
     },
     actionSetSelectedPostList: (state, action) => {
       state.selectedPostList = action.payload;
@@ -25,8 +30,10 @@ const postSlice = createSlice({
 export const {
   actionDeletePost,
   actionGetAllPost,
+  actionGetCommentList,
   actionGetPost,
   actionSetPostList,
+  actionSetCommentList,
   actionSetSelectedPost,
   actionSetSelectedPostList,
   actionUpdatePost,
