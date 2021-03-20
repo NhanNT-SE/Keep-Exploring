@@ -100,7 +100,7 @@ const logOut = async (req, res, next) => {
 			});
 		}
 
-		handlerCustomError(201, 'Không tồn tại người dùng này trong hệ thống');
+	return	handlerCustomError(201, 'Không tồn tại người dùng này trong hệ thống');
 	} catch (error) {
 		next(error);
 	}
