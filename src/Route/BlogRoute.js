@@ -27,14 +27,20 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //Get Method
-router.get('/', passport.authenticate('jwt'), BlogController.getAll);
+router.get('/', passport.authenticate('jwt', { session: false }), BlogController.getAll);
+router.get('/:idBlog', passport.authenticate('jwt', { session: false }), BlogController.getBlogbyID);
 
 //Post Method
-router.post('/add', passport.authenticate('jwt'), upload.array('image_blog', 10), BlogController.createBlog);
+router.post(
+	'/add',
+	passport.authenticate('jwt', { session: false }),
+	upload.array('image_blog', 10),
+	BlogController.createBlog
+);
 
 //Patch method
-router.patch('/status', passport.authenticate('jwt'), BlogController.updateStatus);
-router.patch('/like', passport.authenticate('jwt'), BlogController.likeBlog);
+router.patch('/status', passport.authenticate('jwt', { session: false }), BlogController.updateStatus);
+router.patch('/like', passport.authenticate('jwt', { session: false }), BlogController.likeBlog);
 
 //Delete Method
 router.delete('/delete/:idBlog', passport.authenticate('jwt'), BlogController.deleteBlog);
