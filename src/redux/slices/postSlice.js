@@ -7,6 +7,7 @@ const postSlice = createSlice({
     selectedPostList: null,
   },
   reducers: {
+    actionDeletePost: () => {},
     actionGetAllPost: () => {},
     actionGetPost: () => {},
     actionUpdatePost: () => {},
@@ -22,6 +23,7 @@ const postSlice = createSlice({
   },
 });
 export const {
+  actionDeletePost,
   actionGetAllPost,
   actionGetPost,
   actionSetPostList,

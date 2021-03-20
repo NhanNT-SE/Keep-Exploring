@@ -10,10 +10,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog } from "redux/slices/commonSlice";
 import "./dialog-edit-post.scss";
-import { actionUpdatePost } from "redux/slices/postSlice";
+import { actionDeletePost, actionUpdatePost } from "redux/slices/postSlice";
+import { useHistory } from "react-router";
 function DialogEditPost(props) {
   const { post } = props;
   const { owner } = post;
+  const history = useHistory();
   const [selectedStatus, setSelectedStatus] = useState(null);
   const isShowDialog = useSelector(
     (state) => state.common.isShowDialogEditPost
@@ -32,9 +34,16 @@ function DialogEditPost(props) {
     const body = {
       idPost: post._id,
       status: selectedStatus,
-      content: notify,
+      contentAdmin: notify,
     };
     dispatch(actionUpdatePost(body));
+  };
+  const deletePost = () => {
+    const payload = {
+      idPost: post._id,
+      history,
+    };
+    dispatch(actionDeletePost(payload));
   };
   const renderFooter = () => {
     return (
@@ -44,8 +53,8 @@ function DialogEditPost(props) {
           label="Delete"
           icon="pi pi-trash"
           className="p-button-danger"
-          disabled={notify && selectedStatus ? false : true}
-          onClick={hideDialog}
+          disabled={notify ? false : true}
+          onClick={deletePost}
         />
         <Button
           label="Submit"

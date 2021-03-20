@@ -6,6 +6,7 @@ import {
   actionSetSelectedPost,
   actionGetPost,
   actionUpdatePost,
+  actionDeletePost,
 } from "redux/slices/postSlice";
 import {
   actionFailed,
@@ -15,7 +16,19 @@ import {
 } from "redux/slices/commonSlice";
 import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
 import GLOBAL_VARIABLE from "utils/global_variable";
-
+function* handlerDeletePost(action) {
+  try {
+    const { postId, history } = action.payload;
+    yield put(actionLoading("Loading deleting post...!"));
+    yield call(() => postApi.deletePost(postId));
+    yield call(() => handlerSuccessSaga("Delete post successfully!"));
+    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    history.push("/post");
+  } catch (error) {
+    console.log("post slice: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
 function* handlerGetAllPost() {
   try {
     yield put(actionLoading("Loading get all post list ...!"));
@@ -53,6 +66,10 @@ function* handlerUpdatePost(action) {
   }
 }
 // ***** Watcher Functions *****
+export function* sagaDeletePost() {
+  yield takeLatest(actionDeletePost.type, handlerDeletePost);
+}
+
 export function* sagaGetAllPost() {
   yield takeLatest(actionGetAllPost.type, handlerGetAllPost);
 }

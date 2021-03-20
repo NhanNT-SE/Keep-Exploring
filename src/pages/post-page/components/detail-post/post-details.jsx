@@ -179,7 +179,6 @@ function PostDetailsPage() {
   ];
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
-
   const [urlImageOverlayPanel, setUrlImageOverlayPanel] = useState("");
   const op = useRef(null);
   const opLike = useRef(null);
@@ -204,7 +203,6 @@ function PostDetailsPage() {
   useEffect(() => {
     dispatch(actionGetPost(postId));
   }, []);
-
   return (
     post && (
       <div className="post-details-container">
@@ -249,13 +247,27 @@ function PostDetailsPage() {
                 <i className="pi pi-comments">
                   <span>{`Comments(${post.comment.length})`}</span>
                 </i>
-                <Button
-                  icon="pi pi-pencil"
-                  className="p-button-rounded p-button-success p-mr-2"
-                  onClick={() =>
-                    dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST))
-                  }
-                />
+                <div className="btn-actions">
+                  <Button
+                    icon="pi pi-chevron-left"
+                    className="p-button-rounded p-button-success p-mr-2"
+                    onClick={() => history.push("/post")}
+                  />
+                  <Button
+                    icon="pi pi-pencil"
+                    className="p-button-rounded p-button-success p-mr-2"
+                    onClick={() =>
+                      dispatch(
+                        actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST)
+                      )
+                    }
+                  />
+                  <Button
+                    icon="pi pi-refresh"
+                    className="p-button-rounded p-button-success p-mr-2"
+                    onClick={() => dispatch(actionGetPost(postId))}
+                  />
+                </div>
               </div>
               <div className="title">
                 <h3>Tittle</h3>

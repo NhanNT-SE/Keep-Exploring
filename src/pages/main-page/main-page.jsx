@@ -16,6 +16,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import "./styles/main-page.scss";
+import BlogDetailsPage from "pages/blog-page/blog-details/blog-details";
 function MainPage() {
   const loadingStore = useSelector((state) => state.common.isLoading);
   const user = useSelector((state) => state.user.user);
@@ -53,6 +54,11 @@ function MainPage() {
               component={PostDetailsPage}
             ></Route>
             <Route exact path="/blog" component={BlogPage}></Route>
+            <Route
+              exact
+              path="/blog/:blogId"
+              component={BlogDetailsPage}
+            ></Route>
             <Route exact path="/notify" component={NotifyPage}></Route>
             <Route exact path="/statistics" component={StatisticsPage}></Route>
             <Redirect from="*" to="/home" />

@@ -46,7 +46,6 @@ function TablePostComponent() {
 
   const history = useHistory();
   const editPost = (post) => {
-    // dispatch(actionSetSelectedPost(post));
     history.push(`post/${post.id}`);
   };
 

@@ -1,0 +1,82 @@
+.table-blog-container {
+    flex: 1;
+    height: 100%;
+    .p-datatable {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      .p-datatable-scrollable {
+        &-wrapper {
+          flex: 1;
+          overflow: hidden;
+        }
+        &-view {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+        &-header {
+          overflow: unset;
+        }
+      }
+    }
+    .p-datatable-scrollable-wrapper .p-datatable-scrollable-view {
+      .post-status {
+        padding: 4px 20px;
+        width: 100%;
+        &.status-done {
+          background-color: #c8e6c9;
+          color: #256029;
+        }
+        &.status-pending {
+          background-color: #feedaf;
+          color: #8a5340;
+        }
+        &.status-need_update {
+          background-color: #ffcdd2;
+          color: #c63737;
+        }
+      }
+      .p-datatable-scrollable-header {
+        table {
+          thead {
+            tr th.p-filter-column {
+              overflow: unset;
+              .p-inputtext,
+              .p-dropdown {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+      .p-datatable-scrollable-body {
+        table {
+          tbody {
+            tr  td {
+              .actions-button{
+                display: flex;
+                justify-content: space-around;
+              }
+            }
+          }
+        }
+      }
+    }
+    .p-datatable-header {
+      padding: 0px;
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px 16px;
+        i {
+          cursor: pointer;
+        }
+      }
+    }
+    .p-toast{
+      z-index: 1202 !important;
+    }
+  }
+  

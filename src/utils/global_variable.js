@@ -1,8 +1,8 @@
 const GLOBAL_VARIABLE = {
-  // BASE_URL: process.env.REACT_APP_BASE_URL_PRO,
-  // BASE_URL_IMAGE: process.env.REACT_APP_URL_IMAGE_PRO,
-  BASE_URL: process.env.REACT_APP_BASE_URL_DEV,
-  BASE_URL_IMAGE: process.env.REACT_APP_URL_IMAGE_DEV,
+  BASE_URL: process.env.REACT_APP_BASE_URL_PRO,
+  BASE_URL_IMAGE: process.env.REACT_APP_URL_IMAGE_PRO,
+  // BASE_URL: process.env.REACT_APP_BASE_URL_DEV,
+  // BASE_URL_IMAGE: process.env.REACT_APP_URL_IMAGE_DEV,
   DIALOG_MESSAGE: "DIALOG_MESSAGE",
   DIALOG_EDIT_POST: "DIALOG_EDIT_POST",
   STATUS_LIST: ["pending", "done", "need_update"],
@@ -16,6 +16,12 @@ const GLOBAL_VARIABLE = {
     { field: "desc", header: "Description" },
     { field: "address", header: "Address" },
     { field: "rating", header: "Rating" },
+    { field: "created_on", header: "Date" },
+  ],
+  COLUMNS_BLOG: [
+    { field: "owner", header: "Owner" },
+    { field: "title", header: "Title" },
+    { field: "status", header: "Status" },
     { field: "created_on", header: "Date" },
   ],
   RESPONSIVE_OPTIONS: [
