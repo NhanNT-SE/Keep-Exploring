@@ -40,14 +40,12 @@ const createPost = async (req, res, next) => {
     });
     await createNotification(notify);
 
-    return res
-      .status(200)
-      .send({
-        data: { post },
-        err: "",
-        status: 200,
-        msg: "create Post successfully",
-      });
+    return res.status(200).send({
+      data: { post },
+      err: "",
+      status: 200,
+      msg: "create Post successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -57,7 +55,7 @@ const deletePost = async (req, res, next) => {
   try {
     const { postID } = req.params;
     const user = req.user;
-
+    console.log(postID);
     const postFound = await Post.findById(postID);
 
     if (postFound) {
@@ -70,14 +68,12 @@ const deletePost = async (req, res, next) => {
         await Post.findByIdAndDelete(postID);
         await Address.findOneAndDelete({ idPost: postID });
 
-        return res
-          .status(200)
-          .send({
-            data: null,
-            err: "",
-            status: 200,
-            message: "Đã xóa bài viết",
-          });
+        return res.status(200).send({
+          data: null,
+          err: "",
+          status: 200,
+          message: "Đã xóa bài viết",
+        });
       }
 
       return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
@@ -116,7 +112,10 @@ const getLikeList = async (req, res, next) => {
 const getPost = async (req, res, next) => {
   try {
     const { idPost } = req.params;
-    const post = await Post.findById(idPost).populate("owner");
+    const post = await Post.findById(idPost)
+      .populate("owner")
+      .populate("like_list", ["imgUser", "displayName"])
+      .populate("comment");
 
     if (post) {
       return res
@@ -142,7 +141,9 @@ const getPostList = async (req, res, next) => {
 
       //Neu khong truyen status thi tra ve all post
       if (!status || status == "" || status == "all") {
-        post_list = await Post.find({}).populate("owner",["displayName","imgUser"]);
+        post_list = await Post.find({})
+          .populate("owner", ["displayName", "imgUser"])
+          .populate("address");
         return res.status(200).send({
           data: post_list,
           status: 200,
@@ -299,7 +300,7 @@ const updatePost = async (req, res, next) => {
 
 const updateStatus = async (req, res, next) => {
   try {
-    const { idPost, status } = req.body;
+    const { idPost, status, contentAdmin } = req.body;
 
     //Kiem tra role cua nguoi dung, chi co admin moi duoc update status
     const { role } = req.user;
@@ -319,6 +320,7 @@ const updateStatus = async (req, res, next) => {
           idUser: postFound.owner.toString(),
           idPost: idPost,
           status: "new",
+          contentAdmin,
         });
         if (status == "done") {
           notify.content = "moderated";
@@ -329,7 +331,7 @@ const updateStatus = async (req, res, next) => {
         await createNotification(notify);
 
         return res.send({
-          data: null,
+          data: notify,
           status: 200,
           message: "Cập nhật bài viết thành công",
         });

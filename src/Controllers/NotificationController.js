@@ -1,4 +1,3 @@
-const e = require('express');
 const Notification = require('../Models/Notification');
 
 const createNotification = async (notify) => {

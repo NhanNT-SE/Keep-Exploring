@@ -29,7 +29,7 @@ const uploadPost = multer({ storage: storagePost });
 const uploadBlog = multer({ storage: storageBlog });
 
 // GET Method
-router.get('/getByPost', commentController.getCommentbyPost);
+router.get('/getByPost/:idPost', commentController.getCommentbyPost);
 
 //POST Method
 router.post(
