@@ -3,6 +3,7 @@ const Address = require("../Models/Address");
 const fs = require("fs");
 const Notification = require("../Models/Notification");
 const { createNotification } = require("./NotificationController");
+const User = require("../Models/User");
 
 const createPost = async (req, res, next) => {
   try {
@@ -31,6 +32,10 @@ const createPost = async (req, res, next) => {
     addressPost.idPost = post._id;
     await addressPost.save();
 
+    //Add post vào list post của user
+    await user.post.push(post._id);
+    await user.save();
+
     //Tao notify khi co nguoi tao bai viet
     const notify = new Notification({
       idUser: user._id,
@@ -38,13 +43,13 @@ const createPost = async (req, res, next) => {
       status: "new",
       content: "unmoderated",
     });
-    await createNotification(notify);
+    const notification = await createNotification(notify);
 
     return res.status(200).send({
-      data: { post },
+      data: { post, notification },
       err: "",
       status: 200,
-      msg: "create Post successfully",
+      msg: "Tạo bài viết thành công, bài viết đang được kiểm duyệt",
     });
   } catch (error) {
     next(error);
@@ -68,12 +73,17 @@ const deletePost = async (req, res, next) => {
         await Post.findByIdAndDelete(postID);
         await Address.findOneAndDelete({ idPost: postID });
 
-        return res.status(200).send({
-          data: null,
-          err: "",
-          status: 200,
-          message: "Đã xóa bài viết",
-        });
+        //Xoa bai post khoi postlist cua user
+        await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
+
+        return res
+          .status(200)
+          .send({
+            data: null,
+            err: "",
+            status: 200,
+            message: "Đã xóa bài viết",
+          });
       }
 
       return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
@@ -90,13 +100,13 @@ const getLikeList = async (req, res, next) => {
     const { idPost } = req.body;
     const postFound = await Post.findById(idPost).populate("like_list");
     if (!postFound) {
-      handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = postFound.like_list;
 
     if (!likeList) {
-      handleCustomError(202, "Chưa có người like bài viết này");
+      return handleCustomError(202, "Chưa có người like bài viết này");
     }
 
     return res.send({
@@ -114,15 +124,15 @@ const getPost = async (req, res, next) => {
     const { idPost } = req.params;
     const post = await Post.findById(idPost)
       .populate("owner")
-      .populate("like_list", ["imgUser", "displayName"])
-      .populate("comment");
+      .populate("comment")
+      .populate("like_list");
 
     if (post) {
       return res
         .status(200)
         .send({ data: post, status: 200, message: "Lấy dữ liệu thành công" });
     }
-    handlerCustomError(201, "Bài viết không tồn tại");
+    return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -141,9 +151,7 @@ const getPostList = async (req, res, next) => {
 
       //Neu khong truyen status thi tra ve all post
       if (!status || status == "" || status == "all") {
-        post_list = await Post.find({})
-          .populate("owner", ["displayName", "imgUser"])
-          .populate("address");
+        post_list = await Post.find({});
         return res.status(200).send({
           data: post_list,
           status: 200,
@@ -167,6 +175,15 @@ const getPostList = async (req, res, next) => {
       status: 200,
       message: "Lấy dữ liệu thành công",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPostListbyUser = async (req, res, next) => {
+  try {
+    const { idUser } = req.params;
+    const postList = await Post.find({ owner: idUser });
   } catch (error) {
     next(error);
   }
@@ -206,20 +223,20 @@ const likePost = async (req, res, next) => {
         status: "new",
         content: "like",
       });
-      await createNotification(notify);
+      const notification = await createNotification(notify);
 
       //Con neu nguoi dung chua like bai viet thi push idUser vao like_list
       await postFound.like_list.push(user._id);
       await postFound.save();
 
       return res.send({
-        data: null,
+        data: notification,
         status: 200,
         message: "Đã thích bài viết",
       });
     }
 
-    handlerCustomError(202, "Bài viết không tồn tại");
+    return handlerCustomError(202, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -283,15 +300,26 @@ const updatePost = async (req, res, next) => {
           status: "pending",
         };
         await Post.findByIdAndUpdate(idPost, newPost);
+
+        //Tao notify
+        const notify = new Notification({
+          idUser: postFound.owner.toString(),
+          idPost: idPost,
+          status: "new",
+          content: "unmoderated",
+        });
+        const notification = await createNotification(notify);
+
         return res.send({
-          data: newPost,
+          data: { newPost, notification },
           status: 200,
-          message: "Cập nhật bài viết thành công",
+          message:
+            "Cập nhật bài viết thành công, bài viết của bạn đang được kiểm duyệt",
         });
       }
 
       //Neu khong phai owner bai viet thi tra ve status code 201
-      handlerCustomError(201, "Bạn không thể cập nhật bài viết này");
+      return handlerCustomError(201, "Bạn không thể cập nhật bài viết này");
     }
   } catch (error) {
     next(error);
@@ -328,21 +356,24 @@ const updateStatus = async (req, res, next) => {
           notify.content = "unmoderated";
         }
 
-        await createNotification(notify);
+        const notification = await createNotification(notify);
 
         return res.send({
-          data: notify,
+          data: notification,
           status: 200,
           message: "Cập nhật bài viết thành công",
         });
       }
 
       //Neu khong ton tai bai post se tra ve client status code la 201
-      handlerCustomError(201, "Bài viết không tồn tại");
+      return handlerCustomError(201, "Bài viết không tồn tại");
     }
 
     //Khi role nguoi dung khong phai admin thi tra ve status code la 202
-    handlerCustomError(201, "Bạn không có quyền cập nhật trạng thái bài viết");
+    return handlerCustomError(
+      201,
+      "Bạn không có quyền cập nhật trạng thái bài viết"
+    );
   } catch (error) {
     next(error);
   }

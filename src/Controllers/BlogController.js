@@ -16,6 +16,7 @@ const createBlog = async (req, res, next) => {
       title,
       owner: user._id,
     });
+    blog.blog_detail = blog._id;
     await blog.save();
 
     const _id = blog._id;
@@ -80,20 +81,40 @@ const deleteBlog = async (req, res, next) => {
   }
 };
 
-const updateBlog = async (req, res, next) => {
+const getAll = async (req, res, next) => {
   try {
-    //Lay du lieu gui len tu phia client
-    const { idBlog, title, content_list } = req.body;
-    const files = req.files;
+    //Kiem tra role nguoi dung
+    const user = req.user;
+    const role = user.role;
 
-    //Kiem tra bai viet co ton tai
-    const blogFound = Blog.findById(idBlog);
-    const detailFound = Blog_Detail.findById(idBlog);
-    if (blogFound && detailFound) {
-      //Kiem tra bai viet co thay doi hinh anh khong
+    //Neu la admin thi co quyen xem tat ca bai viet
+    if (role == "admin") {
+      const blogList = await Blog.find({}).populate("Blog_Detail");
+      return res.status(200).send(blogList);
     }
-    // return res.status(201).send("Bai viet khong ton tai");
-    handlerCustomError(201, "This post doesn't exists");
+
+    //Khong phai admin thi chi xem nhung bai viet co status la done
+    const blogList_done = await Blog.find({ status: "done" });
+    return res.status(200).send(blogList_done);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBlogbyID = async (req, res, next) => {
+  try {
+    const { idBlog } = req.params;
+
+    const blogFound = await Blog.findById(idBlog)
+      .populate("blog_detail")
+      .populate("comment")
+      .populate("like_list");
+
+    if (blogFound) {
+      return res.send({ data: blogFound, status: 200, message: "" });
+    }
+
+    return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -136,9 +157,13 @@ const likeBlog = async (req, res, next) => {
         status: "new",
         content: "like",
       });
-      await createNotification(notify);
+      const notification = await createNotification(notify);
 
-      return res.send({ status: 201, data: null, message: "like" });
+      return res.send({
+        status: 201,
+        data: notification,
+        message: "Đã like bài viết",
+      });
     }
 
     //Neu bai viet khong ton tai thi tra ve res code 202
@@ -179,52 +204,24 @@ const updateStatus = async (req, res, next) => {
 
         return res
           .status(200)
-          .send({ status: 200, data: null, message: "Update successfully" });
+          .send({
+            status: 200,
+            data: null,
+            message: "Cập nhật bài viết thành công",
+          });
       }
 
       //Neu khong ton tai blog se tra ve client status code la 201
-      //   return res.status(201).send("Bai viet khong ton tai");
-      handlerCustomError(201, "this post doesn't exists");
+      return handlerCustomError(201, "Bài viết không tồn tại");
     }
 
     //Khi role nguoi dung khong phai admin thi tra ve status code la 202
-    // return res.status(202).send("Ban khong co quyen cap nhat status blog");
-    handlerCustomError(401, "You don't have permission for this action");
+    return handlerCustomError(202, "Bạn không có quyền cập nhật status blog");
   } catch (error) {
     next(error);
   }
 };
 
-const getAll = async (req, res, next) => {
-  try {
-    //Kiem tra role nguoi dung
-    const user = req.user;
-    const role = user.role;
-
-    //Neu la admin thi co quyen xem tat ca bai viet
-    if (role == "admin") {
-      const blogList = await Blog.find({}).populate("owner", [
-        "displayName",
-        "imgUser",
-      ]);
-      return res.status(200).send({
-        data: blogList,
-        status: 200,
-        message: "lấy dữ liệu thành công",
-      });
-    }
-
-    //Khong phai admin thi chi xem nhung bai viet co status la done
-    const blogList_done = await Blog.find({ status: "done" });
-    return res.status(200).send({
-      data: blogList_done,
-      status: 200,
-      message: "lấy dữ liệu thành công",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 const handlerCustomError = (status, message) => {
   const err = new Error();
   err.status = status || 500;
@@ -234,7 +231,8 @@ const handlerCustomError = (status, message) => {
 module.exports = {
   createBlog,
   deleteBlog,
+  getAll,
+  getBlogbyID,
   likeBlog,
   updateStatus,
-  getAll,
 };
