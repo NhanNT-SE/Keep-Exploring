@@ -87,7 +87,7 @@ const getAll = async (req, res, next) => {
 
 		//Neu la admin thi co quyen xem tat ca bai viet
 		if (role == 'admin') {
-			const blogList = await Blog.find({}).populate('Blog_Detail');
+			const blogList = await Blog.find({}).populate('blog_detail');
 			return res.status(200).send(blogList);
 		}
 
