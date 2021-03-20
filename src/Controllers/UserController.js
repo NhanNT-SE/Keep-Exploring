@@ -69,6 +69,19 @@ const getAnotherProfile = async (req, res, next) => {
 	}
 };
 
+const getAllUser = async (req, res, next) => {
+	try {
+		const user = req.user;
+		if (user.role == 'admin') {
+			const userList = await User.find();
+			return res.send({ data: userList, status: 201, message: 'Danh sách tất cả người dùng' });
+		}
+		return handlerCustomError(201, 'Bạn không phải admin');
+	} catch (error) {
+		next(error);
+	}
+};
+
 const logOut = async (req, res, next) => {
 	try {
 		const user = req.user;
@@ -225,6 +238,7 @@ const updateProfile = async (req, res, next) => {
 		next(error);
 	}
 };
+
 const handlerCustomError = (status, message) => {
 	const err = new Error();
 	err.status = status || 500;
@@ -233,6 +247,7 @@ const handlerCustomError = (status, message) => {
 };
 module.exports = {
 	changePass,
+	getAllUser,
 	getMyProfile,
 	getAnotherProfile,
 	logOut,
