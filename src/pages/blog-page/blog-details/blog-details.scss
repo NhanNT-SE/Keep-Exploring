@@ -69,19 +69,10 @@
             }
           }
 
-          .title,
-          .description {
-            h3,
-            p {
-              margin: 0px;
-            }
-            p {
-              font-weight: 600;
-            }
-          }
-          .description {
-            margin-top: 16px;
+          .content-details {
+            flex: 1;
             overflow: auto;
+            padding-top: 8px;
           }
           .comment-container {
             overflow: auto;

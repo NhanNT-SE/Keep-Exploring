@@ -123,7 +123,7 @@ function PostDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={commentList} />
+                <CommentComponent commentList={commentList} type="post" />
               </div>
             </TabPanel>
           </TabView>

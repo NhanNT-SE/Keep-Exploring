@@ -4,8 +4,9 @@ import { useHistory } from "react-router";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import "./comment.scss";
 function CommentComponent(props) {
-  const { commentList } = props;
+  const { commentList, type } = props;
   const history = useHistory();
+  console.log(commentList);
   return commentList.map((item) => (
     <div key={item._id} className="comment-item">
       <div className="comment-header">
@@ -27,7 +28,7 @@ function CommentComponent(props) {
         <div
           className="comment-image"
           style={{
-            background: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/comment/post/${item.img})`,
+            background: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/comment/${type}/${item.img})`,
           }}
         />
       )}

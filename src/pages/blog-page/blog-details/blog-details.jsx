@@ -10,6 +10,7 @@ import { useHistory, useParams } from "react-router";
 import { actionGetBlog } from "redux/slices/blogSlice";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
+import BlogContent from "../blog-content/blog-content";
 import "./blog-details.scss";
 function BlogDetailsPage() {
   const { blogId } = useParams();
@@ -33,7 +34,9 @@ function BlogDetailsPage() {
     };
     dispatch(actionGetBlog(payload));
   }, []);
-
+  useEffect(() => {
+    console.log("blog:", blog);
+  }, [blog]);
   return (
     blog && (
       <div className="blog-details-container">
@@ -86,7 +89,9 @@ function BlogDetailsPage() {
                 </div>
               </div>
               <div className="content-details">
-               
+                {blog.blog_detail.detail_list.map((item) => (
+                  <BlogContent blogDetail={item} key={item._id} />
+                ))}
               </div>
             </TabPanel>
             <TabPanel
@@ -95,7 +100,7 @@ function BlogDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={blog.comment} />
+                <CommentComponent commentList={blog.comment} type="blog" />
               </div>
             </TabPanel>
           </TabView>
