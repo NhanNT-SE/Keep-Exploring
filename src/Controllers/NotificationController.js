@@ -7,7 +7,7 @@ const createNotification = async (notify) => {
 
 		if (notiFound_list) {
 			let notiUpdate = null;
-			notiFound_list.forEach(async (item) => {
+			notiFound_list.forEach((item) => {
 				if (item.content == notify.content) {
 					item.status = 'new';
 					notiUpdate = item;
@@ -17,13 +17,14 @@ const createNotification = async (notify) => {
 
 			if (notiUpdate) {
 				await notiUpdate.save();
+				return notiUpdate;
 			} else {
 				await notify.save();
+				return notify;
 			}
-			return;
 		} else {
 			await notify.save();
-			return;
+			return notify;
 		}
 	} catch (error) {
 		return error;

@@ -36,6 +36,12 @@ const BlogSchema = new Schema(
 				ref: 'Comment',
 			},
 		],
+		blog_detail: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Blog_Detail',
+			},
+		],
 	},
 	{ collection: 'Blog' }
 );

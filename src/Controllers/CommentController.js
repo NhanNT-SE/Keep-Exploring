@@ -12,8 +12,8 @@ const createCommentPost = async (req, res, next) => {
 		const file = req.file;
 		const user = req.user;
 
-    //Kiem tra bai post con ton tai hay khong
-    const postFound = await Post.findById(idPost);
+		//Kiem tra bai post con ton tai hay khong
+		const postFound = await Post.findById(idPost);
 
 		if (postFound) {
 			//Kiem tra comment co hinh anh hay khong
@@ -31,12 +31,11 @@ const createCommentPost = async (req, res, next) => {
 				img,
 			});
 
-      //Luu comment vao database de lay id
-      await comment.save();
+			await comment.save();
 
-      //Push idComment vao bai Post
-      postFound.comment.push(comment._id);
-      await postFound.save();
+			//Push idComment vao bai Post
+			postFound.comment.push(comment._id);
+			await postFound.save();
 
 			//Tao notify khi co nguoi comment bai viet
 			const notify = new Notification({
@@ -45,11 +44,11 @@ const createCommentPost = async (req, res, next) => {
 				status: 'new',
 				content: 'comment',
 			});
-			await createNotification(notify);
+			const notification = await createNotification(notify);
 
 			//Thanh cong tra ve status code 200
 
-			return res.send({ data: { comment }, status: 200, message: 'Tạo bình luận thành công' });
+			return res.send({ data: { comment, notification }, status: 200, message: 'Tạo bình luận thành công' });
 		}
 
 		//Neu bai viet khong ton tai thi tra ve status code 201
@@ -100,10 +99,10 @@ const createCommentBlog = async (req, res, next) => {
 				status: 'new',
 				content: 'comment',
 			});
-			await createNotification(notify);
+			const notification = await createNotification(notify);
 
 			//Thanh cong tra ve status code 200
-			return res.send({ data: { comment }, status: 200, message: 'Tạo bình luận thành công' });
+			return res.send({ data: { comment, notification }, status: 200, message: 'Tạo bình luận thành công' });
 		}
 
 		//Neu bai viet khong ton tai thi tra ve status code 201
@@ -151,7 +150,7 @@ const deleteCommentbyPost = async (req, res, next) => {
 		const { idPost } = req.params;
 
 		if (user.role !== 'admin') {
-			handleCustomError(201, 'Bạn không có quyền xóa list comment này');
+			return handleCustomError(201, 'Bạn không có quyền xóa list comment này');
 		}
 
 		const commentList = await Comment.find({ idPost: idPost }, { img: 1, _id: 0 });
@@ -176,7 +175,7 @@ const deleteCommentbyBlog = async (req, res, next) => {
 		const { idBlog } = req.params;
 
 		if (user.role !== 'admin') {
-			handleCustomError(201, 'Bạn không có quyền xóa list comment này');
+			return handleCustomError(201, 'Bạn không có quyền xóa list comment này');
 		}
 
 		const commentList = await Comment.find({ idBlog: idBlog }, { img: 1, _id: 0 });
@@ -195,6 +194,72 @@ const deleteCommentbyBlog = async (req, res, next) => {
 	}
 };
 
+const editCommentBlog = async (req, res, next) => {
+	try {
+		const { idComment, content, deleteImg } = req.body;
+		const user = req.user;
+		const file = req.file;
+		const commentFound = await Comment.findById(idComment);
+
+		if (!commentFound) {
+			return handleCustomError(201, 'Bình luận không tồn tại');
+		}
+
+		if (user._id != commentFound.idUser.toString()) {
+			console.log(user._id);
+			console.log(commentFound.idUser);
+			return handleCustomError(202, 'Bạn không có quyền chỉnh sửa comment này');
+		}
+
+		if (commentFound.img && deleteImg) {
+			fs.unlinkSync('src/public/images/comment/blog/' + commentFound.img);
+		}
+
+		if (file) {
+			commentFound.img = file.filename;
+		}
+		commentFound.content = content;
+
+		await commentFound.save();
+		return res.send({ data: commentFound, status: 200, message: 'Chỉnh sửa bình luận thành công' });
+	} catch (error) {
+		next(error);
+	}
+};
+
+const editCommentPost = async (req, res, next) => {
+	try {
+		const { idComment, content, deleteImg } = req.body;
+		const user = req.user;
+		const file = req.file;
+		const commentFound = await Comment.findById(idComment);
+
+		if (!commentFound) {
+			return handleCustomError(201, 'Bình luận không tồn tại');
+		}
+
+		if (user._id != commentFound.idUser.toString()) {
+			console.log(user._id);
+			console.log(commentFound.idUser);
+			return handleCustomError(202, 'Bạn không có quyền chỉnh sửa comment này');
+		}
+
+		if (commentFound.img && deleteImg) {
+			fs.unlinkSync('src/public/images/comment/post/' + commentFound.img);
+		}
+
+		if (file) {
+			commentFound.img = file.filename;
+		}
+		commentFound.content = content;
+
+		await commentFound.save();
+		return res.send({ data: commentFound, status: 200, message: 'Chỉnh sửa bình luận thành công' });
+	} catch (error) {
+		next(error);
+	}
+};
+
 const getCommentbyPost = async (req, res, next) => {
 	try {
 		const { idPost } = req.params;
@@ -208,7 +273,7 @@ const getCommentbyPost = async (req, res, next) => {
 			return handleCustomError(202, 'Bài viết không tồn tại hoặc đã bị xóa');
 		}
 
-		return res.status(200).send(commentList);
+		return res.send({ data: commentList, status: 200, message: '' });
 	} catch (error) {
 		next(error);
 	}
@@ -225,7 +290,7 @@ const getCommentbyBlog = async (req, res, next) => {
 			}
 			return handleCustomError(202, 'Bài viết không tồn tại hoặc đã bị xóa');
 		}
-		return res.status(200).send(commentList);
+		return res.send({ data: commentList, status: 200, message: '' });
 	} catch (error) {
 		next(error);
 	}
@@ -243,6 +308,8 @@ module.exports = {
 	deleteCommentbyID,
 	deleteCommentbyPost,
 	deleteCommentbyBlog,
+	editCommentBlog,
+	editCommentPost,
 	getCommentbyPost,
 	getCommentbyBlog,
 };
