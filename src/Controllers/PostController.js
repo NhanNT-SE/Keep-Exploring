@@ -3,6 +3,7 @@ const Address = require('../Models/Address');
 const fs = require('fs');
 const Notification = require('../Models/Notification');
 const { createNotification } = require('./NotificationController');
+const User = require('../Models/User');
 
 const createPost = async (req, res, next) => {
 	try {
@@ -30,6 +31,10 @@ const createPost = async (req, res, next) => {
 		const addressPost = await Address.findById(addressID);
 		addressPost.idPost = post._id;
 		await addressPost.save();
+
+		//Add post vào list post của user
+		await user.post.push(post._id);
+		await user.save();
 
 		//Tao notify khi co nguoi tao bai viet
 		const notify = new Notification({
@@ -67,6 +72,9 @@ const deletePost = async (req, res, next) => {
 				}
 				await Post.findByIdAndDelete(postID);
 				await Address.findOneAndDelete({ idPost: postID });
+
+				//Xoa bai post khoi postlist cua user
+				await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
 
 				return res.status(200).send({ data: null, err: '', status: 200, message: 'Đã xóa bài viết' });
 			}
@@ -151,6 +159,15 @@ const getPostList = async (req, res, next) => {
 			status: 200,
 			message: 'Lấy dữ liệu thành công',
 		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const getPostListbyUser = async (req, res, next) => {
+	try {
+		const { idUser } = req.params;
+		const postList = await Post.find({ owner: idUser });
 	} catch (error) {
 		next(error);
 	}
