@@ -57,21 +57,21 @@ const createPost = async (req, res, next) => {
 };
 
 const deletePost = async (req, res, next) => {
-	try {
-		const { postID } = req.params;
-		const user = req.user;
+  try {
+    const { postID } = req.params;
+    const user = req.user;
 
-		const postFound = await Post.findById(postID);
+    const postFound = await Post.findById(postID);
 
-		if (postFound) {
-			if (user._id == postFound.owner.toString() || user.role == 'admin') {
-				const len = postFound.imgs.length;
+    if (postFound) {
+      if (user._id == postFound.owner.toString() || user.role == "admin") {
+        const len = postFound.imgs.length;
 
-				for (let i = 0; i < len; i++) {
-					fs.unlinkSync('src/public/images/post/' + postFound.imgs[i]);
-				}
-				await Post.findByIdAndDelete(postID);
-				await Address.findOneAndDelete({ idPost: postID });
+        for (let i = 0; i < len; i++) {
+          fs.unlinkSync("src/public/images/post/" + postFound.imgs[i]);
+        }
+        await Post.findByIdAndDelete(postID);
+        await Address.findOneAndDelete({ idPost: postID });
 
 				//Xoa bai post khoi postlist cua user
 				await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
@@ -79,13 +79,13 @@ const deletePost = async (req, res, next) => {
 				return res.status(200).send({ data: null, err: '', status: 200, message: 'Đã xóa bài viết' });
 			}
 
-			return handleCustomError(202, 'Bạn không phải admin/owner bài viết này');
-		}
+      return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
+    }
 
-		return handleCustomError(201, 'Bài viết không tồn tại');
-	} catch (error) {
-		next(error);
-	}
+    return handleCustomError(201, "Bài viết không tồn tại");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getLikeList = async (req, res, next) => {
@@ -307,33 +307,33 @@ const updatePost = async (req, res, next) => {
 };
 
 const updateStatus = async (req, res, next) => {
-	try {
-		const { idPost, status } = req.body;
+  try {
+    const { idPost, status } = req.body;
 
-		//Kiem tra role cua nguoi dung, chi co admin moi duoc update status
-		const { role } = req.user;
+    //Kiem tra role cua nguoi dung, chi co admin moi duoc update status
+    const { role } = req.user;
 
-		if (role === 'admin') {
-			//Kiem tra co ton tai bai viet
-			const postFound = await Post.findById(idPost);
+    if (role === "admin") {
+      //Kiem tra co ton tai bai viet
+      const postFound = await Post.findById(idPost);
 
-			//Neu ton tai thi admin cap nhat status,
-			if (postFound) {
-				postFound.status = status;
+      //Neu ton tai thi admin cap nhat status,
+      if (postFound) {
+        postFound.status = status;
 
-				await Post.findByIdAndUpdate(idPost, postFound);
+        await Post.findByIdAndUpdate(idPost, postFound);
 
-				//Tao notify
-				const notify = new Notification({
-					idUser: postFound.owner.toString(),
-					idPost: idPost,
-					status: 'new',
-				});
-				if (status == 'done') {
-					notify.content = 'moderated';
-				} else {
-					notify.content = 'unmoderated';
-				}
+        //Tao notify
+        const notify = new Notification({
+          idUser: postFound.owner.toString(),
+          idPost: idPost,
+          status: "new",
+        });
+        if (status == "done") {
+          notify.content = "moderated";
+        } else {
+          notify.content = "unmoderated";
+        }
 
 				const notification = await createNotification(notify);
 
@@ -356,19 +356,19 @@ const updateStatus = async (req, res, next) => {
 };
 
 const handleCustomError = (status, message) => {
-	const err = new Error();
-	err.status = status || 500;
-	err.message = message;
-	throw err;
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
 };
 
 module.exports = {
-	createPost,
-	deletePost,
-	getLikeList,
-	getPost,
-	getPostList,
-	likePost,
-	updatePost,
-	updateStatus,
+  createPost,
+  deletePost,
+  getLikeList,
+  getPost,
+  getPostList,
+  likePost,
+  updatePost,
+  updateStatus,
 };
