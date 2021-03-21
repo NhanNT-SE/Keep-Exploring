@@ -35,7 +35,7 @@ const createNotiByAdmin = async (req, res, next) => {
 		const { idUser, contentAdmin } = req.body;
 		const user = req.user;
 		if (user.role !== 'admin') {
-			handleCustomError(201, 'Bạn không phải admin');
+			return handleCustomError(201, 'Bạn không phải admin');
 		}
 
 		const notify = new Notification({

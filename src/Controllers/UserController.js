@@ -90,28 +90,27 @@ const getAllUser = async (req, res, next) => {
 };
 
 const logOut = async (req, res, next) => {
-  try {
-    console.log("Logout");
-    const user = req.user;
-    const userId = user._id;
-    if (user) {
-      const token = await RefreshToken.findById(userId);
-      token.refreshToken = null;
-      token.accessToken = null;
-      await token.save();
+	try {
+		const user = req.user;
+		const userId = user._id;
+		if (user) {
+			const token = await RefreshToken.findById(userId);
+			token.refreshToken = null;
+			token.accessToken = null;
+			await token.save();
 
-      req.logout();
-      return res.send({
-        status: 200,
-        data: null,
-        message: "Đăng xuất thành công",
-      });
-    }
+			req.logout();
+			return res.send({
+				status: 200,
+				data: null,
+				message: 'Đăng xuất thành công',
+			});
+		}
 
-    handlerCustomError(201, "Không tồn tại người dùng này trong hệ thống");
-  } catch (error) {
-    next(error);
-  }
+	return	handlerCustomError(201, 'Không tồn tại người dùng này trong hệ thống');
+	} catch (error) {
+		next(error);
+	}
 };
 
 const signIn = async (req, res, next) => {
