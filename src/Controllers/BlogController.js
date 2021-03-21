@@ -112,6 +112,7 @@ const getBlogbyID = async (req, res, next) => {
 
     const blogFound = await Blog.findById(idBlog)
       .populate("blog_detail")
+      .populate("owner",["displayName","imgUser"])
       .populate({path:"comment",populate:{path:"idUser"}})
       .populate("like_list");
 

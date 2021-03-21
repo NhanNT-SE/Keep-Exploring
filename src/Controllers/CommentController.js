@@ -244,8 +244,6 @@ const editCommentBlog = async (req, res, next) => {
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      console.log(user._id);
-      console.log(commentFound.idUser);
       return handleCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
     }
 
@@ -281,8 +279,7 @@ const editCommentPost = async (req, res, next) => {
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      console.log(user._id);
-      console.log(commentFound.idUser);
+
       return handleCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
     }
 
