@@ -73,7 +73,7 @@ const deleteBlog = async (req, res, next) => {
 			});
 		}
 		// return res.status(201).send("Bai Blog khong ton tai");
-		handlerCustomError(201, 'Bài viết không tồn tại');
+return		handlerCustomError(201, 'Bài viết không tồn tại');
 	} catch (error) {
 		next(error);
 	}
@@ -87,13 +87,13 @@ const getAll = async (req, res, next) => {
 
 		//Neu la admin thi co quyen xem tat ca bai viet
 		if (role == 'admin') {
-			const blogList = await Blog.find({}).populate('Blog_Detail');
-			return res.status(200).send(blogList);
+			const blogList = await Blog.find({}).populate('blog_detail');
+			return res.send({ data: blogList, status: 200, message: '' });
 		}
 
 		//Khong phai admin thi chi xem nhung bai viet co status la done
 		const blogList_done = await Blog.find({ status: 'done' });
-		return res.status(200).send(blogList_done);
+		return res.send({ data: blogList_done, status: 200, message: '' });
 	} catch (error) {
 		next(error);
 	}
@@ -158,7 +158,6 @@ const likeBlog = async (req, res, next) => {
 		}
 
 		//Neu bai viet khong ton tai thi tra ve res code 202
-		// return res.status(202).send("Bai viet khong ton tai");
 		handlerCustomError(202, 'Bài viết không tồn tại');
 	} catch (error) {
 		next(error);

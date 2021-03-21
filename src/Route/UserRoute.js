@@ -22,9 +22,9 @@ const upload = multer({ storage: storage });
 
 //GET Method
 router.get('/', passport.authenticate('jwt', { session: false }), userController.getMyProfile);
-router.get('/:idUser', userController.getAnotherProfile);
 router.get('/list', passport.authenticate('jwt', { session: false }), userController.getAllUser);
 router.get('/logOut', passport.authenticate('jwt', { session: false }), userController.logOut);
+router.get('/:idUser', userController.getAnotherProfile);
 
 //POST Method
 router.post('/signUp', upload.single('image_user'), userController.signUp);
