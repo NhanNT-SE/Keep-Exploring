@@ -76,14 +76,12 @@ const deletePost = async (req, res, next) => {
         //Xoa bai post khoi postlist cua user
         await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
 
-        return res
-          .status(200)
-          .send({
-            data: null,
-            err: "",
-            status: 200,
-            message: "Đã xóa bài viết",
-          });
+        return res.status(200).send({
+          data: null,
+          err: "",
+          status: 200,
+          message: "Đã xóa bài viết",
+        });
       }
 
       return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
@@ -151,7 +149,9 @@ const getPostList = async (req, res, next) => {
 
       //Neu khong truyen status thi tra ve all post
       if (!status || status == "" || status == "all") {
-        post_list = await Post.find({});
+        post_list = await Post.find({})
+          .populate("owner", ["displayName", "imgUser"])
+          .populate("address");
         return res.status(200).send({
           data: post_list,
           status: 200,
