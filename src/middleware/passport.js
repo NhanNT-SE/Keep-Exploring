@@ -17,7 +17,6 @@ passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
       const user = await User.findById(jwt_payload.id);
-      console.log(user);
       const token = await RefreshToken.findById(jwt_payload.id);
       if (user && token.accessToken) {
         return done(null, user);

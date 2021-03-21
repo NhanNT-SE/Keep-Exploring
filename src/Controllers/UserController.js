@@ -56,7 +56,9 @@ const getMyProfile = async (req, res, next) => {
 const getAnotherProfile = async (req, res, next) => {
   try {
     const { idUser } = req.params;
-    const profile = await User.findById(idUser).populate("post");
+    const profile = await User.findById(idUser)
+      .populate("post")
+      .populate("blog");
 
     if (profile) {
       return res.status(200).send({
@@ -76,7 +78,7 @@ const getAllUser = async (req, res, next) => {
   try {
     const user = req.user;
     if (user.role == "admin") {
-      const userList = await User.find();
+      const userList = await User.find({ role: "user" }, { pass: 0, role: 0 });
       return res.send({
         data: userList,
         status: 201,
@@ -90,27 +92,30 @@ const getAllUser = async (req, res, next) => {
 };
 
 const logOut = async (req, res, next) => {
-	try {
-		const user = req.user;
-		const userId = user._id;
-		if (user) {
-			const token = await RefreshToken.findById(userId);
-			token.refreshToken = null;
-			token.accessToken = null;
-			await token.save();
+  try {
+    const user = req.user;
+    const userId = user._id;
+    if (user) {
+      const token = await RefreshToken.findById(userId);
+      token.refreshToken = null;
+      token.accessToken = null;
+      await token.save();
 
-			req.logout();
-			return res.send({
-				status: 200,
-				data: null,
-				message: 'Đăng xuất thành công',
-			});
-		}
+      req.logout();
+      return res.send({
+        status: 200,
+        data: null,
+        message: "Đăng xuất thành công",
+      });
+    }
 
-	return	handlerCustomError(201, 'Không tồn tại người dùng này trong hệ thống');
-	} catch (error) {
-		next(error);
-	}
+    return handlerCustomError(
+      201,
+      "Không tồn tại người dùng này trong hệ thống"
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 const signIn = async (req, res, next) => {
