@@ -1,0 +1,82 @@
+.user-details-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  .header {
+    display: flex;
+    align-items: center;
+    .icon-back .pi {
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: bold;
+      font-variant: all-petite-caps;
+      margin-left: 16px;
+    }
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 16px;
+    &-header {
+      display: flex;
+      .avatar-user {
+        width: 8rem;
+        height: 8rem;
+      }
+      .header-info {
+        padding-left: 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        span {
+          font-variant: all-petite-caps;
+          font-weight: bold;
+        }
+        .display-name {
+          font-size: 20px;
+        }
+        .email {
+          color: #4272d7;
+          text-decoration: underline;
+        }
+        .role {
+          font-size: 18px;
+        }
+      }
+      .header-actions {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-evenly;
+        padding-left: 16px;
+        button {
+          width: 200px !important;
+        }
+      }
+    }
+    &-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 16px;
+      overflow: hidden;
+      .content-info {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        padding: 8px;
+        label {
+          margin: 0px;
+          font-variant: all-petite-caps;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

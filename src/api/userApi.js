@@ -1,6 +1,14 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
+  getAllUser: () => {
+    const url = "/user/list";
+    return axiosClient.get(url);
+  },
+  getUser: (userId) => {
+    const url = `/user/${userId}`;
+    return axiosClient.get(url);
+  },
   login: (user) => {
     const url = "/user/signIn";
     return axiosClient.post(url, user);

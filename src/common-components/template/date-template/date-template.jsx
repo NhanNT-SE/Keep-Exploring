@@ -1,5 +1,5 @@
 import React from "react";
-export const DateBodyTemplate = (rowData) => {
+const DateBodyTemplate = (rowData) => {
   const date = new Date(rowData.created_on);
   const month = date.getMonth() + 1;
   const day = date.getDate();

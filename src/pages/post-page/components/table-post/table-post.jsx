@@ -16,11 +16,8 @@ import {
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
-import { Toast } from "primereact/toast";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -30,14 +27,13 @@ import {
   actionSetSelectedPostList,
 } from "redux/slices/postSlice";
 import "./table-post.scss";
+import DisplayNameBodyTemplate from "common-components/template/display-name-template/display-name-template";
+import TableComponent from "common-components/table/table";
 function TablePostComponent() {
-  const toast = useRef(null);
   const dt = useRef(null);
   const columns = GLOBAL_VARIABLE.COLUMNS_POST;
   const postList = useSelector((state) => state.post.postList);
   const [posts, setPosts] = useState([]);
-  const [deletePostsDialog, setDeletePostsDialog] = useState(false);
-  const [selectedPosts, setSelectedPosts] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedRating, setSelectedRating] = useState(null);
@@ -49,13 +45,6 @@ function TablePostComponent() {
     history.push(`post/${post._id}`);
   };
 
-  const hideDeletePostsDialog = () => {
-    setDeletePostsDialog(false);
-  };
-
-  const confirmDeleteSelected = () => {
-    setDeletePostsDialog(true);
-  };
   const onColumnToggle = (event) => {
     let selectedColumns = event.value;
     let orderedSelectedColumns = columns.filter((col) =>
@@ -63,20 +52,9 @@ function TablePostComponent() {
     );
     setSelectedColumns(orderedSelectedColumns);
   };
-  const deleteSelectedProducts = () => {
-    let _posts = posts.filter((val) => !selectedPosts.includes(val));
-    setPosts(_posts);
-    setDeletePostsDialog(false);
-    setSelectedPosts(null);
-    dispatch(actionSetSelectedPostList(null));
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Products Deleted",
-      life: 3000,
-    });
+  const displayNameClick = (userId) => {
+    history.push(`/user/${userId}`);
   };
-
   const categoryBodyTemplate = (rowData) => {
     return <span>{rowData.category.toUpperCase().replace("_", " ")}</span>;
   };
@@ -120,32 +98,9 @@ function TablePostComponent() {
         onChange={onColumnToggle}
         style={{ width: "20em" }}
       />
-
-      <Button
-        icon="pi pi-trash"
-        className="p-button-danger p-button-rounded p-button-text"
-        onClick={confirmDeleteSelected}
-        disabled={!selectedPosts || !selectedPosts.length}
-      />
     </div>
   );
 
-  const deletePostsDialogFooter = (
-    <div>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        className="p-button-text"
-        onClick={hideDeletePostsDialog}
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        className="p-button-text"
-        onClick={deleteSelectedProducts}
-      />
-    </div>
-  );
   // ***** handler filter on change dropdown *****
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "status", "equals");
@@ -213,6 +168,8 @@ function TablePostComponent() {
             ? categoryBodyTemplate
             : col.field === "created_on"
             ? DateBodyTemplate
+            : col.field === "owner.displayName"
+            ? (rowData) => DisplayNameBodyTemplate(rowData, displayNameClick)
             : null
         }
         filterElement={
@@ -231,57 +188,14 @@ function TablePostComponent() {
   });
   return (
     <div className="table-post-container">
-      <Toast ref={toast} />
-      <DataTable
-        ref={dt}
-        value={posts}
-        selection={selectedPosts}
-        onSelectionChange={(e) => {
-          dispatch(actionSetSelectedPostList(e.value));
-          setSelectedPosts(e.value);
-        }}
-        dataKey="_id"
-        paginator
-        resizableColumns={true}
-        rows={10}
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} posts"
+      <TableComponent
+        dt={dt}
+        data={posts}
+        dataType="posts"
         header={header}
-        scrollable
-        scrollHeight="calc(100% - 200px)"
-        className="p-datatable-gridlines"
-      >
-        <Column
-          selectionMode="multiple"
-          headerStyle={{ width: "3rem" }}
-        ></Column>
-
-        <Column
-          body={actionBodyTemplate}
-          header="Edit"
-          style={{ width: "4rem" }}
-        ></Column>
-        {dynamicColumns}
-      </DataTable>
-
-      <Dialog
-        visible={deletePostsDialog}
-        style={{ width: "450px" }}
-        header="Confirm"
-        modal
-        footer={deletePostsDialogFooter}
-        onHide={hideDeletePostsDialog}
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle p-mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          {posts && (
-            <span>Are you sure you want to delete the selected posts?</span>
-          )}
-        </div>
-      </Dialog>
+        columns={dynamicColumns}
+        actionBodyTemplate={actionBodyTemplate}
+      />
     </div>
   );
 }

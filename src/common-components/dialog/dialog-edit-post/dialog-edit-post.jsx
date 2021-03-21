@@ -12,8 +12,9 @@ import { actionHideDialog } from "redux/slices/commonSlice";
 import "./dialog-edit-post.scss";
 import { actionDeletePost, actionUpdatePost } from "redux/slices/postSlice";
 import { useHistory } from "react-router";
+import { actionDeleteBlog, actionUpdateBlog } from "redux/slices/blogSlice";
 function DialogEditPost(props) {
-  const { post } = props;
+  const { post, type } = props;
   const { owner } = post;
   const history = useHistory();
   const [selectedStatus, setSelectedStatus] = useState(null);
@@ -32,18 +33,31 @@ function DialogEditPost(props) {
   };
   const updatePost = () => {
     const body = {
-      idPost: post._id,
+      idUser: post.owner._id,
       status: selectedStatus,
       contentAdmin: notify,
     };
-    dispatch(actionUpdatePost(body));
+    if (type && type === "blog") {
+      body.idBlog = post._id;
+      dispatch(actionUpdateBlog(body));
+    } else {
+      body.idPost = post._id;
+      dispatch(actionUpdatePost(body));
+    }
   };
   const deletePost = () => {
     const payload = {
-      postId: post._id,
+      idUser: post.owner._id,
+      contentAdmin: notify,
       history,
     };
-    dispatch(actionDeletePost(payload));
+    if (type && type === "blog") {
+      payload.blogId = post._id;
+      dispatch(actionDeleteBlog(payload));
+    } else {
+      payload.postId = post._id;
+      dispatch(actionDeletePost(payload));
+    }
   };
   const renderFooter = () => {
     return (

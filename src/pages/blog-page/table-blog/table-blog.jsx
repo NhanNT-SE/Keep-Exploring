@@ -2,11 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
-import { Toast } from "primereact/toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { StatusBodyTemplate } from "common-components/template/status-template/status-template";
@@ -15,6 +12,8 @@ import { StatusItemTemplate } from "common-components/template/status-template/s
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
 import "./table-blog.scss";
 import { actionGetAllBlog } from "redux/slices/blogSlice";
+import DisplayNameBodyTemplate from "common-components/template/display-name-template/display-name-template";
+import TableComponent from "common-components/table/table";
 function TableBlogComponent() {
   const columns = GLOBAL_VARIABLE.COLUMNS_BLOG;
   const toast = useRef(null);
@@ -197,6 +196,9 @@ function TableBlogComponent() {
   useEffect(() => {
     dispatch(actionGetAllBlog());
   }, []);
+  const displayNameClick = (userId) => {
+    history.push(`/user/${userId}`);
+  };
   const statusFilter = (
     <Dropdown
       value={selectedStatus}
@@ -249,6 +251,8 @@ function TableBlogComponent() {
             ? StatusBodyTemplate
             : col.field === "created_on"
             ? DateBodyTemplate
+            : col.field === "owner.displayName"
+            ? (rowData) => DisplayNameBodyTemplate(rowData, displayNameClick)
             : null
         }
         filterElement={col.field === "status" ? statusFilter : null}
@@ -259,29 +263,14 @@ function TableBlogComponent() {
   });
   return (
     <div className="table-blog-container">
-      <Toast ref={toast} />
-      <DataTable
-        ref={dt}
-        value={blogs}
-        // selection={selectedPosts}
-        dataKey="_id"
-        paginator
-        resizableColumns={true}
-        rows={10}
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} blogs"
+      <TableComponent
+        dt={dt}
+        data={blogs}
+        dataType="blogs"
         header={header}
-        scrollable
-        scrollHeight="calc(100% - 200px)"
-        className="p-datatable-gridlines"
-      >
-        <Column
-          body={actionBodyTemplate}
-          header="Edit"
-          style={{ width: "4rem" }}
-        ></Column>
-        {dynamicColumns}
-      </DataTable>
+        columns={dynamicColumns}
+        actionBodyTemplate={actionBodyTemplate}
+      />
     </div>
   );
 }

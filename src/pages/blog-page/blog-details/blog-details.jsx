@@ -105,7 +105,7 @@ function BlogDetailsPage() {
             </TabPanel>
           </TabView>
         </div>
-        <DialogEditPost post={blog} />
+        <DialogEditPost post={blog} type="blog" />
         <OverlayUserLike opLike={opLike} likeList={blog.like_list} />
       </div>
     )

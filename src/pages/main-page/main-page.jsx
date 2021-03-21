@@ -10,12 +10,12 @@ import NotifyPage from "pages/notify-page/notify-page";
 import PostDetailsPage from "pages/post-page/components/detail-post/post-details";
 import PostPage from "pages/post-page/post-page";
 import StatisticsPage from "pages/statistics-page/statistics-page";
-import UserDetailsPage from "pages/user-page/components/user-details-page/user-details";
+import UserDetailsPage from "pages/user-page/user-details/user-details";
 import UserPage from "pages/user-page/user-page";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
-import "./styles/main-page.scss";
+import "./main-page.scss";
 import BlogDetailsPage from "pages/blog-page/blog-details/blog-details";
 function MainPage() {
   const loadingStore = useSelector((state) => state.common.isLoading);

@@ -5,6 +5,7 @@ const GLOBAL_VARIABLE = {
   BASE_URL_IMAGE: process.env.REACT_APP_URL_IMAGE_DEV,
   DIALOG_MESSAGE: "DIALOG_MESSAGE",
   DIALOG_EDIT_POST: "DIALOG_EDIT_POST",
+  DIALOG_NOTIFY: "DIALOG_NOTIFY",
   STATUS_LIST: ["pending", "done", "need_update"],
   CATEGORY_LIST: ["hotel", "food", "check_in"],
   RATING_LIST: [0, 1, 2, 3, 4, 5],
@@ -23,6 +24,13 @@ const GLOBAL_VARIABLE = {
     { field: "title", header: "Title" },
     { field: "status", header: "Status" },
     { field: "created_on", header: "Date" },
+  ],
+  COLUMNS_USER: [
+    { field: "imgUser", header: "" },
+    { field: "displayName", header: "User Name" },
+    { field: "email", header: "Email" },
+    { field: "blog.length", header: "Blog" },
+    { field: "post.length", header: "Post" },
   ],
   RESPONSIVE_OPTIONS: [
     {

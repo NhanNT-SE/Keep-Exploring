@@ -1,0 +1,8 @@
+import axiosClient from "./axiosClient";
+const notifyApi = {
+  sendNotify: (body) => {
+    const url = "/notification/admin";
+    return axiosClient.post(url, body);
+  },
+};
+export default notifyApi;

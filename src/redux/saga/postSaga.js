@@ -17,11 +17,13 @@ import {
 } from "redux/slices/commonSlice";
 import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
 import GLOBAL_VARIABLE from "utils/global_variable";
+import notifyApi from "api/notifyApi";
 function* handlerDeletePost(action) {
   try {
     const { postId, history } = action.payload;
     yield put(actionLoading("Loading deleting post...!"));
     yield call(() => postApi.deletePost(postId));
+    yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Delete post successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
     history.push("/post");
@@ -67,6 +69,7 @@ function* handlerUpdatePost(action) {
   try {
     yield put(actionLoading("Loading updating status post...!"));
     yield call(() => postApi.updatePost(action.payload));
+    yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Update post successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
   } catch (error) {

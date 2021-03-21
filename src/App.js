@@ -2,6 +2,8 @@ import LoadingComponent from "common-components/loading/loading";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import 'primeflex/primeflex.css';
+
 import PrimeReact from "primereact/api";
 import NotFound from "pages/not-found/not-found";
 import { Suspense } from "react";

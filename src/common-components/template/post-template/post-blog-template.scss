@@ -1,0 +1,10 @@
+.body-template {
+  &-post,
+  &-blog {
+    cursor: pointer;
+    &:hover {
+      color: #4272d7;
+      text-decoration: underline;
+    }
+  }
+}
