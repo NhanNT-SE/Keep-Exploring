@@ -1,49 +1,49 @@
-const Blog = require('../Models/Blog');
-const Blog_Detail = require('../Models/Blog_Detail');
+const Blog = require("../Models/Blog");
+const Blog_Detail = require("../Models/Blog_Detail");
 
-const fs = require('fs');
-const Notification = require('../Models/Notification');
-const { createNotification } = require('./NotificationController');
+const fs = require("fs");
+const Notification = require("../Models/Notification");
+const { createNotification } = require("./NotificationController");
 
 const createBlog = async (req, res, next) => {
-	try {
-		const { title, content_list } = req.body;
+  try {
+    const { title, content_list } = req.body;
 
-		const user = req.user;
-		const files = req.files;
-		const content_list_json = JSON.parse(content_list);
-		const blog = new Blog({
-			title,
-			owner: user._id,
-		});
-		blog.blog_detail = blog._id;
-		await blog.save();
+    const user = req.user;
+    const files = req.files;
+    const content_list_json = JSON.parse(content_list);
+    const blog = new Blog({
+      title,
+      owner: user._id,
+    });
+    blog.blog_detail = blog._id;
+    await blog.save();
 
-		const _id = blog._id;
-		const len = files.length;
-		const detail_list = [];
+    const _id = blog._id;
+    const len = files.length;
+    const detail_list = [];
 
-		// Gán img+content vào mảng detail_list
-		for (let i = 0; i < len; i++) {
-			let detail = {};
-			detail.img = files[i].filename;
-			detail.content = content_list_json[i];
-			detail_list.push(detail);
-		}
+    // Gán img+content vào mảng detail_list
+    for (let i = 0; i < len; i++) {
+      let detail = {};
+      detail.img = files[i].filename;
+      detail.content = content_list_json[i];
+      detail_list.push(detail);
+    }
 
-		const blog_detail = new Blog_Detail({
-			_id,
-			detail_list,
-		});
-		await blog_detail.save();
-		return res.status(200).send({
-			status: 200,
-			data: blog_detail,
-			message: 'Tạo bài viết thành công',
-		});
-	} catch (error) {
-		next(error);
-	}
+    const blog_detail = new Blog_Detail({
+      _id,
+      detail_list,
+    });
+    await blog_detail.save();
+    return res.status(200).send({
+      status: 200,
+      data: blog_detail,
+      message: "Tạo bài viết thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deleteBlog = async (req, res, next) => {
@@ -80,39 +80,50 @@ return		handlerCustomError(201, 'Bài viết không tồn tại');
 };
 
 const getAll = async (req, res, next) => {
-	try {
-		//Kiem tra role nguoi dung
-		const user = req.user;
-		const role = user.role;
+  try {
+    //Kiem tra role nguoi dung
+    const user = req.user;
+    const role = user.role;
 
-		//Neu la admin thi co quyen xem tat ca bai viet
-		if (role == 'admin') {
-			const blogList = await Blog.find({}).populate('blog_detail');
-			return res.send({ data: blogList, status: 200, message: '' });
-		}
+    //Neu la admin thi co quyen xem tat ca bai viet
+    if (role == "admin") {
+      const blogList = await Blog.find({}).populate("owner", [
+        "displayName",
+        "imgUser",
+      ]);
+      return res.status(200).send({
+        data: blogList,
+        status: 200,
+        message: "Lấy dữ liệu thành công",
+      });
+    }
 
-		//Khong phai admin thi chi xem nhung bai viet co status la done
-		const blogList_done = await Blog.find({ status: 'done' });
-		return res.send({ data: blogList_done, status: 200, message: '' });
-	} catch (error) {
-		next(error);
-	}
+    //Khong phai admin thi chi xem nhung bai viet co status la done
+    const blogList_done = await Blog.find({ status: "done" });
+    return res.status(200).send(blogList_done);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getBlogbyID = async (req, res, next) => {
-	try {
-		const { idBlog } = req.params;
+  try {
+    const { idBlog } = req.params;
 
-		const blogFound = await Blog.findById(idBlog).populate('blog_detail').populate('comment').populate('like_list');
+    const blogFound = await Blog.findById(idBlog)
+      .populate("blog_detail")
+      .populate("owner",["displayName","imgUser"])
+      .populate({path:"comment",populate:{path:"idUser"}})
+      .populate("like_list");
 
-		if (blogFound) {
-			return res.send({ data: blogFound, status: 200, message: '' });
-		}
+    if (blogFound) {
+      return res.send({ data: blogFound, status: 200, message: "" });
+    }
 
-		return handlerCustomError(201, 'Bài viết không tồn tại');
-	} catch (error) {
-		next(error);
-	}
+    return handlerCustomError(201, "Bài viết không tồn tại");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const likeBlog = async (req, res, next) => {
@@ -165,58 +176,62 @@ const likeBlog = async (req, res, next) => {
 };
 
 const updateStatus = async (req, res, next) => {
-	try {
-		const { idBlog, status } = req.body;
-		//Kiem tra role cua nguoi dung, chi co admin moi duoc update status
-		const { role } = req.user;
+  try {
+    const { idBlog, status } = req.body;
+    //Kiem tra role cua nguoi dung, chi co admin moi duoc update status
+    const { role } = req.user;
 
-		if (role === 'admin') {
-			//Kiem tra co ton tai bai viet
-			const blogFound = await Blog.findById(idBlog);
+    if (role === "admin") {
+      //Kiem tra co ton tai bai viet
+      const blogFound = await Blog.findById(idBlog);
 
-			//Neu ton tai thi admin cap nhat status,
-			if (blogFound) {
-				blogFound.status = status;
-				await Blog.findByIdAndUpdate(idBlog, blogFound);
+      //Neu ton tai thi admin cap nhat status,
+      if (blogFound) {
+        blogFound.status = status;
+        await Blog.findByIdAndUpdate(idBlog, blogFound);
 
-				//Tao notify
-				const notify = new Notification({
-					idUser: blogFound.owner.toString(),
-					idPost: idBlog,
-					status: 'new',
-				});
-				if (status == 'done') {
-					notify.content = 'moderated';
-				} else {
-					notify.content = 'unmoderated';
-				}
-				await createNotification(notify);
+        //Tao notify
+        const notify = new Notification({
+          idUser: blogFound.owner.toString(),
+          idPost: idBlog,
+          status: "new",
+        });
+        if (status == "done") {
+          notify.content = "moderated";
+        } else {
+          notify.content = "unmoderated";
+        }
+        await createNotification(notify);
 
-				return res.status(200).send({ status: 200, data: null, message: 'Cập nhật bài viết thành công' });
-			}
+        return res.status(200).send({
+          status: 200,
+          data: null,
+          message: "Cập nhật bài viết thành công",
+        });
+      }
 
-			//Neu khong ton tai blog se tra ve client status code la 201
-			return handlerCustomError(201, 'Bài viết không tồn tại');
-		}
+      //Neu khong ton tai blog se tra ve client status code la 201
+      return handlerCustomError(201, "Bài viết không tồn tại");
+    }
 
-		//Khi role nguoi dung khong phai admin thi tra ve status code la 202
-		return handlerCustomError(202, 'Bạn không có quyền cập nhật status blog');
-	} catch (error) {
-		next(error);
-	}
+    //Khi role nguoi dung khong phai admin thi tra ve status code la 202
+    return handlerCustomError(202, "Bạn không có quyền cập nhật status blog");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const handlerCustomError = (status, message) => {
-	const err = new Error();
-	err.status = status || 500;
-	err.message = message;
-	throw err;
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
 };
 module.exports = {
-	createBlog,
-	deleteBlog,
-	getAll,
-	getBlogbyID,
-	likeBlog,
-	updateStatus,
+  createBlog,
+  deleteBlog,
+  getAll,
+  getBlogbyID,
+  likeBlog,
+  updateStatus,
 };
