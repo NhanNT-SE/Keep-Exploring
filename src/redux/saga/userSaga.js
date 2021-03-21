@@ -21,10 +21,24 @@ import {
   actionSetUser,
   actionSetUserList,
   actionSendNotify,
+  actionDeleteUser,
+  actionSendMultiNotify,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 import notifyApi from "api/notifyApi";
-
+function* handlerDeleteUser(action) {
+  try {
+    const { userId, history } = action.payload;
+    yield put(actionLoading("Loading deleting user...!"));
+    // yield call(() => userApi.deleteUser(userId));
+    yield call(() => handlerSuccessSaga("Delete user successfully!"));
+    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    history.push("/user");
+  } catch (error) {
+    console.log("user saga: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
 function* handlerGetUser(action) {
   try {
     yield put(actionLoading("Loading get user profile...!"));
@@ -123,12 +137,26 @@ function* handlerSendNotify(action) {
     yield call(() => handlerSuccessSaga("Send notify successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
   } catch (error) {
-    console.log("post slice: ", error);
+    console.log("user saga: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
+function* handlerSendMultiNotify(action) {
+  try {
+    yield put(actionLoading("Loading send notify for user list ...!"));
+    // yield call(() => notifyApi.sendMultiNotify(action.payload));
+    yield call(() => handlerSuccessSaga("Send notify successfully!"));
+    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+  } catch (error) {
+    console.log("user saga: ", error);
     yield call(() => handlerFailSaga(error));
   }
 }
 
 // ***** Watcher Functions *****
+export function* sagaDeleteUser() {
+  yield takeLatest(actionDeleteUser.type, handlerDeleteUser);
+}
 export function* sagaLogin() {
   yield takeLatest(actionLogin.type, handlerLogin);
 }
@@ -143,6 +171,9 @@ export function* sagaGetUser() {
 }
 export function* sagaGetUserList() {
   yield takeLatest(actionGetListUser.type, handlerGetUserList);
+}
+export function* sagaSendMultiNotify() {
+  yield takeLatest(actionSendMultiNotify.type, handlerSendMultiNotify);
 }
 export function* sagaSendNotify() {
   yield takeLatest(actionSendNotify.type, handlerSendNotify);

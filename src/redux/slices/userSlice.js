@@ -10,12 +10,14 @@ const userSlice = createSlice({
     userList: [],
   },
   reducers: {
+    actionDeleteUser() {},
     actionLogin() {},
     actionLogout() {},
     actionRefreshToken() {},
     actionGetListUser() {},
     actionGetUser() {},
     actionSendNotify() {},
+    actionSendMultiNotify() {},
     actionRefreshTokenEnded(state) {
       state.isRefreshingToken = false;
     },
@@ -35,6 +37,7 @@ const userSlice = createSlice({
   },
 });
 export const {
+  actionDeleteUser,
   actionGetListUser,
   actionGetUser,
   actionLogin,
@@ -44,6 +47,7 @@ export const {
   actionRefreshTokenStarted,
   actionSetSelectedUser,
   actionSendNotify,
+  actionSendMultiNotify,
   actionSetUser,
   actionSetUserList,
 } = userSlice.actions;

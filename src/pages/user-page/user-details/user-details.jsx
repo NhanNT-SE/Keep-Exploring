@@ -9,6 +9,7 @@ import "./user-details.scss";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
+import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
 
 function UserDetailsPage() {
   const { userId } = useParams();
@@ -27,15 +28,16 @@ function UserDetailsPage() {
       <div className="header">
         <div className="icon-back">
           <i
-            onClick={() => history.goBack()}
+            onClick={() => history.push("/user")}
             className="pi pi-chevron-left"
           ></i>
         </div>
         <div className="title">User Profile</div>
       </div>
-      {user && (
+      {user ? (
         <div className="container">
           <DialogNotify user={user} />
+          <DialogDeleteUser user={user} />
           <div className="container-header">
             <Avatar
               image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.imgUser}`}
@@ -62,6 +64,9 @@ function UserDetailsPage() {
                 className="p-button-danger"
                 icon="pi pi-trash"
                 iconPos="right"
+                onClick={() =>
+                  dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER))
+                }
               />
             </div>
           </div>
@@ -135,6 +140,8 @@ function UserDetailsPage() {
             </div>
           </div>
         </div>
+      ) : (
+        <h1>USER NOT FOUND (OR THIS USER WAS DELETED)</h1>
       )}
     </div>
   );

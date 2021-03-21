@@ -1,6 +1,10 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
+  deleteUser: (userId) => {
+    const url = `/user/delete/${userId}`;
+    return axiosClient.delete(url);
+  },
   getAllUser: () => {
     const url = "/user/list";
     return axiosClient.get(url);

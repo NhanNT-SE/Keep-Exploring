@@ -12,6 +12,7 @@ const commonSlice = createSlice({
     isShowDialogMessage: false,
     isShowDialogEditPost: false,
     isShowDialogNotify: false,
+    isShowDialogDeleteUser: false,
 
     isOpenDrawer: false,
     isRemember: userStorage ? userStorage.remember : false,
@@ -47,6 +48,9 @@ const commonSlice = createSlice({
         case GLOBAL_VARIABLE.DIALOG_NOTIFY:
           state.isShowDialogNotify = true;
           break;
+        case GLOBAL_VARIABLE.DIALOG_DELETE_USER:
+          state.isShowDialogDeleteUser = true;
+          break;
         default:
           break;
       }
@@ -62,6 +66,9 @@ const commonSlice = createSlice({
           break;
         case GLOBAL_VARIABLE.DIALOG_NOTIFY:
           state.isShowDialogNotify = false;
+          break;
+        case GLOBAL_VARIABLE.DIALOG_DELETE_USER:
+          state.isShowDialogDeleteUser = false;
           break;
         default:
           break;

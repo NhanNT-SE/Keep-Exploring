@@ -6,6 +6,7 @@ const GLOBAL_VARIABLE = {
   DIALOG_MESSAGE: "DIALOG_MESSAGE",
   DIALOG_EDIT_POST: "DIALOG_EDIT_POST",
   DIALOG_NOTIFY: "DIALOG_NOTIFY",
+  DIALOG_DELETE_USER: "DIALOG_DELETE_USER",
   STATUS_LIST: ["pending", "done", "need_update"],
   CATEGORY_LIST: ["hotel", "food", "check_in"],
   RATING_LIST: [0, 1, 2, 3, 4, 5],
@@ -31,6 +32,10 @@ const GLOBAL_VARIABLE = {
     { field: "email", header: "Email" },
     { field: "blog.length", header: "Blog" },
     { field: "post.length", header: "Post" },
+  ],
+  COLUMNS_NOTIFY: [
+    { field: "displayName", header: "User Name" },
+    { field: "email", header: "Email" },
   ],
   RESPONSIVE_OPTIONS: [
     {

@@ -12,12 +12,14 @@ import {
   sagaUpdatePost,
 } from "./postSaga";
 import {
+  sagaDeleteUser,
   sagaGetUser,
   sagaGetUserList,
   sagaLogin,
   sagaLogout,
   sagaRefreshToken,
   sagaSendNotify,
+  sagaSendMultiNotify,
 } from "./userSaga";
 const sagaBlog = [
   sagaDeleteBlog(),
@@ -32,11 +34,13 @@ const sagaPost = [
   sagaUpdatePost(),
 ];
 const sagaUser = [
+  sagaDeleteUser(),
   sagaGetUser(),
   sagaGetUserList(),
   sagaLogin(),
   sagaLogout(),
   sagaSendNotify(),
+  sagaSendMultiNotify(),
   sagaRefreshToken(),
 ];
 const sagaList = sagaUser.concat(sagaBlog, sagaPost);

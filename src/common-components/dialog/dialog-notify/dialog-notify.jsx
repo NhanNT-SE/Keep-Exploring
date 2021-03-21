@@ -6,9 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "primereact/button";
 import { actionHideDialog } from "redux/slices/commonSlice";
 import "./dialog-notify.scss";
-import { actionSendNotify } from "redux/slices/userSlice";
+import {
+  actionSendMultiNotify,
+  actionSendNotify,
+} from "redux/slices/userSlice";
 function DialogNotify(props) {
-  const { user } = props;
+  const { user, userList } = props;
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");
   const isShowDialog = useSelector((state) => state.common.isShowDialogNotify);
@@ -16,11 +19,15 @@ function DialogNotify(props) {
     dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
   };
   const sendNotify = () => {
-    const payload = {
-      idUser: user._id,
-      contentAdmin: notify,
-    };
-    dispatch(actionSendNotify(payload));
+    if (!user) {
+      dispatch(actionSendMultiNotify(userList));
+    } else {
+      const payload = {
+        idUser: user._id,
+        contentAdmin: notify,
+      };
+      dispatch(actionSendNotify(payload));
+    }
   };
   const renderFooter = () => {
     return (
@@ -50,14 +57,18 @@ function DialogNotify(props) {
   };
   return (
     <Dialog
-      header="Edit Post"
+      header="Notification"
       visible={isShowDialog}
       style={{ width: "50vw" }}
       footer={renderFooter()}
       onHide={hideDialog}
       className="dialog-notify"
     >
-      <h5>Send notification to user: "{user.displayName}"</h5>
+      {user ? (
+        <h5>Send notification to user: "{user.displayName}"</h5>
+      ) : (
+        <h5>Send notification to selected users</h5>
+      )}
       <InputTextarea
         rows={5}
         cols={30}
