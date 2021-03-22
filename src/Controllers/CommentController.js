@@ -125,7 +125,6 @@ const deleteCommentbyID = async (req, res, next) => {
     const user = req.user;
     const { idComment } = req.params;
     const commentFound = await Comment.findById(idComment);
-
     if (user.role == "admin" || user._id == commentFound.idUser) {
       if (commentFound.idPost) {
         if (commentFound.img) {
