@@ -32,6 +32,7 @@ function NotifyPage() {
     );
   });
   const sendNotify = () => {
+    console.log(selectedUser);
     dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
   };
   useEffect(() => {
@@ -64,6 +65,13 @@ function NotifyPage() {
               label={e.email}
               image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${e.imgUser}`}
               className="custom-chip p-mb-2"
+              removable
+              onRemove={() => {
+                const listUser = selectedData.filter(
+                  (item) => item._id !== e._id
+                );
+                setSelectedData(listUser);
+              }}
             />
           ))}
         </div>

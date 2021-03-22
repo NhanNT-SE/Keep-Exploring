@@ -45,6 +45,7 @@ function TableComponent(props) {
         ></Column>
       )}
       {columns}
+
     </DataTable>
   );
 }

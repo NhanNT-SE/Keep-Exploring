@@ -11,6 +11,7 @@ const blogSlice = createSlice({
     actionGetBlog: () => {},
     actionDeleteBlog: () => {},
     actionUpdateBlog: () => {},
+    actionDeleteComment: () => {},
     actionSetSelectedBlog: (state, action) => {
       state.selectedBlog = action.payload;
     },
@@ -22,6 +23,7 @@ const blogSlice = createSlice({
 
 export const {
   actionDeleteBlog,
+  actionDeleteComment,
   actionGetAllBlog,
   actionSetBlogList,
   actionGetBlog,

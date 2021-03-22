@@ -23,14 +23,33 @@ import {
   actionSendNotify,
   actionDeleteUser,
   actionSendMultiNotify,
+  actionUpdateProfile,
+  actionChangePassword,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 import notifyApi from "api/notifyApi";
+
+function* handlerChangePassword(action) {
+  try {
+    const { data, history } = action.payload;
+    yield put(actionLoading("Loading change your password...!"));
+    // yield call(() => userApi.changePassword(data));
+    console.log("Change Password:", action.payload);
+    yield call(() => handlerSuccessSaga("Change password successfully!"));
+    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    localStorageService.clearUser();
+    history.push("/login");
+  } catch (error) {
+    console.log("user saga: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
+
 function* handlerDeleteUser(action) {
   try {
     const { userId, history } = action.payload;
     yield put(actionLoading("Loading deleting user...!"));
-    // yield call(() => userApi.deleteUser(userId));
+    yield call(() => userApi.deleteUser(userId));
     yield call(() => handlerSuccessSaga("Delete user successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
     history.push("/user");
@@ -80,6 +99,7 @@ function* handlerLogin(action) {
     } else {
       localStorageService.setToken(data.accessToken, data.refreshToken);
       localStorageService.setUser({
+        _id: data._id,
         email: data.email,
         displayName: data.displayName,
         imgUser: data.imgUser,
@@ -152,8 +172,22 @@ function* handlerSendMultiNotify(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
+function* handlerUpdateProfile(action) {
+  try {
+    yield put(actionLoading("Loading update profile...!"));
+    // yield call(() => userApi.updateProfile(action.payload));
+    console.log("update profile:", action.payload);
+    yield call(() => handlerSuccessSaga("Update Profile successfully!"));
+  } catch (error) {
+    console.log("user saga: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
 
 // ***** Watcher Functions *****
+export function* sagaChangePassword() {
+  yield takeLatest(actionChangePassword.type, handlerChangePassword);
+}
 export function* sagaDeleteUser() {
   yield takeLatest(actionDeleteUser.type, handlerDeleteUser);
 }
@@ -177,5 +211,8 @@ export function* sagaSendMultiNotify() {
 }
 export function* sagaSendNotify() {
   yield takeLatest(actionSendNotify.type, handlerSendNotify);
+}
+export function* sagaUpdateProfile() {
+  yield takeLatest(actionUpdateProfile.type, handlerUpdateProfile);
 }
 // ***** Watcher Functions *****

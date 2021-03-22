@@ -10,6 +10,7 @@ import GLOBAL_VARIABLE from "utils/global_variable";
 import blogApi from "api/blogApi";
 import {
   actionDeleteBlog,
+  actionDeleteComment,
   actionGetAllBlog,
   actionGetBlog,
   actionSetBlogList,
@@ -17,6 +18,7 @@ import {
   actionUpdateBlog,
 } from "redux/slices/blogSlice";
 import notifyApi from "api/notifyApi";
+import commentApi from "api/commentApi";
 function* handlerDeleteBlog(action) {
   try {
     const { blogId, history } = action.payload;
@@ -31,6 +33,18 @@ function* handlerDeleteBlog(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
+function* handlerDeleteComment(action) {
+  try {
+    const  commentId  = action.payload;
+    yield put(actionLoading("Loading deleting comment...!"));
+    yield call(() => commentApi.deleteComment(commentId));
+    yield call(() => handlerSuccessSaga("Delete comment successfully!"));
+  } catch (error) {
+    console.log("post saga: ", error);
+    yield call(() => handlerFailSaga(error));
+  }
+}
+
 function* handlerGetAllBlog() {
   try {
     yield put(actionLoading("Loading get all blog list ...!"));
@@ -76,6 +90,9 @@ function* handlerUpdateBlog(action) {
 
 export function* sagaDeleteBlog() {
   yield takeLatest(actionDeleteBlog.type, handlerDeleteBlog);
+}
+export function* sagaDeleteComment() {
+  yield takeLatest(actionDeleteComment.type, handlerDeleteComment);
 }
 export function* sagaGetAllBlog() {
   yield takeLatest(actionGetAllBlog.type, handlerGetAllBlog);

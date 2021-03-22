@@ -77,6 +77,7 @@ function TableUser() {
             ? (rowData) => BlogBodyTemplate(rowData, onBlogClick)
             : null
         }
+        style={col.field === "imgUser" ? { width: "4rem" } : null}
       />
     );
   });

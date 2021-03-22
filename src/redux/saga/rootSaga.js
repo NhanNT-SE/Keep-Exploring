@@ -1,6 +1,7 @@
 import { all } from "redux-saga/effects";
 import {
   sagaDeleteBlog,
+  sagaDeleteComment,
   sagaGetAllBlog,
   sagaGetBlog,
   sagaUpdateBlog,
@@ -20,12 +21,15 @@ import {
   sagaRefreshToken,
   sagaSendNotify,
   sagaSendMultiNotify,
+  sagaUpdateProfile,
+  sagaChangePassword,
 } from "./userSaga";
 const sagaBlog = [
   sagaDeleteBlog(),
   sagaGetAllBlog(),
   sagaGetBlog(),
   sagaUpdateBlog(),
+  sagaDeleteComment(),
 ];
 const sagaPost = [
   sagaDeletePost(),
@@ -34,6 +38,7 @@ const sagaPost = [
   sagaUpdatePost(),
 ];
 const sagaUser = [
+  sagaChangePassword(),
   sagaDeleteUser(),
   sagaGetUser(),
   sagaGetUserList(),
@@ -42,6 +47,7 @@ const sagaUser = [
   sagaSendNotify(),
   sagaSendMultiNotify(),
   sagaRefreshToken(),
+  sagaUpdateProfile(),
 ];
 const sagaList = sagaUser.concat(sagaBlog, sagaPost);
 

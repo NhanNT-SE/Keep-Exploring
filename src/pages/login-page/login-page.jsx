@@ -13,7 +13,7 @@ import { useHistory } from "react-router-dom";
 import { actionSetIsRemember } from "redux/slices/commonSlice";
 import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
-import "./styles/login-page.scss";
+import "./login-page.scss";
 const schema = yup.object().shape({
   email: yup
     .string()

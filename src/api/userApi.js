@@ -1,6 +1,10 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
+  changePassword: (data) => {
+    const url = "/user/changePass";
+    return axiosClient.patch(url, data);
+  },
   deleteUser: (userId) => {
     const url = `/user/delete/${userId}`;
     return axiosClient.delete(url);
@@ -24,6 +28,10 @@ const userApi = {
   refreshToken: (data) => {
     const url = "/refreshToken";
     return axiosClient.post(url, data);
+  },
+  updateProfile: (data) => {
+    const url = "/user";
+    return axiosClient.patch(url, data);
   },
 };
 export default userApi;
