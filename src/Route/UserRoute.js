@@ -40,6 +40,9 @@ router.patch(
 );
 router.patch('/changePass', passport.authenticate('jwt', { session: false }), userController.changePass);
 
+//DELETE Method
+router.delete('/:idUser', passport.authenticate('jwt', { session: false }), userController.deleteUser);
+
 module.exports = router;
 
 /**
