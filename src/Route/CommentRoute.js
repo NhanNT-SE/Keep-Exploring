@@ -29,30 +29,60 @@ const uploadPost = multer({ storage: storagePost });
 const uploadBlog = multer({ storage: storageBlog });
 
 // GET Method
-router.get('/getByPost/:idPost', commentController.getCommentbyPost);
-router.get('/getByBlog/:idBlog', commentController.getCommentbyPost);
+router.get(
+  "/getByPost/:idPost",
+  passport.authenticate("jwt"),
+  commentController.getCommentbyPost
+);
+router.get(
+  "/getByBlog/:idBlog",
+  passport.authenticate("jwt"),
+  commentController.getCommentbyPost
+);
 
 //POST Method
 router.post(
-	'/post',
-	passport.authenticate('jwt'),
-	uploadPost.single('image_comment'),
-	commentController.createCommentPost
+  "/post",
+  passport.authenticate("jwt"),
+  uploadPost.single("image_comment"),
+  commentController.createCommentPost
 );
 router.post(
-	'/blog',
-	passport.authenticate('jwt'),
-	uploadBlog.single('image_comment'),
-	commentController.createCommentBlog
+  "/blog",
+  passport.authenticate("jwt"),
+  uploadBlog.single("image_comment"),
+  commentController.createCommentBlog
 );
 
 //PATCH Method
-router.patch('/editBlog', passport.authenticate('jwt'), uploadBlog.single('image_comment'), commentController.editCommentBlog);
-router.patch('/editPost', passport.authenticate('jwt'), uploadBlog.single('image_comment'), commentController.editCommentPost);
+router.patch(
+  "/editBlog",
+  passport.authenticate("jwt"),
+  uploadBlog.single("image_comment"),
+  commentController.editCommentBlog
+);
+router.patch(
+  "/editPost",
+  passport.authenticate("jwt"),
+  uploadBlog.single("image_comment"),
+  commentController.editCommentPost
+);
 
 //DELETE Method
-router.delete('/deleteByPost/:idPost', commentController.deleteCommentbyPost);
-router.delete('/deleteByBlog/:idBlog', commentController.deleteCommentbyBlog);
-router.delete('/deletebyId/:idComment', commentController.deleteCommentbyID);
+router.delete(
+  "/deleteByPost/:idPost",
+  passport.authenticate("jwt"),
+  commentController.deleteCommentbyPost
+);
+router.delete(
+  "/deleteByBlog/:idBlog",
+  passport.authenticate("jwt"),
+  commentController.deleteCommentbyBlog
+);
+router.delete(
+  "/deletebyId/:idComment",
+  passport.authenticate("jwt"),
+  commentController.deleteCommentbyID
+);
 
 module.exports = router;
