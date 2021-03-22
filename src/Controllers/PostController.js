@@ -8,8 +8,8 @@ const User = require("../Models/User");
 const createPost = async (req, res, next) => {
   try {
     const user = req.user;
-    var img_list = new Array();
-    var i;
+    let img_list = new Array();
+    let i;
 
     //Luu string hinh anh vao database
     const files = req.files;
@@ -78,7 +78,6 @@ const deletePost = async (req, res, next) => {
 
         return res.status(200).send({
           data: null,
-          err: "",
           status: 200,
           message: "Đã xóa bài viết",
         });

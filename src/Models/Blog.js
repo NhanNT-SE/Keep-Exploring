@@ -1,5 +1,5 @@
-const moongose = require("mongoose");
-const Schema = moongose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const BlogSchema = new Schema(
   {
@@ -44,4 +44,4 @@ const BlogSchema = new Schema(
   { collection: "Blog" }
 );
 
-module.exports = moongose.model("Blog", BlogSchema);
+module.exports = mongoose.model("Blog", BlogSchema);
