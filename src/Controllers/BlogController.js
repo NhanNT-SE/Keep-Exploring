@@ -15,8 +15,11 @@ const createBlog = async (req, res, next) => {
 		const blog = new Blog({
 			title,
 			owner: user._id,
-		});
+		})
+			.populate('owner')
+			.populate('blog_detail');
 		blog.blog_detail = blog._id;
+
 		await blog.save();
 
 		const _id = blog._id;
@@ -36,9 +39,15 @@ const createBlog = async (req, res, next) => {
 			detail_list,
 		});
 		await blog_detail.save();
+
+		//Add post vào list post của user
+		await user.blog.push(_id);
+		await user.save();
+
 		return res.status(200).send({
 			status: 200,
-			data: blog_detail,
+			data: blog,
+			blog_detail,
 			message: 'Tạo bài viết thành công',
 		});
 	} catch (error) {
@@ -66,6 +75,10 @@ const deleteBlog = async (req, res, next) => {
 			}
 			await Blog_Detail.findByIdAndDelete(idBlog);
 			await Blog.findByIdAndDelete(idBlog);
+
+			//Xoa bai blog khoi bloglist cua user
+			await User.findByIdAndUpdate(user._id, { $pull: { blog: idBlog } });
+
 			return res.status(200).send({
 				status: 200,
 				data: null,
@@ -73,7 +86,7 @@ const deleteBlog = async (req, res, next) => {
 			});
 		}
 		// return res.status(201).send("Bai Blog khong ton tai");
-return		handlerCustomError(201, 'Bài viết không tồn tại');
+		return handlerCustomError(201, 'Bài viết không tồn tại');
 	} catch (error) {
 		next(error);
 	}
@@ -190,9 +203,11 @@ const updateStatus = async (req, res, next) => {
 				} else {
 					notify.content = 'unmoderated';
 				}
-				await createNotification(notify);
+				const notification = await createNotification(notify);
 
-				return res.status(200).send({ status: 200, data: null, message: 'Cập nhật bài viết thành công' });
+				return res
+					.status(200)
+					.send({ status: 200, data: notification, message: 'Cập nhật bài viết thành công' });
 			}
 
 			//Neu khong ton tai blog se tra ve client status code la 201

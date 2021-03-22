@@ -13,7 +13,7 @@ const UserSchema = new Schema(
 		},
 		displayName: {
 			type: String,
-			required: true
+			required: true,
 		},
 		role: {
 			type: String,
@@ -27,6 +27,12 @@ const UserSchema = new Schema(
 			{
 				type: Schema.Types.ObjectId,
 				ref: 'Post',
+			},
+		],
+		blog: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Blog',
 			},
 		],
 	},
