@@ -1,9 +1,9 @@
-const Blog = require('../Models/Blog');
-const Blog_Detail = require('../Models/Blog_Detail');
+const Blog = require("../Models/Blog");
+const Blog_Detail = require("../Models/Blog_Detail");
 
-const fs = require('fs');
-const Notification = require('../Models/Notification');
-const { createNotification } = require('./NotificationController');
+const fs = require("fs");
+const Notification = require("../Models/Notification");
+const { createNotification } = require("./NotificationController");
 
 const createBlog = async (req, res, next) => {
 	try {
@@ -46,7 +46,7 @@ const createBlog = async (req, res, next) => {
 
 		return res.status(200).send({
 			status: 200,
-			data: blog,
+			data: 
 			blog_detail,
 			message: 'Tạo bài viết thành công',
 		});
@@ -93,39 +93,50 @@ const deleteBlog = async (req, res, next) => {
 };
 
 const getAll = async (req, res, next) => {
-	try {
-		//Kiem tra role nguoi dung
-		const user = req.user;
-		const role = user.role;
+  try {
+    //Kiem tra role nguoi dung
+    const user = req.user;
+    const role = user.role;
 
-		//Neu la admin thi co quyen xem tat ca bai viet
-		if (role == 'admin') {
-			const blogList = await Blog.find({}).populate('blog_detail');
-			return res.send({ data: blogList, status: 200, message: '' });
-		}
+    //Neu la admin thi co quyen xem tat ca bai viet
+    if (role == "admin") {
+      const blogList = await Blog.find({}).populate("owner", [
+        "displayName",
+        "imgUser",
+      ]);
+      return res.status(200).send({
+        data: blogList,
+        status: 200,
+        message: "Lấy dữ liệu thành công",
+      });
+    }
 
-		//Khong phai admin thi chi xem nhung bai viet co status la done
-		const blogList_done = await Blog.find({ status: 'done' });
-		return res.send({ data: blogList_done, status: 200, message: '' });
-	} catch (error) {
-		next(error);
-	}
+    //Khong phai admin thi chi xem nhung bai viet co status la done
+    const blogList_done = await Blog.find({ status: "done" });
+    return res.status(200).send(blogList_done);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getBlogbyID = async (req, res, next) => {
-	try {
-		const { idBlog } = req.params;
+  try {
+    const { idBlog } = req.params;
 
-		const blogFound = await Blog.findById(idBlog).populate('blog_detail').populate('comment').populate('like_list');
+    const blogFound = await Blog.findById(idBlog)
+      .populate("blog_detail")
+      .populate("owner",["displayName","imgUser"])
+      .populate({path:"comment",populate:{path:"idUser"}})
+      .populate("like_list");
 
-		if (blogFound) {
-			return res.send({ data: blogFound, status: 200, message: '' });
-		}
+    if (blogFound) {
+      return res.send({ data: blogFound, status: 200, message: "" });
+    }
 
-		return handlerCustomError(201, 'Bài viết không tồn tại');
-	} catch (error) {
-		next(error);
-	}
+    return handlerCustomError(201, "Bài viết không tồn tại");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const likeBlog = async (req, res, next) => {
@@ -222,16 +233,16 @@ const updateStatus = async (req, res, next) => {
 };
 
 const handlerCustomError = (status, message) => {
-	const err = new Error();
-	err.status = status || 500;
-	err.message = message;
-	throw err;
+  const err = new Error();
+  err.status = status || 500;
+  err.message = message;
+  throw err;
 };
 module.exports = {
-	createBlog,
-	deleteBlog,
-	getAll,
-	getBlogbyID,
-	likeBlog,
-	updateStatus,
+  createBlog,
+  deleteBlog,
+  getAll,
+  getBlogbyID,
+  likeBlog,
+  updateStatus,
 };
