@@ -171,7 +171,7 @@ const getPostListAdmin = async (req, res, next) => {
 
 const getPostList = async (req, res, next) => {
 	try {
-		const postList_done = await Post.find({ status: 'done' });
+		const postList_done = await Post.find({ status: 'done' }).populate('owner', ['displayName', 'imgUser']);
 		return res.send({
 			data: postList_done,
 			status: 200,

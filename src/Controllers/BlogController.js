@@ -92,25 +92,49 @@ const deleteBlog = async (req, res, next) => {
 	}
 };
 
-const getAll = async (req, res, next) => {
+const getAllByAdmin = async (req, res, next) => {
 	try {
 		//Kiem tra role nguoi dung
 		const user = req.user;
 		const role = user.role;
 
 		//Neu la admin thi co quyen xem tat ca bai viet
-		if (role == 'admin') {
-			const blogList = await Blog.find({}).populate('owner', ['displayName', 'imgUser']);
-			return res.status(200).send({
-				data: blogList,
+		if (role !== 'admin') {
+			return handleCustomError(201, 'Bạn không phải admin');
+		}
+		let { status } = req.query;
+		let blog_list = [];
+
+		//Neu khong truyen status thi tra ve all post
+		if (!status || status == '' || status == 'all') {
+			blog_list = await Blog.find({}).populate('owner', ['displayName', 'imgUser']);
+			return res.send({
+				data: blog_list,
 				status: 200,
 				message: 'Lấy dữ liệu thành công',
 			});
 		}
 
-		//Khong phai admin thi chi xem nhung bai viet co status la done
-		const blogList_done = await Blog.find({ status: 'done' });
-		return res.status(200).send(blogList_done);
+		//con neu co truyen query thi loc post list theo query
+		blog_list = await Post.find({ status: status }).populate('owner', ['displayName', 'imgUser']);
+		return res.status(200).send({
+			data: blog_list,
+			status: 200,
+			message: 'Lấy dữ liệu thành công',
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const getAll = async (req, res, next) => {
+	try {
+		const blogList_done = await Blog.find({ status: 'done' }).populate('owner', ['displayName', 'imgUser']);
+		return res.status(200).send({
+			data: blogList_done,
+			status: 200,
+			message: 'Lấy dữ liệu thành công',
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -175,7 +199,11 @@ const likeBlog = async (req, res, next) => {
 			});
 			const notification = await createNotification(notify);
 
-			return res.send({ status: 201, data: notification, message: 'Đã like bài viết' });
+			return res.send({
+				status: 201,
+				data: notification,
+				message: 'Đã like bài viết',
+			});
 		}
 
 		//Neu bai viet khong ton tai thi tra ve res code 202
@@ -238,6 +266,7 @@ const handlerCustomError = (status, message) => {
 module.exports = {
 	createBlog,
 	deleteBlog,
+	getAllByAdmin,
 	getAll,
 	getBlogbyID,
 	likeBlog,

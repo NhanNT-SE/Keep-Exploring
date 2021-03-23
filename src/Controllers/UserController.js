@@ -56,7 +56,9 @@ const getMyProfile = async (req, res, next) => {
 const getAnotherProfile = async (req, res, next) => {
   try {
     const { idUser } = req.params;
-    const profile = await User.findById(idUser).populate("post");
+    const profile = await User.findById(idUser)
+      .populate("post")
+      .populate("blog");
 
     if (profile) {
       return res.status(200).send({
@@ -76,7 +78,7 @@ const getAllUser = async (req, res, next) => {
   try {
     const user = req.user;
     if (user.role == "admin") {
-      const userList = await User.find();
+      const userList = await User.find({ role: "user" }, { pass: 0, role: 0 });
       return res.send({
         data: userList,
         status: 201,
