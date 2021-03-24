@@ -92,52 +92,62 @@ const getAllUser = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-	try {
-		const { idUser } = req.params;
-		const user = req.user;
+  try {
+    const { idUser } = req.params;
+    const user = req.user;
 
-		if (user.role != 'admin') {
-			return handlerCustomError(201, 'Bạn không phải admin');
-		}
+    if (user.role != "admin") {
+      return handlerCustomError(201, "Bạn không phải admin");
+    }
 
-		const userFound = await User.findById(idUser);
-		if (!userFound) {
-			return handlerCustomError(202, 'Người dùng này không tồn tại hoặc đã bị xóa');
-		}
+    const userFound = await User.findById(idUser);
+    if (!userFound) {
+      return handlerCustomError(
+        202,
+        "Người dùng này không tồn tại hoặc đã bị xóa"
+      );
+    }
 
-		if (userFound.role == 'admin') {
-			return handlerCustomError(203, 'Bạn không thể xóa tài khoản admin');
-		}
+    if (userFound.role == "admin") {
+      return handlerCustomError(203, "Bạn không thể xóa tài khoản admin");
+    }
 
-		await User.findByIdAndDelete(idUser);
-		return res.send({ data: null, status: 200, messsage: 'Xóa tài khoản thành công' });
-	} catch (error) {
-		next(error);
-	}
+    await User.findByIdAndDelete(idUser);
+    return res.send({
+      data: null,
+      status: 200,
+      messsage: "Xóa tài khoản thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const logOut = async (req, res, next) => {
-	try {
-		const user = req.user;
-		const userId = user._id;
-		if (user) {
-			const token = await RefreshToken.findById(userId);
-			token.refreshToken = null;
-			token.accessToken = null;
-			await token.save();
+  try {
+    const user = req.user;
+    const userId = user._id;
+    if (user) {
+      const token = await RefreshToken.findById(userId);
+      token.refreshToken = null;
+      token.accessToken = null;
+      await token.save();
 
-			req.logout();
-			return res.send({
-				status: 200,
-				data: null,
-				message: 'Đăng xuất thành công',
-			});
-		}
+      req.logout();
+      return res.send({
+        status: 200,
+        data: null,
+        message: "Đăng xuất thành công",
+      });
+    }
 
-		return handlerCustomError(201, 'Không tồn tại người dùng này trong hệ thống');
-	} catch (error) {
-		next(error);
-	}
+    return handlerCustomError(
+      201,
+      "Không tồn tại người dùng này trong hệ thống"
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 const signIn = async (req, res, next) => {
@@ -174,7 +184,6 @@ const signIn = async (req, res, next) => {
         return res.status(200).send({
           data: {
             _id: user._id,
-            name: user.name,
             email: user.email,
             role: user.role,
             displayName: user.displayName,
@@ -267,7 +276,11 @@ const updateProfile = async (req, res, next) => {
 
     await User.findByIdAndUpdate(user._id, newUser);
     return res.status(200).send({
-      data: newUser,
+      data: {
+        _id: user._id,
+        email: user.email,
+        ...newUser,
+      },
       message: "Cap nhật thông tin cá nhân thành công",
       status: 200,
     });
@@ -283,13 +296,13 @@ const handlerCustomError = (status, message) => {
   throw err;
 };
 module.exports = {
-	changePass,
-	getAllUser,
-	getMyProfile,
-	getAnotherProfile,
-	deleteUser,
-	logOut,
-	signIn,
-	signUp,
-	updateProfile,
+  changePass,
+  getAllUser,
+  getMyProfile,
+  getAnotherProfile,
+  deleteUser,
+  logOut,
+  signIn,
+  signUp,
+  updateProfile,
 };
