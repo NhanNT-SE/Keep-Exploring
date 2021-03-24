@@ -8,6 +8,8 @@ import {
   actionUpdatePost,
   actionDeletePost,
   actionSetCommentList,
+  actionSetStatistics,
+  actionGetStatistics,
 } from "redux/slices/postSlice";
 import {
   actionFailed,
@@ -18,6 +20,7 @@ import {
 import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import notifyApi from "api/notifyApi";
+import statisticsApi from "api/statisticsApi";
 function* handlerDeletePost(action) {
   try {
     const { postId, history } = action.payload;
@@ -64,6 +67,17 @@ function* handlerGetPost(action) {
     history.push("/post");
   }
 }
+function* handlerGetStatistics() {
+  try {
+    const response = yield call(statisticsApi.getData);
+    const { data } = response;
+    yield put(actionSetStatistics(data));
+    yield put(actionSuccess("Fetch statistics data successfully!"));
+  } catch (error) {
+    console.log("post slice: ", error);
+    yield put(actionFailed(error.message));
+  }
+}
 
 function* handlerUpdatePost(action) {
   try {
@@ -90,5 +104,8 @@ export function* sagaGetPost() {
 }
 export function* sagaUpdatePost() {
   yield takeLatest(actionUpdatePost.type, handlerUpdatePost);
+}
+export function* sagaGetStatistics() {
+  yield takeLatest(actionGetStatistics.type, handlerGetStatistics);
 }
 // ***** Watcher Functions *****

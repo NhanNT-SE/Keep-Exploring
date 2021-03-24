@@ -1,0 +1,36 @@
+.chart-statistics-container {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  .chart-container {
+    width: 40%;
+    height: 40%;
+    margin: 8px 0px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    overflow: hidden;
+    display: flex;
+    .p-chart {
+      overflow: hidden;
+      display: flex;
+      flex: 1;
+    }
+    .chartjs-size-monitor {
+      height: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chartjs-render-monitor {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+.loading{
+  display: flex;
+  flex: 1;
+align-items: center;
+justify-content: center;
+}

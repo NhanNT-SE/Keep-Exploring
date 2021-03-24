@@ -10,6 +10,7 @@ import {
   sagaDeletePost,
   sagaGetAllPost,
   sagaGetPost,
+  sagaGetStatistics,
   sagaUpdatePost,
 } from "./postSaga";
 import {
@@ -36,6 +37,7 @@ const sagaPost = [
   sagaGetAllPost(),
   sagaGetPost(),
   sagaUpdatePost(),
+  sagaGetStatistics(),
 ];
 const sagaUser = [
   sagaChangePassword(),
