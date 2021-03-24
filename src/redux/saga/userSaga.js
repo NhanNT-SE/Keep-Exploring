@@ -34,9 +34,10 @@ function* handlerChangePassword(action) {
     const { data, history } = action.payload;
     yield put(actionLoading("Loading change your password...!"));
     // yield call(() => userApi.changePassword(data));
-    console.log("Change Password:", action.payload);
+    console.log("Change Password:", data);
     yield call(() => handlerSuccessSaga("Change password successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    yield put(actionSetUser(null));
     localStorageService.clearUser();
     history.push("/login");
   } catch (error) {
@@ -174,10 +175,22 @@ function* handlerSendMultiNotify(action) {
 }
 function* handlerUpdateProfile(action) {
   try {
+    const rootState = rootStore.getState();
+    const { isRemember } = rootState.common;
     yield put(actionLoading("Loading update profile...!"));
-    // yield call(() => userApi.updateProfile(action.payload));
-    console.log("update profile:", action.payload);
+    const response = yield call(() => userApi.updateProfile(action.payload));
+    const { data } = response;
+    data.imgUser = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.imgUser}`;  
+    localStorageService.setUser({
+      _id: data._id,
+      email: data.email,
+      displayName: data.displayName,
+      imgUser: data.imgUser,
+      remember: isRemember,
+    });
+    console.log(data);
     yield call(() => handlerSuccessSaga("Update Profile successfully!"));
+    yield put(actionSetUser(data));
   } catch (error) {
     console.log("user saga: ", error);
     yield call(() => handlerFailSaga(error));

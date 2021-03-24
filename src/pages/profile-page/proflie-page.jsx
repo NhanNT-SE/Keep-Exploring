@@ -1,14 +1,26 @@
 import DialogChangePassword from "common-components/dialog/dialog-change-password/dialog-change-password";
-import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
+import ImageUploader from "react-images-upload";
 import { useDispatch, useSelector } from "react-redux";
+import { actionShowDialog } from "redux/slices/commonSlice";
 import { actionGetUser, actionUpdateProfile } from "redux/slices/userSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 import "./profile-page.scss";
-
+// const UploadComponent = (props) => (
+//   <ImageUploader
+//     key="image-uploader"
+//     singleImage={true}
+//     withIcon={false}
+//     withLabel={false}
+//     buttonText="Choose an image"
+//     onChange={props.onImage}
+//     imgExtension={[".jpg", ".png", ".jpeg"]}
+//     maxFileSize={5242880}
+//   ></ImageUploader>
+// );
 function ProfilePage() {
   const userStorage = localStorageService.getUser();
   const dispatch = useDispatch();
@@ -16,9 +28,10 @@ function ProfilePage() {
   const [displayName, setDisplayName] = useState("");
   const [address, setAddress] = useState("");
   const [bod, setBod] = useState("");
-
+  const [file, setFile] = useState("");
+  const [imageSubmit, setImageSubmit] = useState(undefined);
   const updateProfile = () => {
-    const profile = { displayName, address, bod };
+    const profile = { displayName, address, bod, image_user: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
@@ -34,20 +47,48 @@ function ProfilePage() {
       setBod("07/05/2000");
     }
   }, [user]);
+
+ 
+  const onImage = async (e) => {
+    setFile(URL.createObjectURL(e[0]));
+    setImageSubmit(e[0]);
+    console.log(e);
+  };
+
   return (
     <div className="profile-page-container">
       <DialogChangePassword />
       <div className="header">
         <div className="title">My Profile</div>
       </div>
+
       {user && (
         <div className="container">
           <div className="container-header">
-            <Avatar
-              image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.imgUser}`}
-              className="avatar-user"
-              shape="circle"
-            />
+            <div className="avatar-user-container">
+              <div className="avatar-user">
+                <img
+                  name="image_user"
+                  src={
+                    file
+                      ? file
+                      : `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.imgUser}`
+                  }
+                  alt="avatar"
+                />
+              </div>
+              <ImageUploader
+                key="image-uploader"
+                singleImage={true}
+                withIcon={false}
+                withLabel={false}
+                buttonText="Choose an image"
+                onChange={onImage}
+                imgExtension={[".jpg", ".png", ".jpeg"]}
+                maxFileSize={5242880}
+              />
+            </div>
+
             <div className="header-info">
               <span className="display-name">{user.displayName}</span>
               <span className="email">{user.email}</span>
@@ -115,7 +156,11 @@ function ProfilePage() {
                 className="p-button-warning"
                 icon="pi pi-lock"
                 iconPos="right"
-                onClick={() => {}}
+                onClick={() => {
+                  dispatch(
+                    actionShowDialog(GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD)
+                  );
+                }}
               />
             </div>
           </div>

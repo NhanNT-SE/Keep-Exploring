@@ -31,7 +31,16 @@ const userApi = {
   },
   updateProfile: (data) => {
     const url = "/user";
-    return axiosClient.patch(url, data);
+
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(data)) {
+      formData.append(key, value);
+    }
+
+    return axiosClient.patch(url, formData, {
+      headers: { "content-type": "multipart/form-data" },
+    });
   },
 };
 export default userApi;

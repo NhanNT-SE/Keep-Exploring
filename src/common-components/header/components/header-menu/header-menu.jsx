@@ -13,6 +13,7 @@ import "./header-menu.scss";
 import { useDispatch } from "react-redux";
 import localStorageService from "utils/localStorageService";
 import { actionLogout } from "redux/slices/userSlice";
+import { useHistory } from "react-router";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginRight: theme.spacing(2),
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 function HeaderMenu(props) {
+  const history = useHistory();
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -70,9 +72,7 @@ function HeaderMenu(props) {
           className={classes.avatar}
           onClick={handleToggle}
           src={
-            user
-              ? user.imgUser
-              : `${process.env.PUBLIC_URL}/images/avatar1.png`
+            user ? user.imgUser : `${process.env.PUBLIC_URL}/images/avatar1.png`
           }
           alt="avatar"
         />
@@ -122,7 +122,12 @@ function HeaderMenu(props) {
                         </p>
                       </div>
                     </div>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem
+                      onClick={(event) => {
+                        handleClose(event);
+                        history.push("/profile");
+                      }}
+                    >
                       <ListItemIcon>
                         <AccountCircle />
                       </ListItemIcon>

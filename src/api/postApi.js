@@ -6,7 +6,7 @@ const postApi = {
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/post";
+    const url = "/post/admin";
     return axiosClient.get(url);
   },
   getCommentList: (postId) => {

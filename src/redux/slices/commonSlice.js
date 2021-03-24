@@ -13,7 +13,7 @@ const commonSlice = createSlice({
     isShowDialogEditPost: false,
     isShowDialogNotify: false,
     isShowDialogDeleteUser: false,
-    isShowDialogChangePassword: true,
+    isShowDialogChangePassword: false,
 
     isOpenDrawer: false,
     isRemember: userStorage ? userStorage.remember : false,
@@ -53,7 +53,7 @@ const commonSlice = createSlice({
           state.isShowDialogDeleteUser = true;
           break;
         case GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD:
-          state.isShowDialogDeleteUser = true;
+          state.isShowDialogChangePassword = true;
           break;
         default:
           break;
@@ -75,7 +75,7 @@ const commonSlice = createSlice({
           state.isShowDialogDeleteUser = false;
           break;
         case GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD:
-          state.isShowDialogDeleteUser = false;
+          state.isShowDialogChangePassword = false;
           break;
         default:
           break;

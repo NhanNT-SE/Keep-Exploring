@@ -25,10 +25,36 @@
     padding-top: 16px;
     &-header {
       display: flex;
-      .avatar-user {
-        width: 8rem;
-        height: 8rem;
+      .avatar-user-container {
+        position: relative;
+        .avatar-user {
+          width: 8rem;
+          height: 8rem;
+          border-radius: 50%;
+          border: 1px solid #cbd2e2;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .fileUploader {
+          position: absolute;
+          right: 0px;
+          width: fit-content;
+          bottom: -16px;
+          .fileContainer {
+            padding: 0px;
+            margin: 0px;
+            box-shadow: none;
+            background-color: transparent;
+            button {
+              padding: 0px 8px;
+            }
+          }
+        }
       }
+
       .header-info {
         padding-left: 32px;
         display: flex;
@@ -71,8 +97,8 @@
     &-actions {
       display: flex;
       justify-content: flex-end;
-      .update-profile{
-          margin-right: 16px;
+      .update-profile {
+        margin-right: 16px;
       }
     }
   }

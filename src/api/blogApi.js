@@ -6,7 +6,7 @@ const blogApi = {
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/blog";
+    const url = "/blog/admin";
     return axiosClient.get(url);
   },
   getBlog: (blogId) => {
