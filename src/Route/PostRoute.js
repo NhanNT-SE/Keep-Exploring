@@ -29,8 +29,9 @@ const limitImgs = async (req, res) => {
 const upload = multer({ storage: storage });
 
 //Get Method
-router.get('/', passport.authenticate('jwt'), postController.getPostList);
-router.get('/like', passport.authenticate('jwt', { session: false }), postController.getLikeList);
+router.get('/', postController.getPostList);
+router.get('/admin', passport.authenticate('jwt'), postController.getPostListAdmin);
+router.get('/like', postController.getLikeList);
 router.get('/:idPost', postController.getPost);
 
 //Post Method
