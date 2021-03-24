@@ -27,8 +27,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //Get Method
-router.get('/', passport.authenticate('jwt', { session: false }), BlogController.getAll);
-router.get('/:idBlog', passport.authenticate('jwt', { session: false }), BlogController.getBlogbyID);
+router.get('/', BlogController.getAll);
+router.get('/admin', passport.authenticate('jwt', { session: false }), BlogController.getAllByAdmin);
+router.get('/:idBlog', BlogController.getBlogbyID);
 
 //Post Method
 router.post(
