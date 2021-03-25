@@ -4,22 +4,22 @@ import { Alert } from "@material-ui/lab";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog } from "redux/slices/commonSlice";
-import "./dialog.scss";
+import "./dialog-message.scss";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-function DialogComponent() {
+function DialogMessage() {
   const commonState = useSelector((state) => state.common);
-  const { isError, isSuccess, message, isShowDialog } = commonState;
+  const { isError, isSuccess, message, isShowDialogMessage } = commonState;
   const dispatch = useDispatch();
   const handleClose = () => {
-    dispatch(actionHideDialog());
+    dispatch(actionHideDialog("message"));
   };
 
   return (
     <Dialog
-      open={isShowDialog}
+      open={isShowDialogMessage}
       TransitionComponent={Transition}
       keepMounted
       className="dialog-content"
@@ -50,4 +50,4 @@ function DialogComponent() {
   );
 }
 
-export default DialogComponent;
+export default DialogMessage;

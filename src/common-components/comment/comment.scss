@@ -1,6 +1,5 @@
 .comment {
   &-item {
-    
     border: 1px solid #4272d7;
     margin-bottom: 8px;
     padding: 0px 16px;
@@ -12,13 +11,36 @@
     .p-avatar {
       margin-right: 16px;
     }
+    .date-comment {
+      margin-left: 16px;
+      font-style: italic;
+      font-size: 12px;
+      color: #b3a7a7;
+    }
+    .actions-comment {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+      button{
+        width: 25px;
+        height: 25px;
+      }
+    }
   }
   &-user-name {
     font-weight: 800;
     cursor: pointer;
-
   }
-  &-content{
-      margin-bottom: 8px;
+  &-content {
+    margin-bottom: 8px;
+  }
+  &-image {
+    width: 250px;
+    height: 250px;
+    background-color: red;
+    margin-bottom: 8px;
+    border: 1px solid;
+    border-radius: 4px;
   }
 }

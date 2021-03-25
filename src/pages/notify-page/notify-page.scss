@@ -1,0 +1,24 @@
+.notify-page-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      height: 40px;
+    }
+  }
+  .chip-container {
+    .p-chip.custom-chip {
+      background: #2196f3;
+      color: #ffffff;
+    }
+  }
+  .table-notify-container {
+    flex: 1;
+    overflow: auto;
+  }
+}

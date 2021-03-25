@@ -16,7 +16,7 @@ import {
   PictureInPictureAlt,
   PowerSettingsNew,
 } from "@material-ui/icons";
-import localStorageService from "api/localStorageService";
+import localStorageService from "utils/localStorageService";
 import clsx from "clsx";
 import { STYLES_GLOBAL } from "common-components/styles-global";
 import React, { useState } from "react";

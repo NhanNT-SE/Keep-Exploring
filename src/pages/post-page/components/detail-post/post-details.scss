@@ -3,14 +3,6 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  .carousel-container {
-    #overlay_panel {
-      width: 450px;
-      height: 450px;
-      background-repeat: no-repeat;
-      background-size: "100% 100%";
-    }
-  }
   .content-container {
     flex: 1;
     border-radius: 4px;
@@ -42,19 +34,25 @@
             align-items: center;
             justify-content: space-between;
             display: flex;
-            #overlay_panel_like {
-              min-width: 250px;
-              max-height: 250;
-              .p-overlaypanel-content {
-                max-height: 250px;
-                overflow: auto;
-              }
-              .p-listbox-list-wrapper {
-                max-height: 250px;
-              }
-            }
             .tag-status {
               width: 200px;
+              &.done {
+                background-color: #c8e6c9;
+                color: #256029;
+              }
+              &.pending {
+                background-color: #feedaf;
+                color: #8a5340;
+              }
+              &.need_update {
+                background-color: #ffcdd2;
+                color: #c63737;
+              }
+            }
+            .btn-actions {
+              button {
+                margin: 0px 8px;
+              }
             }
             i {
               font-size: 20px;
@@ -89,25 +87,6 @@
             overflow: auto;
           }
         }
-      }
-    }
-  }
-  .dialog-edit {
-    .p-dialog-content {
-      .owner {
-        flex-direction: row;
-        display: flex;
-        align-items: center;
-        p {
-          margin-left: 16px;
-          font-weight: bold;
-        }
-      }
-      h5 {
-        margin: 8px 0px;
-      }
-      textarea {
-        width: 100%;
       }
     }
   }

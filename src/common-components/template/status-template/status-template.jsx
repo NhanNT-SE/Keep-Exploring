@@ -1,14 +1,13 @@
 import React from "react";
 import "./status-template.scss";
-export const StatusItemTemplate = (props) => {
+export const StatusItemTemplate = (options) => {
   return (
-    <div className={`post-status status-${props.option}`}>
-      {props.option.toUpperCase().replace("_", " ")}
+    <div className={`post-status status-${options}`}>
+      {options.toUpperCase().replace("_", " ")}
     </div>
   );
 };
-export const SelectedStatusTemplate = (props) => {
-  const { option, placeholder } = props;
+export const SelectedStatusTemplate = (option, props) => {
   if (option) {
     return (
       <div className={`post-status status-${option}`}>
@@ -16,5 +15,12 @@ export const SelectedStatusTemplate = (props) => {
       </div>
     );
   }
-  return <span>{placeholder}</span>;
+  return <span>{props.placeholder}</span>;
+};
+export const StatusBodyTemplate = (rowData) => {
+  return (
+    <span className={`post-status status-${rowData.status.toLowerCase()}`}>
+      {rowData.status.toUpperCase().replace("_", " ")}
+    </span>
+  );
 };

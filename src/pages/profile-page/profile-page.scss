@@ -1,0 +1,105 @@
+.profile-page-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  .header {
+    display: flex;
+    align-items: center;
+    .icon-back .pi {
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: bold;
+      font-variant: all-petite-caps;
+      margin-left: 16px;
+    }
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 16px;
+    &-header {
+      display: flex;
+      .avatar-user-container {
+        position: relative;
+        .avatar-user {
+          width: 8rem;
+          height: 8rem;
+          border-radius: 50%;
+          border: 1px solid #cbd2e2;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .fileUploader {
+          position: absolute;
+          right: 0px;
+          width: fit-content;
+          bottom: -16px;
+          .fileContainer {
+            padding: 0px;
+            margin: 0px;
+            box-shadow: none;
+            background-color: transparent;
+            button {
+              padding: 0px 8px;
+            }
+          }
+        }
+      }
+
+      .header-info {
+        padding-left: 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        span {
+          font-variant: all-petite-caps;
+          font-weight: bold;
+        }
+        .display-name {
+          font-size: 20px;
+        }
+        .email {
+          color: #4272d7;
+          text-decoration: underline;
+        }
+        .role {
+          font-size: 18px;
+        }
+      }
+    }
+    &-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 16px;
+      overflow: hidden;
+      .content-info {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        padding: 8px;
+        label {
+          margin: 0px;
+          font-variant: all-petite-caps;
+          font-weight: bold;
+        }
+      }
+    }
+    &-actions {
+      display: flex;
+      justify-content: flex-end;
+      .update-profile {
+        margin-right: 16px;
+      }
+    }
+  }
+}

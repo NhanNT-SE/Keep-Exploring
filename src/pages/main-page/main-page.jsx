@@ -1,5 +1,5 @@
-import localStorageService from "api/localStorageService";
-import DialogComponent from "common-components/dialog/dialog";
+import localStorageService from "utils/localStorageService";
+import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import DrawerComponent from "common-components/drawer/drawer";
 import HeaderComponent from "common-components/header/header";
 import LoadingComponent from "common-components/loading/loading";
@@ -10,12 +10,14 @@ import NotifyPage from "pages/notify-page/notify-page";
 import PostDetailsPage from "pages/post-page/components/detail-post/post-details";
 import PostPage from "pages/post-page/post-page";
 import StatisticsPage from "pages/statistics-page/statistics-page";
-import UserDetailsPage from "pages/user-page/components/user-details-page/user-details";
+import UserDetailsPage from "pages/user-page/user-details/user-details";
 import UserPage from "pages/user-page/user-page";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
-import "./styles/main-page.scss";
+import "./main-page.scss";
+import BlogDetailsPage from "pages/blog-page/blog-details/blog-details";
+import ProfilePage from "pages/profile-page/proflie-page";
 function MainPage() {
   const loadingStore = useSelector((state) => state.common.isLoading);
   const user = useSelector((state) => state.user.user);
@@ -31,7 +33,7 @@ function MainPage() {
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
-      <DialogComponent />
+      <DialogMessage />
       <HeaderComponent user={user} />
       <DrawerComponent user={user} />
       <main className={`${classes.content} page-container`}>
@@ -51,8 +53,14 @@ function MainPage() {
               component={PostDetailsPage}
             ></Route>
             <Route exact path="/blog" component={BlogPage}></Route>
+            <Route
+              exact
+              path="/blog/:blogId"
+              component={BlogDetailsPage}
+            ></Route>
             <Route exact path="/notify" component={NotifyPage}></Route>
             <Route exact path="/statistics" component={StatisticsPage}></Route>
+            <Route exact path="/profile" component={ProfilePage}></Route>
             <Redirect from="*" to="/home" />
           </Switch>
         </div>

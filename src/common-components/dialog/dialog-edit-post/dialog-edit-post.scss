@@ -1,0 +1,19 @@
+.dialog-edit {
+  .p-dialog-content {
+    .owner {
+      flex-direction: row;
+      display: flex;
+      align-items: center;
+      p {
+        margin-left: 16px;
+        font-weight: bold;
+      }
+    }
+    h5 {
+      margin: 8px 0px;
+    }
+    textarea {
+      width: 100%;
+    }
+  }
+}

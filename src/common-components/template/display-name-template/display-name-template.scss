@@ -1,0 +1,7 @@
+.display-name-body-template {
+  cursor: pointer;
+  &:hover {
+    color: #4272d7;
+    text-decoration: underline;
+  }
+}

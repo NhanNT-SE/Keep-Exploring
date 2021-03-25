@@ -1,7 +1,12 @@
 import React from "react";
-
+import TableUser from "./table-user/table-user";
+import "./user-page.scss";
 function UserPage() {
-  return <div><h1>USER PAGE</h1></div>;
+  return (
+    <div className="user-page-container">
+      <TableUser />
+    </div>
+  );
 }
 
 export default UserPage;

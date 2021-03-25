@@ -1,0 +1,21 @@
+.dialog-delete-user {
+  .p-dialog-header {
+    padding: 16px;
+    span.p-dialog-title {
+      color: red;
+      font-weight: bold;
+    }
+  }
+  .p-dialog-content {
+    .message {
+      margin-bottom: 16px;
+      .bold {
+        font-variant: all-petite-caps;
+        font-weight: bold;
+      }
+    }
+    input {
+      width: 100%;
+    }
+  }
+}

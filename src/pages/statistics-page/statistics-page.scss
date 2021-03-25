@@ -1,0 +1,34 @@
+.statistics-page-container {
+  overflow: hidden;
+  flex: 1;
+  .p-tabview-nav {
+    a:focus {
+      box-shadow: unset !important;
+    }
+    i {
+      margin-right: 8px;
+    }
+  }
+  .tab-view-statistics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    .p-tabview-panels {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      .p-tabview-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+    }
+    .tab-statistics-chart {
+    }
+    .tab-org-chart {
+    }
+  }
+}

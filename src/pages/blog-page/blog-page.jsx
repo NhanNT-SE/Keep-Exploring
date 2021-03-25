@@ -1,9 +1,10 @@
 import React from "react";
-
+import TableBlogComponent from "./table-blog/table-blog";
+import "./blog-page.scss";
 function BlogPage() {
   return (
-    <div>
-      <h1>BLOG PAGE</h1>
+    <div className="blog-page-container">
+      <TableBlogComponent />
     </div>
   );
 }

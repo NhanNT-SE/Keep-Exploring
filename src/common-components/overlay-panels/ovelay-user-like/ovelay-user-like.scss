@@ -1,0 +1,11 @@
+#overlay_panel_like {
+  min-width: 250px;
+  max-height: 250;
+  .p-overlaypanel-content {
+    max-height: 250px;
+    overflow: auto;
+  }
+  .p-listbox-list-wrapper {
+    max-height: 250px;
+  }
+}

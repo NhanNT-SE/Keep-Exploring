@@ -1,15 +1,15 @@
 import axios from "axios";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import queryString from "query-string";
 import {
   actionRefreshToken,
   actionRefreshTokenStarted,
 } from "redux/slices/userSlice";
 import rootStore from "rootStore";
-import localStorageService from "./localStorageService";
+import localStorageService from "../utils/localStorageService";
 
 const axiosClient = axios.create({
-  // baseURL: process.env.REACT_APP_BASE_URL_DEV,
-  baseURL: process.env.REACT_APP_BASE_URL_PRO,
+  baseURL: GLOBAL_VARIABLE.BASE_URL,
   headers: {
     "content-type": "application/json",
   },

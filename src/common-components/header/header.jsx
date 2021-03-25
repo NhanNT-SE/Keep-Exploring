@@ -44,12 +44,12 @@ function HeaderComponent(props) {
           </Typography>
         </Toolbar>
         <div className="button-container">
-          <Badge badgeContent={4} color="secondary">
+          {/* <Badge badgeContent={4} color="secondary">
             <Mail />
           </Badge>
           <Badge badgeContent={4} color="secondary">
             <Notifications />
-          </Badge>
+          </Badge> */}
           <div className="user-action">
             <HeaderMenu user={props.user} />
           </div>
