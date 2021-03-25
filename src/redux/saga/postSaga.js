@@ -21,6 +21,7 @@ import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import notifyApi from "api/notifyApi";
 import statisticsApi from "api/statisticsApi";
+import localStorageService from "utils/localStorageService";
 function* handlerDeletePost(action) {
   try {
     const { postId, history } = action.payload;
@@ -38,6 +39,7 @@ function* handlerDeletePost(action) {
 
 function* handlerGetAllPost() {
   try {
+    // localStorageService.setLatestAction(actionGetAllPost.type);
     yield put(actionLoading("Loading get all post list ...!"));
     const response = yield call(postApi.getAll);
     const { data } = response;

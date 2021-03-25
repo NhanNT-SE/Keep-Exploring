@@ -40,9 +40,6 @@ function PostDetailsPage() {
     };
     dispatch(actionGetPost(payload));
   }, []);
-  useEffect(() => {
-    console.log("post:", post);
-  }, [post]);
   return (
     post &&
     commentList && (
