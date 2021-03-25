@@ -1,25 +1,25 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import InputField from "custom-fields/input-field";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { actionHideDialog } from "redux/slices/commonSlice";
 import { actionChangePassword } from "redux/slices/userSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { Checkbox, Input, TextField } from "@material-ui/core";
-import "./dialog-change-password.scss";
-import InputField from "custom-fields/input-field";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm, Controller } from "react-hook-form";
+import "./dialog-change-password.scss";
 const schema = yup.object().shape({
   currentPass: yup.string().required(),
-  newPass: yup.string().required(),
-  // .matches(
-  //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-  //   "Password must contain at least 8 characters, one uppercase, one number and one special case character"
-  // ),
+  newPass: yup
+    .string()
+    .required()
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+    ),
   confirmPass: yup
     .string()
     .oneOf(

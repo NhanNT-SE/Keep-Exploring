@@ -6,10 +6,9 @@ function TreeSystem() {
   const [selection, setSelection] = useState([]);
   const data = [
     {
-      label: "Keep-Exploring",
-      className: "p-person",
+      label: "KEEP EXPLORING",
       expanded: true,
-
+      className: "department-cfo",
       children: [
         {
           label: "NGUYEN TRONG NHAN",
@@ -59,31 +58,31 @@ function TreeSystem() {
           ],
         },
         {
-            label: "BUI DUY LAM",
-            type: "person",
-            className: "p-person",
-            expanded: true,
-            data: { name: "Member", avatar: "lam.jpg" },
-            children: [
-              {
-                label: "Mobile-Android",
-                className: "department-cfo",
-              },
-            ],
-          },
-          {
-            label: "CAO HOANG PHUOC",
-            type: "person",
-            className: "p-person",
-            expanded: true,
-            data: { name: "Member", avatar: "phuoc.jpg" },
-            children: [
-              {
-                label: "Mobile-Android",
-                className: "department-cfo",
-              },
-            ],
-          },
+          label: "BUI DUY LAM",
+          type: "person",
+          className: "p-person",
+          expanded: true,
+          data: { name: "Member", avatar: "lam.jpg" },
+          children: [
+            {
+              label: "Mobile-Android",
+              className: "department-cfo",
+            },
+          ],
+        },
+        {
+          label: "CAO HOANG PHUOC",
+          type: "person",
+          className: "p-person",
+          expanded: true,
+          data: { name: "Member", avatar: "phuoc.jpg" },
+          children: [
+            {
+              label: "Mobile-Android",
+              className: "department-cfo",
+            },
+          ],
+        },
       ],
     },
   ];

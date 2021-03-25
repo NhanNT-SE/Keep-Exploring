@@ -33,7 +33,7 @@ function* handlerChangePassword(action) {
   try {
     const { data, history } = action.payload;
     yield put(actionLoading("Loading change your password...!"));
-    // yield call(() => userApi.changePassword(data));
+    yield call(() => userApi.changePassword(data));
     console.log("Change Password:", data);
     yield call(() => handlerSuccessSaga("Change password successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));

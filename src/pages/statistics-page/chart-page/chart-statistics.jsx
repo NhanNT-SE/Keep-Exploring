@@ -1,5 +1,5 @@
 import { Chart } from "primereact/chart";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionGetStatistics } from "redux/slices/postSlice";
 import "./chart-statistics.scss";
@@ -7,6 +7,9 @@ import "./chart-statistics.scss";
 function ChartStatistics() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.post.statisticsData);
+  const memoData = useMemo(() => {
+    return data;
+  }, [data]);
   const configDoughnutChart = (data) => {
     return {
       labels: ["Done", "Pending", "Need Update"],
@@ -52,41 +55,44 @@ function ChartStatistics() {
   useEffect(() => {
     dispatch(actionGetStatistics());
   }, []);
-  return data ? (
+  return memoData ? (
     <div className="chart-statistics-container">
       <div className="chart-container">
         <Chart
           type="pie"
-          data={configPieChart(data.postBlog.data, ["Post", "Blog"])}
-          options={configOptions(data.postBlog.title)}
+          data={configPieChart(memoData.postBlog.data, ["Post", "Blog"])}
+          options={configOptions(memoData.postBlog.title)}
         />
       </div>
 
       <div className="chart-container">
         <Chart
           type="pie"
-          data={configPieChart(data.user.data, ["Admin", "User"])}
-          options={configOptions(data.user.title)}
+          data={configPieChart(memoData.user.data, ["Admin", "User"])}
+          options={configOptions(memoData.user.title)}
         />
       </div>
       <div className="chart-container">
         <Chart
           type="doughnut"
-          data={configDoughnutChart(data.post.data)}
-          options={configOptions(data.post.title)}
+          data={configDoughnutChart(memoData.post.data)}
+          options={configOptions(memoData.post.title)}
         />
       </div>
       <div className="chart-container">
         <Chart
           type="doughnut"
-          data={configDoughnutChart(data.blog.data)}
-          options={configOptions(data.blog.title)}
+          data={configDoughnutChart(memoData.blog.data)}
+          options={configOptions(memoData.blog.title)}
         />
       </div>
     </div>
   ) : (
     <div className="loading">
-      <i className="pi pi-spin pi-spinner" style={{ fontSize: "5em" ,color:"#4272d7"}}></i>
+      <i
+        className="pi pi-spin pi-spinner"
+        style={{ fontSize: "5em", color: "#4272d7" }}
+      ></i>
     </div>
   );
 }
