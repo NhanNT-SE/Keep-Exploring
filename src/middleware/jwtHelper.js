@@ -1,23 +1,21 @@
 const jwt = require("jsonwebtoken");
 const Token = require("../Models/Token");
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const { ACCESS_TOKEN_SECRET } = require("../config/index");
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
       _id: user._id,
-      name: user.name,
+      displayName: user.displayName,
       email: user.email,
       role: user.role,
-      displayName: user.displayName,
-      imageUser: user.imgUser,
+      imgUser: user.imgUser,
     };
-    const token = await jwt.sign({ data: userData }, secretSignature, {
+    const token = await jwt.sign( userData , secretSignature, {
       algorithm: "HS256",
       expiresIn: tokenLife,
     });
     return token;
   } catch (error) {
-    console.log("Create Token Error:", error);
     return error;
   }
 };
@@ -32,39 +30,38 @@ const verifyToken = async (token, secretKey, cb) => {
 };
 
 const isAuth = async (req, res, next) => {
-  const tokenFromClient = req.headers["authorization"];
-  const userId = req.headers["user-id"];
-  if (tokenFromClient) {
+  const TOKEN_FROM_CLIENT = req.headers["authorization"];
+  // const userId = req.headers["user-id"];
+  if (TOKEN_FROM_CLIENT) {
     try {
       const decoded = await verifyToken(
-        tokenFromClient,
-        accessTokenSecret,
+        TOKEN_FROM_CLIENT,
+        ACCESS_TOKEN_SECRET,
         (err) => {
-          err.status = 401;
           return next(err);
         }
       );
-      req.jwtDecoded = decoded;
-      return next();
-      // const token = await Token.findById(decoded.data._id);
-      // if (token.accessToken && decoded.data._id === userId) {
-      //   req.jwtDecoded = decoded;
-      //   return next();
-      // }
-      // let err = new Error();
-      // err.status = 401;
-      // err.message = "Invalid Token";
-      // return next(err);
+      const token = await Token.findById(decoded._id);
+      if (token.accessToken === TOKEN_FROM_CLIENT) {
+        req.jwtDecoded = decoded;
+        req.user = decoded;
+        return next();
+      }
+      const err = new Error();
+      err.status = 401;
+      err.message = "Vui lòng đăng nhập để tiếp tục";
+      return next(err);
     } catch (error) {
       next(error);
     }
   } else {
-    let err = new Error();
-    err.message = "No token provided.";
+    const err = new Error();
+    err.message = "Không nhận được token.";
     err.status = 401;
     return next(err);
   }
 };
+
 module.exports = {
   isAuth,
   generateToken,

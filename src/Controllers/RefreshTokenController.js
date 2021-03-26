@@ -15,7 +15,7 @@ const rfToken = async (req, res, next) => {
       const decode = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
       if (decode.id == userId) {
         const newAccessToken = jwt.sign({ id: decode.id }, JWT_SECRET, {
-          expiresIn: "1d",
+          expiresIn: "15s",
         });
         return res.send({
           data: newAccessToken,
