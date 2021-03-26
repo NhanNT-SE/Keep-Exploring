@@ -60,7 +60,7 @@ public class Adapter_LV_User extends BaseAdapter implements Filterable {
                 filterList.addAll(allUser);
             }else {
                 for (User user: allUser){
-                    if (user.getName().toLowerCase().contains(constraint.toString().toLowerCase())){
+                    if (user.getDisplayName().toLowerCase().contains(constraint.toString().toLowerCase())){
                         filterList.add(user);
                     }
                 }
@@ -100,11 +100,11 @@ public class Adapter_LV_User extends BaseAdapter implements Filterable {
         }
 
         User user = userList.get(position);
-        viewHolder.tvName.setText(user.getName());
+        viewHolder.tvName.setText(user.getDisplayName());
         viewHolder.tvEmail.setText(user.getEmail());
-        viewHolder.tvCreated.setText(user.getStringCreated());
+
         try {
-            Picasso.get().load(Uri.parse(user.getUriAvatar())).into(viewHolder.imgAvatar);
+//            Picasso.get().load(Uri.parse(user.getImgUser())).into(viewHolder.imgAvatar);
         }catch (Exception e){
 
         }

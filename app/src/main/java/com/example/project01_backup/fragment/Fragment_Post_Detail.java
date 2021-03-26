@@ -23,8 +23,7 @@ import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_Comment;
 import com.example.project01_backup.adapter.Adapter_LV_Content;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
-import com.example.project01_backup.dao.DAO_Comment;
-import com.example.project01_backup.dao.DAO_Content;
+
 import com.example.project01_backup.model.Comment;
 import com.example.project01_backup.model.Content;
 import com.example.project01_backup.model.FirebaseCallback;
@@ -52,8 +51,7 @@ public class Fragment_Post_Detail extends Fragment {
     private Post post;
     private Adapter_LV_Comment adapterComment;
     private Adapter_LV_Content adapterContent;
-    private DAO_Comment dao_comment;
-    private DAO_Content dao_content;
+
 
     public Fragment_Post_Detail() {
         // Required empty public constructor
@@ -70,8 +68,7 @@ public class Fragment_Post_Detail extends Fragment {
     }
 
     private void initView() {
-        dao_comment = new DAO_Comment(getActivity(), this);
-        dao_content = new DAO_Content(getActivity(), this);
+
         Bundle bundle = getArguments();
         post = (Post) bundle.getSerializable(Adapter_LV_PostUser.POST);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -124,19 +121,7 @@ public class Fragment_Post_Detail extends Fragment {
         final TextView tvNothing = (TextView) dialog.findViewById(R.id.dContentPost_tvNothing);
 
         final ListView listView = (ListView) dialog.findViewById(R.id.dContentPost_lvContent);
-        dao_content.getDataUser(post.getIdPost(), new FirebaseCallback() {
-            @Override
-            public void contentListUser(List<Content> contentList) {
-                adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-                listView.setAdapter(adapterContent);
-                if (contentList.size()>0){
-                    tvNothing.setVisibility(View.GONE);
-                }else {
-                    tvNothing.setVisibility(View.VISIBLE);
-                }
 
-            }
-        });
 
 
         tvDone.setOnClickListener(new View.OnClickListener() {
@@ -187,26 +172,11 @@ public class Fragment_Post_Detail extends Fragment {
                     toast("Vui lòng viết bình luận");
                 }else {
                     comment.setContentComment(contentCmt);
-                    dao_comment.insert(post.getIdPost(),comment);
                     etComment.setText("");
                 }
             }
         });
 
-        dao_comment.getData(post.getIdPost(), new FirebaseCallback(){
-            @Override
-            public void commentList(List<Comment> commentList) {
-                if (commentList.size()>0){
-                    tvNothing.setVisibility(View.GONE);
-                }else {
-                    tvNothing.setVisibility(View.VISIBLE);
-                }
-                adapterComment = new Adapter_LV_Comment(getActivity(),commentList);
-                lvComment.setAdapter(adapterComment);
-
-
-            }
-        });
         dialog.show();
 
     }

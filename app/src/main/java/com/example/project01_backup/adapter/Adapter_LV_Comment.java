@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.dao.DAO_Comment;
 import com.example.project01_backup.model.Comment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,7 +30,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Adapter_LV_Comment extends BaseAdapter {
     private Context context;
     private List<Comment> commentList;
-    private DAO_Comment dao_comment;
     private int index = -1;
     public Adapter_LV_Comment(Context context, List<Comment> commentList) {
         this.context = context;
@@ -57,7 +55,6 @@ public class Adapter_LV_Comment extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.raw_comment,null);
-        dao_comment = new DAO_Comment(context);
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         TextView tvEmail = (TextView) convertView.findViewById(R.id.raw_comment_tvEmail);
         TextView tvPubDate = (TextView) convertView.findViewById(R.id.raw_comment_tvPubDate);
@@ -134,7 +131,6 @@ public class Adapter_LV_Comment extends BaseAdapter {
     }
     private void deleteComment(){
         Comment comment = commentList.get(index);
-        dao_comment.deleteByIdComment(comment);
     }
     private void editComment(){
         final Dialog dialog = new Dialog(context);
@@ -152,7 +148,6 @@ public class Adapter_LV_Comment extends BaseAdapter {
                     comment.setContentComment(etComment.getText().toString());
                     comment.setPubDate(stringPubDate());
                     comment.setLongPubDate(longPubDate());
-                    dao_comment.update(comment);
                     dialog.dismiss();
                 }
             }

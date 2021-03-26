@@ -8,7 +8,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -21,9 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.dao.DAO_Feedback;
-import com.example.project01_backup.dao.DAO_Places;
-import com.example.project01_backup.dao.DAO_Post;
+
 import com.example.project01_backup.fragment.Fragment_Accommodations;
 import com.example.project01_backup.fragment.Fragment_BeautifulPlaces;
 import com.example.project01_backup.fragment.Fragment_JourneyDiary;
@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String password;
     private String email;
     private TextView number;
-    private DAO_Post dao_post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initView() {
-        dao_post = new DAO_Post(this);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser!=null){
 //            Toast.makeText(this, "Hello " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
@@ -91,16 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         number.setGravity(Gravity.CENTER_VERTICAL);
         number.setTypeface(null, Typeface.BOLD);
         number.setTextColor(Color.RED);
-        dao_post.getDataAdmin(new FirebaseCallback(){
-            @Override
-            public void postListAdmin(List<Post> postList) {
-                if (postList.size() == 0){
-                    number.setText("");
-                }else {
-                    number.setText(postList.size()+"");
-                }
-            }
-        });
+
     }
 
     private void showInfo() {
@@ -116,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     private void insertPlaces(){
-        DAO_Places dao_places = new DAO_Places(this);
         String[] placeList = {"An Ging", "Vung Tau", "Bac Giang", "Bac Kan","Bac Lieu","Bac Ninh",
         "Ben Tre", "Binh Dinh", "Binh Duong", "Binh Phuoc", "Binh Thuan", "Ca Mau", "Cao Bang",
         "Dak Lak", "Dak Nong", "Dien Bien", "Dong Nai", "Dong Thap", "Gia Lai", "Ha Giang","Ha Nam",
@@ -129,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (int i =0; i<placeList.length; i++){
             Places places = new Places();
             places.setName(placeList[i]);
-            dao_places.insert(places);
         }
     }
     private void runtimePermission() {
@@ -152,6 +139,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     }
                 }).check();
+    }
+
+    private String getToken(String key){
+        SharedPreferences sharedPreferences = this.getSharedPreferences("storage_token", Context.MODE_PRIVATE);
+        String value = sharedPreferences.getString(key, "");
+        return value;
+
     }
 
     private void hideAdmin() {

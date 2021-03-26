@@ -17,8 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.dao.DAO_Comment;
-import com.example.project01_backup.dao.DAO_Feedback;
+
 import com.example.project01_backup.model.Comment;
 import com.example.project01_backup.model.Feedback;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +33,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Adapter_LV_Feedback extends BaseAdapter {
     private Context context;
     private List<Feedback> feedbackList;
-    private DAO_Feedback dao_feedback;
 
     public Adapter_LV_Feedback(Context context, List<Feedback> feedbackList) {
         this.context = context;
@@ -60,7 +58,6 @@ public class Adapter_LV_Feedback extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.raw_feedback,null);
-        dao_feedback = new DAO_Feedback(context);
         TextView tvEmail = (TextView) convertView.findViewById(R.id.raw_feedback_tvEmail);
         TextView tvPubDate = (TextView) convertView.findViewById(R.id.raw_feedback_tvPubDate);
         TextView tvComment = (TextView) convertView.findViewById(R.id.raw_feedback_tvComment);
@@ -78,7 +75,6 @@ public class Adapter_LV_Feedback extends BaseAdapter {
                 dialog.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dao_feedback.delete(feedback.getIdFeedBack());
                     }
                 });
                 dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {

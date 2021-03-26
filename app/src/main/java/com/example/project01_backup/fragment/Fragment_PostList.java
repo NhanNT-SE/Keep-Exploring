@@ -17,9 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
-import com.example.project01_backup.dao.DAO_Comment;
-import com.example.project01_backup.dao.DAO_Content;
-import com.example.project01_backup.dao.DAO_Post;
+
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,10 +34,8 @@ public class Fragment_PostList extends Fragment {
     private ListView lvPost;
     private TextView tvNothing;
     private Adapter_LV_PostUser adapterPost;
-    private DAO_Post dao_post;
     private List<Post> listPost;
-    private DAO_Content dao_content;
-    private DAO_Comment dao_comment;
+
     private FirebaseUser currentUser;
     private int index = -1;
 
@@ -52,26 +48,11 @@ public class Fragment_PostList extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_post_list, container, false);
-        dao_post = new DAO_Post(getActivity(), this);
-        dao_content = new DAO_Content(getActivity(),this);
-        dao_comment = new DAO_Comment(getActivity(),this);
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         lvPost = (ListView) view.findViewById(R.id.fPostList_lvPost);
         tvNothing = (TextView) view.findViewById(R.id.fPostList_tvNothing);
-        dao_post.getDataByUser(currentUser.getEmail(), new FirebaseCallback(){
-            @Override
-            public void postListUser(List<Post> postList) {
-                listPost = new ArrayList<>(postList);
-                adapterPost = new Adapter_LV_PostUser(getActivity(), listPost);
-                lvPost.setAdapter(adapterPost);
-                if (postList.size()>0){
-                    tvNothing.setVisibility(View.GONE);
-                }else {
-                    tvNothing.setVisibility(View.VISIBLE);
-                }
 
-            }
-        });
 
         lvPost.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -122,9 +103,7 @@ public class Fragment_PostList extends Fragment {
                 dialogDelete.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
-                        dao_post.deleteUser(post.getCategory(),post.getPlace(),post.getIdPost());
-                        dao_content.deleteUser(post.getIdPost());
-                        dao_comment.deleteByIdPost(post.getIdPost());
+
                         dialog.dismiss();
                     }
                 });

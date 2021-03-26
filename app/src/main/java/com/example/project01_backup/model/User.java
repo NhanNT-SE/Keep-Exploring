@@ -1,26 +1,28 @@
 package com.example.project01_backup.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
-    private String id, name, email, uriAvatar, type, password, stringCreated;
-    private String phoneNumber, address, birthDay;
-    private long longCreated;
+    private String email;
+    private String pass;
+    private String displayName;
+    private String role;
+    private String imgUser;
+    private List<Post> post;
+    private List<Blog> blog;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", pass='" + pass + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", role='" + role + '\'' +
+                ", imgUser='" + imgUser + '\'' +
+                ", post=" + post +
+                ", blog=" + blog +
+                '}';
     }
 
     public String getEmail() {
@@ -31,67 +33,51 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getUriAvatar() {
-        return uriAvatar;
+    public String getPass() {
+        return pass;
     }
 
-    public void setUriAvatar(String uriAvatar) {
-        this.uriAvatar = uriAvatar;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
-    public String getType() {
-        return type;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getRole() {
+        return role;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public String getStringCreated() {
-        return stringCreated;
+    public String getImgUser() {
+        return imgUser;
     }
 
-    public void setStringCreated(String stringCreated) {
-        this.stringCreated = stringCreated;
+    public void setImgUser(String imgUser) {
+        this.imgUser = imgUser;
     }
 
-    public long getLongCreated() {
-        return longCreated;
+    public List<Post> getPost() {
+        return post;
     }
 
-    public void setLongCreated(long longCreated) {
-        this.longCreated = longCreated;
+    public void setPost(List<Post> post) {
+        this.post = post;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public List<Blog> getBlog() {
+        return blog;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getBirthDay() {
-        return birthDay;
-    }
-
-    public void setBirthDay(String birthDay) {
-        this.birthDay = birthDay;
+    public void setBlog(List<Blog> blog) {
+        this.blog = blog;
     }
 }

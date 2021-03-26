@@ -25,8 +25,7 @@ import android.widget.Toast;
 import com.example.project01_backup.R;
 import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
-import com.example.project01_backup.dao.DAO_Places;
-import com.example.project01_backup.dao.DAO_Post;
+
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
 import com.example.project01_backup.model.Post;
@@ -47,8 +46,7 @@ import java.util.List;
  */
 public class Fragment_Restaurant extends Fragment {
     private View view;
-    private DAO_Places dao_places;
-    private DAO_Post dao_post;
+
     private List<String> placeNames;
     private TextView tvTitle, tvNothing;
     private ListView listView;
@@ -75,19 +73,13 @@ public class Fragment_Restaurant extends Fragment {
 
     private void initView() {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dao_post = new DAO_Post(getActivity(), this);
-        dao_places = new DAO_Places(getActivity(), this);
+
         tvTitle = (TextView) view.findViewById(R.id.fRestaurant_tvTitle);
         tvNothing = (TextView) view.findViewById(R.id.fRestaurant_tvNothing);
         fbaAdd = (FloatingActionButton) view.findViewById(R.id.fRestaurant_fabAddPost);
         listView = (ListView) view.findViewById(R.id.fRestaurant_lvPost);
         categoryNode = "Restaurants";
-        dao_post.getDataUser(categoryNode, new FirebaseCallback(){
-            @Override
-            public void postListUser(List<Post> postList) {
-               refreshLV(postList);
-            }
-        });
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -163,44 +155,11 @@ public class Fragment_Restaurant extends Fragment {
         autoComplete.setTextColor(Color.WHITE);
         autoComplete.setDropDownBackgroundResource(android.R.color.white);
         autoComplete.setThreshold(1);
-        dao_places.getData(new FirebaseCallback(){
-            @Override
-            public void placesList(final List<Places> placesList) {
-                placeNames.clear();
-                for (Places places : placesList){
-                    placeNames.add(places.getName());
-                    ArrayAdapter<String> newsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, placeNames);
-                    autoComplete.setAdapter(newsAdapter);
-                }
-                autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
-                        String placeNode =(String)adapterView.getItemAtPosition(itemIndex);
-                        autoComplete.setText(placeNode);
-                        tvTitle.setText(placeNode);
-                        dao_post.getDataByPlace(categoryNode,placeNode, new FirebaseCallback(){
-                            @Override
-                            public void postListPlace(List<Post> postList) {
-                                refreshLV(postList);
-                            }
-                        });
-
-                    }
-                });
-
-            }
-        });
         final MenuItem refresh = menu.findItem(R.id.menu_search_refresh);
         refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                dao_post.getDataUser(categoryNode, new FirebaseCallback(){
-                    @Override
-                    public void postListUser(List<Post> postList) {
-                        refreshLV(postList);
-                        tvTitle.setText(categoryNode);
-                    }
-                });
+
                 return false;
             }
         });

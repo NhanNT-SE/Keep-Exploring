@@ -31,9 +31,7 @@ import android.widget.Toast;
 
 import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_Content;
-import com.example.project01_backup.dao.DAO_Content;
-import com.example.project01_backup.dao.DAO_Places;
-import com.example.project01_backup.dao.DAO_Post;
+
 import com.example.project01_backup.model.Content;
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
@@ -64,9 +62,7 @@ public class Fragment_AddPost extends Fragment {
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
     private FirebaseUser user;
-    private DAO_Post dao_post;
-    private DAO_Content dao_content;
-    private DAO_Places dao_places;
+
     private Post post, oldPost;
     private List<Content> contentList;
     private List<String> nameList;
@@ -94,9 +90,7 @@ public class Fragment_AddPost extends Fragment {
 
     private void initView() {
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dao_post = new DAO_Post(getActivity(), this);
-        dao_content = new DAO_Content(getActivity(), this);
-        dao_places = new DAO_Places(getActivity(), this);
+
         post = new Post();
         contentList = new ArrayList<>();
 
@@ -120,18 +114,7 @@ public class Fragment_AddPost extends Fragment {
         spnCategory.setAdapter(adapterSpinner);
         acPlace.setThreshold(1);
 
-        dao_places.getData(new FirebaseCallback() {
-            @Override
-            public void placesList(List<Places> placesList) {
-                nameList.clear();
-                for (Places places : placesList) {
-                    nameList.add(places.getName());
-                }
-                final ArrayAdapter<String> adapterPlace = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, nameList);
-                acPlace.setAdapter(adapterPlace);
 
-            }
-        });
 
 
         setPubDate(tvPubDate);
@@ -351,7 +334,6 @@ public class Fragment_AddPost extends Fragment {
             dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dao_post.insertAdmin(categoryNode, placeNode, post, imgPost);
                     toast("Pending moderation!");
                     currentFragment(categoryNode);
                 }
@@ -369,12 +351,10 @@ public class Fragment_AddPost extends Fragment {
             dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dao_post.insertAdmin(categoryNode, placeNode, post, imgPost);
                     for (int i = 0; i < contentList.size(); i++) {
                         Content upload = new Content();
                         Uri uri = contentList.get(i).getUriImage();
                         upload.setDescription(contentList.get(i).getDescription());
-                        dao_content.insertAdmin(post.getIdPost(), upload, uri);
                     }
                     toast("Pending moderation!");
                     currentFragment(categoryNode);
