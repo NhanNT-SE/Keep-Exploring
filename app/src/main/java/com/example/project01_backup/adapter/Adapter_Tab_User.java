@@ -6,9 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.project01_backup.fragment.Fragment_PostList;
-import com.example.project01_backup.fragment.Fragment_PostListAdmin;
 import com.example.project01_backup.fragment.Fragment_UserInfo;
-import com.example.project01_backup.fragment.Fragment_UserInfoAdmin;
 
 public class Adapter_Tab_User extends FragmentStatePagerAdapter {
     public Adapter_Tab_User(@NonNull FragmentManager fm, int behavior) {

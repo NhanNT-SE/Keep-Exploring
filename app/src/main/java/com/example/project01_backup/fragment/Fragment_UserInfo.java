@@ -22,8 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.dao.DAO_Feedback;
-import com.example.project01_backup.dao.DAO_User;
+
 import com.example.project01_backup.model.Feedback;
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.User;
@@ -57,8 +56,7 @@ public class Fragment_UserInfo extends Fragment {
     private TextView tvName, tvEmail, tvID, tvPhone, tvBOD, tvAddress;
     private ImageView imgAvatar;
     private CircleImageView imgAvatarUser;
-    private DAO_User dao_user;
-    private DAO_Feedback dao_feedback;
+
     private User update;
     private FirebaseUser currentUser;
     private Dialog spotDialog;
@@ -81,8 +79,7 @@ public class Fragment_UserInfo extends Fragment {
 
     private void initView() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        dao_user = new DAO_User(getActivity(), this);
-        dao_feedback = new DAO_Feedback(getActivity(),this);
+
         spotDialog = new SpotsDialog(getActivity());
         tvName = (TextView) view.findViewById(R.id.fUserInfo_tvName);
         tvEmail = (TextView) view.findViewById(R.id.fUserInfo_tvEmail);
@@ -94,32 +91,7 @@ public class Fragment_UserInfo extends Fragment {
         btnFeedBack = (Button) view.findViewById(R.id.fUserInfo_btnFeedBack);
         imgAvatar = (ImageView) view.findViewById(R.id.fUserInfo_imgAvatar);
 
-        dao_user.getUserInfo(currentUser.getUid(), new FirebaseCallback() {
-            @Override
-            public void getUser(User user) {
-               try {
-                   tvName.setText(user.getName());
-                   tvEmail.setText(user.getEmail());
-                   tvID.setText(user.getId());
-                   tvPhone.setText(user.getPhoneNumber());
-                   tvBOD.setText(user.getBirthDay());
-                   tvAddress.setText(user.getAddress());
-                   Picasso.get().load(Uri.parse(user.getUriAvatar())).into(imgAvatar);
-                   update = user;
-                   AuthCredential credential = EmailAuthProvider
-                           .getCredential(update.getEmail(), update.getPassword());
-                   currentUser.reauthenticate(credential)
-                           .addOnCompleteListener(new OnCompleteListener<Void>() {
-                               @Override
-                               public void onComplete(@NonNull Task<Void> task) {
 
-                               }
-                           });
-               }catch (Exception e){
-
-               }
-            }
-        });
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,7 +125,6 @@ public class Fragment_UserInfo extends Fragment {
                     feedback.setEmailUser(currentUser.getEmail());
                     feedback.setUriAvatarUser(String.valueOf(currentUser.getPhotoUrl()));
                     feedback.setIdUser(currentUser.getUid());
-                    dao_feedback.inset(feedback);
                     dialog.dismiss();
                 }
             }
@@ -188,17 +159,7 @@ public class Fragment_UserInfo extends Fragment {
             }
         });
 
-        try {
-            etName.setText(update.getName());
-            tvEmail.setText(update.getEmail());
-            etPass.setText(update.getPassword());
-            etDOB.setText(update.getBirthDay());
-            etPhone.setText(update.getPhoneNumber());
-            etAddress.setText(update.getAddress());
-            Picasso.get().load(Uri.parse(update.getUriAvatar())).into(imgAvatarUser);
-        }catch (Exception e){
 
-        }
 
         imgAvatarUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,24 +190,7 @@ public class Fragment_UserInfo extends Fragment {
             }
         });
 
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spotDialog.show();
-                String name = etName.getText().toString();
-                String bOD = etDOB.getText().toString();
-                String pass = etPass.getText().toString();
-                String phone = etPhone.getText().toString();
-                String address = etAddress.getText().toString();
-                update.setName(name);
-                update.setBirthDay(bOD);
-                update.setAddress(address);
-                update.setPhoneNumber(phone);
-                update.setPassword(pass);
-                updateInfo(name, pass);
-                dialog.dismiss();
-            }
-        });
+
 
         dialog.show();
     }
@@ -273,7 +217,6 @@ public class Fragment_UserInfo extends Fragment {
                 storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        update.setUriAvatar(String.valueOf(uri));
                         editInfo(name,pass,uri);
 
                     }
@@ -296,7 +239,6 @@ public class Fragment_UserInfo extends Fragment {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
                                     toast("Your account has been successfully updated!");
-                                    dao_user.insert(update);
                                     spotDialog.dismiss();
                                 }else {
                                     toast("Error");

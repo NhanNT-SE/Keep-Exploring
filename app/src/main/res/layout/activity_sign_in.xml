@@ -57,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:text="user@gmail.com"
                 android:hint="Enter Your Email" />
 
             <TextView
@@ -73,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:text="123456"
                 android:hint="Enter Your Password"
                 android:inputType="textPassword" />
 

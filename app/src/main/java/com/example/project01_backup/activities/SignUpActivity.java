@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.dao.DAO_User;
+import com.example.project01_backup.api.Retrofit_config;
+import com.example.project01_backup.api.UserApi;
 import com.example.project01_backup.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,12 +38,22 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -48,11 +62,9 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView tvSignIn;
     private CircleImageView imgAvatar;
     private Button btnSignUp;
-    private StorageReference storageReference;
-    private FirebaseAuth mAuth;
-    private DAO_User dao_user;
     private AlertDialog dialog;
-    private User insert;
+    private UserApi userApi;
+    private String realPath = "";
     private static final int PICK_IMAGE_CODE = 1;
 
     @Override
@@ -60,13 +72,12 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setTitle("SIGN UP");
+        userApi = Retrofit_config.retrofit.create(UserApi.class);
         initView();
     }
 
     private void initView() {
-        dao_user = new DAO_User(this);
-        insert = new User();
-        mAuth = FirebaseAuth.getInstance();
+
         etDisplayName = (TextInputLayout) findViewById(R.id.signUp_etDisplayName);
         etEmail = (TextInputLayout) findViewById(R.id.signUp_etEmail);
         etPassword = (TextInputLayout) findViewById(R.id.signUp_etPassword);
@@ -91,7 +102,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select picture"),PICK_IMAGE_CODE);
+                startActivityForResult(Intent.createChooser(intent, "Select picture"), PICK_IMAGE_CODE);
             }
         });
 
@@ -101,119 +112,118 @@ public class SignUpActivity extends AppCompatActivity {
                 String displayName = etDisplayName.getEditText().getText().toString();
                 String email = etEmail.getEditText().getText().toString();
                 String pass = etPassword.getEditText().getText().toString();
-                if (displayName.isEmpty()){
-                    etDisplayName.setError("Field can't be empty");
-                }if (email.isEmpty()){
-                    etEmail.setError("Field can't be empty");
-                }if (pass.isEmpty()){
-                    etPassword.setError("Field cant' be empty");
-                }if (!displayName.isEmpty() && !email.isEmpty() && !pass.isEmpty()){
-                    dialog.show();
-                    createUser(displayName,email,pass);
+
+                if (displayName.isEmpty() || email.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(SignUpActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
+                File file = new File(realPath);
+
+                RequestBody requestBody;
+                if (realPath.isEmpty()) {
+                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                } else {
+                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                }
+                MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", realPath, requestBody);
+
+                RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), displayName);
+                RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
+                RequestBody passBody = RequestBody.create(MediaType.parse("text/plain"), pass);
+
+
+
+                Call<String> callSignUp = userApi.signUp(nameBody,emailBody,passBody);
+                callSignUp.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.d("TAG", "onResponse: " + response.body());
+                        try {
+                            JSONObject responseData = new JSONObject(response.body());
+//                            JSONObject data = responseData.getJSONObject("data");
+                            if (responseData.has("error")) {
+                                JSONObject error = responseData.getJSONObject("error");
+                                String status = error.getString("status");
+                                if (status == "201") {
+                                    Toast.makeText(SignUpActivity.this, "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
+
+                            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("TAG", "onFailure: " + t.getMessage());
+                    }
+                });
             }
         });
 
     }
-    private void createUser(final String name, String mail, String pass){
-        insert.setPassword(pass);
-        mAuth.createUserWithEmailAndPassword(mail,pass)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            String uID = mAuth.getCurrentUser().getUid();
-                            storageReference = FirebaseStorage.getInstance()
-                                    .getReference().child("AvatarUser/" + uID);
-                            imgAvatar.setDrawingCacheEnabled(true);
-                            imgAvatar.buildDrawingCache();
-                            Bitmap bitmap = ((BitmapDrawable) imgAvatar.getDrawable()).getBitmap();
-                            ByteArrayOutputStream bAOS = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bAOS);
-                            byte[] data = bAOS.toByteArray();
-                            UploadTask uploadTask = storageReference.putBytes(data);
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle unsuccessful uploads
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            updateUser(name,uri,mAuth.getCurrentUser());
-                                        }
-                                    });
-                                }
-                            });
 
 
-                        }else {
-                            toast("Error!");
-                            dialog.dismiss();
-                        }
-                    }
-                });
 
-    }
 
-    private void updateUser(final String name, final Uri uriImage, final FirebaseUser currentUser ){
-        UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .setPhotoUri(uriImage)
-                .build();
-
-        currentUser.updateProfile(profileUpdate)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            insert.setName(name);
-                            insert.setUriAvatar(String.valueOf(uriImage));
-                            insert.setEmail(currentUser.getEmail());
-                            insert.setId(currentUser.getUid());
-                            insert.setType("User");
-                            insert.setStringCreated(stringCreated());
-                            insert.setLongCreated(longCreated());
-                            dao_user.insert(insert);
-                            dialog.dismiss();
-                            toast("Sign up successful");
-                            FirebaseAuth.getInstance().signOut();
-                            finish();
-                            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                        }
-                    }
-                });
-
-    }
-
-    private void toast(String s){
+    private void toast(String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
-    private String stringCreated(){
-        String created;
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-       created = format.format(calendar.getTime());
-        return created;
-    }
 
-    private long longCreated(){
-        long created;
-        Calendar calendar = Calendar.getInstance();
-        created = calendar.getTimeInMillis();
-        return  created;
-    }
+
+//    private String getPathFromUri(Uri uri) {
+//        final String docId = DocumentsContract.getDocumentId(uri);
+//        final String[] split = docId.split(":");
+//        final String type = split[0];
+//        Uri contentUri = null;
+//        if ("image".equals(type)) {
+//            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        } else if ("video".equals(type)) {
+//            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+//        } else if ("audio".equals(type)) {
+//            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//        }
+//        final String selection = "_id=?";
+//        final String[] selectionArgs = new String[]{
+//                split[1]
+//        };
+//        return getDataColumn(contentUri, selection, selectionArgs);
+//
+//    }
+//
+//
+//    public String getDataColumn(Uri uri, String selection, String[] selectionArgs) {
+//        Cursor cursor = null;
+//        final String column = "_data";
+//        final String[] projection = {
+//                column
+//        };
+//        try {
+//            cursor = this.getContentResolver().query(uri, projection, selection, selectionArgs,
+//                    null);
+//            if (cursor != null && cursor.moveToFirst()) {
+//                final int index = cursor.getColumnIndexOrThrow(column);
+//                return cursor.getString(index);
+//            }
+//        } finally {
+//            if (cursor != null)
+//                cursor.close();
+//        }
+//        return "";
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == PICK_IMAGE_CODE && data != null){
-            imgAvatar.setImageURI(data.getData());
+        if (requestCode == 1 && data != null) {
+            Uri uri = data.getData();
+            imgAvatar.setImageURI(uri);
+//            realPath = getPathFromUri(uri);
+//            Log.d("realpath", realPath);
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -106,14 +106,12 @@ public class Fragment_Admin extends Fragment {
         cvUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragment(new Fragment_UserList());
             }
         });
 
         cvFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragment(new Fragment_Feedback());
             }
         });
     }

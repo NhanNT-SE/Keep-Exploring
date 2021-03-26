@@ -10,7 +10,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_Tab_User;
-import com.example.project01_backup.adapter.Adapter_Tab_UserAdmin;
 import com.example.project01_backup.model.User;
 import com.google.android.material.tabs.TabLayout;
 
