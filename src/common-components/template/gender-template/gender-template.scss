@@ -1,0 +1,10 @@
+.gender {
+  background-color: #ed008c;
+  padding: 4px 16px;
+  border-radius: 5px;
+  font-variant: all-petite-caps;
+  color: #fff;
+  &.gender-male {
+    background-color: #01adef;
+  }
+}

@@ -16,13 +16,11 @@ import {
   actionLogin,
   actionLogout,
   actionRefreshToken,
-  actionRefreshTokenEnded,
   actionSetSelectedUser,
   actionSetUser,
   actionSetUserList,
   actionSendNotify,
   actionDeleteUser,
-  actionSendMultiNotify,
   actionUpdateProfile,
   actionChangePassword,
 } from "redux/slices/userSlice";
@@ -31,6 +29,7 @@ import notifyApi from "api/notifyApi";
 
 function* handlerChangePassword(action) {
   try {
+    localStorageService.setLatestAction(actionChangePassword.type);
     const { data, history } = action.payload;
     yield put(actionLoading("Loading change your password...!"));
     yield call(() => userApi.changePassword(data));
@@ -48,6 +47,7 @@ function* handlerChangePassword(action) {
 
 function* handlerDeleteUser(action) {
   try {
+    localStorageService.setLatestAction(actionDeleteUser.type);
     const { userId, history } = action.payload;
     yield put(actionLoading("Loading deleting user...!"));
     yield call(() => userApi.deleteUser(userId));
@@ -61,6 +61,8 @@ function* handlerDeleteUser(action) {
 }
 function* handlerGetUser(action) {
   try {
+    localStorageService.setLatestAction(actionGetUser.type);
+
     yield put(actionLoading("Loading get user profile...!"));
     const response = yield call(() => userApi.getUser(action.payload));
     const { data } = response;
@@ -71,9 +73,9 @@ function* handlerGetUser(action) {
     yield put(actionFailed(error.message));
   }
 }
-
 function* handlerGetUserList() {
   try {
+    localStorageService.setLatestAction(actionGetListUser.type);
     yield put(actionLoading("Loading get all users...!"));
     const response = yield call(userApi.getAllUser);
     const { data } = response;
@@ -84,7 +86,6 @@ function* handlerGetUserList() {
     yield put(actionFailed(error.message));
   }
 }
-
 function* handlerLogin(action) {
   try {
     const rootState = rootStore.getState();
@@ -114,10 +115,14 @@ function* handlerLogin(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-function* handleLogout() {
+function* handleLogout(action) {
   try {
     yield put(actionLoading("Loading logout user ...!"));
-    yield call(userApi.logout);
+    yield call(() => {
+      userApi.logout(action.payload);
+    });
+    localStorageService.clearStorage();
+    localStorageService.clearUser();
     yield call(() => handlerSuccessSaga("Logout successfully!"));
     yield put(actionSetUser(null));
   } catch (error) {
@@ -129,30 +134,27 @@ function* handlerRefreshToken() {
   try {
     yield put(actionLoading("Loading refresh token ...!"));
     const userState = rootStore.getState();
-    const { user, isRefreshingToken } = userState.user;
-    if (isRefreshingToken) {
-      const refreshToken = localStorageService.getRefreshToken();
-      const latestAction = localStorageService.getLatestAction();
-      const response = yield call(() =>
-        userApi.refreshToken({ userId: user._id, refreshToken })
-      );
-      const { data } = response;
-      localStorageService.setAccessToken(data.accessToken);
-      axiosClient.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${localStorageService.getAccessToken()}`;
-      yield put(actionRefreshTokenEnded());
-      yield put({ type: latestAction });
-      yield call(() => handlerSuccessSaga("Refresh token successfully!"));
-    }
+    const { user } = userState.user;
+    const refreshToken = localStorageService.getRefreshToken();
+    const latestAction = localStorageService.getLatestAction();
+    const response = yield call(() =>
+      userApi.refreshToken({ userId: user._id, refreshToken })
+    );
+    const { data } = response;
+    localStorageService.setAccessToken(data);
+    axiosClient.defaults.headers.common[
+      "Authorization"
+    ] = localStorageService.getAccessToken();
+    yield put({ type: latestAction });
+    yield call(() => actionSuccess("Refresh token successfully!"));
   } catch (error) {
     console.log("user saga: ", error);
-    yield call(() => handlerFailSaga(error));
+    yield call(() => actionFailed(error));
   }
 }
-
 function* handlerSendNotify(action) {
   try {
+    localStorageService.setLatestAction(actionSendNotify.type);
     yield put(actionLoading("Loading send notify for user...!"));
     yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Send notify successfully!"));
@@ -162,25 +164,15 @@ function* handlerSendNotify(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-function* handlerSendMultiNotify(action) {
-  try {
-    yield put(actionLoading("Loading send notify for user list ...!"));
-    // yield call(() => notifyApi.sendMultiNotify(action.payload));
-    yield call(() => handlerSuccessSaga("Send notify successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
-  } catch (error) {
-    console.log("user saga: ", error);
-    yield call(() => handlerFailSaga(error));
-  }
-}
 function* handlerUpdateProfile(action) {
   try {
+    localStorageService.setLatestAction(actionUpdateProfile.type);
     const rootState = rootStore.getState();
     const { isRemember } = rootState.common;
     yield put(actionLoading("Loading update profile...!"));
     const response = yield call(() => userApi.updateProfile(action.payload));
     const { data } = response;
-    data.imgUser = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.imgUser}`;  
+    data.imgUser = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.imgUser}`;
     localStorageService.setUser({
       _id: data._id,
       email: data.email,
@@ -188,7 +180,6 @@ function* handlerUpdateProfile(action) {
       imgUser: data.imgUser,
       remember: isRemember,
     });
-    console.log(data);
     yield call(() => handlerSuccessSaga("Update Profile successfully!"));
     yield put(actionSetUser(data));
   } catch (error) {
@@ -219,9 +210,7 @@ export function* sagaGetUser() {
 export function* sagaGetUserList() {
   yield takeLatest(actionGetListUser.type, handlerGetUserList);
 }
-export function* sagaSendMultiNotify() {
-  yield takeLatest(actionSendMultiNotify.type, handlerSendMultiNotify);
-}
+
 export function* sagaSendNotify() {
   yield takeLatest(actionSendNotify.type, handlerSendNotify);
 }

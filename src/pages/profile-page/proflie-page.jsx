@@ -1,5 +1,6 @@
 import DialogChangePassword from "common-components/dialog/dialog-change-password/dialog-change-password";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import ImageUploader from "react-images-upload";
@@ -7,31 +8,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import { actionGetUser, actionUpdateProfile } from "redux/slices/userSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
+import { convertDate } from "utils/helper";
 import localStorageService from "utils/localStorageService";
 import "./profile-page.scss";
-// const UploadComponent = (props) => (
-//   <ImageUploader
-//     key="image-uploader"
-//     singleImage={true}
-//     withIcon={false}
-//     withLabel={false}
-//     buttonText="Choose an image"
-//     onChange={props.onImage}
-//     imgExtension={[".jpg", ".png", ".jpeg"]}
-//     maxFileSize={5242880}
-//   ></ImageUploader>
-// );
 function ProfilePage() {
+  const genderList = [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+  ];
   const userStorage = localStorageService.getUser();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.selectedUser);
   const [displayName, setDisplayName] = useState("");
   const [address, setAddress] = useState("");
-  const [bod, setBod] = useState("");
+  const [gender, setGender] = useState("");
+  const [created, setCreated] = useState("");
   const [file, setFile] = useState("");
   const [imageSubmit, setImageSubmit] = useState(undefined);
   const updateProfile = () => {
-    const profile = { displayName, address, bod, image_user: imageSubmit };
+    const profile = { displayName, address, gender, image_user: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
@@ -43,12 +38,14 @@ function ProfilePage() {
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName);
-      setAddress("130 Cong Hoa, Tan Binh, HCM");
-      setBod("07/05/2000");
+      setCreated(convertDate(user.created_on));
+      setGender(user.gender);
+      if (user.address) {
+        setAddress(user.address);
+      }
     }
   }, [user]);
 
- 
   const onImage = async (e) => {
     setFile(URL.createObjectURL(e[0]));
     setImageSubmit(e[0]);
@@ -114,7 +111,17 @@ function ProfilePage() {
                   />
                 </div>
               </div>
-
+              <div className="p-field p-grid">
+                <label className="p-col-12 p-md-2">Gender:</label>
+                <div className="p-col-12 p-md-10">
+                  <Dropdown
+                    value={gender}
+                    options={genderList}
+                    onChange={(e) => setGender(e.value)}
+                    placeholder="Select gender"
+                  />
+                </div>
+              </div>
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Address:</label>
                 <div className="p-col-12 p-md-10">
@@ -127,22 +134,13 @@ function ProfilePage() {
               </div>
 
               <div className="p-field p-grid">
-                <label className="p-col-12 p-md-2">Birth Day:</label>
-                <div className="p-col-12 p-md-10">
-                  <InputText
-                    type="text"
-                    value={bod}
-                    onChange={(e) => setBod(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Created on:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={"07/05/2000"} />
+                  <InputText type="text" disabled value={created} />
                 </div>
               </div>
             </div>
+
             <div className="container-actions">
               <Button
                 label="Update Profile"

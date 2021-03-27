@@ -6,15 +6,15 @@ const blogApi = {
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/blog/admin";
+    const url = "/admin/blogs";
     return axiosClient.get(url);
   },
   getBlog: (blogId) => {
-    const url = `/blog/${blogId}`;
+    const url = `/public/blog/${blogId}`;
     return axiosClient.get(url);
   },
   updateBlog: (body) => {
-    const url = "/blog/status";
+    const url = "/admin/update-status";
     return axiosClient.patch(url, body);
   },
 };

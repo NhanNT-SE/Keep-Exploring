@@ -33,7 +33,7 @@ function DrawerComponent(props) {
   const [active, setActive] = useState(0);
   const dispatch = useDispatch();
   const history = useHistory();
-  const {user} = props;
+  const { user } = props;
   const toggleDrawer = () => {
     if (open) {
       return dispatch(actionCloseDrawer());
@@ -43,8 +43,7 @@ function DrawerComponent(props) {
   const onItemClick = (url, index) => {
     setActive(index);
     if (url === "/logout") {
-      dispatch(actionLogout());
-      localStorageService.clearUser();
+      dispatch(actionLogout({ userId: user._id }));
     } else {
       history.push(url);
     }
@@ -68,7 +67,7 @@ function DrawerComponent(props) {
         }}
       >
         <div className={`${classes.toolbar} header-toolbar`}>
-          {user? `Hello ${user.displayName}`:"ADMIN DASHBOARD" }
+          {user ? `Hello ${user.displayName}` : "ADMIN DASHBOARD"}
         </div>
         <Divider />
         <List>

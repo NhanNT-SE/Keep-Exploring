@@ -21,7 +21,6 @@ import {
   sagaLogout,
   sagaRefreshToken,
   sagaSendNotify,
-  sagaSendMultiNotify,
   sagaUpdateProfile,
   sagaChangePassword,
 } from "./userSaga";
@@ -47,7 +46,6 @@ const sagaUser = [
   sagaLogin(),
   sagaLogout(),
   sagaSendNotify(),
-  sagaSendMultiNotify(),
   sagaRefreshToken(),
   sagaUpdateProfile(),
 ];

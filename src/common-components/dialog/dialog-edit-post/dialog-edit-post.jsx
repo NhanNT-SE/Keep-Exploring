@@ -33,15 +33,17 @@ function DialogEditPost(props) {
   };
   const updatePost = () => {
     const body = {
-      idUser: post.owner._id,
+      idUser: [post.owner._id],
       status: selectedStatus,
       contentAdmin: notify,
     };
     if (type && type === "blog") {
-      body.idBlog = post._id;
+      body.idUpdate = post._id;
+      body.type = "blog";
       dispatch(actionUpdateBlog(body));
     } else {
-      body.idPost = post._id;
+      body.idUpdate = post._id;
+      body.type = "post";
       dispatch(actionUpdatePost(body));
     }
   };

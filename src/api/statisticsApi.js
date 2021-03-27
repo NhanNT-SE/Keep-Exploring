@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 
 const statisticsApi = {
   getData: () => {
-    const url = "/statistics";
+    const url = "/admin/statistics";
     return axiosClient.get(url);
   },
 };

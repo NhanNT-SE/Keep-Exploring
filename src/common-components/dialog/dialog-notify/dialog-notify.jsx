@@ -1,17 +1,16 @@
+import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
-import GLOBAL_VARIABLE from "utils/global_variable";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 import { actionHideDialog } from "redux/slices/commonSlice";
-import "./dialog-notify.scss";
 import {
-  actionSendMultiNotify,
-  actionSendNotify,
+  actionSendNotify
 } from "redux/slices/userSlice";
+import GLOBAL_VARIABLE from "utils/global_variable";
+import "./dialog-notify.scss";
 function DialogNotify(props) {
-  const { user, userList } = props;
+  const { userList } = props;
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");
   const isShowDialog = useSelector((state) => state.common.isShowDialogNotify);
@@ -19,15 +18,11 @@ function DialogNotify(props) {
     dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
   };
   const sendNotify = () => {
-    if (!user) {
-      dispatch(actionSendMultiNotify(userList));
-    } else {
-      const payload = {
-        idUser: user._id,
-        contentAdmin: notify,
-      };
-      dispatch(actionSendNotify(payload));
-    }
+    const payload = {
+      idUser: userList,
+      contentAdmin: notify,
+    };
+    dispatch(actionSendNotify(payload));
   };
   const renderFooter = () => {
     return (
@@ -64,8 +59,8 @@ function DialogNotify(props) {
       onHide={hideDialog}
       className="dialog-notify"
     >
-      {user ? (
-        <h5>Send notification to user: "{user.displayName}"</h5>
+      {userList.length == 1 ? (
+        <h5>Send notification to this user</h5>
       ) : (
         <h5>Send notification to selected users</h5>
       )}
