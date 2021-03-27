@@ -25,11 +25,9 @@ const upload = multer({ storage: storage });
 //Post Method
 router.post(
   "/add",
-
   upload.array("image_blog", 10),
   BlogController.createBlog
 );
-
 //Patch method
 router.patch("/like", BlogController.likeBlog);
 

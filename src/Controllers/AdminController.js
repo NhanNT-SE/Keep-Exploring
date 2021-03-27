@@ -179,13 +179,16 @@ const deleteUser = async (req, res, next) => {
 const sendNotify = async (req, res, next) => {
   try {
     const { idUser, contentAdmin } = req.body;
-    const notify = new Notification({
-      idUser,
-      contentAdmin,
+    const user = {};
+    const listUser = [];
+    idUser.forEach((e) => {
+      user.idUser = e;
+      user.contentAdmin = contentAdmin;
+      listUser.push(user);
     });
-    await notify.save();
+    await Notification.insertMany(listUser);
     return res.send({
-      data: notify,
+      data: listUser,
       status: 200,
       message: "Tạo thông báo thành công",
     });

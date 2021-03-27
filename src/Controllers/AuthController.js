@@ -48,7 +48,7 @@ const signIn = async (req, res, next) => {
           email: user.email,
           role: user.role,
           displayName: user.displayName,
-          imageUser: user.imgUser,
+          imgUser: user.imgUser,
         };
 
         return res.status(200).send({
@@ -131,6 +131,7 @@ const signUp = async (req, res, next) => {
 const refreshToken = async (req, res, next) => {
   try {
     const { refreshToken, userId } = req.body;
+
     const decoded = await jwtHelper.verifyToken(
       refreshToken,
       REFRESH_TOKEN_SECRET
@@ -147,7 +148,7 @@ const refreshToken = async (req, res, next) => {
         token.accessToken = accessToken;
         await token.save();
         return res.send({
-          data: token,
+          data: accessToken,
           status: 200,
           message: "Refresh token thành công",
         });
