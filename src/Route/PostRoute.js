@@ -1,54 +1,43 @@
-const express = require('express');
-const multer = require('multer');
-const postController = require('../Controllers/PostController');
-const passport = require('passport');
-const Post = require('../Models/Post');
-require('../middleware/passport');
-
+const express = require("express");
+const multer = require("multer");
+const postController = require("../Controllers/PostController");
+const Post = require("../Models/Post");
 const router = express.Router();
 
 //The disk storage engine gives you full control on storing files to disk.
 const storage = multer.diskStorage({
-	destination: function (req, file, callback) {
-		callback(null, 'src/public/images/post');
-	},
-	filename: function (req, file, callback) {
-		callback(null, Date.now() + '-' + file.originalname);
-	},
+  destination: function (req, file, callback) {
+    callback(null, "src/public/images/post");
+  },
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + "-" + file.originalname);
+  },
 });
 
 const limitImgs = async (req, res) => {
-	try {
-		const postFound = await Post.findById(req.params);
-		const amount = postFound.imgs.length;
-	} catch (error) {
-		res.status(500).send(error.message);
-	}
+  try {
+    const postFound = await Post.findById(req.params);
+    const amount = postFound.imgs.length;
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 const upload = multer({ storage: storage });
 
-//Get Method
-router.get('/', postController.getPostList);
-router.get('/admin', passport.authenticate('jwt'), postController.getPostListAdmin);
-router.get('/like', postController.getLikeList);
-router.get('/:idPost', postController.getPost);
-
 //Post Method
-router.post('/', passport.authenticate('jwt'), upload.array('image_post', 20), postController.createPost);
+router.post("/", upload.array("image_post", 20), postController.createPost);
 
 //Patch Method
-router.patch('/like', passport.authenticate('jwt', { session: false }), postController.likePost);
-router.patch('/status', passport.authenticate('jwt', { session: false }), postController.updateStatus);
+router.patch("/like", postController.likePost);
 router.patch(
-	'/:idPost',
-	passport.authenticate('jwt', { session: false }),
-	upload.array('image_post', 20),
-	postController.updatePost
+  "/:idPost",
+  upload.array("image_post", 20),
+  postController.updatePost
 );
 
 //Delete Method
-router.delete('/delete/:postID', passport.authenticate('jwt', { session: false }), postController.deletePost);
+router.delete("/delete/:postID", postController.deletePost);
 
 module.exports = router;
 

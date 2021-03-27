@@ -1,71 +1,67 @@
 const jwt = require("jsonwebtoken");
 const Token = require("../Models/Token");
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const { ACCESS_TOKEN_SECRET } = require("../config/index");
+const handlerCustomError = require("./customError");
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
       _id: user._id,
-      name: user.name,
-      email: user.email,
       role: user.role,
-      displayName: user.displayName,
-      imageUser: user.imgUser,
     };
-    const token = await jwt.sign({ data: userData }, secretSignature, {
+    const token = await jwt.sign(userData, secretSignature, {
       algorithm: "HS256",
       expiresIn: tokenLife,
     });
     return token;
   } catch (error) {
-    console.log("Create Token Error:", error);
-    return error;
+    handlerCustomError(401, error.message);
   }
 };
 
-const verifyToken = async (token, secretKey, cb) => {
+const verifyToken = async (token, secretKey) => {
   try {
     const verify = await jwt.verify(token, secretKey);
     return verify;
   } catch (error) {
-    cb(error);
+    handlerCustomError(401, error.message);
   }
 };
 
 const isAuth = async (req, res, next) => {
-  const tokenFromClient = req.headers["authorization"];
-  const userId = req.headers["user-id"];
-  if (tokenFromClient) {
-    try {
-      const decoded = await verifyToken(
-        tokenFromClient,
-        accessTokenSecret,
-        (err) => {
-          err.status = 401;
-          return next(err);
-        }
-      );
-      req.jwtDecoded = decoded;
-      return next();
-      // const token = await Token.findById(decoded.data._id);
-      // if (token.accessToken && decoded.data._id === userId) {
-      //   req.jwtDecoded = decoded;
-      //   return next();
-      // }
-      // let err = new Error();
-      // err.status = 401;
-      // err.message = "Invalid Token";
-      // return next(err);
-    } catch (error) {
-      next(error);
+  const TOKEN_FROM_CLIENT = req.headers["authorization"];
+  // const userId = req.headers["user-id"];
+  try {
+    if (TOKEN_FROM_CLIENT) {
+      const decoded = await verifyToken(TOKEN_FROM_CLIENT, ACCESS_TOKEN_SECRET);
+      const token = await Token.findById(decoded._id);
+      if (token.accessToken === TOKEN_FROM_CLIENT) {
+        req.jwtDecoded = decoded;
+        req.user = decoded;
+        return next();
+      }
+      handlerCustomError(401, "Vui lòng đăng nhập lại để tiếp tục");
     }
-  } else {
-    let err = new Error();
-    err.message = "No token provided.";
-    err.status = 401;
-    return next(err);
+    handlerCustomError(401, "Không nhận được token.");
+  } catch (error) {
+    next(error);
+  }
+};
+const isAdmin = async (req, res, next) => {
+  const { user } = req;
+  try {
+    if (user.role === "admin") {
+      return next();
+    }
+    handlerCustomError(
+      401,
+      "Tài khoản hiện tại của bạn không đủ quyền để thực hiện hành động này"
+    );
+  } catch (error) {
+    next(error);
   }
 };
 module.exports = {
+  isAdmin,
   isAuth,
   generateToken,
   verifyToken,

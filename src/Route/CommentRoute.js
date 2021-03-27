@@ -1,11 +1,7 @@
 const express = require("express");
 const multer = require("multer");
-const passport = require("passport");
 const commentController = require("../Controllers/CommentController");
-require("../middleware/passport");
-
 const router = express.Router();
-
 //The disk storage engine gives you full control on storing files to disk.
 const storagePost = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -27,29 +23,14 @@ const storageBlog = multer.diskStorage({
 
 const uploadPost = multer({ storage: storagePost });
 const uploadBlog = multer({ storage: storageBlog });
-
-// GET Method
-router.get(
-  "/getByPost/:idPost",
-  passport.authenticate("jwt"),
-  commentController.getCommentbyPost
-);
-router.get(
-  "/getByBlog/:idBlog",
-  passport.authenticate("jwt"),
-  commentController.getCommentbyPost
-);
-
 //POST Method
 router.post(
   "/post",
-  passport.authenticate("jwt"),
   uploadPost.single("image_comment"),
   commentController.createCommentPost
 );
 router.post(
   "/blog",
-  passport.authenticate("jwt"),
   uploadBlog.single("image_comment"),
   commentController.createCommentBlog
 );
@@ -57,32 +38,15 @@ router.post(
 //PATCH Method
 router.patch(
   "/editBlog",
-  passport.authenticate("jwt"),
   uploadBlog.single("image_comment"),
   commentController.editCommentBlog
 );
 router.patch(
   "/editPost",
-  passport.authenticate("jwt"),
   uploadBlog.single("image_comment"),
   commentController.editCommentPost
 );
-
 //DELETE Method
-router.delete(
-  "/deleteByPost/:idPost",
-  passport.authenticate("jwt"),
-  commentController.deleteCommentbyPost
-);
-router.delete(
-  "/deleteByBlog/:idBlog",
-  passport.authenticate("jwt"),
-  commentController.deleteCommentbyBlog
-);
-router.delete(
-  "/deletebyId/:idComment",
-  passport.authenticate("jwt"),
-  commentController.deleteCommentbyID
-);
+router.delete("/deletebyId/:idComment", commentController.deleteCommentByID);
 
 module.exports = router;
