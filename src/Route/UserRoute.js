@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
-
+require("../Models/Blog");
+require("../Models/Post");
 const userController = require("../Controllers/UserController");
 
 const router = express.Router();
@@ -18,19 +19,11 @@ const upload = multer({ storage: storage });
 
 //GET Method
 router.get("/", userController.getMyProfile);
-router.get("/list", userController.getAllUser);
 router.get("/:idUser", userController.getAnotherProfile);
 
 //PUT Method
-router.patch(
-  "/",
-  upload.single("image_user"),
-  userController.updateProfile
-);
+router.patch("/", upload.single("image_user"), userController.updateProfile);
 router.patch("/changePass", userController.changePass);
-
-//DELETE Method
-router.delete("/:idUser", userController.deleteUser);
 
 module.exports = router;
 

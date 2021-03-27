@@ -4,28 +4,25 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
-const multer = require("multer");
-const { isAuth } = require("./src/middleware/jwtHelper");
-
+const { isAuth, isAdmin } = require("./src/middleware/jwtHelper");
+// ----------DEFINE ROUTER----------
+const addressRouter = require("./src/Route/AddressRoute");
+const adminRouter = require("./src/Route/AdminRoute");
 const apiDocRouter = require("./src/Route/APIDocsRoute");
 const authRouter = require("./src/Route/AuthRouter");
+const blogRouter = require("./src/Route/BlogRoute");
+const commentRouter = require("./src/Route/CommentRoute");
+const postRouter = require("./src/Route/PostRoute");
+const notifyRouter = require("./src/Route/NotificationRoute");
+const publicRouter = require("./src/Route/PublicRoute");
 const userRouter = require("./src/Route/UserRoute");
-// const postRouter = require("./src/Route/PostRoute");
-// const addressRouter = require("./src/Route/AddressRoute");
-// const commentRouter = require("./src/Route/CommentRoute");
-// const blogRouter = require("./src/Route/BlogRoute");
-// const notiRouter = require("./src/Route/NotificationRoute");
-// const statisticsRouter = require("./src/Route/StatisticsRoute");
-
+// ----------ROUTER----------
 const mongoString =
   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const port = process.env.PORT || 3000;
 const app = express();
-const forms = multer();
-
 app.use(express.static("src/public"));
 app.use(bodyParser.json());
-// app.use(forms.array());
 app.use(
   bodyParser.urlencoded({
     extended: true,
@@ -33,20 +30,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(cors());
-
-//Routers
-app.use("/api-doc", apiDocRouter);
-app.use("/auth", authRouter);
-app.use(isAuth);
-app.use("/user", userRouter);
-// app.use("/post", postRouter);
-// app.use("/address", addressRouter);
-// app.use("/comment", commentRouter);
-// app.use("/blog", blogRouter);
-// app.use("/notification", notiRouter);
-// app.use("/statistics", statisticsRouter);
-
-//Kết nối với mongo database
+// ----------CONNECT MONGO DB----------
 mongoose
   .connect(mongoString, {
     useUnifiedTopology: true,
@@ -60,7 +44,22 @@ mongoose
   .catch((err) => {
     console.error(`Error connecting to the database. \n${err}`);
   });
-
+// ----------PUBLIC ROUTER----------
+app.use("/api-doc", apiDocRouter);
+app.use("/auth", authRouter);
+app.use("/public", publicRouter);
+// ----------AUTH ROUTER----------
+app.use(isAuth);
+app.use("/address", addressRouter);
+app.use("/blog", blogRouter);
+app.use("/comment", commentRouter);
+app.use("/notification", notifyRouter);
+app.use("/post", postRouter);
+app.use("/user", userRouter);
+// ----------ADMIN ROUTER----------
+app.use(isAdmin);
+app.use("/admin", adminRouter);
+// ----------HANDLER ERROR----------
 app.use((req, res, next) => {
   const error = new Error("Not found");
   error.status = 404;
@@ -75,5 +74,4 @@ app.use((error, req, res, next) => {
     },
   });
 });
-
 app.listen(port, console.log(`start on port ${port}`));

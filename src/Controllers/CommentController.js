@@ -4,6 +4,7 @@ const Notification = require("../Models/Notification");
 const Post = require("../Models/Post");
 const { createNotification } = require("./NotificationController");
 const fs = require("fs");
+const handlerCustomError = require("../middleware/customError");
 
 const createCommentPost = async (req, res, next) => {
   try {
@@ -120,7 +121,7 @@ const createCommentBlog = async (req, res, next) => {
   }
 };
 
-const deleteCommentbyID = async (req, res, next) => {
+const deleteCommentByID = async (req, res, next) => {
   try {
     const user = req.user;
     const { idComment } = req.params;
@@ -158,79 +159,6 @@ const deleteCommentbyID = async (req, res, next) => {
     next(error);
   }
 };
-
-const deleteCommentbyPost = async (req, res, next) => {
-  try {
-    const user = req.user;
-    const { idPost } = req.params;
-
-    if (user.role !== "admin") {
-      return handleCustomError(201, "Bạn không có quyền xóa list comment này");
-    }
-
-    const commentList = await Comment.find(
-      { idPost: idPost },
-      { img: 1, _id: 0 }
-    );
-    if (commentList) {
-      commentList.forEach((item) => {
-        fs.unlinkSync("src/public/images/comment/post/" + item.img);
-      });
-    }
-
-    await Comment.deleteMany({ idPost: idPost });
-    await Post.findByIdAndUpdate(
-      idPost,
-      { $unset: { comment: "" } },
-      { multi: true }
-    );
-
-    return res.send({
-      data: null,
-      status: 200,
-      message: "Đã xóa tất cả comment của bài Post",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const deleteCommentbyBlog = async (req, res, next) => {
-  try {
-    const user = req.user;
-    const { idBlog } = req.params;
-
-    if (user.role !== "admin") {
-      return handleCustomError(201, "Bạn không có quyền xóa list comment này");
-    }
-
-    const commentList = await Comment.find(
-      { idBlog: idBlog },
-      { img: 1, _id: 0 }
-    );
-    if (commentList) {
-      commentList.forEach((item) => {
-        fs.unlinkSync("src/public/images/comment/blog/" + item.img);
-      });
-    }
-
-    await Comment.deleteMany({ idBlog: idBlog });
-    await Blog.findByIdAndUpdate(
-      idBlog,
-      { $unset: { comment: 1 } },
-      { multi: true }
-    );
-
-    return res.send({
-      data: null,
-      status: 200,
-      message: "Đã xóa tất cả comment của bài Blog",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const editCommentBlog = async (req, res, next) => {
   try {
     const { idComment, content, deleteImg } = req.body;
@@ -279,7 +207,7 @@ const editCommentPost = async (req, res, next) => {
 
     if (user._id != commentFound.idUser.toString()) {
 
-      return handleCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
+      return handlerCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
     }
 
     if (commentFound.img && deleteImg) {
@@ -301,61 +229,10 @@ const editCommentPost = async (req, res, next) => {
     next(error);
   }
 };
-
-const getCommentbyPost = async (req, res, next) => {
-  try {
-    const { idPost } = req.params;
-
-    const commentList = await Comment.find({ idPost: idPost })
-      .populate("idPost")
-      .populate("idUser");
-    if (!commentList) {
-      const postFound = await Post.findById(idPost);
-      if (postFound) {
-        return handleCustomError(201, "Bài viết chưa có comment");
-      }
-      return handleCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
-    }
-
-    return res.send({ data: commentList, status: 200, message: "" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getCommentbyBlog = async (req, res, next) => {
-  try {
-    const { idBlog } = req.params;
-    const commentList = await Comment.find({ idBlog: idBlog })
-      .populate("idBlog")
-      .populate("idUser");
-    if (!commentList) {
-      const blogFound = await Blog.findById(idBlog);
-      if (blogFound) {
-        return handleCustomError(201, "Bài viết chưa có comment");
-      }
-      return handleCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
-    }
-    return res.send({ data: commentList, status: 200, message: "" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const handleCustomError = (status, message) => {
-  const err = new Error();
-  err.status = status || 500;
-  err.message = message;
-  throw err;
-};
 module.exports = {
   createCommentPost,
   createCommentBlog,
-  deleteCommentbyID,
-  deleteCommentbyPost,
-  deleteCommentbyBlog,
+  deleteCommentByID,
   editCommentBlog,
   editCommentPost,
-  getCommentbyPost,
-  getCommentbyBlog,
 };

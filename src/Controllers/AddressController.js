@@ -1,3 +1,4 @@
+const handlerCustomError = require("../middleware/customError");
 const Address = require("../Models/Address");
 
 const createAddress = async (req, res, next) => {
@@ -27,25 +28,6 @@ const deleteAddress = async (req, res, next) => {
   }
 };
 
-const getPostByAddress = async (req, res, next) => {
-  try {
-    const { province } = req.body;
-    var postList = [];
-
-    const addressList = await Address.find({ province }).populate("idPost");
-    // addressList.forEach((item) => {
-    //   postList.push(item.idPost);
-    // });
-    postList = [...addressList];
-    if ((postList.length = 0)) {
-      handlerCustomError(201, "Địa điểm chưa được review");
-    }
-
-    return res.send({ data: postList, status: 200, message: "" });
-  } catch (error) {
-    next(error);
-  }
-};
 
 const updateAddress = async (req, res, next) => {
   try {
@@ -70,15 +52,9 @@ const updateAddress = async (req, res, next) => {
     next(error);
   }
 };
-const handlerCustomError = (status, message) => {
-  const err = new Error();
-  err.status = status || 500;
-  err.message = message;
-  throw err;
-};
+
 module.exports = {
   createAddress,
   deleteAddress,
-  getPostByAddress,
   updateAddress,
 };

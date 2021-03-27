@@ -6,10 +6,7 @@ const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
       _id: user._id,
-      displayName: user.displayName,
-      email: user.email,
       role: user.role,
-      imgUser: user.imgUser,
     };
     const token = await jwt.sign(userData, secretSignature, {
       algorithm: "HS256",
@@ -49,7 +46,22 @@ const isAuth = async (req, res, next) => {
     next(error);
   }
 };
+const isAdmin = async (req, res, next) => {
+  const { user } = req;
+  try {
+    if (user.role === "admin") {
+      return next();
+    }
+    handlerCustomError(
+      401,
+      "Tài khoản hiện tại của bạn không đủ quyền để thực hiện hành động này"
+    );
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
+  isAdmin,
   isAuth,
   generateToken,
   verifyToken,

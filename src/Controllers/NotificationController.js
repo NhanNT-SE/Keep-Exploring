@@ -1,3 +1,4 @@
+const handlerCustomError = require("../middleware/customError");
 const Notification = require("../Models/Notification");
 
 const createNotification = async (notify) => {
@@ -30,30 +31,7 @@ const createNotification = async (notify) => {
   }
 };
 
-const createNotiByAdmin = async (req, res, next) => {
-  try {
-    const { idUser, contentAdmin } = req.body;
-    const user = req.user;
-    if (user.role !== "admin") {
-      return handleCustomError(201, "Bạn không phải admin");
-    }
-
-    const notify = new Notification({
-      idUser,
-      contentAdmin,
-    });
-    await notify.save();
-    return res.send({
-      data: { notify },
-      status: 200,
-      message: "Tạo thông báo thành công",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const changeNewStatusNoti = async (req, res, next) => {
+const changeNewStatusNotify = async (req, res, next) => {
   try {
     const { idNoti } = req.body;
     const notiFound = await Notification.findById(idNoti);
@@ -74,7 +52,7 @@ const changeNewStatusNoti = async (req, res, next) => {
   }
 };
 
-const changeSeenStatusNoti = async (req, res, next) => {
+const changeSeenStatusNotify = async (req, res, next) => {
   try {
     const idUser = req.user._id;
     const newNoti_list = await Notification.find({
@@ -97,34 +75,33 @@ const changeSeenStatusNoti = async (req, res, next) => {
   }
 };
 
-const deleteNoti = async (req, res, next) => {
+const deleteNotify = async (req, res, next) => {
   try {
     const { idNoti } = req.params;
     const user = req.user;
-    if (user.role !== "admin") {
-      return handleCustomError(202, "Bạn không có quyền xóa thông báo này");
-    }
-
     const notiFound = await Notification.findById(idNoti);
     if (!notiFound) {
       return handleCustomError(201, "Thông báo không tồn tại hoặc đã bị xóa");
     }
-
-    await Notification.findByIdAndDelete(idNoti);
-    return res.send({ data: null, status: 200, message: "Đã xóa thông báo" });
+    if (user.role === "admin" || user._id == notiFound.idUser.toString()) {
+      await Notification.findByIdAndDelete(idNoti);
+      return res.send({ data: null, status: 200, message: "Đã xóa thông báo" });
+    }
+    return handleCustomError(202, "Bạn không có quyền xóa thông báo này");
   } catch (error) {
     next(error);
   }
 };
 
-const getAllbyUser = async (req, res, next) => {
+const getAllByUser = async (req, res, next) => {
   try {
     const user = req.user;
     const { status } = req.query;
-    const notification_list = await Notification.find({ idUser: user._id });
-
+    const notification_list = await Notification.find({
+      idUser: user._id,
+    }).sort({ created_on: -1 });
     if (!notification_list) {
-      handleCustomError(201, "Bạn chưa có thông báo nào");
+      handlerCustomError(201, "Bạn chưa có thông báo nào");
     }
 
     if (status) {
@@ -148,18 +125,10 @@ const getAllbyUser = async (req, res, next) => {
   }
 };
 
-const handleCustomError = (status, message) => {
-  const err = new Error();
-  err.status = status || 500;
-  err.message = message;
-  throw err;
-};
-
 module.exports = {
   createNotification,
-  createNotiByAdmin,
-  changeNewStatusNoti,
-  changeSeenStatusNoti,
-  deleteNoti,
-  getAllbyUser,
+  changeNewStatusNotify,
+  changeSeenStatusNotify,
+  deleteNotify,
+  getAllByUser,
 };
