@@ -1,6 +1,6 @@
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { actionGetUser } from "redux/slices/userSlice";
@@ -10,18 +10,27 @@ import GLOBAL_VARIABLE from "utils/global_variable";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
-
+import { convertDate } from "utils/helper";
 function UserDetailsPage() {
   const { userId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((state) => state.user.selectedUser);
+  const [created, setCreated] = useState("");
+  const [bod, setBod] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     dispatch(actionGetUser(userId));
   }, []);
   useEffect(() => {
-    console.log("user profile:", user);
+    if (user) {
+      setCreated(convertDate(user.created_on));
+      setBod(convertDate(user.bod));
+      if (user.address) {
+        setAddress(user.address);
+      }
+    }
   }, [user]);
   return (
     <div className="user-details-container">
@@ -34,9 +43,9 @@ function UserDetailsPage() {
         </div>
         <div className="title">User Profile</div>
       </div>
-      {user ? (
+      {user && (
         <div className="container">
-          <DialogNotify user={user} />
+          <DialogNotify userList={[user._id]} />
           <DialogDeleteUser user={user} />
           <div className="container-header">
             <Avatar
@@ -74,13 +83,6 @@ function UserDetailsPage() {
             <h2>Account</h2>
             <div className="p-fluid content-info">
               <div className="p-field p-grid">
-                <label className="p-col-12 p-md-2">Account ID:</label>
-                <div className="p-col-12 p-md-10">
-                  <InputText type="text" value={user._id} disabled />
-                </div>
-              </div>
-
-              <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Display Name:</label>
                 <div className="p-col-12 p-md-10">
                   <InputText type="text" disabled value={user.displayName} />
@@ -93,14 +95,6 @@ function UserDetailsPage() {
                   <InputText type="email" disabled value={user.email} />
                 </div>
               </div>
-
-              <div className="p-field p-grid">
-                <label className="p-col-12 p-md-2">Password:</label>
-                <div className="p-col-12 p-md-10">
-                  <InputText type="password" disabled value={user.pass} />
-                </div>
-              </div>
-
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Post:</label>
                 <div className="p-col-12 p-md-10">
@@ -114,34 +108,37 @@ function UserDetailsPage() {
                   <InputText type="text" disabled value={user.blog.length} />
                 </div>
               </div>
-
+              <div className="p-field p-grid">
+                <label className="p-col-12 p-md-2">Gender:</label>
+                <div className="p-col-12 p-md-10">
+                  <InputText
+                    type="text"
+                    value={user.gender.toUpperCase()}
+                    disabled
+                  />
+                </div>
+              </div>
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Created on:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={"07/05/2000"} />
+                  <InputText type="text" disabled value={created} />
                 </div>
               </div>
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Address:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText
-                    type="text"
-                    disabled
-                    value={"150 Cong Hoa, Tan Binh, HCM"}
-                  />
+                  <InputText type="text" disabled value={address} />
                 </div>
               </div>
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Birth Day:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={"07/07/2000"} />
+                  <InputText type="text" disabled value={bod} />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      ) : (
-        <h1>USER NOT FOUND (OR THIS USER WAS DELETED)</h1>
       )}
     </div>
   );

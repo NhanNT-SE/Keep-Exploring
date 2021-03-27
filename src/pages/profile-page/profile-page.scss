@@ -92,6 +92,25 @@
           font-variant: all-petite-caps;
           font-weight: bold;
         }
+        .input-date {
+          .MuiTextField-root{
+            width: 100%;
+
+          }
+          input {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            padding: 0px 8px;
+            border: 1px solid #ced4da;
+            &:hover {
+              outline: 0 none;
+              outline-offset: 0;
+              box-shadow: 0 0 0 0.2rem #a6d5fa;
+              border-color: #2196f3;
+            }
+          }
+        }
       }
     }
     &-actions {

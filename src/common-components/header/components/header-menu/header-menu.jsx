@@ -44,8 +44,7 @@ function HeaderMenu(props) {
     setOpen(false);
   };
   const logout = () => {
-    dispatch(actionLogout());
-    localStorageService.clearUser();
+    dispatch(actionLogout({ userId: user._id }));
   };
   function handleListKeyDown(event) {
     if (event.key === "Tab") {

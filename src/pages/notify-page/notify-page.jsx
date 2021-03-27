@@ -10,6 +10,11 @@ import "./notify-page.scss";
 import { Button } from "primereact/button";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import { actionShowDialog } from "redux/slices/commonSlice";
+import { Dropdown } from "primereact/dropdown";
+import { GenderItemTemplate } from "common-components/template/gender-template/gender-template";
+import { SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
+import DateBodyTemplate from "common-components/template/date-template/date-template";
+import { GenderBodyTemplate } from "common-components/template/gender-template/gender-template";
 
 function NotifyPage() {
   const dt = useRef(null);
@@ -18,7 +23,28 @@ function NotifyPage() {
   const [selectedData, setSelectedData] = useState(null);
   const [selectedUser, setSelectedUser] = useState([]);
   const userList = useSelector((state) => state.user.userList);
+  const [selectedGender, setSelectedGender] = useState(null);
 
+  const onGenderChange = (e) => {
+    dt.current.filter(e.value, "gender", "equals");
+    setSelectedGender(e.value);
+  };
+  const sendNotify = () => {
+    console.log(selectedUser);
+    dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+  };
+  const genderFilter = (
+    <Dropdown
+      value={selectedGender}
+      options={GLOBAL_VARIABLE.GENDER_LIST}
+      onChange={onGenderChange}
+      itemTemplate={GenderItemTemplate}
+      valueTemplate={SelectedGenderTemplate}
+      placeholder="Select a gender"
+      className="p-column-filter"
+      showClear
+    />
+  );
   const dynamicColumns = columns.map((col, i) => {
     return (
       <Column
@@ -27,14 +53,18 @@ function NotifyPage() {
         filter
         filterMatchMode="contains"
         sortable
+        filterElement={col.field === "gender" ? genderFilter : null}
+        body={
+          col.field === "gender"
+            ? GenderBodyTemplate
+            : col.field === "created_on"
+            ? DateBodyTemplate
+            : null
+        }
         header={col.header}
       />
     );
   });
-  const sendNotify = () => {
-    console.log(selectedUser);
-    dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
-  };
   useEffect(() => {
     dispatch(actionGetListUser());
   }, []);

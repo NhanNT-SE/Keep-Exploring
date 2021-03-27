@@ -19,8 +19,11 @@ import {
 } from "redux/slices/blogSlice";
 import notifyApi from "api/notifyApi";
 import commentApi from "api/commentApi";
+import localStorageService from "utils/localStorageService";
 function* handlerDeleteBlog(action) {
   try {
+    localStorageService.setLatestAction(actionDeleteBlog.type);
+
     const { blogId, history } = action.payload;
     yield put(actionLoading("Loading deleting blog...!"));
     yield call(() => blogApi.deleteBlog(blogId));
@@ -35,7 +38,8 @@ function* handlerDeleteBlog(action) {
 }
 function* handlerDeleteComment(action) {
   try {
-    const  commentId  = action.payload;
+    localStorageService.setLatestAction(actionDeleteComment.type);
+    const commentId = action.payload;
     yield put(actionLoading("Loading deleting comment...!"));
     yield call(() => commentApi.deleteComment(commentId));
     yield call(() => handlerSuccessSaga("Delete comment successfully!"));
@@ -47,6 +51,7 @@ function* handlerDeleteComment(action) {
 
 function* handlerGetAllBlog() {
   try {
+    localStorageService.setLatestAction(actionGetAllBlog.type);
     yield put(actionLoading("Loading get all blog list ...!"));
     const response = yield call(blogApi.getAll);
     const { data } = response;
@@ -60,6 +65,7 @@ function* handlerGetAllBlog() {
 }
 function* handlerGetBlog(action) {
   const { blogId, history } = action.payload;
+  localStorageService.setLatestAction(actionGetBlog.type);
   try {
     yield put(actionLoading("Loading get blog ...!"));
     const response = yield call(() => blogApi.getBlog(blogId));
@@ -69,12 +75,14 @@ function* handlerGetBlog(action) {
   } catch (error) {
     console.log("blog saga: ", error);
     yield put(actionFailed(error.message));
-    history.put("/blog");
+    history.push("/blog");
   }
 }
 
 function* handlerUpdateBlog(action) {
   try {
+    localStorageService.setLatestAction(actionUpdateBlog.type);
+
     yield put(actionLoading("Loading updating status blog...!"));
     yield call(() => blogApi.updateBlog(action.payload));
     yield call(() => notifyApi.sendNotify(action.payload));

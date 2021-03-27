@@ -39,7 +39,7 @@ function* handlerDeletePost(action) {
 
 function* handlerGetAllPost() {
   try {
-    // localStorageService.setLatestAction(actionGetAllPost.type);
+    localStorageService.setLatestAction(actionGetAllPost.type);
     yield put(actionLoading("Loading get all post list ...!"));
     const response = yield call(postApi.getAll);
     const { data } = response;
@@ -53,6 +53,7 @@ function* handlerGetAllPost() {
 function* handlerGetPost(action) {
   const { postId, history } = action.payload;
   try {
+    localStorageService.setLatestAction(actionGetPost.type);
     yield put(actionLoading("Loading get post...!"));
     const responsePost = yield call(() => postApi.getPost(postId));
     const responseComment = yield call(() => postApi.getCommentList(postId));
@@ -71,6 +72,7 @@ function* handlerGetPost(action) {
 }
 function* handlerGetStatistics() {
   try {
+    localStorageService.setLatestAction(actionGetStatistics.type);
     const response = yield call(statisticsApi.getData);
     const { data } = response;
     yield put(actionSetStatistics(data));
@@ -83,6 +85,7 @@ function* handlerGetStatistics() {
 
 function* handlerUpdatePost(action) {
   try {
+    localStorageService.setLatestAction(actionUpdatePost.type);
     yield put(actionLoading("Loading updating status post...!"));
     yield call(() => postApi.updatePost(action.payload));
     yield call(() => notifyApi.sendNotify(action.payload));

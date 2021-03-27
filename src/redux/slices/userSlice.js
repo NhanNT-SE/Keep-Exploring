@@ -5,7 +5,6 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     user: userStorage ? userStorage : null,
-    isRefreshingToken: false,
     selectedUser: null,
     userList: [],
   },
@@ -18,14 +17,7 @@ const userSlice = createSlice({
     actionGetListUser() {},
     actionGetUser() {},
     actionSendNotify() {},
-    actionSendMultiNotify() {},
     actionUpdateProfile() {},
-    actionRefreshTokenEnded(state) {
-      state.isRefreshingToken = false;
-    },
-    actionRefreshTokenStarted: (state) => {
-      state.isRefreshingToken = true;
-    },
     actionSetUser(state, action) {
       const user = action.payload;
       state.user = user;
@@ -46,11 +38,8 @@ export const {
   actionLogin,
   actionLogout,
   actionRefreshToken,
-  actionRefreshTokenEnded,
-  actionRefreshTokenStarted,
   actionSetSelectedUser,
   actionSendNotify,
-  actionSendMultiNotify,
   actionSetUser,
   actionSetUserList,
   actionUpdateProfile,

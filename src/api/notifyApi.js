@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient";
 const notifyApi = {
   sendNotify: (body) => {
-    const url = "/notification/admin";
+    const url = "/admin/send-notify";
     return axiosClient.post(url, body);
   },
   sendMultiNotify: (body) => {

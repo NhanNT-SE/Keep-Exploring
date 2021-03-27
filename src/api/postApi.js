@@ -6,20 +6,20 @@ const postApi = {
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/post/admin";
+    const url = "/admin/posts";
     return axiosClient.get(url);
   },
   getCommentList: (postId) => {
-    const url = `/comment/getByPost/${postId}`;
+    const url = `/public/post/comments/${postId}`;
     return axiosClient.get(url);
   },
 
   getPost: (postId) => {
-    const url = `/post/${postId}`;
+    const url = `/public/post/${postId}`;
     return axiosClient.get(url);
   },
   updatePost: (body) => {
-    const url = "/post/status";
+    const url = "/admin/update-status";
     return axiosClient.patch(url, body);
   },
 };
