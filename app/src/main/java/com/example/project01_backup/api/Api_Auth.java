@@ -13,10 +13,8 @@ import retrofit2.http.Part;
 public interface Api_Auth {
     @POST("/auth/sign-in")
     Call<String> signIn(@Body HashMap<String, String> map);
-
     @POST("/auth/sign-out")
     Call<String> signOut(@Body HashMap<String, String> map);
-
     @Multipart
     @POST("/auth/sign-up")
     Call<String> signUp(

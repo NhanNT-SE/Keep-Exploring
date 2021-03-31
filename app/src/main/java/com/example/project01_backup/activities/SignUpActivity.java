@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project01_backup.DAO.DAO_Auth;
 import com.example.project01_backup.R;
 import com.example.project01_backup.api.Retrofit_config;
 import com.example.project01_backup.api.UserApi;
@@ -65,9 +66,11 @@ public class SignUpActivity extends AppCompatActivity {
     private Button btnSignUp;
     private AlertDialog dialog;
     private UserApi userApi;
-    private String realPath = "";
+    private String realPath= "";
     private static final int PICK_IMAGE_CODE = 1;
     private Helper_Image helper_image;
+    private DAO_Auth dao_auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("SIGN UP");
         userApi = Retrofit_config.retrofit.create(UserApi.class);
         helper_image = new Helper_Image(this);
+        dao_auth = new DAO_Auth(this);
         initView();
     }
 
@@ -109,73 +113,20 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String displayName = etDisplayName.getEditText().getText().toString();
-                String email = etEmail.getEditText().getText().toString();
-                String pass = etPassword.getEditText().getText().toString();
-
-                if (displayName.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                    Toast.makeText(SignUpActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                File file = new File(realPath);
-
-                RequestBody requestBody;
-                if (realPath.isEmpty()) {
-                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
-                } else {
-                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                }
-                MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", realPath, requestBody);
-
-                RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), displayName);
-                RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
-                RequestBody passBody = RequestBody.create(MediaType.parse("text/plain"), pass);
-
-
-
-                Call<String> callSignUp = userApi.signUp(nameBody,emailBody,passBody);
-                callSignUp.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("TAG", "onResponse: " + response.body());
-                        try {
-                            JSONObject responseData = new JSONObject(response.body());
-//                            JSONObject data = responseData.getJSONObject("data");
-                            if (responseData.has("error")) {
-                                JSONObject error = responseData.getJSONObject("error");
-                                String status = error.getString("status");
-                                if (status == "201") {
-                                    Toast.makeText(SignUpActivity.this, "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            }
-
-                            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.d("TAG", "onFailure: " + t.getMessage());
-                    }
-                });
+                String email = "user-android1";
+                String pass = "123456";
+                String displayName = "User Android 1";
+                dao_auth.signUp(realPath, email, pass, displayName);
             }
         });
 
     }
-
-
-
-
+    private void log(String s) {
+        Log.d("log",s);
+    }
     private void toast(String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == PICK_IMAGE_CODE && data.getData() != null) {

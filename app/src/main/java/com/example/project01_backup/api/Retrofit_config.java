@@ -15,6 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class Retrofit_config {
+    private static final String URL_LOCAL ="http://10.0.2.2:3000";
+    private static final String URL_GLOBAL ="http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
     static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
             .connectTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
@@ -35,7 +37,7 @@ public class Retrofit_config {
             .setLenient()
             .create();
     public static Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000")
+            .baseUrl(URL_LOCAL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)

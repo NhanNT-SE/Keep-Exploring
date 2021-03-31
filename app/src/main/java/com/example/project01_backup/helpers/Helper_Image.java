@@ -30,7 +30,6 @@ public class Helper_Image {
         return getDataColumn(contentUri, selection, selectionArgs);
 
     }
-
     public String getDataColumn(Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         final String column = "_data";
