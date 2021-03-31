@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.project01_backup.R;
 import com.example.project01_backup.api.Retrofit_config;
 import com.example.project01_backup.api.UserApi;
+import com.example.project01_backup.helpers.Helper_Image;
 import com.example.project01_backup.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,13 +67,14 @@ public class SignUpActivity extends AppCompatActivity {
     private UserApi userApi;
     private String realPath = "";
     private static final int PICK_IMAGE_CODE = 1;
-
+    private Helper_Image helper_image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setTitle("SIGN UP");
         userApi = Retrofit_config.retrofit.create(UserApi.class);
+        helper_image = new Helper_Image(this);
         initView();
     }
 
@@ -81,9 +83,7 @@ public class SignUpActivity extends AppCompatActivity {
         etDisplayName = (TextInputLayout) findViewById(R.id.signUp_etDisplayName);
         etEmail = (TextInputLayout) findViewById(R.id.signUp_etEmail);
         etPassword = (TextInputLayout) findViewById(R.id.signUp_etPassword);
-
         imgAvatar = (CircleImageView) findViewById(R.id.signUp_imgAvatar);
-
         btnSignUp = (Button) findViewById(R.id.signUp_btnRegister);
         tvSignIn = (TextView) findViewById(R.id.signUp_tvSignIn);
         tvSignIn.setOnClickListener(new View.OnClickListener() {
@@ -175,54 +175,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-//    private String getPathFromUri(Uri uri) {
-//        final String docId = DocumentsContract.getDocumentId(uri);
-//        final String[] split = docId.split(":");
-//        final String type = split[0];
-//        Uri contentUri = null;
-//        if ("image".equals(type)) {
-//            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//        } else if ("video".equals(type)) {
-//            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-//        } else if ("audio".equals(type)) {
-//            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        }
-//        final String selection = "_id=?";
-//        final String[] selectionArgs = new String[]{
-//                split[1]
-//        };
-//        return getDataColumn(contentUri, selection, selectionArgs);
-//
-//    }
-//
-//
-//    public String getDataColumn(Uri uri, String selection, String[] selectionArgs) {
-//        Cursor cursor = null;
-//        final String column = "_data";
-//        final String[] projection = {
-//                column
-//        };
-//        try {
-//            cursor = this.getContentResolver().query(uri, projection, selection, selectionArgs,
-//                    null);
-//            if (cursor != null && cursor.moveToFirst()) {
-//                final int index = cursor.getColumnIndexOrThrow(column);
-//                return cursor.getString(index);
-//            }
-//        } finally {
-//            if (cursor != null)
-//                cursor.close();
-//        }
-//        return "";
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 1 && data != null) {
+        if (requestCode == PICK_IMAGE_CODE && data.getData() != null) {
             Uri uri = data.getData();
             imgAvatar.setImageURI(uri);
-//            realPath = getPathFromUri(uri);
-//            Log.d("realpath", realPath);
+            realPath = helper_image.getPathFromUri(uri);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
