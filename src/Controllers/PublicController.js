@@ -44,10 +44,18 @@ const getPostById = async (req, res, next) => {
 };
 const getPostList = async (req, res, next) => {
   try {
-    const postList = await Post.find({ status: "done" }).populate("owner", [
-      "displayName",
-      "imgUser",
-    ]);
+    const { category } = req.query;
+    let postList;
+    if (category === "" || !category) {
+      postList = await Post.find({ status: "done" })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .populate("address");
+    } else {
+      postList = await Post.find({ status: "done", category })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .populate("address");
+    }
+
     return res.send({
       data: postList,
       status: 200,

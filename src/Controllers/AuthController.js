@@ -2,6 +2,7 @@ const jwtHelper = require("../middleware/jwtHelper");
 const User = require("../Models/User");
 const Token = require("../Models/Token");
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
 const {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
@@ -125,6 +126,7 @@ const signUp = async (req, res, next) => {
       status: 200,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
