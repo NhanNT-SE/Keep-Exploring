@@ -1,91 +1,47 @@
 package com.example.project01_backup.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Post implements Serializable {
-    private String idPost, idUser, displayName ,emailUser, urlImage,urlAvatarUser;
-    private String place, category, tittle, address, description, pubDate;
-    private long longPubDate;
+    private String _id, category, title;
+    private String desc, address, status, created_on;
+    private List<String> imgs;
+    private int rating, likes, comments;
+    private User owner;
 
-
-    public String getIdPost() {
-        return idPost;
+    @Override
+    public String toString() {
+        return "Post{" +
+                "_id='" + _id + '\'' +
+                ", category='" + category + '\'' +
+                ", title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", address='" + address + '\'' +
+                ", status='" + status + '\'' +
+                ", created_on='" + created_on + '\'' +
+                ", imgs=" + imgs +
+                ", rating=" + rating +
+                ", likes=" + likes +
+                ", comments=" + comments +
+                ", owner=" + owner +
+                '}';
     }
 
-    public void setIdPost(String idPost) {
-        this.idPost = idPost;
+    public String get_id() {
+        return _id;
     }
 
-    public String getEmailUser() {
-        return emailUser;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public void setEmailUser(String emailUser) {
-        this.emailUser = emailUser;
+    public String getStatus() {
+        return status;
     }
 
-    public String getUrlImage() {
-        return urlImage;
-    }
-
-    public void setUrlImage(String urlImage) {
-        this.urlImage = urlImage;
-    }
-
-    public String getTittle() {
-        return tittle;
-    }
-
-    public void setTittle(String tittle) {
-        this.tittle = tittle;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPubDate() {
-        return pubDate;
-    }
-
-    public void setPubDate(String pubDate) {
-        this.pubDate = pubDate;
-    }
-
-    public long getLongPubDate() {
-        return longPubDate;
-    }
-
-    public void setLongPubDate(long longPubDate) {
-        this.longPubDate = longPubDate;
-    }
-
-    public String getUrlAvatarUser() {
-        return urlAvatarUser;
-    }
-
-    public void setUrlAvatarUser(String urlAvatarUser) {
-        this.urlAvatarUser = urlAvatarUser;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCategory() {
@@ -96,19 +52,75 @@ public class Post implements Serializable {
         this.category = category;
     }
 
-    public String getIdUser() {
-        return idUser;
+    public String getTitle() {
+        return title;
     }
 
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<String> getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(List<String> imgs) {
+        this.imgs = imgs;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public int getComments() {
+        return comments;
+    }
+
+    public void setComments(int comments) {
+        this.comments = comments;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public String getCreated_on() {
+        return created_on;
+    }
+
+    public void setCreated_on(String created_on) {
+        this.created_on = created_on;
     }
 }

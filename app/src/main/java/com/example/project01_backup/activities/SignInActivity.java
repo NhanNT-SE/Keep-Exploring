@@ -80,8 +80,10 @@ public class SignInActivity extends AppCompatActivity {
       btnLogIn.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              String email = "admin@wwkeep-exploring.com";
-              String pass = "123456";
+//              String email = "admin@keep-exploring.com";
+//              String pass = "123456";
+              String email = etEmail.getText().toString();
+              String pass = etPass.getText().toString();
               dao_auth.signIn(email,pass);
           }
       });

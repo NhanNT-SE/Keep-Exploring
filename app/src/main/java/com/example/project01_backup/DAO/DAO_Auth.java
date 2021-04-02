@@ -1,8 +1,11 @@
 package com.example.project01_backup.DAO;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.api.Api_Auth;
 import com.example.project01_backup.api.Retrofit_config;
 import com.example.project01_backup.helpers.Helper_Common;
@@ -24,30 +27,43 @@ import retrofit2.Response;
 public class DAO_Auth {
     private final Api_Auth api_auth;
     private final Helper_SP helper_sp;
+    private Context context;
 
     public DAO_Auth(Context context) {
+        this.context = context;
         api_auth = Retrofit_config.retrofit.create(Api_Auth.class);
         helper_sp = new Helper_SP(context);
     }
+
 
     public void signIn(String email, String pass) {
         HashMap<String, String> map = new HashMap<>();
         map.put("email", email);
         map.put("pass", pass);
         Call<String> call = api_auth.signIn(map);
+
+        if(email.isEmpty() || pass.isEmpty()){
+            toast("Vui lòng điền đầy đủ thông tin email và password");
+            return;
+        }
+
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        log(jObjError.getString("error"));
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        toast(msg);
+
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
 
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
-                            log(err.toString());
+                            String msg = err.getString("message");
+                            toast(msg);
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
                             String accessToken = data.getString("accessToken");
@@ -64,6 +80,8 @@ public class DAO_Auth {
                             log("User SP:\n" + helper_sp.getUser().toString());
                             log("Access Token:\n" + helper_sp.getAccessToken());
                             log("Refresh Token:\n" + helper_sp.getRefreshToken());
+                            toast("Đăng nhập thành công");
+                            context.startActivity(new Intent(context, MainActivity.class));
                         }
 
                     }
@@ -200,9 +218,12 @@ public class DAO_Auth {
 
     }
 
-
     private void log(String s) {
         Log.d("log", s);
+    }
+
+    private void toast(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
 }

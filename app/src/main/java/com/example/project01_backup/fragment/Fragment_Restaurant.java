@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project01_backup.DAO.DAO_Post;
 import com.example.project01_backup.R;
 import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
@@ -55,6 +56,7 @@ public class Fragment_Restaurant extends Fragment {
     private FloatingActionButton fbaAdd;
     private List<Post> listPost;
     private String categoryNode;
+    private DAO_Post dao_post;
 
 
     public Fragment_Restaurant() {
@@ -67,7 +69,10 @@ public class Fragment_Restaurant extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
-        initView();
+//        initView();
+        log("Hello");
+        dao_post = new DAO_Post(view.getContext());
+        dao_post.getPostByCategory("food");
         return view;
     }
 
