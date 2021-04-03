@@ -27,6 +27,7 @@ import com.example.project01_backup.R;
 import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
 
+import com.example.project01_backup.helpers.Helper_Callback;
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
 import com.example.project01_backup.model.Post;
@@ -69,23 +70,22 @@ public class Fragment_Restaurant extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
-//        initView();
-        log("Hello");
+        initView();
         dao_post = new DAO_Post(view.getContext());
-        dao_post.getPostByCategory("food");
+        dao_post.getPostByCategory("food", new Helper_Callback() {
+            @Override
+            public void postList(List<Post> postList) {
+                refreshLV(postList);
+            }
+        });
         return view;
     }
-
     private void initView() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
         tvTitle = (TextView) view.findViewById(R.id.fRestaurant_tvTitle);
         tvNothing = (TextView) view.findViewById(R.id.fRestaurant_tvNothing);
         fbaAdd = (FloatingActionButton) view.findViewById(R.id.fRestaurant_fabAddPost);
         listView = (ListView) view.findViewById(R.id.fRestaurant_lvPost);
         categoryNode = "Restaurants";
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -101,12 +101,9 @@ public class Fragment_Restaurant extends Fragment {
                         .commit();
             }
         });
-
-
         if (user == null) {
             fbaAdd.setVisibility(View.GONE);
         }
-
         fbaAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,8 +117,6 @@ public class Fragment_Restaurant extends Fragment {
         });
 
         placeNames = new ArrayList<>();
-
-
     }
 
     private void log(String s) {
@@ -131,13 +126,14 @@ public class Fragment_Restaurant extends Fragment {
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
-    private void refreshLV(List<Post> postList){
+
+    private void refreshLV(List<Post> postList) {
         listPost = new ArrayList<>(postList);
-        adapterPost = new Adapter_LV_PostUser(getActivity(),listPost);
+        adapterPost = new Adapter_LV_PostUser(getActivity(), listPost);
         listView.setAdapter(adapterPost);
-        if (postList.size()>0){
+        if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
-        }else {
+        } else {
             tvNothing.setVisibility(View.VISIBLE);
         }
     }
@@ -152,7 +148,7 @@ public class Fragment_Restaurant extends Fragment {
     @SuppressLint({"RestrictedApi", "ResourceAsColor"})
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_search_places,menu);
+        inflater.inflate(R.menu.menu_search_places, menu);
         MenuItem search = menu.findItem(R.id.menu_search_places);
         final SearchView searchView = (SearchView) search.getActionView();
         searchView.setQueryHint("Please, enter a location");
@@ -168,8 +164,6 @@ public class Fragment_Restaurant extends Fragment {
                 return false;
             }
         });
-
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 }

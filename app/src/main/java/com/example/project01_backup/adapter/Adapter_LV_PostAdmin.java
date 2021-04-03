@@ -64,17 +64,17 @@ public class Adapter_LV_PostAdmin extends BaseAdapter {
         ImageView imgPost = (ImageView) convertView.findViewById(R.id.raw_post_imgPost);
         CircleImageView imgAvatar = (CircleImageView) convertView.findViewById(R.id.raw_post_imgAvatarUser);
         final Post post = postList.get(position);
-
-        tvUser.setText(post.getEmailUser());
-        tvPubDate.setText(post.getPubDate());
-        tvTitle.setText(post.getTittle());
-        tvAddress.setText(post.getAddress());
-        try {
-            Picasso.get().load(Uri.parse(post.getUrlAvatarUser())).into(imgAvatar);
-            Picasso.get().load(Uri.parse(post.getUrlImage())).into(imgPost);
-        }catch (Exception e){
-
-        }
+//
+//        tvUser.setText(post.getEmailUser());
+//        tvPubDate.setText(post.getPubDate());
+//        tvTitle.setText(post.getTittle());
+//        tvAddress.setText(post.getAddress());
+//        try {
+//            Picasso.get().load(Uri.parse(post.getUrlAvatarUser())).into(imgAvatar);
+//            Picasso.get().load(Uri.parse(post.getUrlImage())).into(imgPost);
+//        }catch (Exception e){
+//
+//        }
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,13 +105,13 @@ public class Adapter_LV_PostAdmin extends BaseAdapter {
         final ListView lvContent = (ListView) dialog.findViewById(R.id.dCensorship_lvContent);
         final List<Content> listContent = new ArrayList<>();
 
-        tvEmail.setText(post.getDisplayName());
-        tvPubDate.setText(post.getPubDate());
-        tvTitle.setText(post.getTittle());
-        tvAddress.setText(post.getAddress());
-        tvDescription.setText(post.getDescription());
-        Picasso.get().load(Uri.parse(post.getUrlImage())).into(imgPost);
-        Picasso.get().load(Uri.parse(post.getUrlAvatarUser())).into(imgAvatar);
+//        tvEmail.setText(post.getDisplayName());
+//        tvPubDate.setText(post.getPubDate());
+//        tvTitle.setText(post.getTittle());
+//        tvAddress.setText(post.getAddress());
+//        tvDescription.setText(post.getDescription());
+//        Picasso.get().load(Uri.parse(post.getUrlImage())).into(imgPost);
+//        Picasso.get().load(Uri.parse(post.getUrlAvatarUser())).into(imgAvatar);
 
         tvDone.setOnClickListener(new View.OnClickListener() {
             @Override

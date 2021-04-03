@@ -315,14 +315,14 @@ public class Fragment_AddPost extends Fragment {
         final String categoryNode = spnCategory.getSelectedItem().toString();
         final String placeNode = acPlace.getText().toString();
         post.setAddress(etAddress.getText().toString());
-        post.setDescription(etDescription.getText().toString());
-        post.setPubDate(tvPubDate.getText().toString());
-        post.setEmailUser(tvUser.getText().toString());
-        post.setTittle(etTitle.getText().toString());
-        post.setLongPubDate(longPubDate());
-        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
-        post.setIdUser(user.getUid());
-        post.setDisplayName(user.getDisplayName());
+//        post.setDescription(etDescription.getText().toString());
+//        post.setPubDate(tvPubDate.getText().toString());
+//        post.setEmailUser(tvUser.getText().toString());
+//        post.setTittle(etTitle.getText().toString());
+//        post.setLongPubDate(longPubDate());
+//        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
+//        post.setIdUser(user.getUid());
+//        post.setDisplayName(user.getDisplayName());
         if (etTitle.getText().toString().isEmpty() ||
                 acPlace.getText().toString().isEmpty()||
                 etDescription.getText().toString().isEmpty() ||
