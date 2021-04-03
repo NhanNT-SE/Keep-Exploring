@@ -44,10 +44,18 @@ const getPostById = async (req, res, next) => {
 };
 const getPostList = async (req, res, next) => {
   try {
-    const postList = await Post.find({ status: "done" }).populate("owner", [
-      "displayName",
-      "imgUser",
-    ]);
+    const { category } = req.query;
+    let postList;
+    if (category === "" || !category) {
+      postList = await Post.find({ status: "done" })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .populate("address");
+    } else {
+      postList = await Post.find({ status: "done", category })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .populate("address");
+    }
+
     return res.send({
       data: postList,
       status: 200,
@@ -115,6 +123,7 @@ const getBlogList = async (req, res, next) => {
     const blogList = await Blog.find({ status: "done" }).populate("owner", [
       "displayName",
       "imgUser",
+      "email",
     ]);
     return res.status(200).send({
       data: blogList,
@@ -139,11 +148,29 @@ const getLikeListPost = async (req, res, next) => {
     }
 
     const likeList = postFound.like_list;
+    return res.send({
+      data: likeList,
+      status: 200,
+      message: "Danh sách những người like bài viết",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    if (!likeList) {
-      return handleCustomError(202, "Chưa có người like bài viết này");
+const getLikeListBlog = async (req, res, next) => {
+  try {
+    const { idBlog } = req.body;
+    const blogFound = await Blog.findById(idBlog).populate("like_list", [
+      "email",
+      "displayName",
+      "imgUser",
+    ]);
+    if (!blogFound) {
+      return handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
+    const likeList = blogFound.like_list;
     return res.send({
       data: likeList,
       status: 200,
@@ -161,5 +188,6 @@ module.exports = {
   getPostComment,
   getPostById,
   getPostList,
+  getLikeListBlog,
   getLikeListPost,
 };
