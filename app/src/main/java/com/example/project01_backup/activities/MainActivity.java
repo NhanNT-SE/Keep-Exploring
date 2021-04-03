@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -82,13 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         replaceFragment(new Fragment_Restaurant());
-        showInfo();
-        hideAdmin();
-        MenuItem admin = navigationView.getMenu().findItem(R.id.menu_drawer_Admin);
-        number = (TextView) admin.getActionView();
-        number.setGravity(Gravity.CENTER_VERTICAL);
-        number.setTypeface(null, Typeface.BOLD);
-        number.setTextColor(Color.RED);
+//        showInfo();
 
     }
 
@@ -120,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     private void runtimePermission() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.INTERNET,
                         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -148,27 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void hideAdmin() {
-        Menu drawerMenu = navigationView.getMenu();
-        drawerMenu.findItem(R.id.menu_drawer_Admin).setVisible(false);
-        drawerMenu.findItem(R.id.menu_drawer_Information).setVisible(false);
-        String[] adminList = {"nhan@gmail.com","ngan@gmail.com", "hao@gmail.com", "lam@gmail.com"};
-        if (currentUser != null){
-            drawerMenu.findItem(R.id.menu_drawer_Information).setVisible(true);
-            for (String admin : adminList){
-                if (currentUser.getEmail().equalsIgnoreCase(admin)){
-                    drawerMenu.findItem(R.id.menu_drawer_Admin).setVisible(true);
-                    break;
 
-                }
-            }
-        }
-        if (currentUser == null){
-            drawerMenu.findItem(R.id.menu_drawer_SignOut).setTitle("Sign in");
-        }
-
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -178,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

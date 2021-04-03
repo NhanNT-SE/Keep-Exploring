@@ -5,9 +5,8 @@ import java.util.List;
 
 public class User implements Serializable {
     private String email;
-    private String pass;
+    private String _id;
     private String displayName;
-    private String role;
     private String imgUser;
     private List<Post> post;
     private List<Blog> blog;
@@ -16,9 +15,8 @@ public class User implements Serializable {
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
-                ", pass='" + pass + '\'' +
+                ", _id='" + _id + '\'' +
                 ", displayName='" + displayName + '\'' +
-                ", role='" + role + '\'' +
                 ", imgUser='" + imgUser + '\'' +
                 ", post=" + post +
                 ", blog=" + blog +
@@ -33,12 +31,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getPass() {
-        return pass;
+    public String getId() {
+        return _id;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setId(String _id) {
+        this._id = _id;
     }
 
     public String getDisplayName() {
@@ -48,15 +46,6 @@ public class User implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getImgUser() {
         return imgUser;
     }

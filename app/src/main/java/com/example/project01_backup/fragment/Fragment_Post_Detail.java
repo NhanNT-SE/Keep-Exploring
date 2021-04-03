@@ -96,21 +96,21 @@ public class Fragment_Post_Detail extends Fragment {
             }
         });
 
-        String email = post.getDisplayName();
-        String pubDate = post.getPubDate();
-        String title = post.getTittle();
-        String address = post.getAddress();
-        String description = post.getDescription();
-        String uriAvatar = post.getUrlAvatarUser();
-        String uriPost = post.getUrlImage();
-
-        tvEmail.setText(email);
-        tvPubDate.setText(pubDate);
-        tvTitle.setText(title);
-        tvAddress.setText(address);
-        tvDescription.setText(description);
-        Picasso.get().load(Uri.parse(uriAvatar)).into(imgAvatar);
-        Picasso.get().load(Uri.parse(uriPost)).into(imgPost);
+//        String email = post.getDisplayName();
+//        String pubDate = post.getPubDate();
+//        String title = post.getTittle();
+//        String address = post.getAddress();
+//        String description = post.getDescription();
+//        String uriAvatar = post.getUrlAvatarUser();
+//        String uriPost = post.getUrlImage();
+//
+//        tvEmail.setText(email);
+//        tvPubDate.setText(pubDate);
+//        tvTitle.setText(title);
+//        tvAddress.setText(address);
+//        tvDescription.setText(description);
+//        Picasso.get().load(Uri.parse(uriAvatar)).into(imgAvatar);
+//        Picasso.get().load(Uri.parse(uriPost)).into(imgPost);
 
     }
 

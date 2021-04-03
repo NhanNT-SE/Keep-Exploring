@@ -135,14 +135,14 @@ public class Fragment_EditPost extends Fragment {
             } else if (categoryOldPost.equalsIgnoreCase("journey diary")) {
                 category = "Trải Nghiệm";
             }
-            idPost = oldPost.getIdPost();
-            int position = adapterSpinner.getPosition(category);
-            acPlace.setText(oldPost.getPlace());
-            spnCategory.setSelection(position);
-            etTitle.setText(oldPost.getTittle());
-            etAddress.setText(oldPost.getAddress());
-            etDescription.setText(oldPost.getDescription());
-            Picasso.get().load(Uri.parse(oldPost.getUrlImage())).into(imgPost);
+//            idPost = oldPost.getIdPost();
+//            int position = adapterSpinner.getPosition(category);
+//            acPlace.setText(oldPost.getPlace());
+//            spnCategory.setSelection(position);
+//            etTitle.setText(oldPost.getTittle());
+//            etAddress.setText(oldPost.getAddress());
+//            etDescription.setText(oldPost.getDescription());
+//            Picasso.get().load(Uri.parse(oldPost.getUrlImage())).into(imgPost);
         }
 
         imgPost.setOnClickListener(new View.OnClickListener() {
@@ -333,16 +333,16 @@ public class Fragment_EditPost extends Fragment {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         final String categoryNode = spnCategory.getSelectedItem().toString();
         final String placeNode = acPlace.getText().toString();
-        post.setIdPost(oldPost.getIdPost());
-        post.setAddress(etAddress.getText().toString());
-        post.setDescription(etDescription.getText().toString());
-        post.setPubDate(tvPubDate.getText().toString());
-        post.setEmailUser(tvUser.getText().toString());
-        post.setTittle(etTitle.getText().toString());
-        post.setLongPubDate(longPubDate());
-        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
-        post.setIdUser(user.getUid());
-        post.setDisplayName(user.getDisplayName());
+//        post.setIdPost(oldPost.getIdPost());
+//        post.setAddress(etAddress.getText().toString());
+//        post.setDescription(etDescription.getText().toString());
+//        post.setPubDate(tvPubDate.getText().toString());
+//        post.setEmailUser(tvUser.getText().toString());
+//        post.setTittle(etTitle.getText().toString());
+//        post.setLongPubDate(longPubDate());
+//        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
+//        post.setIdUser(user.getUid());
+//        post.setDisplayName(user.getDisplayName());
 
 
         if (etTitle.getText().toString().isEmpty() || etDescription.getText().toString().isEmpty() ||

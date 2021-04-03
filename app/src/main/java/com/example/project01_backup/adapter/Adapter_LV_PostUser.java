@@ -1,5 +1,6 @@
 package com.example.project01_backup.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.example.project01_backup.R;
 import com.example.project01_backup.activities.AdminActivity;
 import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.fragment.Fragment_Post_Detail;
+import com.example.project01_backup.helpers.Helper_Common;
 import com.example.project01_backup.model.Post;
 import com.squareup.picasso.Picasso;
 
@@ -29,13 +31,12 @@ public class Adapter_LV_PostUser extends BaseAdapter {
     private Context context;
     private List<Post> postList;
     public static final String POST = "post";
-
-
+    private final Helper_Common helper_common;
     public Adapter_LV_PostUser(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
+        helper_common = new Helper_Common();
     }
-
     @Override
     public int getCount() {
         return postList.size();
@@ -53,8 +54,9 @@ public class Adapter_LV_PostUser extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        String URL_IMAGE = helper_common.getBaseUrlImage();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.raw_post,null);
+        convertView = inflater.inflate(R.layout.raw_post, null);
         TextView tvPubDate = (TextView) convertView.findViewById(R.id.raw_post_tvPubDate);
         TextView tvTitle = (TextView) convertView.findViewById(R.id.raw_post_tvTitle);
         TextView tvUser = (TextView) convertView.findViewById(R.id.raw_post_tvUser);
@@ -62,18 +64,12 @@ public class Adapter_LV_PostUser extends BaseAdapter {
         ImageView imgPost = (ImageView) convertView.findViewById(R.id.raw_post_imgPost);
         CircleImageView imgAvatar = (CircleImageView) convertView.findViewById(R.id.raw_post_imgAvatarUser);
         final Post post = postList.get(position);
-        tvUser.setText(post.getDisplayName());
-        tvPubDate.setText(post.getPubDate());
-        tvTitle.setText(post.getTittle());
+        tvUser.setText(post.getOwner().getDisplayName());
+        tvPubDate.setText(post.getCreated_on());
+        tvTitle.setText(post.getTitle());
         tvAddress.setText(post.getAddress());
-        try {
-            Picasso.get().load(Uri.parse(post.getUrlAvatarUser())).into(imgAvatar);
-            Picasso.get().load(Uri.parse(post.getUrlImage())).into(imgPost);
-        }catch (Exception e){
-
-        }
-
-
+        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(imgPost);
+        Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(imgAvatar);
         return convertView;
     }
 }
