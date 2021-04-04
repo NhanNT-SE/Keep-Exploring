@@ -1,4 +1,5 @@
 const handlerCustomError = require("../middleware/customError");
+const Address = require("../Models/Address");
 const Blog = require("../Models/Blog");
 const Comment = require("../Models/Comment");
 const Post = require("../Models/Post");
@@ -6,6 +7,50 @@ require("../Models/User");
 require("../Models/Comment");
 require("../Models/Blog_Detail");
 
+const getAddress = async (req, res, next) => {
+  try {
+    let { district, province } = req.body;
+    if (!province || province === "") {
+      province = "tp.hcm";
+    }
+    const address = await Address.findOne({ province });
+    if (address) {
+      let wardList = [];
+      const districtList = address.district.map((e) => e.name);
+      const index = address.district.findIndex((e) => e.name === district);
+      if (index >= 0 && district) {
+        wardList = address.district[index].ward;
+      }
+      return res.status(200).send({
+        data: {
+          wardList,
+          districtList,
+        },
+        status: 200,
+        message: "Lấy dữ liệu thành công",
+      });
+    }
+    handlerCustomError(
+      201,
+      `Không tìm thấy địa điểm ${province} trong hệ thống`
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+const getProvinceList = async (req, res, next) => {
+  try {
+    const address = await Address.find({});
+    const provinceList = address.map((e) => e.province);
+    return res.status(200).send({
+      data: provinceList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getBlogByID = async (req, res, next) => {
   try {
     const { idBlog } = req.params;
@@ -47,13 +92,16 @@ const getPostList = async (req, res, next) => {
     const { category } = req.query;
     let postList;
     if (category === "" || !category) {
-      postList = await Post.find({ status: "done" })
-        .populate("owner", ["displayName", "imgUser", "email"])
-        .populate("address");
+      postList = await Post.find({ status: "done" }).populate("owner", [
+        "displayName",
+        "imgUser",
+        "email",
+      ]);
     } else {
-      postList = await Post.find({ status: "done", category })
-        .populate("owner", ["displayName", "imgUser", "email"])
-        .populate("address");
+      postList = await Post.find({ status: "done", category }).populate(
+        "owner",
+        ["displayName", "imgUser", "email"]
+      );
     }
 
     return res.send({
@@ -67,14 +115,26 @@ const getPostList = async (req, res, next) => {
 };
 const getPostByAddress = async (req, res, next) => {
   try {
-    const { province } = req.body;
-    var postList = [];
-    const addressList = await Address.find({ province }).populate("idPost");
-    postList = [...addressList];
-    if ((postList.length = 0)) {
-      handlerCustomError(201, "Địa điểm chưa được review");
-    }
-    return res.send({ data: postList, status: 200, message: "" });
+    // const { province } = req.body;
+    // var postList = [];
+    // const addressList = await Address.find({ province }).populate("idPost");
+    // postList = [...addressList];
+    // if ((postList.length = 0)) {
+    //   handlerCustomError(201, "Địa điểm chưa được review");
+    // }
+    // return res.send({ data: postList, status: 200, message: "" });
+    const { address } = req.body;
+    const postList = await Post.find({
+      address: {
+        $regex: new RegExp(address),
+        $options: "i",
+      },
+    });
+    return res.send({
+      data: postList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
   } catch (error) {
     next(error);
   }
@@ -181,6 +241,7 @@ const getLikeListBlog = async (req, res, next) => {
   }
 };
 module.exports = {
+  getAddress,
   getBlogComment,
   getBlogList,
   getBlogByID,
@@ -190,4 +251,5 @@ module.exports = {
   getPostList,
   getLikeListBlog,
   getLikeListPost,
+  getProvinceList,
 };
