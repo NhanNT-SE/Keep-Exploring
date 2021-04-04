@@ -1,28 +1,24 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const addressSchema = new Schema(
-	{
-		idPost: {
-			type: Schema.Types.ObjectId,
-            // required: true,
-            ref:"Post"
-		},
-		province: {
-			type: String,
-			required: true,
-		},
-		district: {
-			type: String,
-		},
-		ward: {
-			type: String,
-		},
-		additional: {
-			type: String,
-		},
-	},
-	{ collection: 'Address' }
+  {
+    province: {
+      type: String,
+      lowercase: true,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    district: [
+      {
+        type: Object,
+        name: { type: String, lowercase: true, unique: true },
+        ward: [{ type: String, lowercase: true, unique: true }],
+      },
+    ],
+  },
+  { collection: "Address" }
 );
 
-module.exports = mongoose.model('Address', addressSchema);
+module.exports = mongoose.model("Address", addressSchema);

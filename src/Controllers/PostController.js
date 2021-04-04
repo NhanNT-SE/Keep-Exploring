@@ -8,14 +8,12 @@ const handlerCustomError = require("../middleware/customError");
 
 const createPost = async (req, res, next) => {
   try {
-    const user = req.user;
-    var img_list = new Array();
-    var i;
-
+    const user = await User.findById(req.user._id);
+    let img_list = new Array();
     //Luu string hinh anh vao database
     const files = req.files;
     const length = files.length;
-    for (i = 0; i < length; ++i) {
+    for (let i = 0; i < length; ++i) {
       img_list.push(files[i].filename);
     }
 
@@ -28,13 +26,13 @@ const createPost = async (req, res, next) => {
     await post.save();
 
     //Tim address de push idPost vao
-    const addressID = req.body.address;
-    const addressPost = await Address.findById(addressID);
-    addressPost.idPost = post._id;
-    await addressPost.save();
+    // const addressID = req.body.address;
+    // const addressPost = await Address.findById(addressID);
+    // addressPost.idPost = post._id;
+    // await addressPost.save();
 
     //Add post vào list post của user
-    await user.post.push(post._id);
+    user.post.push(post._id);
     await user.save();
 
     //Tao notify khi co nguoi tao bai viet
