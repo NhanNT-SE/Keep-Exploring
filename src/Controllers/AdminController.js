@@ -80,9 +80,11 @@ const getAllUser = async (req, res, next) => {
 };
 const getAllPost = async (req, res, next) => {
   try {
-    const post_list = await Post.find({})
-      .populate("owner", ["displayName", "imgUser", "email"])
-      .populate("address");
+    const post_list = await Post.find({}).populate("owner", [
+      "displayName",
+      "imgUser",
+      "email",
+    ]);
     return res.status(200).send({
       data: post_list,
       status: 200,

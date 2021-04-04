@@ -38,6 +38,19 @@ const getAddress = async (req, res, next) => {
     next(error);
   }
 };
+const getProvinceList = async (req, res, next) => {
+  try {
+    const address = await Address.find({});
+    const provinceList = address.map((e) => e.province);
+    return res.status(200).send({
+      data: provinceList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getBlogByID = async (req, res, next) => {
   try {
     const { idBlog } = req.params;
@@ -79,13 +92,16 @@ const getPostList = async (req, res, next) => {
     const { category } = req.query;
     let postList;
     if (category === "" || !category) {
-      postList = await Post.find({ status: "done" })
-        .populate("owner", ["displayName", "imgUser", "email"])
-        .populate("address");
+      postList = await Post.find({ status: "done" }).populate("owner", [
+        "displayName",
+        "imgUser",
+        "email",
+      ]);
     } else {
-      postList = await Post.find({ status: "done", category })
-        .populate("owner", ["displayName", "imgUser", "email"])
-        .populate("address");
+      postList = await Post.find({ status: "done", category }).populate(
+        "owner",
+        ["displayName", "imgUser", "email"]
+      );
     }
 
     return res.send({
@@ -108,15 +124,12 @@ const getPostByAddress = async (req, res, next) => {
     // }
     // return res.send({ data: postList, status: 200, message: "" });
     const { address } = req.body;
-    const postList = await Post.find(
-      {
-        address: {
-          $regex: new RegExp(address),
-          $options: "i",
-        },
+    const postList = await Post.find({
+      address: {
+        $regex: new RegExp(address),
+        $options: "i",
       },
-      ["address"]
-    );
+    });
     return res.send({
       data: postList,
       status: 200,
@@ -238,4 +251,5 @@ module.exports = {
   getPostList,
   getLikeListBlog,
   getLikeListPost,
+  getProvinceList,
 };

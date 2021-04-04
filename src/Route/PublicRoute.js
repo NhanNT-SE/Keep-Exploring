@@ -9,6 +9,7 @@ router.get("/post/:idPost", publicController.getPostById);
 router.get("/blog/:idBlog", publicController.getBlogByID);
 router.get("/post/comments/:idPost", publicController.getPostComment);
 router.get("/blog/comments/:idBlog", publicController.getBlogComment);
+router.get("/address", publicController.getProvinceList);
 router.post("/address", publicController.getAddress);
 router.post("/blog/like", publicController.getLikeListBlog);
 router.post("/post/like", publicController.getLikeListPost);
