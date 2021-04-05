@@ -2,6 +2,7 @@ package com.example.project01_backup.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import com.example.project01_backup.adapter.Adapter_LV_Content;
 
 import com.example.project01_backup.helpers.Helper_Callback;
 import com.example.project01_backup.helpers.Helper_Common;
+import com.example.project01_backup.helpers.Helper_Image;
 import com.example.project01_backup.helpers.Helper_SP;
 import com.example.project01_backup.model.Content;
 import com.example.project01_backup.model.FirebaseCallback;
@@ -68,15 +70,15 @@ public class Fragment_AddPost extends Fragment {
     private ImageView imgPost;
     private CircleImageView imgAvatarUser;
     private User user;
-    public static final int CHOOSE_IMAGE_POST = 2;
-    public static final int CHOOSE_IMAGE_CONTENT = 3;
+    public static final int CHOOSE_IMAGE_POST = 1;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
+    private Helper_Image helper_image;
     private DAO_Address dao_address;
     private String categorySubmit;
     private String addressSubmit;
     private String additionalAddress;
-
+    private List<String> imagesEncodedList;
     public Fragment_AddPost() {
         // Required empty public constructor
     }
@@ -89,11 +91,11 @@ public class Fragment_AddPost extends Fragment {
         initView();
         return view;
     }
-
     private void initView() {
         dao_address = new DAO_Address(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
+        helper_image = new Helper_Image(getContext());
         user = helper_sp.getUser();
         tvUser = (TextView) view.findViewById(R.id.fAddPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fAddPost_tvPubDate);
@@ -113,12 +115,11 @@ public class Fragment_AddPost extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_POST);
             }
         });
-
-
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,12 +130,29 @@ public class Fragment_AddPost extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
-            imgPost.setImageURI(data.getData());
-        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
+        imagesEncodedList = new ArrayList<>();
+        if (requestCode == CHOOSE_IMAGE_POST) {
+            if (data.getData() != null) {
+                Uri uri = data.getData();
+                String realPath =  helper_image.getPathFromUri(uri);
+                imagesEncodedList.add(realPath);
+                imgPost.setImageURI(uri);
+
+            }else if(data.getClipData() != null){
+                ClipData mClipData = data.getClipData();
+                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                    ClipData.Item item = mClipData.getItemAt(i);
+                    Uri uri = item.getUri();
+                    String realPath = helper_image.getPathFromUri(uri);
+                    imagesEncodedList.add(realPath);
+                }
+            }
         }
+
+        log("List image:\n" + imagesEncodedList.toString());
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     private void dialogAddAddress() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_address);
@@ -315,11 +333,13 @@ public class Fragment_AddPost extends Fragment {
         }
         addressSubmit = additionalAddress + sWard + sDistrict + province;
     }
+
     private void setPubDate(TextView tv) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         tv.setText(format.format(calendar.getTime()));
     }
+
     private void currentFragment(String current) {
         if (current.equalsIgnoreCase("Restaurants")) {
             replaceFragment(new Fragment_Restaurant());
@@ -339,13 +359,16 @@ public class Fragment_AddPost extends Fragment {
                 .replace(R.id.main_FrameLayout, fragment)
                 .commit();
     }
+
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
+
     private long longPubDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -373,12 +396,7 @@ public class Fragment_AddPost extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
     private void log(String s) {
         Log.d("log", s);
     }
-
-
 }
