@@ -18,12 +18,10 @@ import androidx.fragment.app.Fragment;
 import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
 
-import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,14 +55,14 @@ public class Fragment_PostList extends Fragment {
         lvPost.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment_Post_Detail fragment_post_detail = new Fragment_Post_Detail();
+                Fragment_Blog_Detail fragment_blog_detail = new Fragment_Blog_Detail();
                 Bundle bundle = new Bundle();
                 Post post = listPost.get(position);
                 bundle.putSerializable("post", post);
-                fragment_post_detail.setArguments(bundle);
+                fragment_blog_detail.setArguments(bundle);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_post_detail)
+                        .replace(R.id.main_FrameLayout, fragment_blog_detail)
                         .addToBackStack(null)
                         .commit();
             }
@@ -120,13 +118,13 @@ public class Fragment_PostList extends Fragment {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_EditPost fragment_editPost = new Fragment_EditPost();
+                Fragment_EditBlog fragment_editBlog = new Fragment_EditBlog();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("post", post);
-                fragment_editPost.setArguments(bundle);
+                fragment_editBlog.setArguments(bundle);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_editPost)
+                        .replace(R.id.main_FrameLayout, fragment_editBlog)
                         .addToBackStack(null)
                         .commit();
 

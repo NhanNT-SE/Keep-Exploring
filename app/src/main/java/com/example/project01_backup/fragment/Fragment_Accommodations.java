@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,11 +21,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.activities.MainActivity;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
 
-import com.example.project01_backup.model.FirebaseCallback;
-import com.example.project01_backup.model.Places;
 import com.example.project01_backup.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,8 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.project01_backup.adapter.Adapter_LV_PostUser.POST;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,14 +73,14 @@ public class Fragment_Accommodations extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment_Post_Detail fragment_post_detail = new Fragment_Post_Detail();
+                Fragment_Blog_Detail fragment_blog_detail = new Fragment_Blog_Detail();
                 Bundle bundle = new Bundle();
                 Post post = listPost.get(position);
                 bundle.putSerializable("post", post);
-                fragment_post_detail.setArguments(bundle);
+                fragment_blog_detail.setArguments(bundle);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_post_detail)
+                        .replace(R.id.main_FrameLayout, fragment_blog_detail)
                         .addToBackStack(null)
                         .commit();
             }

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,8 +31,6 @@ import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_Content;
 
 import com.example.project01_backup.model.Content;
-import com.example.project01_backup.model.FirebaseCallback;
-import com.example.project01_backup.model.Places;
 import com.example.project01_backup.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fragment_EditPost extends Fragment {
+public class Fragment_EditBlog extends Fragment {
     private View view;
     private EditText etTitle, etAddress, etDescription;
     private TextView tvUser, tvPubDate;
@@ -73,7 +70,7 @@ public class Fragment_EditPost extends Fragment {
     private int index = -1;
     private Content content;
 
-    public Fragment_EditPost() {
+    public Fragment_EditBlog() {
         // Required empty public constructor
     }
 
@@ -82,7 +79,7 @@ public class Fragment_EditPost extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_edit_post, container, false);
+        view = inflater.inflate(R.layout.fragment_edit_blog, container, false);
         initView();
         return view;
     }
@@ -240,10 +237,7 @@ public class Fragment_EditPost extends Fragment {
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
         Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
         dEtDescription.setText(update.getDescription());
-
-
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,17 +1,13 @@
 package com.example.project01_backup.fragment;
 
 import android.app.Dialog;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,23 +21,19 @@ import com.example.project01_backup.adapter.Adapter_LV_Content;
 import com.example.project01_backup.adapter.Adapter_LV_PostUser;
 
 import com.example.project01_backup.model.Comment;
-import com.example.project01_backup.model.Content;
-import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fragment_Post_Detail extends Fragment {
+public class Fragment_Blog_Detail extends Fragment {
 
     private View view;
     private ImageView  imgPost, imgContent, imgComment;
@@ -53,7 +45,7 @@ public class Fragment_Post_Detail extends Fragment {
     private Adapter_LV_Content adapterContent;
 
 
-    public Fragment_Post_Detail() {
+    public Fragment_Blog_Detail() {
         // Required empty public constructor
     }
 
@@ -62,7 +54,7 @@ public class Fragment_Post_Detail extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_post_detail, container, false);
+        view = inflater.inflate(R.layout.fragment_blog_detail, container, false);
         initView();
         return view;
     }

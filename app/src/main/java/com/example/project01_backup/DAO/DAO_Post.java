@@ -85,6 +85,67 @@ public class DAO_Post {
 
     }
 
+    public void getPostById(String idPost, Helper_Callback callback) {
+        Call<String> call = api_post.getPostById(idPost);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject jsonData = responseData.getJSONObject("data");
+                            JSONArray jsonImageList = jsonData.getJSONArray("imgs");
+                            JSONObject jsonOwner = jsonData.getJSONObject("owner");
+                            Post post = new Post();
+                            User user = new User();
+                            List<String> imageList = new ArrayList<>();
+                            for (int i = 0; i < jsonImageList.length(); i++) {
+                                imageList.add(jsonImageList.get(i).toString());
+                            }
+//                            SET OWNER FOR POST
+                            user.setId(jsonOwner.getString("_id"));
+                            user.setEmail(jsonOwner.getString("email"));
+                            user.setDisplayName(jsonOwner.getString("displayName"));
+                            user.setImgUser(jsonOwner.getString("imgUser"));
+//                            SET POST
+                            post.set_id(jsonData.getString("_id"));
+                            post.setCategory(jsonData.getString("category"));
+                            post.setTitle(jsonData.getString("title"));
+                            post.setDesc(jsonData.getString("desc"));
+                            post.setAddress(jsonData.getString("address"));
+                            post.setStatus(jsonData.getString("status"));
+                            post.setCreated_on(jsonData.getString("created_on"));
+                            post.setRating(Integer.parseInt(jsonData.getString("rating")));
+                            post.setImgs(imageList);
+                            post.setOwner(user);
+                            callback.getPostById(post);
+
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
     public void getPostByCategory(String category, Helper_Callback helper_callback) {
         Call<String> call = api_post.getPostList(category);
         call.enqueue(new Callback<String>() {
@@ -154,6 +215,7 @@ public class DAO_Post {
         });
 
     }
+
     private void log(String s) {
         Log.d("log", s);
     }

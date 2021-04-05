@@ -1,28 +1,18 @@
 package com.example.project01_backup.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.project01_backup.R;
-import com.example.project01_backup.activities.AdminActivity;
-import com.example.project01_backup.activities.MainActivity;
-import com.example.project01_backup.fragment.Fragment_Post_Detail;
 import com.example.project01_backup.helpers.Helper_Common;
 import com.example.project01_backup.model.Post;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;

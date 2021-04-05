@@ -12,12 +12,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -27,19 +23,14 @@ import com.example.project01_backup.DAO.DAO_Address;
 import com.example.project01_backup.R;
 
 import com.example.project01_backup.fragment.Fragment_Accommodations;
-import com.example.project01_backup.fragment.Fragment_AddPost;
 import com.example.project01_backup.fragment.Fragment_BeautifulPlaces;
-import com.example.project01_backup.fragment.Fragment_EditPost;
+import com.example.project01_backup.fragment.Fragment_Edit_Post;
 import com.example.project01_backup.fragment.Fragment_JourneyDiary;
-import com.example.project01_backup.fragment.Fragment_PostList;
+import com.example.project01_backup.fragment.Fragment_Post_Details;
 import com.example.project01_backup.fragment.Fragment_Restaurant;
 import com.example.project01_backup.fragment.Fragment_Tab_UserInfo;
-import com.example.project01_backup.fragment.Fragment_UserInfo;
 import com.example.project01_backup.helpers.Helper_SP;
-import com.example.project01_backup.model.Feedback;
-import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
-import com.example.project01_backup.model.Post;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -91,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        replaceFragment(new Fragment_AddPost());
+        replaceFragment(new Fragment_Edit_Post());
 //        showInfo();
 
     }
