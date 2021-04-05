@@ -76,9 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             password = getPass.getStringExtra("pass");
             email = getPass.getStringExtra("email");
         }
-        if(helper_sp.getProvinceList() == null){
-            dao_address.getProvinceList();
-        }
+        dao_address.getProvinceList();
         initView();
     }
 

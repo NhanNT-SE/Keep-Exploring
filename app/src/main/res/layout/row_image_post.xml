@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/rImagePost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        app:riv_corner_radius="12dp" />
+    <ImageButton
+        android:id="@+id/rImagePost_btnDelete"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_baseline_close_24"
+        android:background="#fff"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:contentDescription="Delete Image"/>
+</RelativeLayout>

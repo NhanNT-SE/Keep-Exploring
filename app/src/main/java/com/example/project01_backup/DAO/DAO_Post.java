@@ -39,6 +39,52 @@ public class DAO_Post {
         api_post = Retrofit_config.retrofit.create(Api_Post.class);
         helper_sp = new Helper_SP(context);
     }
+
+    public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        List<MultipartBody.Part> imageList = new ArrayList<>();
+        for (int i = 0; i < imageSubmitList.size(); i++) {
+            File file = new File(imageSubmitList.get(i));
+            String realPath = imageSubmitList.get(i);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part singleImage = MultipartBody.Part.createFormData("image_post", realPath, requestBody);
+            imageList.add(singleImage);
+        }
+        Call<String> call = api_post.createPost(accessToken, map, imageList);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
     public void getPostByCategory(String category, Helper_Callback helper_callback) {
         Call<String> call = api_post.getPostList(category);
         call.enqueue(new Callback<String>() {
@@ -90,7 +136,7 @@ public class DAO_Post {
                                 post.setRating(jsonPost.getInt("rating"));
                                 post.setOwner(user);
                                 postList.add(post);
-                                log("post" +post.toString());
+                                log("post" + post.toString());
                             }
                             helper_callback.postList(postList);
                         }
@@ -108,8 +154,6 @@ public class DAO_Post {
         });
 
     }
-
-
     private void log(String s) {
         Log.d("log", s);
     }
