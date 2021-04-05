@@ -62,15 +62,10 @@ public class DAO_Post {
                             JSONArray data = responseData.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject jsonPost = data.getJSONObject(i);
-                                JSONObject jsonAddress = jsonPost.getJSONObject("address");
                                 JSONObject jsonOwner = jsonPost.getJSONObject("owner");
                                 JSONArray jsonArrayImg = jsonPost.getJSONArray("imgs");
                                 JSONArray jsonArrayLike = jsonPost.getJSONArray("like_list");
                                 JSONArray jsonArrayComment = jsonPost.getJSONArray("comment");
-                                String address = jsonAddress.getString("additional") + ", Phuong: "
-                                        + jsonAddress.getString("ward") + ", Quan: "
-                                        + jsonAddress.get("district") + ", "
-                                        + jsonAddress.get("province");
                                 for (int j = 0; j < jsonArrayImg.length(); j++) {
                                     listImg.add(jsonArrayImg.get(i).toString());
                                 }
@@ -91,10 +86,11 @@ public class DAO_Post {
                                 post.setComments(jsonArrayComment.length());
                                 post.setTitle(jsonPost.getString("title"));
                                 post.setDesc(jsonPost.getString("desc"));
-                                post.setAddress(address);
+                                post.setAddress(jsonPost.getString("address"));
                                 post.setRating(jsonPost.getInt("rating"));
                                 post.setOwner(user);
                                 postList.add(post);
+                                log("post" +post.toString());
                             }
                             helper_callback.postList(postList);
                         }

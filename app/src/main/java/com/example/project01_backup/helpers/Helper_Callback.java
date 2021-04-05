@@ -8,4 +8,9 @@ public class Helper_Callback {
 
     public void postList(List<Post> postList) {
     }
+
+    public void addressList(List<String> districtList, List<String> wardList) {
+    }
+
+
 }

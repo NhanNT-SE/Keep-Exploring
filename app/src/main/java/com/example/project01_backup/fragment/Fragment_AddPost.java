@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,13 +31,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project01_backup.DAO.DAO_Address;
 import com.example.project01_backup.R;
 import com.example.project01_backup.adapter.Adapter_LV_Content;
 
+import com.example.project01_backup.helpers.Helper_Callback;
+import com.example.project01_backup.helpers.Helper_Common;
+import com.example.project01_backup.helpers.Helper_SP;
 import com.example.project01_backup.model.Content;
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
 import com.example.project01_backup.model.Post;
+import com.example.project01_backup.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +50,9 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -53,31 +62,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class Fragment_AddPost extends Fragment {
     private View view;
-    private EditText etTitle, etAddress, etDescription;
-    private TextView tvUser, tvPubDate;
-    private AutoCompleteTextView acPlace;
-    private Spinner spnCategory;
+    private EditText etTitle, etDescription;
+    private TextView tvUser, tvPubDate, tvAddress, tvCategory;
     private FloatingActionButton fabAddContent;
-    private ImageView imgPost, imgContent;
+    private ImageView imgPost;
     private CircleImageView imgAvatarUser;
-    private ListView lvContent;
-    private FirebaseUser user;
-
-    private Post post, oldPost;
-    private List<Content> contentList;
-    private List<String> nameList;
-    private Adapter_LV_Content adapterContent;
-    private String idPost;
-
+    private User user;
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
-    private int index = -1;
-    private Content content;
+    private Helper_SP helper_sp;
+    private Helper_Common helper_common;
+    private DAO_Address dao_address;
+    private String categorySubmit;
+    private String addressSubmit;
+    private String additionalAddress;
 
     public Fragment_AddPost() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,38 +91,22 @@ public class Fragment_AddPost extends Fragment {
     }
 
     private void initView() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
-        post = new Post();
-        contentList = new ArrayList<>();
-
-        spnCategory = (Spinner) view.findViewById(R.id.fAddPost_spnCategory);
-        acPlace = (AutoCompleteTextView) view.findViewById(R.id.fAddPost_acPlace);
+        dao_address = new DAO_Address(getContext());
+        helper_sp = new Helper_SP(getContext());
+        helper_common = new Helper_Common();
+        user = helper_sp.getUser();
         tvUser = (TextView) view.findViewById(R.id.fAddPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fAddPost_tvPubDate);
         etDescription = (EditText) view.findViewById(R.id.fAddPost_etDescription);
         etTitle = (EditText) view.findViewById(R.id.fAddPost_etTitle);
-        etAddress = (EditText) view.findViewById(R.id.fAddPost_etAddress);
+        tvAddress = (TextView) view.findViewById(R.id.fAddPost_tvAddress);
+        tvCategory = (TextView) view.findViewById(R.id.fAddPost_tvCategory);
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fAddPost_fabAddContent);
         imgPost = (ImageView) view.findViewById(R.id.fAddPost_imgPost);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fAddPost_imgAvatarUser);
-        lvContent = (ListView) view.findViewById(R.id.fAddPost_lvContent);
-
-        adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-        lvContent.setAdapter(adapterContent);
-        nameList = new ArrayList<>();
-        String[] categoryList = {"Restaurants", "Accommodations", "Beautiful Places", "Journey Diary"};
-        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categoryList);
-        spnCategory.setAdapter(adapterSpinner);
-        acPlace.setThreshold(1);
-
-
-
-
         setPubDate(tvPubDate);
         tvUser.setText(user.getDisplayName());
-        Picasso.get().load(user.getPhotoUrl()).into(imgAvatarUser);
-
+        Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
 
         imgPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,251 +119,207 @@ public class Fragment_AddPost extends Fragment {
         });
 
 
-        lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                index = position;
-                dialogLongClick();
-            }
-        });
-
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogAddContent();
+                dialogAddAddress();
             }
         });
     }
 
-
-    private void dialogAddContent() {
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
-        content = new Content();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
-        imgContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_CONTENT);
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable() == null) {
-                    toast("Please, choose a picture");
-
-                } else if (description.isEmpty()) {
-                    toast("Please, add a description");
-                } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    contentList.add(content);
-                    adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-                    lvContent.setAdapter(adapterContent);
-                    dialog.dismiss();
-                }
-
-            }
-        });
-
-
-        dialog.show();
-    }
-
-    private void dialogUpdateContent() {
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
-        content = contentList.get(index);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
-        imgContent.setImageURI(content.getUriImage());
-        dEtDescription.setText(content.getDescription());
-
-        imgContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_CONTENT);
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable() == null) {
-                    toast("Please, choose a picture");
-
-                } else if (description.isEmpty()) {
-                    toast("Please, add a description");
-                } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-                    lvContent.setAdapter(adapterContent);
-                    dialog.dismiss();
-                }
-
-            }
-        });
-
-
-        dialog.show();
-    }
-
-    private void dialogLongClick() {
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_longclick);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Content delete = contentList.get(index);
-        Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
-        Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contentList.remove(delete);
-                adapterContent.notifyDataSetChanged();
-                dialog.dismiss();
-            }
-        });
-
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogUpdateContent();
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void uploadData() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        final String categoryNode = spnCategory.getSelectedItem().toString();
-        final String placeNode = acPlace.getText().toString();
-        post.setAddress(etAddress.getText().toString());
-//        post.setDescription(etDescription.getText().toString());
-//        post.setPubDate(tvPubDate.getText().toString());
-//        post.setEmailUser(tvUser.getText().toString());
-//        post.setTittle(etTitle.getText().toString());
-//        post.setLongPubDate(longPubDate());
-//        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
-//        post.setIdUser(user.getUid());
-//        post.setDisplayName(user.getDisplayName());
-        if (etTitle.getText().toString().isEmpty() ||
-                acPlace.getText().toString().isEmpty()||
-                etDescription.getText().toString().isEmpty() ||
-                etAddress.getText().toString().isEmpty() ||
-                imgPost.getDrawable() == null) {
-            toast("Please, fill up the form");
-        } else if (contentList.size() == 0) {
-            dialog.setMessage("The article has no detailed description. Still submit?");
-            dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    toast("Pending moderation!");
-                    currentFragment(categoryNode);
-                }
-            });
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            dialog.show();
-        } else {
-            dialog.setTitle("Submit an Article?");
-
-            dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < contentList.size(); i++) {
-                        Content upload = new Content();
-                        Uri uri = contentList.get(i).getUriImage();
-                        upload.setDescription(contentList.get(i).getDescription());
-                    }
-                    toast("Pending moderation!");
-                    currentFragment(categoryNode);
-                }
-            });
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            dialog.show();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
+            imgPost.setImageURI(data.getData());
+        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    private void dialogAddAddress() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_address);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        List<String> dProvinceList = new ArrayList<>();
+        List<String> dDistrictList = new ArrayList<>();
+        List<String> dWardList = new ArrayList<>();
+        List<String> dCategoryList = new ArrayList<>();
+        dCategoryList.add("food");
+        dCategoryList.add("hotel");
+        dCategoryList.add("check_in");
+        dProvinceList.addAll(helper_sp.getProvinceList());
+        TextView dTvAddress = (TextView) dialog.findViewById(R.id.dAddress_tvAddress);
+        TextView dTvCategory = (TextView) dialog.findViewById(R.id.dAddress_tvCategory);
 
+        Spinner dSpCategory = (Spinner) dialog.findViewById(R.id.dAddress_spCategory);
+        Spinner dSpProvince = (Spinner) dialog.findViewById(R.id.dAddress_spProvince);
+        Spinner dSpDistrict = (Spinner) dialog.findViewById(R.id.dAddress_spDistrict);
+        Spinner dSpWard = (Spinner) dialog.findViewById(R.id.dAddress_spWard);
 
+        Button dBtnSubmit = (Button) dialog.findViewById(R.id.dAddress_btnSubmit);
+        Button dBtnCancel = (Button) dialog.findViewById(R.id.dAddress_btnCancel);
+
+        EditText dEdtAdditional = (EditText) dialog.findViewById(R.id.dAddress_edtAdditional);
+
+        dEdtAdditional.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isEmpty()) {
+                    additionalAddress = addressSubmit;
+                } else {
+                    additionalAddress = s + ", " + addressSubmit;
+                }
+                dTvAddress.setText(additionalAddress);
+
+            }
+        });
+
+        setSpinner(dCategoryList, dSpCategory);
+        setSpinner(dProvinceList, dSpProvince);
+
+        String selectedProvince = dSpProvince.getSelectedItem().toString();
+
+        dSpProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                dao_address.getAddressList(dProvinceList.get(position), "", new Helper_Callback() {
+                    @Override
+                    public void addressList(List<String> districtList, List<String> wardList) {
+                        dDistrictList.clear();
+                        dWardList.clear();
+                        dDistrictList.addAll(districtList);
+                        dWardList.addAll(wardList);
+                        setSpinner(dDistrictList, dSpDistrict);
+                        setSpinner(dWardList, dSpWard);
+                        setAddressToDisPLay(
+                                ""
+                                , "",
+                                dSpProvince.getSelectedItem().toString()
+                        );
+                        dEdtAdditional.setText("");
+                        dTvAddress.setText(addressSubmit);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        dSpDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                dao_address.getAddressList(selectedProvince, dDistrictList.get(position), new Helper_Callback() {
+                    @Override
+                    public void addressList(List<String> districtList, List<String> wardList) {
+                        dWardList.clear();
+                        dWardList.addAll(wardList);
+                        setSpinner(dWardList, dSpWard);
+                        setAddressToDisPLay(
+                                dSpWard.getSelectedItem().toString()
+                                , dSpDistrict.getSelectedItem().toString(),
+                                dSpProvince.getSelectedItem().toString()
+                        );
+                        dEdtAdditional.setText("");
+                        dTvAddress.setText(addressSubmit);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        dSpWard.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setAddressToDisPLay(
+                        dSpWard.getSelectedItem().toString()
+                        , dSpDistrict.getSelectedItem().toString(),
+                        dSpProvince.getSelectedItem().toString()
+                );
+                dEdtAdditional.setText("");
+                dTvAddress.setText(addressSubmit);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        dSpCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                categorySubmit = dCategoryList.get(position);
+                dTvCategory.setText(categorySubmit);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        dBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dBtnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressSubmit = dTvAddress.getText().toString();
+                tvAddress.setText(addressSubmit);
+                tvCategory.setText(categorySubmit);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
+    private void setSpinner(List<String> spinnerList, Spinner spinner) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getActivity(),
+                android.R.layout.simple_dropdown_item_1line,
+                spinnerList);
+        spinner.setAdapter(adapter);
+    }
+
+    private void setAddressToDisPLay(String ward, String district, String province) {
+        String sWard;
+        String sDistrict;
+        additionalAddress = "";
+        if (!ward.isEmpty()) {
+            sWard = ward + ", ";
+        } else {
+            sWard = "";
+        }
+        if (!district.isEmpty()) {
+            sDistrict = district + ", ";
+        } else {
+            sDistrict = "";
+        }
+        addressSubmit = additionalAddress + sWard + sDistrict + province;
+    }
     private void setPubDate(TextView tv) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         tv.setText(format.format(calendar.getTime()));
     }
-
     private void currentFragment(String current) {
         if (current.equalsIgnoreCase("Restaurants")) {
             replaceFragment(new Fragment_Restaurant());
@@ -396,19 +338,14 @@ public class Fragment_AddPost extends Fragment {
                 .beginTransaction()
                 .replace(R.id.main_FrameLayout, fragment)
                 .commit();
-
     }
-
-
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
-
     private long longPubDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -425,15 +362,11 @@ public class Fragment_AddPost extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                uploadData();
                 break;
             case R.id.menu_post_clear:
                 etDescription.setText("");
-                etAddress.setText("");
+                tvAddress.setText("");
                 etTitle.setText("");
-                acPlace.setText("");
-                contentList.clear();
-                adapterContent.notifyDataSetChanged();
                 imgPost.setImageResource(R.drawable.add_image);
                 break;
         }
@@ -441,15 +374,10 @@ public class Fragment_AddPost extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
-            imgPost.setImageURI(data.getData());
-        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
-            imgContent.setImageURI(data.getData());
-            content.setUriImage(data.getData());
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+
+
+    private void log(String s) {
+        Log.d("log", s);
     }
 
 

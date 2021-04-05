@@ -68,7 +68,6 @@ public class Fragment_Post_Detail extends Fragment {
     }
 
     private void initView() {
-
         Bundle bundle = getArguments();
         post = (Post) bundle.getSerializable(Adapter_LV_PostUser.POST);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -121,9 +120,6 @@ public class Fragment_Post_Detail extends Fragment {
         final TextView tvNothing = (TextView) dialog.findViewById(R.id.dContentPost_tvNothing);
 
         final ListView listView = (ListView) dialog.findViewById(R.id.dContentPost_lvContent);
-
-
-
         tvDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

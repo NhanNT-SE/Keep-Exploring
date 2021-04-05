@@ -23,14 +23,19 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project01_backup.DAO.DAO_Address;
 import com.example.project01_backup.R;
 
 import com.example.project01_backup.fragment.Fragment_Accommodations;
+import com.example.project01_backup.fragment.Fragment_AddPost;
 import com.example.project01_backup.fragment.Fragment_BeautifulPlaces;
+import com.example.project01_backup.fragment.Fragment_EditPost;
 import com.example.project01_backup.fragment.Fragment_JourneyDiary;
+import com.example.project01_backup.fragment.Fragment_PostList;
 import com.example.project01_backup.fragment.Fragment_Restaurant;
 import com.example.project01_backup.fragment.Fragment_Tab_UserInfo;
 import com.example.project01_backup.fragment.Fragment_UserInfo;
+import com.example.project01_backup.helpers.Helper_SP;
 import com.example.project01_backup.model.Feedback;
 import com.example.project01_backup.model.FirebaseCallback;
 import com.example.project01_backup.model.Places;
@@ -57,16 +62,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String password;
     private String email;
     private TextView number;
-
+    private Helper_SP helper_sp;
+    private DAO_Address dao_address;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        helper_sp = new Helper_SP(this);
+        dao_address = new DAO_Address(this);
         Intent getPass = getIntent();
         if (getPass != null) {
             password = getPass.getStringExtra("pass");
             email = getPass.getStringExtra("email");
+        }
+        if(helper_sp.getProvinceList() == null){
+            dao_address.getProvinceList();
         }
         initView();
     }
@@ -82,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        replaceFragment(new Fragment_Restaurant());
+        replaceFragment(new Fragment_AddPost());
 //        showInfo();
 
     }
