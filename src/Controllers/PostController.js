@@ -67,16 +67,19 @@ const deletePost = async (req, res, next) => {
         const len = postFound.imgs.length;
 
         for (let i = 0; i < len; i++) {
-          fs.unlinkSync("src/public/images/post/" + postFound.imgs[i]);
+          fs.unlink("src/public/images/post/" + postFound.imgs[i], (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
         }
         await Post.findByIdAndDelete(postID);
-        await Address.findOneAndDelete({ idPost: postID });
 
         //Xoa bai post khoi postlist cua user
         await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
 
         return res.status(200).send({
-          data: null,
+          data: postFound,
           err: "",
           status: 200,
           message: "Đã xóa bài viết",
