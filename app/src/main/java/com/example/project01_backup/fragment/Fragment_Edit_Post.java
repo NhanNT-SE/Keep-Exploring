@@ -242,7 +242,9 @@ public class Fragment_Edit_Post extends Fragment {
                        dao_post.deletePost(idPost,new Helper_Callback(){
                            @Override
                            public void successReq(JSONObject data) {
-                               log(data.toString());
+                              if(data != null){
+                                  toast("Đã xóa bài viết");
+                              }
                            }
                        });
                    }

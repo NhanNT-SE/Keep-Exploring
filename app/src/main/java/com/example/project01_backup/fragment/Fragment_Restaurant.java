@@ -150,7 +150,6 @@ public class Fragment_Restaurant extends Fragment {
         refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 return false;
             }
         });

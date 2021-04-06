@@ -85,14 +85,12 @@ public class Fragment_PostList extends Fragment {
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +112,6 @@ public class Fragment_PostList extends Fragment {
                 dialogDelete.show();
             }
         });
-
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +132,6 @@ public class Fragment_PostList extends Fragment {
 
         dialog.show();
     }
-
     private void toast(String s){
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
