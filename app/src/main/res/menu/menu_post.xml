@@ -4,11 +4,17 @@
     <item
         android:id="@+id/menu_post_clear"
         android:icon="@drawable/clear"
-        app:showAsAction="always"
-        android:title="clear all"/>
+        android:title="cancel"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_post_delete"
+        android:icon="@drawable/delete_black"
+        android:title="delete"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_post_complete"
         android:icon="@drawable/check"
-        app:showAsAction="always"
-        android:title="complete"/>
+        android:title="submit"
+        app:showAsAction="always" />
+
 </menu>

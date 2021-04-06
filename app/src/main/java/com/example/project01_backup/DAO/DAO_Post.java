@@ -39,6 +39,150 @@ public class DAO_Post {
         api_post = Retrofit_config.retrofit.create(Api_Post.class);
         helper_sp = new Helper_SP(context);
     }
+
+    public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        List<MultipartBody.Part> imageList = new ArrayList<>();
+        for (int i = 0; i < imageSubmitList.size(); i++) {
+            File file = new File(imageSubmitList.get(i));
+            String realPath = imageSubmitList.get(i);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part singleImage = MultipartBody.Part.createFormData("image_post", realPath, requestBody);
+            imageList.add(singleImage);
+        }
+        Call<String> call = api_post.createPost(accessToken, map, imageList);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
+    public void deletePost(String postId, Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        Call<String> call = api_post.deletePost(accessToken, postId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        toast(msg);
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            toast(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
+    public void getPostById(String idPost, Helper_Callback callback) {
+        Call<String> call = api_post.getPostById(idPost);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject jsonData = responseData.getJSONObject("data");
+                            JSONArray jsonImageList = jsonData.getJSONArray("imgs");
+                            JSONObject jsonOwner = jsonData.getJSONObject("owner");
+                            Post post = new Post();
+                            User user = new User();
+                            List<String> imageList = new ArrayList<>();
+                            for (int i = 0; i < jsonImageList.length(); i++) {
+                                imageList.add(jsonImageList.get(i).toString());
+                            }
+//                            SET OWNER FOR POST
+                            user.setId(jsonOwner.getString("_id"));
+                            user.setEmail(jsonOwner.getString("email"));
+                            user.setDisplayName(jsonOwner.getString("displayName"));
+                            user.setImgUser(jsonOwner.getString("imgUser"));
+//                            SET POST
+                            post.set_id(jsonData.getString("_id"));
+                            post.setCategory(jsonData.getString("category"));
+                            post.setTitle(jsonData.getString("title"));
+                            post.setDesc(jsonData.getString("desc"));
+                            post.setAddress(jsonData.getString("address"));
+                            post.setStatus(jsonData.getString("status"));
+                            post.setCreated_on(jsonData.getString("created_on"));
+                            post.setRating(Integer.parseInt(jsonData.getString("rating")));
+                            post.setImgs(imageList);
+                            post.setOwner(user);
+                            callback.getPostById(post);
+
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
     public void getPostByCategory(String category, Helper_Callback helper_callback) {
         Call<String> call = api_post.getPostList(category);
         call.enqueue(new Callback<String>() {
@@ -62,15 +206,10 @@ public class DAO_Post {
                             JSONArray data = responseData.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject jsonPost = data.getJSONObject(i);
-                                JSONObject jsonAddress = jsonPost.getJSONObject("address");
                                 JSONObject jsonOwner = jsonPost.getJSONObject("owner");
                                 JSONArray jsonArrayImg = jsonPost.getJSONArray("imgs");
                                 JSONArray jsonArrayLike = jsonPost.getJSONArray("like_list");
                                 JSONArray jsonArrayComment = jsonPost.getJSONArray("comment");
-                                String address = jsonAddress.getString("additional") + ", Phuong: "
-                                        + jsonAddress.getString("ward") + ", Quan: "
-                                        + jsonAddress.get("district") + ", "
-                                        + jsonAddress.get("province");
                                 for (int j = 0; j < jsonArrayImg.length(); j++) {
                                     listImg.add(jsonArrayImg.get(i).toString());
                                 }
@@ -91,10 +230,11 @@ public class DAO_Post {
                                 post.setComments(jsonArrayComment.length());
                                 post.setTitle(jsonPost.getString("title"));
                                 post.setDesc(jsonPost.getString("desc"));
-                                post.setAddress(address);
+                                post.setAddress(jsonPost.getString("address"));
                                 post.setRating(jsonPost.getInt("rating"));
                                 post.setOwner(user);
                                 postList.add(post);
+                                log("post" + post.toString());
                             }
                             helper_callback.postList(postList);
                         }
@@ -113,6 +253,54 @@ public class DAO_Post {
 
     }
 
+    public void updatePost(
+            HashMap<String, RequestBody> map,
+            String idPost,
+            List<String> imageSubmitList,
+            Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        List<MultipartBody.Part> imageList = new ArrayList<>();
+        for (int i = 0; i < imageSubmitList.size(); i++) {
+            File file = new File(imageSubmitList.get(i));
+            String realPath = imageSubmitList.get(i);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part singleImage = MultipartBody.Part.createFormData("image_post", realPath, requestBody);
+            imageList.add(singleImage);
+        }
+        Call<String> call = api_post.updatePost(accessToken, idPost, map, imageList);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
 
     private void log(String s) {
         Log.d("log", s);

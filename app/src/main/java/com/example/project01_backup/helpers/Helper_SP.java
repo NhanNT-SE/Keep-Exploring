@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 
 import com.example.project01_backup.model.User;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class Helper_SP {
@@ -20,21 +23,25 @@ public class Helper_SP {
         editor.putString("accessToken", accessToken);
         editor.apply();
     }
+
     public String getAccessToken() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_token", Context.MODE_PRIVATE);
         return sharedPreferences.getString("accessToken", null);
     }
+
     public void setRefreshToken(String refreshToken) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_token", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("refreshToken", refreshToken);
         editor.apply();
     }
+
     public String getRefreshToken() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_token", Context.MODE_PRIVATE);
         return sharedPreferences.getString("refreshToken", null);
     }
-    public void setUser(User user){
+
+    public void setUser(User user) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("_id", user.getId());
@@ -43,17 +50,32 @@ public class Helper_SP {
         editor.putString("imgUser", user.getImgUser());
         editor.apply();
     }
-    public User getUser(){
+
+    public User getUser() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
         User user = new User();
-        user.setId(sharedPreferences.getString("_id",null));
-        user.setEmail(sharedPreferences.getString("email",null));
-        user.setDisplayName(sharedPreferences.getString("displayName",null));
-        user.setImgUser(sharedPreferences.getString("imgUser",null));
+        user.setId(sharedPreferences.getString("_id", null));
+        user.setEmail(sharedPreferences.getString("email", null));
+        user.setDisplayName(sharedPreferences.getString("displayName", null));
+        user.setImgUser(sharedPreferences.getString("imgUser", null));
         return user;
     }
+
     public void clearSP() {
         context.getSharedPreferences("sp_token", Context.MODE_PRIVATE).edit().clear().apply();
         context.getSharedPreferences("sp_user", Context.MODE_PRIVATE).edit().clear().apply();
+    }
+
+    public void setProvinceList(List<String> provinceList) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_province_list", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("province_list", String.join(",", provinceList));
+        editor.apply();
+    }
+
+    public List<String> getProvinceList() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_province_list", Context.MODE_PRIVATE);
+        String provincesString = sharedPreferences.getString("province_list", null);
+        return new ArrayList<String>(Arrays.asList(provincesString.split(",")));
     }
 }
