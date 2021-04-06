@@ -170,33 +170,34 @@ const updatePost = async (req, res, next) => {
     const postFound = await Post.findById(idPost);
 
     if (postFound) {
-      const img_list = postFound.imgs;
+      let img_list = postFound.imgs;
 
       //Kiem tra user dang nhap co phai owner cua bai viet hay khong
       if ((user._id = postFound.owner)) {
         //Kiem tra co xoa img nao hay khong neu co thi xoa img phia server theo filename
-        var len_deleted = 0;
-
+        let length_deleted = 0;
         if (imgs_deleted) {
-          const imgs_deleted_json = JSON.parse(imgs_deleted);
-          len_deleted = imgs_deleted_json.length;
-
-          for (let i = 0; i < len_deleted; i++) {
-            for (let j = 0; j < len_deleted; j++) {
-              if ((postFound.imgs[j] = imgs_deleted_json[i])) {
-                await postFound.imgs.splice(i, 1);
-              }
+          const imageDeleteList = imgs_deleted.split(",");
+          const tempList = [];
+          img_list.some((e) => {
+            if (imageDeleteList.indexOf(e) < 0) {
+              tempList.push(e);
+            } else {
+              fs.unlink("src/public/images/post/" + e, (err) => {
+                if (err) {
+                  console.log(err);
+                }
+              });
             }
-            fs.unlinkSync("src/public/images/post/" + imgs_deleted_json[i]);
-          }
+          });
+          img_list = tempList;
         }
 
         //Kiem tra user co upload them hinh moi khong
         if (files) {
           const len_files = files.length;
-
           //Neu so luong hinh upload + so luong hinh o bai viet cu vuot qua gioi han thi tra ve status code 202
-          if (postFound.imgs.lenth - len_deleted + len_files > 20) {
+          if (postFound.imgs.lenth - length_deleted + len_files > 20) {
             handlerCustomError(
               202,
               "Vượt quá số lượng hình ảnh không được vượt quá 20"
@@ -208,7 +209,6 @@ const updatePost = async (req, res, next) => {
             img_list.push(files[i].filename);
           }
         }
-
         //Tao object luu nhung update cua bai viet
         const newPost = {
           ...req.body,
@@ -238,6 +238,7 @@ const updatePost = async (req, res, next) => {
       return handlerCustomError(201, "Bạn không thể cập nhật bài viết này");
     }
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
