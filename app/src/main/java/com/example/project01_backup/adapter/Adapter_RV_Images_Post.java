@@ -55,7 +55,6 @@ public class Adapter_RV_Images_Post extends RecyclerView.Adapter<Adapter_RV_Imag
                 imageDisplayList.remove(position);
                 if (imageDeleteList != null && imageDisplay.getImageUri() == null) {
                     imageDeleteList.add(imageDisplay.getImageString());
-                    Log.d("log", imageDeleteList.toString());
                 }
                 notifyDataSetChanged();
             }

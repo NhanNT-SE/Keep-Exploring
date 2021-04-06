@@ -85,6 +85,43 @@ public class DAO_Post {
 
     }
 
+    public void deletePost(String postId, Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        Call<String> call = api_post.deletePost(accessToken, postId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        toast(msg);
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            toast(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
     public void getPostById(String idPost, Helper_Callback callback) {
         Call<String> call = api_post.getPostById(idPost);
         call.enqueue(new Callback<String>() {
@@ -202,6 +239,55 @@ public class DAO_Post {
                             helper_callback.postList(postList);
                         }
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+            }
+        });
+
+    }
+
+    public void updatePost(
+            HashMap<String, RequestBody> map,
+            String idPost,
+            List<String> imageSubmitList,
+            Helper_Callback helper_callback) {
+        String accessToken = helper_sp.getAccessToken();
+        List<MultipartBody.Part> imageList = new ArrayList<>();
+        for (int i = 0; i < imageSubmitList.size(); i++) {
+            File file = new File(imageSubmitList.get(i));
+            String realPath = imageSubmitList.get(i);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part singleImage = MultipartBody.Part.createFormData("image_post", realPath, requestBody);
+            imageList.add(singleImage);
+        }
+        Call<String> call = api_post.updatePost(accessToken, idPost, map, imageList);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            helper_callback.successReq(data);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

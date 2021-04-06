@@ -223,6 +223,8 @@ public class Fragment_AddPost extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_post, menu);
+        MenuItem deleteItem = menu.findItem(R.id.menu_post_delete);
+        deleteItem.setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
     @SuppressLint("NonConstantResourceId")
@@ -233,9 +235,7 @@ public class Fragment_AddPost extends Fragment {
                 submit();
                 break;
             case R.id.menu_post_clear:
-                etDescription.setText("");
-                tvAddress.setText("");
-                etTitle.setText("");
+                toast("Quay về fragment trước đó");
                 break;
         }
         return super.onOptionsItemSelected(item);

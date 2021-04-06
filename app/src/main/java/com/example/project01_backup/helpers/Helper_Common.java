@@ -1,7 +1,9 @@
 package com.example.project01_backup.helpers;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -39,12 +41,12 @@ public class Helper_Common {
         return RequestBody.create(MediaType.parse("text/plain"), string);
     }
 
-    public void setTransformerViewPager(ViewPager2 viewPager){
+    public void setTransformerViewPager(ViewPager2 viewPager) {
         viewPager.setClipToPadding(false);
         viewPager.setClipChildren(false);
         viewPager.setOffscreenPageLimit(3);
         viewPager.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-        CompositePageTransformer  compositePageTransformer = new CompositePageTransformer();
+        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
         compositePageTransformer.addTransformer(new MarginPageTransformer(40));
         compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
             @Override
@@ -55,13 +57,34 @@ public class Helper_Common {
         });
         viewPager.setPageTransformer(compositePageTransformer);
     }
+
     public void formatDate(TextView tv) {
         Calendar calendar = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         tv.setText(format.format(calendar.getTime()));
     }
-    private String getIsoDate() {
+
+    public String getIsoDate() {
         return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
+    }
+
+    public void alertDialog(Context context, String message, Helper_Callback helper_callback) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setMessage(message);
+        dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                helper_callback.onSubmitAlertDialog();
+            }
+        });
+
+        dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.show();
     }
 }

@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -60,10 +63,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.RequestBody;
 
 
 public class Fragment_Edit_Post extends Fragment {
@@ -92,7 +97,8 @@ public class Fragment_Edit_Post extends Fragment {
     private String idPost;
     private User user;
     private List<ImageDisplay> imageDisplayList;
-    private List<String> imagesSubmitList, imageDeleteList,imageDefaultList;
+    private List<String> imagesSubmitList, imageDeleteList, imageDefaultList;
+
     public Fragment_Edit_Post() {
         // Required empty public constructor
     }
@@ -120,7 +126,6 @@ public class Fragment_Edit_Post extends Fragment {
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         ratingBar = (RatingBar) view.findViewById(R.id.fEditPost_ratingBar);
     }
-
     private void initVariable() {
         dao_address = new DAO_Address(getContext());
         dao_post = new DAO_Post(getContext());
@@ -134,7 +139,7 @@ public class Fragment_Edit_Post extends Fragment {
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
 
-        dao_post.getPostById("606bcbb6ef85ad3828e19b9c", new Helper_Callback() {
+        dao_post.getPostById("606be0b4ef85ad3828e19b9e", new Helper_Callback() {
             @Override
             public void getPostById(Post post) {
                 List<String> imageList = post.getImgs();
@@ -206,6 +211,7 @@ public class Fragment_Edit_Post extends Fragment {
         refreshViewPager();
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -217,6 +223,7 @@ public class Fragment_Edit_Post extends Fragment {
         inflater.inflate(R.menu.menu_post, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -225,26 +232,83 @@ public class Fragment_Edit_Post extends Fragment {
                 submit();
                 break;
             case R.id.menu_post_clear:
-                etDescription.setText("");
-                tvAddress.setText("");
-                etTitle.setText("");
+                toast("Quay về fragment cũ");
+                break;
+            case R.id.menu_post_delete:
+               String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
+               helper_common.alertDialog(getContext(),message,new Helper_Callback(){
+                   @Override
+                   public void onSubmitAlertDialog() {
+                       dao_post.deletePost(idPost,new Helper_Callback(){
+                           @Override
+                           public void successReq(JSONObject data) {
+                               log(data.toString());
+                           }
+                       });
+                   }
+               });
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-    private void submit(){
+
+    private void submit() {
         imagesSubmitList.clear();
         for (ImageDisplay item : imageDisplayList) {
             imagesSubmitList.add(item.getImageString());
         }
-        imageDefaultList.forEach(item->imagesSubmitList.remove(item));
+        imageDefaultList.forEach(item -> imagesSubmitList.remove(item));
+        String addressSubmit = tvAddress.getText().toString();
+        String categorySubmit = tvCategory.getText().toString();
+        String titleSubmit = etTitle.getText().toString();
+        String descriptionSubmit = etDescription.getText().toString();
+        int ratingSubmit = Math.round(ratingBar.getRating());
+        if (imageDisplayList.size() == 0) {
+            toast("Vui lòng chọn ít nhất 1 hình ảnh cho bài viết");
+        } else {
+            if (addressSubmit.isEmpty() || categorySubmit.isEmpty()) {
+                toast("Vui lòng chọn danh mục và địa chỉ cho bài viết");
+            } else if (titleSubmit.isEmpty()) {
+                toast("Vui lòng nhập tiêu đề cho bài viết");
+            } else if (descriptionSubmit.isEmpty()) {
+                toast("Vui lòng nhập nội dung chi tiết cho bài viết");
+            } else {
+                RequestBody bAddress = helper_common.createPartFromString(addressSubmit);
+                RequestBody bCategory = helper_common.createPartFromString(categorySubmit);
+                RequestBody bTitle = helper_common.createPartFromString(titleSubmit);
+                RequestBody bDescription = helper_common.createPartFromString(descriptionSubmit);
+                RequestBody bRating = helper_common.createPartFromString(String.valueOf(ratingSubmit));
+                RequestBody bCreated_on = helper_common.createPartFromString(helper_common.getIsoDate());
+                RequestBody bImageDelete = helper_common.createPartFromString(String.join(",",imageDeleteList));
+                HashMap<String, RequestBody> map = new HashMap<>();
+                map.put("address", bAddress);
+                map.put("category", bCategory);
+                map.put("title", bTitle);
+                map.put("desc", bDescription);
+                map.put("rating", bRating);
+                map.put("imgs_deleted",bImageDelete);
+                map.put("created_on",bCreated_on);
+                dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
+                    @Override
+                    public void successReq(JSONObject data) {
+                        if (data != null) {
+                            toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
+                        }
+                    }
+                });
+            }
+        }
 
     }
+
     private void refreshViewPager() {
         Adapter_RV_Images_Post adapter_rv_images_post = new Adapter_RV_Images_Post(imageDisplayList, imageDeleteList);
         viewPager.setAdapter(adapter_rv_images_post);
     }
     private void log(String s) {
         Log.d("log", s);
+    }
+    private void toast(String s) {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 }

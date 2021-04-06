@@ -25,4 +25,5 @@ public class Helper_Callback {
 
     public void selectImage(){};
 
+    public void onSubmitAlertDialog(){};
 }

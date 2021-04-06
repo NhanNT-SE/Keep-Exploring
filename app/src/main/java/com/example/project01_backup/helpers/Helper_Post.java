@@ -32,12 +32,9 @@ import okhttp3.RequestBody;
 
 public class Helper_Post {
     private Context context;
-    public static final int CHOOSE_IMAGE_POST = 1;
     private Helper_SP helper_sp;
     private String additionalAddress, addressSubmit, categorySubmit;
     private DAO_Address dao_address;
-    private Helper_Common helper_common;
-    private DAO_Post dao_post;
 
     public Helper_Post() {
     }
@@ -48,9 +45,7 @@ public class Helper_Post {
         this.addressSubmit = addressSubmit;
         this.categorySubmit = categorySubmit;
         dao_address = new DAO_Address(context);
-        dao_post = new DAO_Post(context);
         helper_sp = new Helper_SP(context);
-        helper_common = new Helper_Common();
     }
 
     public void dialogActionPost(TextView tvAddress, TextView tvCategory, Helper_Callback callback) {
@@ -263,73 +258,5 @@ public class Helper_Post {
             sDistrict = "";
         }
         addressSubmit = additionalAddress + sWard + sDistrict + province;
-    }
-
-    private HashMap<String, RequestBody> submit(List<String> imagesSubmitList,
-                                                List<String> imageDeleteList,
-                                                TextView tvAddress, TextView tvCategory,
-                                                EditText etTitle, EditText etDescription,
-                                                RatingBar ratingBar) {
-        imagesSubmitList.clear();
-
-        String addressSubmit = tvAddress.getText().toString();
-        String categorySubmit = tvCategory.getText().toString();
-        String titleSubmit = etTitle.getText().toString();
-        String descriptionSubmit = etDescription.getText().toString();
-        int ratingSubmit = Math.round(ratingBar.getRating());
-        HashMap<String, RequestBody> map;
-        if (imagesSubmitList.size() == 0) {
-            toast("Vui lòng chọn ít nhất 1 hình ảnh cho bài viết");
-            return null;
-        } else {
-            if (addressSubmit.isEmpty() || categorySubmit.isEmpty()) {
-                toast("Vui lòng chọn danh mục và địa chỉ cho bài viết");
-                return null;
-            }
-            if (titleSubmit.isEmpty()) {
-                toast("Vui lòng nhập tiêu đề cho bài viết");
-                return null;
-            }
-            if (descriptionSubmit.isEmpty()) {
-                toast("Vui lòng nhập nội dung chi tiết cho bài viết");
-                return null;
-            }
-            map = new HashMap<>();
-            RequestBody bAddress = helper_common.createPartFromString(addressSubmit);
-            RequestBody bCategory = helper_common.createPartFromString(categorySubmit);
-            RequestBody bTitle = helper_common.createPartFromString(titleSubmit);
-            RequestBody bDescription = helper_common.createPartFromString(descriptionSubmit);
-            RequestBody bRating = helper_common.createPartFromString(String.valueOf(ratingSubmit));
-            map.put("address", bAddress);
-            map.put("category", bCategory);
-            map.put("title", bTitle);
-            map.put("desc", bDescription);
-            map.put("rating", bRating);
-
-            return map;
-        }
-    }
-
-//    private void createPost() {
-//        dao_post.createPost(map, imagesSubmitList, new Helper_Callback() {
-//            @Override
-//            public void successReq(JSONObject data) {
-//                if (data != null) {
-//                    toast("Tạo bài viết thành công");
-//                    imagesSubmitList.clear();
-//                    imageDisplayList.clear();
-//                    tvAddress.setText("");
-//                    tvCategory.setText("");
-//                    etTitle.setText("");
-//                    etDescription.setText("");
-//                    ratingBar.setRating(0f);
-//                    refreshViewPager();
-//                }
-//            }
-//        });
-//    }
-
-    private void toast(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 }
