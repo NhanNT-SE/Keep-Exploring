@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView number;
     private Helper_SP helper_sp;
     private DAO_Address dao_address;
-    FirebaseStorage storage;
-    StorageReference storageRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         dao_address.getProvinceList();
         initView();
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
+
     }
 
     private void initView() {
