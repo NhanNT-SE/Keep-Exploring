@@ -23,4 +23,6 @@ public class Helper_Callback {
     public void successReq(JSONObject data) {
     }
 
+    public void selectImage(){};
+
 }

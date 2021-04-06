@@ -23,6 +23,7 @@ import com.example.project01_backup.DAO.DAO_Address;
 import com.example.project01_backup.R;
 
 import com.example.project01_backup.fragment.Fragment_Accommodations;
+import com.example.project01_backup.fragment.Fragment_AddPost;
 import com.example.project01_backup.fragment.Fragment_BeautifulPlaces;
 import com.example.project01_backup.fragment.Fragment_Edit_Post;
 import com.example.project01_backup.fragment.Fragment_JourneyDiary;

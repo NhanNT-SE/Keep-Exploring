@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fAddPost_sV"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -44,7 +43,7 @@
                 android:textStyle="italic" />
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/fAddPost_vPPost"
+                android:id="@+id/fAddPost_viewPager"
                 android:layout_below="@+id/fAddPost_imgAvatarUser"
                 android:layout_marginTop="10dp"
                 android:paddingStart="80dp"
@@ -55,7 +54,7 @@
                 android:id="@+id/fAddPost_tvTitleCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fAddPost_vPPost"
+                android:layout_below="@+id/fAddPost_viewPager"
                 android:layout_marginTop="3dp"
                 android:gravity="top"
                 android:paddingHorizontal="5dp"
@@ -68,7 +67,7 @@
                 android:id="@+id/fAddPost_tvCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fAddPost_vPPost"
+                android:layout_below="@+id/fAddPost_viewPager"
                 android:layout_toEndOf="@+id/fAddPost_tvTitleCategory"
                 android:layout_marginTop="3dp"
                 android:gravity="top"

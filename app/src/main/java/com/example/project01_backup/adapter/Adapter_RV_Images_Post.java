@@ -1,6 +1,7 @@
 package com.example.project01_backup.adapter;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project01_backup.R;
+import com.example.project01_backup.helpers.Helper_Common;
+import com.example.project01_backup.model.ImageDisplay;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class Adapter_RV_Images_Post extends RecyclerView.Adapter<Adapter_RV_Images_Post.ViewHolder> {
-    private List<Uri> uriList;
-    private List<String> imageSubmitList;
 
-    public Adapter_RV_Images_Post(List<Uri> uriList, List<String> imageSubmitList) {
-        this.uriList = uriList;
-        this.imageSubmitList = imageSubmitList;
+    private final List<ImageDisplay> imageDisplayList;
+    private List<String> imageDeleteList;
+
+    public Adapter_RV_Images_Post(List<ImageDisplay> imageDisplayList) {
+        this.imageDisplayList = imageDisplayList;
+    }
+
+    public Adapter_RV_Images_Post(List<ImageDisplay> imageDisplayList, List<String> imageDeleteList) {
+        this.imageDisplayList = imageDisplayList;
+        this.imageDeleteList = imageDeleteList;
     }
 
     @NonNull
@@ -33,13 +42,21 @@ public class Adapter_RV_Images_Post extends RecyclerView.Adapter<Adapter_RV_Imag
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Uri uri = uriList.get(position);
-        holder.imagePost.setImageURI(uri);
+        ImageDisplay imageDisplay = imageDisplayList.get(position);
+        String URL_IMAGE = holder.helper_common.getBaseUrlImage() + "post/";
+        if (imageDisplay.getImageUri() != null) {
+            holder.imagePost.setImageURI(imageDisplay.getImageUri());
+        } else {
+            Picasso.get().load(URL_IMAGE + imageDisplay.getImageString()).into(holder.imagePost);
+        }
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uriList.remove(position);
-                imageSubmitList.remove(position);
+                imageDisplayList.remove(position);
+                if (imageDeleteList != null && imageDisplay.getImageUri() == null) {
+                    imageDeleteList.add(imageDisplay.getImageString());
+                    Log.d("log", imageDeleteList.toString());
+                }
                 notifyDataSetChanged();
             }
         });
@@ -48,15 +65,17 @@ public class Adapter_RV_Images_Post extends RecyclerView.Adapter<Adapter_RV_Imag
 
     @Override
     public int getItemCount() {
-        return uriList.size();
+        return imageDisplayList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private RoundedImageView imagePost;
-        private ImageButton imgDelete;
+        private final RoundedImageView imagePost;
+        private final ImageButton imgDelete;
+        private final Helper_Common helper_common;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            helper_common = new Helper_Common();
             imagePost = (RoundedImageView) itemView.findViewById(R.id.rImagePost);
             imgDelete = (ImageButton) itemView.findViewById(R.id.rImagePost_btnDelete);
         }
