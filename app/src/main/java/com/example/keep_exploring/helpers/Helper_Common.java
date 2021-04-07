@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -62,10 +64,24 @@ public class Helper_Common {
     public String getIsoDate() {
         return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
     }
+
     public long getMillisTime() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
     }
+
+    public String convertListToString(String stringList) {
+        StringBuilder sb = new StringBuilder(stringList);
+
+        sb.deleteCharAt(stringList.length() - 1);
+
+
+        sb.deleteCharAt(0);
+
+
+        return sb.toString();
+    }
+
     public void alertDialog(Context context, String message, Helper_Callback helper_callback) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(message);

@@ -1,7 +1,10 @@
 package com.example.keep_exploring.api;
 
+import com.example.keep_exploring.model.Blog_Details;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -26,11 +29,12 @@ public interface Api_Blog {
     Call<String> getBlogById(@Path("idBlog") String idBlog);
 
     @Multipart
-    @POST("/post")
+    @POST("/blog/add")
     Call<String> createBlog(
             @Header("Authorization") String accessToken,
-            @PartMap() HashMap<String, RequestBody> partMap,
-            @Part MultipartBody.Part imageBlog
+            @Part("title") RequestBody titleBlog,
+            @Part MultipartBody.Part imageBlog,
+            @Part("detail_list") List<Blog_Details> contentList
     );
 
     @Multipart

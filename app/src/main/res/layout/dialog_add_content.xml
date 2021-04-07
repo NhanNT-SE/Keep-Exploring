@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@+id/dAddContent_tvTitle"
-        android:text="Add Content"
         android:gravity="center"
         android:textSize="20sp"
         android:fontFamily="@font/nabila"
@@ -20,10 +19,11 @@
         android:scaleType="fitXY"
         android:id="@+id/dAddContent_imgContent"
         android:layout_below="@+id/dAddContent_tvTitle"
-        android:src="@drawable/add_image"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="230dp"/>
+        android:layout_height="230dp"
+        android:src="@drawable/add_image"
+        />
     <EditText
         android:id="@+id/dAddContent_etDescriptions"
         android:hint="Add Description..."
@@ -49,25 +49,17 @@
             android:backgroundTint="@color/colorPrimary"
             android:textColor="#FFFFFF"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dAddContent_btnClear"
-            android:text="Clear"
-            app:cornerRadius="10dp"
-            android:layout_marginHorizontal="5dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:textColor="#FFFFFF"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:textAllCaps="false"
             android:layout_height="wrap_content"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dAddContent_btnCancel"
-            android:text="Cancel"
+            android:text="Hủy"
             app:cornerRadius="10dp"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="#FFFFFF"
             android:layout_weight="1"
             android:layout_width="0dp"
+            android:textAllCaps="false"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 

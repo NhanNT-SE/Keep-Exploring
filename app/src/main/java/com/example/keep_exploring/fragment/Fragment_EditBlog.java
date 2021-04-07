@@ -1,5 +1,6 @@
 package com.example.keep_exploring.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -110,8 +111,6 @@ public class Fragment_EditBlog extends Fragment {
         acPlace.setThreshold(1);
 
 
-
-
         setPubDate(tvPubDate);
         tvUser.setText(user.getEmail());
         Picasso.get().load(user.getPhotoUrl()).into(imgAvatarUser);
@@ -172,7 +171,6 @@ public class Fragment_EditBlog extends Fragment {
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
 
         imgContent.setOnClickListener(new View.OnClickListener() {
@@ -192,19 +190,14 @@ public class Fragment_EditBlog extends Fragment {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("UseCompatLoadingForDrawables")
             @Override
             public void onClick(View v) {
                 String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable() == null) {
+                if (imgContent.getDrawable().getConstantState() ==
+                        getContext().getDrawable(R.drawable.add_image).getConstantState()) {
                     toast("Please, choose a picture");
 
                 } else if (description.isEmpty()) {
@@ -232,7 +225,6 @@ public class Fragment_EditBlog extends Fragment {
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
         dEtDescription.setText(update.getContent());
         imgContent.setOnClickListener(new View.OnClickListener() {
@@ -252,13 +244,6 @@ public class Fragment_EditBlog extends Fragment {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override

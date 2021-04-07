@@ -1,5 +1,6 @@
 package com.example.keep_exploring.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -33,6 +34,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.Post;
@@ -42,6 +44,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,10 +75,12 @@ public class Fragment_AddBlog extends Fragment {
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
     private int index = -1;
+    private String imageBlog = "";
     //    DAO & HELPER
     private DAO_Blog dao_blog;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
+    private Helper_Image helper_image;
 
 
     public Fragment_AddBlog() {
@@ -104,15 +110,16 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     private void initVariables() {
+        dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(view.getContext());
-        user = helper_sp.getUser();
-        dao_blog = new DAO_Blog(getContext(), user.getId());
         helper_common = new Helper_Common();
+        helper_image = new Helper_Image(getContext());
         blogDetailsList = new ArrayList<>();
+        user = helper_sp.getUser();
     }
 
     private void handlerEvents() {
-        setPubDate(tvPubDate);
+        helper_common.formatDate(tvPubDate);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
@@ -155,10 +162,11 @@ public class Fragment_AddBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
+        dTvTitle.setText("Thêm nội dung chi tiết");
+        btnAdd.setText("Thêm");
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,23 +184,16 @@ public class Fragment_AddBlog extends Fragment {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("UseCompatLoadingForDrawables")
             @Override
             public void onClick(View v) {
                 String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable() == null) {
-                    toast("Please, choose a picture");
-
+                if (imgContent.getDrawable().getConstantState() ==
+                        getContext().getDrawable(R.drawable.add_image).getConstantState()) {
+                    toast("Vui lòng chọn hình ảnh để hiển thị");
                 } else if (description.isEmpty()) {
-                    toast("Please, add a description");
+                    toast("Vui lòng điền nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
                     blogDetailsList.add(blogDetails);
@@ -203,7 +204,6 @@ public class Fragment_AddBlog extends Fragment {
             }
         });
 
-
         dialog.show();
     }
 
@@ -211,6 +211,7 @@ public class Fragment_AddBlog extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CHOOSE_IMAGE_POST && data != null) {
             imgPost.setImageURI(data.getData());
+            imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());
@@ -225,11 +226,11 @@ public class Fragment_AddBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
+        dTvTitle.setText("Chỉnh sửa nội dụng dung chi tiết");
+        btnAdd.setText("Cập nhật");
         imgContent.setImageURI(blogDetails.getUriImage());
         dEtDescription.setText(blogDetails.getContent());
 
@@ -250,34 +251,20 @@ public class Fragment_AddBlog extends Fragment {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEtDescription.setText("");
-                imgContent.setImageResource(R.drawable.add_image);
-            }
-        });
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable() == null) {
-                    toast("Please, choose a picture");
-
-                } else if (description.isEmpty()) {
-                    toast("Please, add a description");
+                if (description.isEmpty()) {
+                    toast("Vui lòng thêm nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
-//                    adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
-//                    lvContent.setAdapter(adapterContent);
+                    refreshListView();
                     dialog.dismiss();
                 }
 
             }
         });
-
-
         dialog.show();
     }
 
@@ -285,7 +272,7 @@ public class Fragment_AddBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        final Blog_Details delete = blogDetailsList.get(index);
+        final Blog_Details delete = blogDetailsList.get(index);
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
@@ -301,8 +288,8 @@ public class Fragment_AddBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                blogDetailsList.remove(delete);
-//                adapterContent.notifyDataSetChanged();
+                blogDetailsList.remove(delete);
+                refreshListView();
                 dialog.dismiss();
             }
         });
@@ -318,64 +305,77 @@ public class Fragment_AddBlog extends Fragment {
         dialog.show();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-//        post.setDescription(etDescription.getText().toString());
-//        post.setPubDate(tvPubDate.getText().toString());
-//        post.setEmailUser(tvUser.getText().toString());
-//        post.setTittle(etTitle.getText().toString());
-//        post.setLongPubDate(longPubDate());
-//        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
-//        post.setIdUser(user.getUid());
-//        post.setDisplayName(user.getDisplayName());
-        if (etTitle.getText().toString().isEmpty() ||
-                imgPost.getDrawable() == null) {
-            toast("Please, fill up the form");
+        if (imgPost.getDrawable().getConstantState() ==
+                getContext().getDrawable(R.drawable.add_image).getConstantState()
+        ) {
+            toast("Vui lòng chọn hình ảnh đại diện cho bài viết");
+        } else if (etTitle.getText().toString().isEmpty()) {
+            toast("Vui lòng chọn tiêu đề");
         } else if (blogDetailsList.size() == 0) {
-            dialog.setMessage("The article has no detailed description. Still submit?");
-            dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    toast("Pending moderation!");
-                }
-            });
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            dialog.show();
+            toast("Vui lòng thêm ít nhất 1 nội dung chi tiết cho bài viết");
         } else {
-            dialog.setTitle("Submit an Article?");
-
-            dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
+            dialog.setTitle("Bạn có muốn tạo bài viết?");
+            dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < blogDetailsList.size(); i++) {
-                        Blog_Details upload = new Blog_Details();
-                        Uri uri = blogDetailsList.get(i).getUriImage();
-                        upload.setContent(blogDetailsList.get(i).getContent());
-                    }
-                    toast("Pending moderation!");
+                    String title = etTitle.getText().toString();
+                    dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
+                        @Override
+                        public void successReq(JSONObject data) {
+                            if (data != null) {
+                                toast("Thêm bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
+                                clearBlog();
+                            }
+                        }
+                    });
                 }
             });
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                 }
             });
             dialog.show();
         }
-
-
     }
 
-    private void setPubDate(TextView tv) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        tv.setText(format.format(calendar.getTime()));
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_post_complete:
+                uploadData();
+                break;
+            case R.id.menu_post_clear:
+                    clearBlog();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_post, menu);
+        menu.findItem(R.id.menu_post_delete).setVisible(false);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void clearBlog() {
+        etTitle.setText("");
+        blogDetailsList.clear();
+        adapterContent.notifyDataSetChanged();
+        imgPost.setImageResource(R.drawable.add_image);
+        imageBlog = "";
     }
 
     private void currentFragment(String current) {
@@ -399,46 +399,9 @@ public class Fragment_AddBlog extends Fragment {
 
     }
 
-
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_post, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_post_complete:
-//                uploadData();
-                dao_blog.uploadImageBlogDetail(blogDetailsList, new Helper_Callback() {
-                    @Override
-                    public void blogDetailList(List<Blog_Details> blog_detailsList) {
-                        log("Blog Detail List:\n" + blog_detailsList.toString());
-                    }
-                });
-                break;
-            case R.id.menu_post_clear:
-                etTitle.setText("");
-                blogDetailsList.clear();
-                adapterContent.notifyDataSetChanged();
-                imgPost.setImageResource(R.drawable.add_image);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     private void log(String msg) {
         Log.d("log", msg);
