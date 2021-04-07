@@ -8,48 +8,62 @@ const handlerCustomError = require("../middleware/customError");
 
 const createBlog = async (req, res, next) => {
   try {
-    const { title, content_list } = req.body;
+    // const files = req.files;
+    // const content_list_json = JSON.parse(content_list);
+    // const blog = new Blog({
+    //   title,
+    //   owner: user._id,
+    // });
+    // blog.blog_detail = blog._id;
+    // await blog.save();
 
-    const user = req.user;
-    const files = req.files;
-    const content_list_json = JSON.parse(content_list);
-    const blog = new Blog({
-      title,
-      owner: user._id,
-    });
-
-    blog.blog_detail = blog._id;
-    await blog.save();
-
-    const _id = blog._id;
-    const len = files.length;
-    const detail_list = [];
+    // const _id = blog._id;
+    // const len = files.length;
+    // const detail_list = [];
 
     // Gán img+content vào mảng detail_list
-    for (let i = 0; i < len; i++) {
-      let detail = {};
-      detail.img = files[i].filename;
-      detail.content = content_list_json[i];
-      detail_list.push(detail);
+    // for (let i = 0; i < len; i++) {
+    //   let detail = {};
+    //   detail.img = files[i].filename;
+    //   detail.content = content_list_json[i];
+    //   detail_list.push(detail);
+    // }
+
+    // const blog_detail = new Blog_Detail({
+    //   _id,
+    //   detail_list,
+    // });
+    // // await blog_detail.save();
+
+    // //Add post vào list post của user
+    // await user.blog.push(_id);
+    // // await user.save();
+
+    // const blogSaved = await Blog.findById(_id)
+    //   .populate("owner")
+    //   .populate("blog_detail");
+
+    const {title, detail_list } = req.body;
+    const file = req.file;
+    const user = await User.findById(req.user._id);
+    const blog = new Blog({ title });
+    const blog_detail = new Blog_Detail({});
+
+    if (file) {
+      blog.img = file.filename;
     }
 
-    const blog_detail = new Blog_Detail({
-      _id,
-      detail_list,
-    });
-    await blog_detail.save();
+    blog_detail.detail_list = [...detail_list];
+    blog_detail._id = blog._id;
 
-    //Add post vào list post của user
-    await user.blog.push(_id);
-    await user.save();
+    blog.owner = user._id;
+    blog.blog_detail = blog._id;
 
-    const blogSaved = await Blog.findById(_id)
-      .populate("owner")
-      .populate("blog_detail");
+    user.blog.push(blog._id);
 
     return res.status(200).send({
       status: 200,
-      data: blogSaved,
+      data: { blog, blog_detail, user },
       message: "Tạo bài viết thành công",
     });
   } catch (error) {

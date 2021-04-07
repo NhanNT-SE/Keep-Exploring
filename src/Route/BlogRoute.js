@@ -23,11 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 //Post Method
-router.post(
-  "/add",
-  upload.array("image_blog", 10),
-  BlogController.createBlog
-);
+router.post("/add", upload.single("image_blog"), BlogController.createBlog);
 //Patch method
 router.patch("/like", BlogController.likeBlog);
 
