@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.keep_exploring.R;
 
-import com.example.keep_exploring.model.Content;
+import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.Post;
 
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class Adapter_LV_PostAdmin extends BaseAdapter {
         CircleImageView imgAvatar = (CircleImageView) dialog.findViewById(R.id.dCensorship_imgAvatarUser);
         final ImageView imgPost = (ImageView) dialog.findViewById(R.id.dCensorship_imgPost);
         final ListView lvContent = (ListView) dialog.findViewById(R.id.dCensorship_lvContent);
-        final List<Content> listContent = new ArrayList<>();
+        final List<Blog_Details> listBlogDetails = new ArrayList<>();
 
 //        tvEmail.setText(post.getDisplayName());
 //        tvPubDate.setText(post.getPubDate());

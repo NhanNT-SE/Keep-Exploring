@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,14 +28,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Content;
+import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -48,29 +54,28 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_AddBlog extends Fragment {
+    //    VIEW
     private View view;
-    private EditText etTitle, etAddress, etDescription;
+    private EditText etTitle;
     private TextView tvUser, tvPubDate;
-    private AutoCompleteTextView acPlace;
-    private Spinner spnCategory;
     private FloatingActionButton fabAddContent;
     private ImageView imgPost, imgContent;
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
+
+    //    VARIABLES
     private User user;
-
-    private Post post, oldPost;
-    private List<Content> contentList;
-    private List<String> nameList;
+    private Blog_Details blogDetails;
+    private List<Blog_Details> blogDetailsList;
     private Adapter_LV_Content adapterContent;
-    private String idPost;
-
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
     private int index = -1;
-    private Content content;
+    //    DAO & HELPER
+    private DAO_Blog dao_blog;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
+
 
     public Fragment_AddBlog() {
         // Required empty public constructor
@@ -83,41 +88,34 @@ public class Fragment_AddBlog extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_add_blog, container, false);
         initView();
+        initVariables();
+        handlerEvents();
         return view;
     }
 
     private void initView() {
+        tvUser = (TextView) view.findViewById(R.id.fAddBlog_tvUser);
+        tvPubDate = (TextView) view.findViewById(R.id.fAddBlog_tvPubDate);
+        etTitle = (EditText) view.findViewById(R.id.fAddBlog_etTitle);
+        fabAddContent = (FloatingActionButton) view.findViewById(R.id.fAddBlog_fabAddContent);
+        imgPost = (ImageView) view.findViewById(R.id.fAddBlog_imgPost);
+        imgAvatarUser = (CircleImageView) view.findViewById(R.id.fAddBlog_imgAvatarUser);
+        lvContent = (ListView) view.findViewById(R.id.fAddBlog_lvContent);
+    }
+
+    private void initVariables() {
         helper_sp = new Helper_SP(view.getContext());
-        helper_common = new Helper_Common();
         user = helper_sp.getUser();
-        post = new Post();
-        contentList = new ArrayList<>();
-        spnCategory = (Spinner) view.findViewById(R.id.fAddPost_spnCategory);
-        acPlace = (AutoCompleteTextView) view.findViewById(R.id.fAddPost_acPlace);
-        tvUser = (TextView) view.findViewById(R.id.fAddPost_tvUser);
-        tvPubDate = (TextView) view.findViewById(R.id.fAddPost_tvPubDate);
-        etDescription = (EditText) view.findViewById(R.id.fAddPost_etDescription);
-        etTitle = (EditText) view.findViewById(R.id.fAddPost_etTitle);
-        etAddress = (EditText) view.findViewById(R.id.fAddPost_etAddress);
-        fabAddContent = (FloatingActionButton) view.findViewById(R.id.fAddPost_fabAddContent);
-        imgPost = (ImageView) view.findViewById(R.id.fAddPost_imgPost);
-        imgAvatarUser = (CircleImageView) view.findViewById(R.id.fAddPost_imgAvatarUser);
-        lvContent = (ListView) view.findViewById(R.id.fAddPost_lvContent);
+        dao_blog = new DAO_Blog(getContext(), user.getId());
+        helper_common = new Helper_Common();
+        blogDetailsList = new ArrayList<>();
+    }
 
-        adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-        lvContent.setAdapter(adapterContent);
-        nameList = new ArrayList<>();
-        String[] categoryList = {"hotel", "food", "check_in", "blog"};
-        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categoryList);
-        spnCategory.setAdapter(adapterSpinner);
-        acPlace.setThreshold(1);
-
-
+    private void handlerEvents() {
         setPubDate(tvPubDate);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
-
-
+        refreshListView();
         imgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,11 +143,15 @@ public class Fragment_AddBlog extends Fragment {
         });
     }
 
+    private void refreshListView() {
+        adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
+        lvContent.setAdapter(adapterContent);
+    }
 
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
-        content = new Content();
+        blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
@@ -192,10 +194,9 @@ public class Fragment_AddBlog extends Fragment {
                 } else if (description.isEmpty()) {
                     toast("Please, add a description");
                 } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    contentList.add(content);
-                    adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-                    lvContent.setAdapter(adapterContent);
+                    blogDetails.setContent(dEtDescription.getText().toString());
+                    blogDetailsList.add(blogDetails);
+                    refreshListView();
                     dialog.dismiss();
                 }
 
@@ -206,10 +207,21 @@ public class Fragment_AddBlog extends Fragment {
         dialog.show();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
+            imgPost.setImageURI(data.getData());
+        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
+            imgContent.setImageURI(data.getData());
+            blogDetails.setUriImage(data.getData());
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
-        content = contentList.get(index);
+        blogDetails = blogDetailsList.get(index);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
@@ -218,8 +230,8 @@ public class Fragment_AddBlog extends Fragment {
         Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
 
-        imgContent.setImageURI(content.getUriImage());
-        dEtDescription.setText(content.getDescription());
+        imgContent.setImageURI(blogDetails.getUriImage());
+        dEtDescription.setText(blogDetails.getContent());
 
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,9 +268,9 @@ public class Fragment_AddBlog extends Fragment {
                 } else if (description.isEmpty()) {
                     toast("Please, add a description");
                 } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    adapterContent = new Adapter_LV_Content(getActivity(), contentList);
-                    lvContent.setAdapter(adapterContent);
+                    blogDetails.setContent(dEtDescription.getText().toString());
+//                    adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
+//                    lvContent.setAdapter(adapterContent);
                     dialog.dismiss();
                 }
 
@@ -273,7 +285,7 @@ public class Fragment_AddBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Content delete = contentList.get(index);
+//        final Blog_Details delete = blogDetailsList.get(index);
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
@@ -289,8 +301,8 @@ public class Fragment_AddBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                contentList.remove(delete);
-                adapterContent.notifyDataSetChanged();
+//                blogDetailsList.remove(delete);
+//                adapterContent.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
@@ -308,9 +320,6 @@ public class Fragment_AddBlog extends Fragment {
 
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        final String categoryNode = spnCategory.getSelectedItem().toString();
-        final String placeNode = acPlace.getText().toString();
-        post.setAddress(etAddress.getText().toString());
 //        post.setDescription(etDescription.getText().toString());
 //        post.setPubDate(tvPubDate.getText().toString());
 //        post.setEmailUser(tvUser.getText().toString());
@@ -320,18 +329,14 @@ public class Fragment_AddBlog extends Fragment {
 //        post.setIdUser(user.getUid());
 //        post.setDisplayName(user.getDisplayName());
         if (etTitle.getText().toString().isEmpty() ||
-                acPlace.getText().toString().isEmpty() ||
-                etDescription.getText().toString().isEmpty() ||
-                etAddress.getText().toString().isEmpty() ||
                 imgPost.getDrawable() == null) {
             toast("Please, fill up the form");
-        } else if (contentList.size() == 0) {
+        } else if (blogDetailsList.size() == 0) {
             dialog.setMessage("The article has no detailed description. Still submit?");
             dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     toast("Pending moderation!");
-                    currentFragment(categoryNode);
                 }
             });
             dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -347,13 +352,12 @@ public class Fragment_AddBlog extends Fragment {
             dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < contentList.size(); i++) {
-                        Content upload = new Content();
-                        Uri uri = contentList.get(i).getUriImage();
-                        upload.setDescription(contentList.get(i).getDescription());
+                    for (int i = 0; i < blogDetailsList.size(); i++) {
+                        Blog_Details upload = new Blog_Details();
+                        Uri uri = blogDetailsList.get(i).getUriImage();
+                        upload.setContent(blogDetailsList.get(i).getContent());
                     }
                     toast("Pending moderation!");
-                    currentFragment(categoryNode);
                 }
             });
             dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -400,11 +404,6 @@ public class Fragment_AddBlog extends Fragment {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 
-    private long longPubDate() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getTimeInMillis();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -421,14 +420,17 @@ public class Fragment_AddBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                uploadData();
+//                uploadData();
+                dao_blog.uploadImageBlogDetail(blogDetailsList, new Helper_Callback() {
+                    @Override
+                    public void blogDetailList(List<Blog_Details> blog_detailsList) {
+                        log("Blog Detail List:\n" + blog_detailsList.toString());
+                    }
+                });
                 break;
             case R.id.menu_post_clear:
-                etDescription.setText("");
-                etAddress.setText("");
                 etTitle.setText("");
-                acPlace.setText("");
-                contentList.clear();
+                blogDetailsList.clear();
                 adapterContent.notifyDataSetChanged();
                 imgPost.setImageResource(R.drawable.add_image);
                 break;
@@ -437,16 +439,8 @@ public class Fragment_AddBlog extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
-            imgPost.setImageURI(data.getData());
-        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
-            imgContent.setImageURI(data.getData());
-            content.setUriImage(data.getData());
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+
+    private void log(String msg) {
+        Log.d("log", msg);
     }
-
-
 }

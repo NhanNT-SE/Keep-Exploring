@@ -23,6 +23,7 @@ import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
 
 import com.example.keep_exploring.fragment.Fragment_Accommodations;
+import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_BeautifulPlaces;
 import com.example.keep_exploring.fragment.Fragment_Edit_Post;
 import com.example.keep_exploring.fragment.Fragment_JourneyDiary;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        replaceFragment(new Fragment_Edit_Post());
+        replaceFragment(new Fragment_AddBlog());
 //        showInfo();
 
     }

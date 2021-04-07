@@ -24,84 +24,53 @@
                 android:layout_height="match_parent">
 
                 <RelativeLayout
-                    android:id="@+id/fAddPost_layoutContainer"
+                    android:id="@+id/fAddBlog_layoutContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp">
 
-                    <LinearLayout
-                        android:id="@+id/fAddPost_layoutTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <AutoCompleteTextView
-                            android:id="@+id/fAddPost_acPlace"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="4"
-                            android:hint="Places"
-                            android:textSize="15sp" />
-
-
-                        <Spinner
-                            android:id="@+id/fAddPost_spnCategory"
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="3dp"
-                            android:layout_weight="6"
-                            android:hint="Tên thể loại"
-                            android:textSize="15sp" />
-
-                    </LinearLayout>
-
-
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/fAddPost_imgAvatarUser"
+                        android:id="@+id/fAddBlog_imgAvatarUser"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/fAddPost_layoutTitle"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/avatar_facebook" />
 
                     <TextView
-                        android:id="@+id/fAddPost_tvUser"
+                        android:id="@+id/fAddBlog_tvUser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fAddPost_layoutTitle"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:layout_marginTop="10dp"
-                        android:layout_toRightOf="@+id/fAddPost_imgAvatarUser"
+                        android:layout_toEndOf="@+id/fAddBlog_imgAvatarUser"
                         android:text="Nguyễn Trọng Nhân"
                         android:textSize="15sp"
                         android:textStyle="italic" />
 
                     <TextView
-                        android:id="@+id/fAddPost_tvPubDate"
+                        android:id="@+id/fAddBlog_tvPubDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fAddPost_layoutTitle"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="10dp"
                         android:text="20/20/2020"
                         android:textSize="15sp"
                         android:textStyle="italic" />
 
                     <ImageView
-                        android:id="@+id/fAddPost_imgPost"
+                        android:id="@+id/fAddBlog_imgPost"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
-                        android:layout_below="@+id/fAddPost_imgAvatarUser"
+                        android:layout_below="@+id/fAddBlog_imgAvatarUser"
                         android:layout_centerHorizontal="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/add_image" />
 
                     <EditText
-                        android:id="@+id/fAddPost_etTitle"
+                        android:id="@+id/fAddBlog_etTitle"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/fAddPost_imgPost"
+                        android:layout_below="@+id/fAddBlog_imgPost"
                         android:layout_marginTop="3dp"
                         android:gravity="top"
                         android:hint="Title..."
@@ -109,31 +78,6 @@
                         android:paddingVertical="3dp"
                         android:textSize="15sp"
                         android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/fAddPost_etAddress"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_below="@+id/fAddPost_etTitle"
-                        android:layout_marginTop="3dp"
-                        android:gravity="top"
-                        android:hint="Address..."
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="3dp"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/fAddPost_etDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="70dp"
-                        android:layout_below="@+id/fAddPost_etAddress"
-                        android:layout_marginTop="3dp"
-                        android:gravity="top"
-                        android:hint="Descriptions..."
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="3dp"
-                        android:textSize="15sp" />
                 </RelativeLayout>
 
             </ScrollView>
@@ -152,10 +96,10 @@
 
 
     <ListView
-        android:id="@+id/fAddPost_lvContent"
+        android:id="@+id/fAddBlog_lvContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fAddPost_layoutContainer"
+        android:layout_below="@+id/fAddBlog_layoutContainer"
         android:layout_marginTop="5dp"
         android:divider="@color/fui_transparent"
         android:dividerHeight="10dp"
@@ -163,19 +107,19 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fAddPost_fabAddContent"
+        android:id="@+id/fAddBlog_fabAddContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"
         android:layout_marginBottom="3dp"
         android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_add_white"
         app:fabSize="mini"
         app:maxImageSize="30dp"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

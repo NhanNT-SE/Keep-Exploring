@@ -30,7 +30,7 @@ import androidx.fragment.app.Fragment;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 
-import com.example.keep_exploring.model.Content;
+import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,7 +60,7 @@ public class Fragment_EditBlog extends Fragment {
     private FirebaseUser user;
 
     private Post post, oldPost;
-    private List<Content> listContent;
+    private List<Blog_Details> listBlogDetails;
     private List<String> nameList;
     private Adapter_LV_Content adapterContent;
     private String idPost;
@@ -68,7 +68,7 @@ public class Fragment_EditBlog extends Fragment {
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
     private int index = -1;
-    private Content content;
+    private Blog_Details blogDetails;
 
     public Fragment_EditBlog() {
         // Required empty public constructor
@@ -85,13 +85,10 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void initView() {
-
         user = FirebaseAuth.getInstance().getCurrentUser();
-
         post = new Post();
         Bundle bundle = getArguments();
-        listContent = new ArrayList<>();
-
+        listBlogDetails = new ArrayList<>();
         spnCategory = (Spinner) view.findViewById(R.id.fEditPost_spnCategory);
         acPlace = (AutoCompleteTextView) view.findViewById(R.id.fEditPost_acPlace);
         tvUser = (TextView) view.findViewById(R.id.fEditPost_tvUser);
@@ -104,7 +101,7 @@ public class Fragment_EditBlog extends Fragment {
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         lvContent = (ListView) view.findViewById(R.id.fEditPost_lvContent);
 
-        adapterContent = new Adapter_LV_Content(getActivity(), listContent);
+        adapterContent = new Adapter_LV_Content(getActivity(), listBlogDetails);
         lvContent.setAdapter(adapterContent);
         nameList = new ArrayList<>();
         String[] categoryList = {"Restaurants", "Accommodations", "Beautiful Places", "Journey Diary"};
@@ -170,7 +167,7 @@ public class Fragment_EditBlog extends Fragment {
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
-        content = new Content();
+        blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
@@ -213,8 +210,8 @@ public class Fragment_EditBlog extends Fragment {
                 } else if (description.isEmpty()) {
                     toast("Please, add a description");
                 } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    listContent.add(content);
+                    blogDetails.setContent(dEtDescription.getText().toString());
+                    listBlogDetails.add(blogDetails);
                     adapterContent.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -229,15 +226,15 @@ public class Fragment_EditBlog extends Fragment {
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
-        content = new Content();
-        final Content update = listContent.get(index);
+        blogDetails = new Blog_Details();
+        final Blog_Details update = listBlogDetails.get(index);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
         Button btnClear = (Button) dialog.findViewById(R.id.dAddContent_btnClear);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-        dEtDescription.setText(update.getDescription());
+        dEtDescription.setText(update.getContent());
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,9 +270,9 @@ public class Fragment_EditBlog extends Fragment {
                 } else if (description.isEmpty()) {
                     toast("Please, add a description");
                 } else {
-                    content.setDescription(dEtDescription.getText().toString());
-                    listContent.add(index, content);
-                    listContent.remove(update);
+                    blogDetails.setContent(dEtDescription.getText().toString());
+                    listBlogDetails.add(index, blogDetails);
+                    listBlogDetails.remove(update);
                     adapterContent.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -291,7 +288,7 @@ public class Fragment_EditBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Content delete = listContent.get(index);
+        final Blog_Details delete = listBlogDetails.get(index);
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
@@ -306,7 +303,7 @@ public class Fragment_EditBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listContent.remove(delete);
+                listBlogDetails.remove(delete);
                 adapterContent.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -342,7 +339,7 @@ public class Fragment_EditBlog extends Fragment {
         if (etTitle.getText().toString().isEmpty() || etDescription.getText().toString().isEmpty() ||
                 etAddress.getText().toString().isEmpty() || (imgPost.getDrawable() == null)) {
             toast("Please, fill up the form");
-        } else if (listContent.size() == 0) {
+        } else if (listBlogDetails.size() == 0) {
             dialog.setMessage("The article has no detailed description. Still submit?.");
 
 
@@ -359,11 +356,11 @@ public class Fragment_EditBlog extends Fragment {
             dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < listContent.size(); i++) {
-                        Content upload = new Content();
-                        Uri uri = listContent.get(i).getUriImage();
-                        upload.setUrlImage(listContent.get(i).getUrlImage());
-                        upload.setDescription(listContent.get(i).getDescription());
+                    for (int i = 0; i < listBlogDetails.size(); i++) {
+                        Blog_Details upload = new Blog_Details();
+                        Uri uri = listBlogDetails.get(i).getUriImage();
+                        upload.setImg(listBlogDetails.get(i).getImg());
+                        upload.setContent(listBlogDetails.get(i).getContent());
                     }
                     currentFragment(categoryNode);
 
@@ -424,7 +421,7 @@ public class Fragment_EditBlog extends Fragment {
         etAddress.setText("");
         etDescription.setText("");
         imgPost.setImageResource(R.drawable.add_image);
-        listContent.clear();
+        listBlogDetails.clear();
         acPlace.setText("");
         adapterContent.notifyDataSetChanged();
     }
@@ -461,7 +458,7 @@ public class Fragment_EditBlog extends Fragment {
             imgPost.setImageURI(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
             imgContent.setImageURI(data.getData());
-            content.setUriImage(data.getData());
+            blogDetails.setUriImage(data.getData());
         }
 
         super.onActivityResult(requestCode, resultCode, data);

@@ -62,7 +62,10 @@ public class Helper_Common {
     public String getIsoDate() {
         return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
     }
-
+    public long getMillisTime() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getTimeInMillis();
+    }
     public void alertDialog(Context context, String message, Helper_Callback helper_callback) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(message);

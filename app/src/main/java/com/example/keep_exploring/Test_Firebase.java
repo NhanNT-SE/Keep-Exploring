@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.ImageDisplay;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,7 +60,7 @@ public class Test_Firebase extends AppCompatActivity {
     }
 
     private void uploadImage() {
-        List<String> urlImage = new ArrayList<>();
+        List<Blog_Details> blog_detailsList = new ArrayList<>();
         for (int i = 0 ; i < uriList.size(); i++) {
             Uri uri = uriList.get(i);
             storageRef = storage.getReference("Images/Blog Details/IdBlog/" + i);
@@ -75,8 +76,14 @@ public class Test_Firebase extends AppCompatActivity {
                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.d("log", "url Image: " + uri);
-                            urlImage.add(uri.toString());
+                            Blog_Details blog_details = new Blog_Details();
+                            blog_details.setImg(uri.toString());
+                            blog_detailsList.add(blog_details);
+                            if (blog_detailsList.size() == uriList.size()){
+                                Log.d("log", "Blog Details List: " + blog_detailsList.toString());
+
+                            }
+
                         }
                     });
                 }

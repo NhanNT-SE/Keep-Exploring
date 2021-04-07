@@ -10,23 +10,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.model.Content;
+import com.example.keep_exploring.model.Blog_Details;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class Adapter_LV_Content extends BaseAdapter {
     private Context context;
-    private List<Content> contentList;
+    private List<Blog_Details> blogDetailsList;
 
-    public Adapter_LV_Content(Context context, List<Content> contentList) {
+    public Adapter_LV_Content(Context context, List<Blog_Details> blogDetailsList) {
         this.context = context;
-        this.contentList = contentList;
+        this.blogDetailsList = blogDetailsList;
     }
 
     @Override
     public int getCount() {
-        return contentList.size();
+        return blogDetailsList.size();
     }
 
     @Override
@@ -46,12 +46,12 @@ public class Adapter_LV_Content extends BaseAdapter {
         TextView tvDescription = (TextView) convertView.findViewById(R.id.raw_content_tvDescription);
         ImageView imgContent = (ImageView) convertView.findViewById(R.id.raw_content_imgContent);
 
-        Content content = contentList.get(position);
-        tvDescription.setText(content.getDescription());
-        if (content.getUrlImage() != null){
-            Picasso.get().load(Uri.parse(content.getUrlImage())).into(imgContent);
+        Blog_Details blogDetails = blogDetailsList.get(position);
+        tvDescription.setText(blogDetails.getContent());
+        if (blogDetails.getImg() != null){
+            Picasso.get().load(Uri.parse(blogDetails.getImg())).into(imgContent);
         }else {
-            imgContent.setImageURI(content.getUriImage());
+            imgContent.setImageURI(blogDetails.getUriImage());
         }
 
         return convertView;
