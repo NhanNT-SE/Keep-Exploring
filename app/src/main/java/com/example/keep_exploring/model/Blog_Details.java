@@ -2,8 +2,12 @@ package com.example.keep_exploring.model;
 
 import android.net.Uri;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Blog_Details {
-    String id, content, img;
+    @SerializedName("_id")
+    String id;
+    String content, img;
     Uri uriImage;
 
     @Override

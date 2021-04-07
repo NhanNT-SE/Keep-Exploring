@@ -6,12 +6,10 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="5dp"
     tools:context=".fragment.Fragment_AddPost">
-
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -28,61 +26,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp">
-
-                    <LinearLayout
-                        android:id="@+id/fEditPost_layoutTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <AutoCompleteTextView
-                            android:id="@+id/fEditPost_acPlace"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="5"
-                            android:hint="Places"
-                            android:textSize="15sp" />
-
-                        <Spinner
-                            android:id="@+id/fEditPost_spnCategory"
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="3dp"
-                            android:layout_weight="5"
-                            android:hint="Tên thể loại"
-                            android:textSize="15sp" />
-
-                    </LinearLayout>
-
-
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/fEditPost_imgAvatarUser"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/fEditPost_layoutTitle"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/avatar_facebook" />
-
                     <TextView
                         android:id="@+id/fEditPost_tvUser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fEditPost_layoutTitle"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:layout_marginTop="10dp"
-                        android:layout_toRightOf="@+id/fEditPost_imgAvatarUser"
+                        android:layout_toEndOf="@+id/fEditPost_imgAvatarUser"
                         android:text="Nguyễn Trọng Nhân"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="italic" />
-
                     <TextView
                         android:id="@+id/fEditPost_tvPubDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fEditPost_layoutTitle"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="10dp"
                         android:text="20/20/2020"
                         android:textColor="@color/black"
@@ -111,33 +76,6 @@
                         android:paddingVertical="3dp"
                         android:textSize="15sp"
                         android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/fEditPost_etAddress"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_below="@+id/fEditPost_etTitle"
-                        android:layout_marginTop="3dp"
-                        android:background="@drawable/border_tv"
-                        android:gravity="top"
-                        android:hint="Address..."
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="3dp"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/fEditPost_etDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="70dp"
-                        android:layout_below="@+id/fEditPost_etAddress"
-                        android:layout_marginTop="3dp"
-                        android:background="@drawable/border_tv"
-                        android:gravity="top"
-                        android:hint="Descriptions..."
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="3dp"
-                        android:textSize="15sp" />
                 </RelativeLayout>
 
             </ScrollView>
@@ -150,24 +88,21 @@
             android:background="#C8C7C7"
             app:layout_collapseMode="pin"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
     </com.google.android.material.appbar.AppBarLayout>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fEditPost_fabAddContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"
         android:layout_marginBottom="3dp"
         android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_add_white"
+        android:src="@drawable/ic_baseline_edit_24"
         app:fabSize="mini"
         app:maxImageSize="30dp"
         app:tint="@android:color/white" />
-
     <ListView
         android:id="@+id/fEditPost_lvContent"
         android:layout_width="match_parent"

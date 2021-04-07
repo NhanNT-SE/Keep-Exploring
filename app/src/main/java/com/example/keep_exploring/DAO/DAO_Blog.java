@@ -12,25 +12,23 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,7 +41,6 @@ public class DAO_Blog {
     private Context context;
     private Helper_Common helper_common;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser user = mAuth.getCurrentUser();
     private StorageReference storageRef;
     private Helper_SP helper_sp;
     private Api_Blog api_blog;
@@ -116,6 +113,52 @@ public class DAO_Blog {
 
     }
 
+    public void getBlogById(String idBlog) {
+        Call<String> call = api_blog.getBlogById(idBlog);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            JSONObject err = responseData.getJSONObject("error");
+                            String msg = err.getString("message");
+                            log(msg);
+                        } else {
+                            JSONObject jsonData = responseData.getJSONObject("data");
+                            JSONArray jsonArrayBlogDetail = jsonData
+                                    .getJSONObject("blog_detail")
+                                    .getJSONArray("detail_list");
+                            Blog blog = new Gson().fromJson(jsonData.toString(), Blog.class);
+                            List<Blog_Details> blogDetailsList = new ArrayList<>();
+                            for (int i = 0; i < jsonArrayBlogDetail.length(); i++) {
+                                JSONObject jsonBlogDetail = jsonArrayBlogDetail.getJSONObject(i);
+                                Blog_Details blogDetails = new Gson().fromJson(jsonBlogDetail.toString(), Blog_Details.class);
+                                blogDetailsList.add(blogDetails);
+                            }
+                            blog.setBlogDetails(blogDetailsList);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+
+    }
+
     private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback helper_callback) {
         List<Uri> uriList = new ArrayList<>();
         for (Blog_Details item : blog_detailsList) {
@@ -149,7 +192,6 @@ public class DAO_Blog {
             });
         }
     }
-
 
     private void signInAnonymously() {
         mAuth.signInAnonymously().addOnSuccessListener((Activity) context, new OnSuccessListener<AuthResult>() {

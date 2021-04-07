@@ -138,31 +138,35 @@ public class DAO_Post {
                             log(msg);
                         } else {
                             JSONObject jsonData = responseData.getJSONObject("data");
-                            JSONArray jsonImageList = jsonData.getJSONArray("imgs");
-                            JSONObject jsonOwner = jsonData.getJSONObject("owner");
-                            Post post = new Post();
-                            User user = new User();
-                            List<String> imageList = new ArrayList<>();
-                            for (int i = 0; i < jsonImageList.length(); i++) {
-                                imageList.add(jsonImageList.get(i).toString());
-                            }
-//                            SET OWNER FOR POST
-                            user.setId(jsonOwner.getString("_id"));
-                            user.setEmail(jsonOwner.getString("email"));
-                            user.setDisplayName(jsonOwner.getString("displayName"));
-                            user.setImgUser(jsonOwner.getString("imgUser"));
-//                            SET POST
-                            post.set_id(jsonData.getString("_id"));
-                            post.setCategory(jsonData.getString("category"));
-                            post.setTitle(jsonData.getString("title"));
-                            post.setDesc(jsonData.getString("desc"));
-                            post.setAddress(jsonData.getString("address"));
-                            post.setStatus(jsonData.getString("status"));
-                            post.setCreated_on(jsonData.getString("created_on"));
-                            post.setRating(Integer.parseInt(jsonData.getString("rating")));
-                            post.setImgs(imageList);
-                            post.setOwner(user);
-                            callback.getPostById(post);
+//                            JSONArray jsonImageList = jsonData.getJSONArray("imgs");
+//                            JSONObject jsonOwner = jsonData.getJSONObject("owner");
+//                            JSONArray jsonArrayLike = jsonData.getJSONArray("like_list");
+//                            JSONArray jsonArrayComment = jsonData.getJSONArray("comment");
+//                            Post post = new Post();
+//                            User user = new User();
+//                            List<String> imageList = new ArrayList<>();
+//                            for (int i = 0; i < jsonImageList.length(); i++) {
+//                                imageList.add(jsonImageList.get(i).toString());
+//                            }
+////                            SET OWNER FOR POST
+//                            user.setId(jsonOwner.getString("_id"));
+//                            user.setEmail(jsonOwner.getString("email"));
+//                            user.setDisplayName(jsonOwner.getString("displayName"));
+//                            user.setImgUser(jsonOwner.getString("imgUser"));
+////                            SET POST
+//                            post.set_id(jsonData.getString("_id"));
+//                            post.setCategory(jsonData.getString("category"));
+//                            post.setTitle(jsonData.getString("title"));
+//                            post.setDesc(jsonData.getString("desc"));
+//                            post.setAddress(jsonData.getString("address"));
+//                            post.setStatus(jsonData.getString("status"));
+//                            post.setCreated_on(jsonData.getString("created_on"));
+//                            post.setRating(Integer.parseInt(jsonData.getString("rating")));
+//                            post.setComments(jsonArrayComment.length());
+//                            post.setLikes(jsonArrayLike.length());
+//                            post.setImgs(imageList);
+//                            post.setOwner(user);
+//                            callback.getPostById(post);
 
                         }
 

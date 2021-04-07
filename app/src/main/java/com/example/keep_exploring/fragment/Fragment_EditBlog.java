@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,13 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,14 +24,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
-
+import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Image;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog_Details;
-import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -49,27 +46,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_EditBlog extends Fragment {
+    //    View
     private View view;
-    private EditText etTitle, etAddress, etDescription;
+    private EditText etTitle;
     private TextView tvUser, tvPubDate;
-    private AutoCompleteTextView acPlace;
-    private Spinner spnCategory;
     private FloatingActionButton fabAddContent;
     private ImageView imgPost, imgContent;
     private CircleImageView imgAvatarUser;
-    private ListView lvContent;
-    private FirebaseUser user;
-
-    private Post post, oldPost;
-    private List<Blog_Details> listBlogDetails;
-    private List<String> nameList;
-    private Adapter_LV_Content adapterContent;
-    private String idPost;
-
+    //    Variables
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
-    private int index = -1;
+    private String idPost;
+    private ListView lvContent;
     private Blog_Details blogDetails;
+    private List<Blog_Details> blogDetailsList;
+    private Adapter_LV_Content adapterContent;
+    private int index = -1;
+    private String imageBlog = "";
+    private User user;
+    //    DAO & Helpers
+    private DAO_Blog dao_blog;
+    private Helper_Common helper_common;
+    private Helper_SP helper_sp;
+    private Helper_Image helper_image;
 
     public Fragment_EditBlog() {
         // Required empty public constructor
@@ -82,62 +81,36 @@ public class Fragment_EditBlog extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_edit_blog, container, false);
         initView();
+        initVariable();
+        handlerEvent();
         return view;
     }
 
     private void initView() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        post = new Post();
-        Bundle bundle = getArguments();
-        listBlogDetails = new ArrayList<>();
-        spnCategory = (Spinner) view.findViewById(R.id.fEditPost_spnCategory);
-        acPlace = (AutoCompleteTextView) view.findViewById(R.id.fEditPost_acPlace);
         tvUser = (TextView) view.findViewById(R.id.fEditPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fEditPost_tvPubDate);
-        etDescription = (EditText) view.findViewById(R.id.fEditPost_etDescription);
         etTitle = (EditText) view.findViewById(R.id.fEditPost_etTitle);
-        etAddress = (EditText) view.findViewById(R.id.fEditPost_etAddress);
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditPost_fabAddContent);
         imgPost = (ImageView) view.findViewById(R.id.fEditPost_imgPost);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         lvContent = (ListView) view.findViewById(R.id.fEditPost_lvContent);
+    }
 
-        adapterContent = new Adapter_LV_Content(getActivity(), listBlogDetails);
-        lvContent.setAdapter(adapterContent);
-        nameList = new ArrayList<>();
-        String[] categoryList = {"Restaurants", "Accommodations", "Beautiful Places", "Journey Diary"};
-        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categoryList);
-        spnCategory.setAdapter(adapterSpinner);
-        acPlace.setThreshold(1);
+    private void initVariable() {
+        dao_blog = new DAO_Blog(getContext());
+        helper_sp = new Helper_SP(view.getContext());
+        helper_common = new Helper_Common();
+        helper_image = new Helper_Image(getContext());
+        blogDetailsList = new ArrayList<>();
+        user = helper_sp.getUser();
+        dao_blog.getBlogById("606dc6e237f4f71c54e04dd6");
+    }
 
-
-        setPubDate(tvPubDate);
-        tvUser.setText(user.getEmail());
-        Picasso.get().load(user.getPhotoUrl()).into(imgAvatarUser);
-
-        if (bundle != null) {
-            oldPost = (Post) bundle.getSerializable("post");
-            String category = null;
-            String categoryOldPost = oldPost.getCategory();
-            if (categoryOldPost.equalsIgnoreCase("restaurants")) {
-                category = "Ăn Uống";
-            } else if (categoryOldPost.equalsIgnoreCase("accommodations")) {
-                category = "Chỗ Ở";
-            } else if (categoryOldPost.equalsIgnoreCase("beautiful places")) {
-                category = "Check in";
-            } else if (categoryOldPost.equalsIgnoreCase("journey diary")) {
-                category = "Trải Nghiệm";
-            }
-//            idPost = oldPost.getIdPost();
-//            int position = adapterSpinner.getPosition(category);
-//            acPlace.setText(oldPost.getPlace());
-//            spnCategory.setSelection(position);
-//            etTitle.setText(oldPost.getTittle());
-//            etAddress.setText(oldPost.getAddress());
-//            etDescription.setText(oldPost.getDescription());
-//            Picasso.get().load(Uri.parse(oldPost.getUrlImage())).into(imgPost);
-        }
-
+    private void handlerEvent() {
+        helper_common.formatDate(tvPubDate);
+        tvUser.setText(user.getDisplayName());
+        Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
+        refreshListView();
         imgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,7 +177,7 @@ public class Fragment_EditBlog extends Fragment {
                     toast("Please, add a description");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
-                    listBlogDetails.add(blogDetails);
+                    blogDetailsList.add(blogDetails);
                     adapterContent.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -220,7 +193,7 @@ public class Fragment_EditBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
         blogDetails = new Blog_Details();
-        final Blog_Details update = listBlogDetails.get(index);
+        final Blog_Details update = blogDetailsList.get(index);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
@@ -248,18 +221,18 @@ public class Fragment_EditBlog extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String description = etDescription.getText().toString();
+                String title = etTitle.getText().toString();
                 if (imgContent.getDrawable() == null) {
                     toast("Please, choose a picture");
 
-                } else if (description.isEmpty()) {
+                } else if (title.isEmpty()) {
                     toast("Please, add a description");
                 } else {
-                    blogDetails.setContent(dEtDescription.getText().toString());
-                    listBlogDetails.add(index, blogDetails);
-                    listBlogDetails.remove(update);
-                    adapterContent.notifyDataSetChanged();
-                    dialog.dismiss();
+//                    blogDetails.setContent(dEtDescription.getText().toString());
+//                    blogDetailsList.add(index, blogDetails);
+//                    blogDetailsList.remove(update);
+//                    adapterContent.notifyDataSetChanged();
+//                    dialog.dismiss();
                 }
 
             }
@@ -273,7 +246,7 @@ public class Fragment_EditBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Blog_Details delete = listBlogDetails.get(index);
+        final Blog_Details delete = blogDetailsList.get(index);
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
@@ -288,7 +261,7 @@ public class Fragment_EditBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listBlogDetails.remove(delete);
+                blogDetailsList.remove(delete);
                 adapterContent.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -305,54 +278,28 @@ public class Fragment_EditBlog extends Fragment {
         dialog.show();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        final String categoryNode = spnCategory.getSelectedItem().toString();
-        final String placeNode = acPlace.getText().toString();
-//        post.setIdPost(oldPost.getIdPost());
-//        post.setAddress(etAddress.getText().toString());
-//        post.setDescription(etDescription.getText().toString());
-//        post.setPubDate(tvPubDate.getText().toString());
-//        post.setEmailUser(tvUser.getText().toString());
-//        post.setTittle(etTitle.getText().toString());
-//        post.setLongPubDate(longPubDate());
-//        post.setUrlAvatarUser(String.valueOf(user.getPhotoUrl()));
-//        post.setIdUser(user.getUid());
-//        post.setDisplayName(user.getDisplayName());
 
+        if (imgPost.getDrawable().getConstantState() ==
+                getContext().getDrawable(R.drawable.add_image).getConstantState()) {
+            toast("Vui lòng chọn hình ảnh đại diện cho bài viết");
+        } else if (etTitle.getText().toString().isEmpty()) {
+            toast("Vui lòng thêm thông tin mô tả cho bài viết");
 
-        if (etTitle.getText().toString().isEmpty() || etDescription.getText().toString().isEmpty() ||
-                etAddress.getText().toString().isEmpty() || (imgPost.getDrawable() == null)) {
-            toast("Please, fill up the form");
-        } else if (listBlogDetails.size() == 0) {
-            dialog.setMessage("The article has no detailed description. Still submit?.");
-
-
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            dialog.show();
+        } else if (blogDetailsList.size() == 0) {
+            toast("Vui lòng thêm ít nhất 1 nội dung chi tiết cho bài viết");
         } else {
-            dialog.setTitle("Submit an Article?");
+            dialog.setTitle("Bạn có cập nhật lại bài viết?");
 
-            dialog.setNegativeButton("SUBMIT", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("Cập nhật", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i = 0; i < listBlogDetails.size(); i++) {
-                        Blog_Details upload = new Blog_Details();
-                        Uri uri = listBlogDetails.get(i).getUriImage();
-                        upload.setImg(listBlogDetails.get(i).getImg());
-                        upload.setContent(listBlogDetails.get(i).getContent());
-                    }
-                    currentFragment(categoryNode);
 
-                    toast("Pending moderation!");
                 }
             });
-            dialog.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -396,19 +343,12 @@ public class Fragment_EditBlog extends Fragment {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 
-    private long longPubDate() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getTimeInMillis();
-    }
-
-    private void clearPost() {
+    private void clearBlog() {
         etTitle.setText("");
-        etAddress.setText("");
-        etDescription.setText("");
-        imgPost.setImageResource(R.drawable.add_image);
-        listBlogDetails.clear();
-        acPlace.setText("");
+        blogDetailsList.clear();
         adapterContent.notifyDataSetChanged();
+        imgPost.setImageResource(R.drawable.add_image);
+        imageBlog = "";
     }
 
     @Override
@@ -423,14 +363,15 @@ public class Fragment_EditBlog extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                uploadData();
+//                uploadData();
                 break;
             case R.id.menu_post_clear:
-                clearPost();
+                clearBlog();
                 break;
         }
 
@@ -441,6 +382,7 @@ public class Fragment_EditBlog extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CHOOSE_IMAGE_POST && data != null) {
             imgPost.setImageURI(data.getData());
+            imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());
@@ -449,5 +391,9 @@ public class Fragment_EditBlog extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void refreshListView() {
+        adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
+        lvContent.setAdapter(adapterContent);
+    }
 
 }

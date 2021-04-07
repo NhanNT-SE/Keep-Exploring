@@ -25,6 +25,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_Accommodations;
 import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_BeautifulPlaces;
+import com.example.keep_exploring.fragment.Fragment_EditBlog;
 import com.example.keep_exploring.fragment.Fragment_Edit_Post;
 import com.example.keep_exploring.fragment.Fragment_JourneyDiary;
 import com.example.keep_exploring.fragment.Fragment_Restaurant;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        replaceFragment(new Fragment_AddBlog());
+        replaceFragment(new Fragment_EditBlog());
 //        showInfo();
 
     }
