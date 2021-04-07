@@ -56,9 +56,7 @@ const getBlogByID = async (req, res, next) => {
     const { idBlog } = req.params;
     const blogFound = await Blog.findById(idBlog)
       .populate("blog_detail")
-      .populate("owner", ["displayName", "imgUser"])
-      .populate({ path: "comment", populate: { path: "idUser" } })
-      .populate("like_list");
+      .populate("owner", ["displayName", "imgUser", "email"]);
     if (blogFound) {
       return res.send({ data: blogFound, status: 200, message: "" });
     }
@@ -72,11 +70,11 @@ const getBlogByID = async (req, res, next) => {
 const getPostById = async (req, res, next) => {
   try {
     const { idPost } = req.params;
-    const post = await Post.findById(idPost)
-      .populate("owner", ["displayName", "imgUser", "email"])
-      .populate("comment")
-      .populate("like_list", ["displayName", "imgUser", "email"]);
-
+    const post = await Post.findById(idPost).populate("owner", [
+      "displayName",
+      "imgUser",
+      "email",
+    ]);
     if (post) {
       return res
         .status(200)
@@ -115,14 +113,6 @@ const getPostList = async (req, res, next) => {
 };
 const getPostByAddress = async (req, res, next) => {
   try {
-    // const { province } = req.body;
-    // var postList = [];
-    // const addressList = await Address.find({ province }).populate("idPost");
-    // postList = [...addressList];
-    // if ((postList.length = 0)) {
-    //   handlerCustomError(201, "Địa điểm chưa được review");
-    // }
-    // return res.send({ data: postList, status: 200, message: "" });
     const { address } = req.body;
     const postList = await Post.find({
       address: {

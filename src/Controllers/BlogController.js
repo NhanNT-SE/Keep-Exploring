@@ -8,65 +8,42 @@ const handlerCustomError = require("../middleware/customError");
 
 const createBlog = async (req, res, next) => {
   try {
-    // const files = req.files;
-    // const content_list_json = JSON.parse(content_list);
-    // const blog = new Blog({
-    //   title,
-    //   owner: user._id,
-    // });
-    // blog.blog_detail = blog._id;
-    // await blog.save();
-
-    // const _id = blog._id;
-    // const len = files.length;
-    // const detail_list = [];
-
-    // Gán img+content vào mảng detail_list
-    // for (let i = 0; i < len; i++) {
-    //   let detail = {};
-    //   detail.img = files[i].filename;
-    //   detail.content = content_list_json[i];
-    //   detail_list.push(detail);
-    // }
-
-    // const blog_detail = new Blog_Detail({
-    //   _id,
-    //   detail_list,
-    // });
-    // // await blog_detail.save();
-
-    // //Add post vào list post của user
-    // await user.blog.push(_id);
-    // // await user.save();
-
-    // const blogSaved = await Blog.findById(_id)
-    //   .populate("owner")
-    //   .populate("blog_detail");
-
-    const {title, detail_list } = req.body;
+    let { title, detail_list } = req.body;
     const file = req.file;
     const user = await User.findById(req.user._id);
     const blog = new Blog({ title });
     const blog_detail = new Blog_Detail({});
-
     if (file) {
       blog.img = file.filename;
     }
-
-    blog_detail.detail_list = [...detail_list];
+    let tempList = [];
+    const isArray = Array.isArray(detail_list);
+    if (!isArray) {
+      tempList.push(JSON.parse(detail_list));
+    } else {
+      tempList = detail_list.map((e) => JSON.parse(e));
+    }
+    tempList.forEach((element) => {
+      delete element.uriImage;
+    });
+    blog_detail.detail_list = [...tempList];
     blog_detail._id = blog._id;
 
     blog.owner = user._id;
     blog.blog_detail = blog._id;
-
     user.blog.push(blog._id);
+
+    await blog.save();
+    await blog_detail.save();
+    await user.save();
 
     return res.status(200).send({
       status: 200,
-      data: { blog, blog_detail, user },
+      data: blog_detail,
       message: "Tạo bài viết thành công",
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
