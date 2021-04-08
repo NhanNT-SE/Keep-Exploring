@@ -101,7 +101,6 @@ const getPostList = async (req, res, next) => {
         ["displayName", "imgUser", "email"]
       );
     }
-
     return res.send({
       data: postList,
       status: 200,
