@@ -18,6 +18,7 @@ import com.example.keep_exploring.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Helper_Post {
     private Context context;
@@ -37,7 +38,7 @@ public class Helper_Post {
         helper_sp = new Helper_SP(context);
     }
 
-    public void dialogActionPost(TextView tvAddress, TextView tvCategory, Helper_Callback callback) {
+    public void dialogActionPost(TextView tvAddress, TextView tvCategory, Helper_Event event) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_action_post);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -55,7 +56,7 @@ public class Helper_Post {
         dBtnImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.selectImage();
+                event.selectImage();
                 dialog.dismiss();
             }
         });
@@ -127,11 +128,12 @@ public class Helper_Post {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 dao_address.getAddressList(dProvinceList.get(position), "", new Helper_Callback() {
                     @Override
-                    public void addressList(List<String> districtList, List<String> wardList) {
+                    public void successReq(Object response) {
+                        Map<String, List<String>> map = (Map<String, List<String>>) response;
                         dDistrictList.clear();
                         dWardList.clear();
-                        dDistrictList.addAll(districtList);
-                        dWardList.addAll(wardList);
+                        dDistrictList.addAll(map.get("districtList"));
+                        dWardList.addAll(map.get("wardList"));
                         setSpinner(dDistrictList, dSpDistrict);
                         setSpinner(dWardList, dSpWard);
                         setAddressToDisPLay(
@@ -141,6 +143,11 @@ public class Helper_Post {
                         );
                         dEdtAdditional.setText("");
                         dTvAddress.setText(addressSubmit);
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+
                     }
                 });
             }
@@ -153,11 +160,15 @@ public class Helper_Post {
         dSpDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                dao_address.getAddressList(dSpProvince.getSelectedItem().toString(), dDistrictList.get(position), new Helper_Callback() {
+                dao_address.getAddressList(
+                        dSpProvince.getSelectedItem().toString(),
+                        dDistrictList.get(position),
+                        new Helper_Callback() {
                     @Override
-                    public void addressList(List<String> districtList, List<String> wardList) {
+                    public void successReq(Object response) {
+                        Map<String, List<String>> map = (Map<String, List<String>>) response;
                         dWardList.clear();
-                        dWardList.addAll(wardList);
+                        dWardList.addAll(map.get("wardList"));
                         setSpinner(dWardList, dSpWard);
                         setAddressToDisPLay(
                                 dSpWard.getSelectedItem().toString()
@@ -166,9 +177,13 @@ public class Helper_Post {
                         );
                         dEdtAdditional.setText("");
                         dTvAddress.setText(addressSubmit);
-
                     }
-                });
+
+                            @Override
+                            public void failedReq(String msg) {
+
+                            }
+                        });
             }
 
             @Override
@@ -198,7 +213,6 @@ public class Helper_Post {
                 categorySubmit = dCategoryList.get(position);
                 dTvCategory.setText(categorySubmit);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -223,7 +237,6 @@ public class Helper_Post {
 
         dialog.show();
     }
-
     private void setSpinner(List<String> spinnerList, Spinner spinner) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 context,
@@ -231,7 +244,6 @@ public class Helper_Post {
                 spinnerList);
         spinner.setAdapter(adapter);
     }
-
     private void setAddressToDisPLay(String ward, String district, String province) {
         String sWard;
         String sDistrict;

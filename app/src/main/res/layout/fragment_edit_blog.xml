@@ -22,29 +22,29 @@
                 android:layout_height="match_parent">
 
                 <RelativeLayout
-                    android:id="@+id/fEditPost_layoutContainer"
+                    android:id="@+id/fEditBlog_layoutContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp">
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/fEditPost_imgAvatarUser"
+                        android:id="@+id/fEditBlog_imgAvatarUser"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/avatar_facebook" />
                     <TextView
-                        android:id="@+id/fEditPost_tvUser"
+                        android:id="@+id/fEditBlog_tvUser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="3dp"
                         android:layout_marginTop="10dp"
-                        android:layout_toEndOf="@+id/fEditPost_imgAvatarUser"
+                        android:layout_toEndOf="@+id/fEditBlog_imgAvatarUser"
                         android:text="Nguyễn Trọng Nhân"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="italic" />
                     <TextView
-                        android:id="@+id/fEditPost_tvPubDate"
+                        android:id="@+id/fEditBlog_tvPubDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -55,19 +55,19 @@
                         android:textStyle="italic" />
 
                     <ImageView
-                        android:id="@+id/fEditPost_imgPost"
+                        android:id="@+id/fEditBlog_imgBlog"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
-                        android:layout_below="@+id/fEditPost_imgAvatarUser"
+                        android:layout_below="@+id/fEditBlog_imgAvatarUser"
                         android:layout_centerHorizontal="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/add_image" />
 
                     <EditText
-                        android:id="@+id/fEditPost_etTitle"
+                        android:id="@+id/fEditBlog_etTitle"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:layout_below="@+id/fEditPost_imgPost"
+                        android:layout_below="@+id/fEditBlog_imgBlog"
                         android:layout_marginTop="3dp"
                         android:background="@drawable/border_tv"
                         android:gravity="top"
@@ -90,7 +90,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fEditPost_fabAddContent"
+        android:id="@+id/fEditBlog_fabAddContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -104,7 +104,7 @@
         app:maxImageSize="30dp"
         app:tint="@android:color/white" />
     <ListView
-        android:id="@+id/fEditPost_lvContent"
+        android:id="@+id/fEditBlog_lvContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fAddPost_layoutContainer"

@@ -7,6 +7,7 @@ import com.example.keep_exploring.api.Api_Address;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +32,7 @@ public class DAO_Address {
         helper_sp = new Helper_SP(context);
     }
 
-    public void getProvinceList() {
+    public void getProvinceList(Helper_Callback callback) {
         Call<String> call = api_address.getProvinceList();
         call.enqueue(new Callback<String>() {
             @Override
@@ -40,15 +42,13 @@ public class DAO_Address {
                     if (responseData.has("error")) {
                         JSONObject err = responseData.getJSONObject("error");
                         String msg = err.getString("message");
+                        callback.failedReq(msg);
                         log(msg);
                     } else {
                         JSONArray data = responseData.getJSONArray("data");
-                        List<String> provinceList = new ArrayList<>();
-                        for (int i = 0; i<data.length();i++){
-                            String province = data.get(i).toString();
-                            provinceList.add(province);
-                        }
+                        List provinceList = new Gson().fromJson(data.toString(),List.class);
                         helper_sp.setProvinceList(provinceList);
+                        callback.successReq(provinceList);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -87,8 +87,10 @@ public class DAO_Address {
                         for (int i = 0 ; i <jsonWardList.length(); i++){
                             wardList.add(jsonWardList.get(i).toString());
                         }
-
-                        helper_callback.addressList(districtList,wardList);
+                        Map<String,List<String>> map = new HashMap<>();
+                        map.put("districtList",districtList);
+                        map.put("wardList", wardList);
+                        helper_callback.successReq(map);
 
                     }
                 } catch (Exception e) {

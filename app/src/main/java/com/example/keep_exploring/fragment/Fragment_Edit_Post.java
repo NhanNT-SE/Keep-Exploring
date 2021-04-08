@@ -28,6 +28,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -117,7 +118,8 @@ public class Fragment_Edit_Post extends Fragment {
 
         dao_post.getPostById("606be0b4ef85ad3828e19b9e", new Helper_Callback() {
             @Override
-            public void getPostById(Post post) {
+            public void successReq(Object response) {
+                Post post = (Post) response;
                 List<String> imageList = post.getImgs();
                 int sizeList = imageList.size();
                 for (int i = 0; i < sizeList; i++) {
@@ -133,6 +135,10 @@ public class Fragment_Edit_Post extends Fragment {
                 tvAddress.setText(post.getAddress());
                 idPost = post.get_id();
                 refreshViewPager();
+            }
+
+            @Override
+            public void failedReq(String msg) {
 
             }
         });
@@ -146,7 +152,7 @@ public class Fragment_Edit_Post extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Callback() {
+                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Event() {
                     @Override
                     public void selectImage() {
                         Intent intent = new Intent();
@@ -212,15 +218,20 @@ public class Fragment_Edit_Post extends Fragment {
                 break;
             case R.id.menu_post_delete:
                String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
-               helper_common.alertDialog(getContext(),message,new Helper_Callback(){
+               helper_common.alertDialog(getContext(),message,new Helper_Event(){
                    @Override
                    public void onSubmitAlertDialog() {
                        dao_post.deletePost(idPost,new Helper_Callback(){
                            @Override
-                           public void successReq(JSONObject data) {
+                           public void successReq(Object data) {
                               if(data != null){
                                   toast("Đã xóa bài viết");
                               }
+                           }
+
+                           @Override
+                           public void failedReq(String msg) {
+
                            }
                        });
                    }
@@ -268,10 +279,15 @@ public class Fragment_Edit_Post extends Fragment {
                 map.put("created_on",bCreated_on);
                 dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
-                    public void successReq(JSONObject data) {
+                    public void successReq(Object data) {
                         if (data != null) {
                             toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
                         }
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+
                     }
                 });
             }

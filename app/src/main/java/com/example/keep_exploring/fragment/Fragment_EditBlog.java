@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +28,11 @@ import androidx.fragment.app.Fragment;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,12 +54,12 @@ public class Fragment_EditBlog extends Fragment {
     private EditText etTitle;
     private TextView tvUser, tvPubDate;
     private FloatingActionButton fabAddContent;
-    private ImageView imgPost, imgContent;
+    private ImageView imgBlog, imgContent;
     private CircleImageView imgAvatarUser;
     //    Variables
-    public static final int CHOOSE_IMAGE_POST = 2;
+    public static final int CHOOSE_IMAGE_BLOG = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
-    private String idPost;
+    private String idBlog;
     private ListView lvContent;
     private Blog_Details blogDetails;
     private List<Blog_Details> blogDetailsList;
@@ -87,13 +90,13 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void initView() {
-        tvUser = (TextView) view.findViewById(R.id.fEditPost_tvUser);
-        tvPubDate = (TextView) view.findViewById(R.id.fEditPost_tvPubDate);
-        etTitle = (EditText) view.findViewById(R.id.fEditPost_etTitle);
-        fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditPost_fabAddContent);
-        imgPost = (ImageView) view.findViewById(R.id.fEditPost_imgPost);
-        imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
-        lvContent = (ListView) view.findViewById(R.id.fEditPost_lvContent);
+        tvUser = (TextView) view.findViewById(R.id.fEditBlog_tvUser);
+        tvPubDate = (TextView) view.findViewById(R.id.fEditBlog_tvPubDate);
+        etTitle = (EditText) view.findViewById(R.id.fEditBlog_etTitle);
+        fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditBlog_fabAddContent);
+        imgBlog = (ImageView) view.findViewById(R.id.fEditBlog_imgBlog);
+        imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditBlog_imgAvatarUser);
+        lvContent = (ListView) view.findViewById(R.id.fEditBlog_lvContent);
     }
 
     private void initVariable() {
@@ -103,7 +106,20 @@ public class Fragment_EditBlog extends Fragment {
         helper_image = new Helper_Image(getContext());
         blogDetailsList = new ArrayList<>();
         user = helper_sp.getUser();
-        dao_blog.getBlogById("606dc6e237f4f71c54e04dd6");
+        dao_blog.getBlogById("606dc6e237f4f71c54e04dd6", new Helper_Callback(){
+            @Override
+            public void successReq(Object response) {
+                Blog blog = (Blog) response;
+                blogDetailsList = blog.getBlogDetails();
+                Picasso.get().load(helper_common.getBaseUrlImage()+"blog/"+blog.getImage()).into(imgBlog);
+                etTitle.setText(blog.getTitle());
+                refreshListView();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+            }
+        });
     }
 
     private void handlerEvent() {
@@ -111,13 +127,13 @@ public class Fragment_EditBlog extends Fragment {
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
-        imgPost.setOnClickListener(new View.OnClickListener() {
+        imgBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_POST);
+                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_BLOG);
             }
         });
 
@@ -282,7 +298,7 @@ public class Fragment_EditBlog extends Fragment {
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
 
-        if (imgPost.getDrawable().getConstantState() ==
+        if (imgBlog.getDrawable().getConstantState() ==
                 getContext().getDrawable(R.drawable.add_image).getConstantState()) {
             toast("Vui lòng chọn hình ảnh đại diện cho bài viết");
         } else if (etTitle.getText().toString().isEmpty()) {
@@ -347,7 +363,7 @@ public class Fragment_EditBlog extends Fragment {
         etTitle.setText("");
         blogDetailsList.clear();
         adapterContent.notifyDataSetChanged();
-        imgPost.setImageResource(R.drawable.add_image);
+        imgBlog.setImageResource(R.drawable.add_image);
         imageBlog = "";
     }
 
@@ -380,8 +396,8 @@ public class Fragment_EditBlog extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CHOOSE_IMAGE_POST && data != null) {
-            imgPost.setImageURI(data.getData());
+        if (requestCode == CHOOSE_IMAGE_BLOG && data != null) {
+            imgBlog.setImageURI(data.getData());
             imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
             imgContent.setImageURI(data.getData());
@@ -394,6 +410,10 @@ public class Fragment_EditBlog extends Fragment {
     private void refreshListView() {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
+    }
+
+    private void log(String s) {
+        Log.d("log", s);
     }
 
 }

@@ -17,7 +17,9 @@ import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.api.UserApi;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.textfield.TextInputLayout;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -47,9 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         dao_auth = new DAO_Auth(this);
         initView();
     }
-
     private void initView() {
-
         etDisplayName = (TextInputLayout) findViewById(R.id.signUp_etDisplayName);
         etEmail = (TextInputLayout) findViewById(R.id.signUp_etEmail);
         etPassword = (TextInputLayout) findViewById(R.id.signUp_etPassword);
@@ -79,10 +79,21 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = "user-android1";
-                String pass = "123456";
-                String displayName = "User Android 1";
-                dao_auth.signUp(realPath, email, pass, displayName);
+                String email = etEmail.getEditText().getText().toString();
+                String pass = etPassword.getEditText().getText().toString();
+                String displayName = etDisplayName.getEditText().getText().toString();
+                dao_auth.signUp(realPath, email, pass, displayName,new Helper_Callback(){
+                    @Override
+                    public void successReq(Object response) {
+                        User user = (User) response;
+                        log(user.toString());
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+                        toast(msg);
+                    }
+                });
             }
         });
 

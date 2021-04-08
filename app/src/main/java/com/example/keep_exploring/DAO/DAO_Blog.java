@@ -64,7 +64,8 @@ public class DAO_Blog {
     ) {
         uploadImageBlogDetail(blogDetailsList, new Helper_Callback() {
             @Override
-            public void blogDetailList(List<Blog_Details> blog_detailsList) {
+            public void successReq(Object response) {
+                List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
                 String accessToken = helper_sp.getAccessToken();
                 RequestBody requestBody;
                 if (imageBlog.isEmpty()) {
@@ -82,17 +83,16 @@ public class DAO_Blog {
                     public void onResponse(Call<String> call, Response<String> response) {
                         try {
                             if (response.errorBody() != null) {
-                                JSONObject err = new JSONObject(response.errorBody().string());
-                                log(err.getString("error"));
-                                String msg = err.getString("message");
+                                String msg = new JSONObject(response.errorBody().string()).getString("message");
                                 log(msg);
+                                callback.failedReq(msg);
 
                             } else {
                                 JSONObject responseData = new JSONObject(response.body());
                                 if (responseData.has("error")) {
-                                    JSONObject err = responseData.getJSONObject("error");
-                                    String msg = err.getString("message");
+                                    String msg = responseData.getJSONObject("error").getString("message");
                                     log(msg);
+                                    callback.failedReq(msg);
                                 } else {
                                     JSONObject data = responseData.getJSONObject("data");
                                     callback.successReq(data);
@@ -109,27 +109,31 @@ public class DAO_Blog {
                     }
                 });
             }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
         });
 
     }
 
-    public void getBlogById(String idBlog) {
+    public void getBlogById(String idBlog,Helper_Callback callback) {
         Call<String> call = api_blog.getBlogById(idBlog);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string());
-                        log(err.getString("error"));
-                        String msg = err.getString("message");
+                        String msg = new JSONObject(response.errorBody().string()).getString("message");
+                        callback.failedReq(msg);
                         log(msg);
 
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
+                            String msg = responseData.getJSONObject("error").getString("message");
+                            callback.failedReq(msg);
                             log(msg);
                         } else {
                             JSONObject jsonData = responseData.getJSONObject("data");
@@ -144,6 +148,8 @@ public class DAO_Blog {
                                 blogDetailsList.add(blogDetails);
                             }
                             blog.setBlogDetails(blogDetailsList);
+//                            callback.getBlogById(blog);
+                            callback.successReq(blog);
                         }
                     }
                 } catch (Exception e) {
@@ -159,7 +165,7 @@ public class DAO_Blog {
 
     }
 
-    private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback helper_callback) {
+    private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback callback) {
         List<Uri> uriList = new ArrayList<>();
         for (Blog_Details item : blog_detailsList) {
             uriList.add(item.getUriImage());
@@ -173,6 +179,7 @@ public class DAO_Blog {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
+                    callback.failedReq(exception.getMessage());
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -183,7 +190,7 @@ public class DAO_Blog {
                             Blog_Details blog_details = blog_detailsList.get(k);
                             blog_details.setImg(uri.toString());
                             if (k + 1 == uriList.size()) {
-                                helper_callback.blogDetailList(blog_detailsList);
+                                callback.successReq(blog_detailsList);
                             }
 
                         }

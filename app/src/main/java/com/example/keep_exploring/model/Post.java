@@ -1,5 +1,7 @@
 package com.example.keep_exploring.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,7 +9,11 @@ public class Post implements Serializable {
     private String _id, category, title;
     private String desc, address, status, created_on;
     private List<String> imgs;
-    private int rating, likes, comments;
+    private int rating;
+    @SerializedName("like_list")
+    private List<String> likes ;
+    @SerializedName("comment")
+    private List<String> comments ;
     private User owner;
 
     @Override
@@ -92,19 +98,19 @@ public class Post implements Serializable {
         this.rating = rating;
     }
 
-    public int getLikes() {
+    public List<String> getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(List<String> likes) {
         this.likes = likes;
     }
 
-    public int getComments() {
+    public List<String> getComments() {
         return comments;
     }
 
-    public void setComments(int comments) {
+    public void setComments(List<String> comments) {
         this.comments = comments;
     }
 

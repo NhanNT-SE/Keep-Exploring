@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -24,12 +25,14 @@ import com.example.keep_exploring.R;
 
 import com.example.keep_exploring.fragment.Fragment_Accommodations;
 import com.example.keep_exploring.fragment.Fragment_AddBlog;
+import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BeautifulPlaces;
 import com.example.keep_exploring.fragment.Fragment_EditBlog;
 import com.example.keep_exploring.fragment.Fragment_Edit_Post;
 import com.example.keep_exploring.fragment.Fragment_JourneyDiary;
 import com.example.keep_exploring.fragment.Fragment_Restaurant;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Places;
 import com.google.android.material.navigation.NavigationView;
@@ -71,7 +74,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             password = getPass.getStringExtra("pass");
             email = getPass.getStringExtra("email");
         }
-        dao_address.getProvinceList();
+        dao_address.getProvinceList(new Helper_Callback(){
+            @Override
+            public void successReq(Object response) {
+                List<String> provinceList = (List<String>) response;
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
         initView();
 
     }

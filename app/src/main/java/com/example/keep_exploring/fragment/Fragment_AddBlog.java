@@ -324,11 +324,15 @@ public class Fragment_AddBlog extends Fragment {
                     String title = etTitle.getText().toString();
                     dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
-                        public void successReq(JSONObject data) {
+                        public void successReq(Object data) {
                             if (data != null) {
                                 toast("Thêm bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
                                 clearBlog();
                             }
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
                         }
                     });
                 }

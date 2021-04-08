@@ -8,8 +8,10 @@ import android.widget.Toast;
 import com.example.keep_exploring.activities.MainActivity;
 import com.example.keep_exploring.api.Api_Auth;
 import com.example.keep_exploring.api.Retrofit_config;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -27,7 +29,6 @@ public class DAO_Auth {
     private final Api_Auth api_auth;
     private final Helper_SP helper_sp;
     private Context context;
-
     public DAO_Auth(Context context) {
         this.context = context;
         api_auth = Retrofit_config.retrofit.create(Api_Auth.class);
@@ -35,17 +36,11 @@ public class DAO_Auth {
     }
 
 
-    public void signIn(String email, String pass) {
+    public void signIn(String email, String pass,Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         map.put("email", email);
         map.put("pass", pass);
         Call<String> call = api_auth.signIn(map);
-
-        if(email.isEmpty() || pass.isEmpty()){
-            toast("Vui lòng điền đầy đủ thông tin email và password");
-            return;
-        }
-
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -54,7 +49,8 @@ public class DAO_Auth {
                         JSONObject err = new JSONObject(response.errorBody().string());
                         log(err.getString("error"));
                         String msg = err.getString("message");
-                        toast(msg);
+                        log(msg);
+                        callback.failedReq(msg);
 
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
@@ -62,25 +58,18 @@ public class DAO_Auth {
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
-                            toast(msg);
+                            log(msg);
+                            callback.failedReq(msg);
+
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
                             String accessToken = data.getString("accessToken");
                             String refreshToken = data.getString("refreshToken");
-                            User user = new User();
-                            user.setId(data.getString("_id"));
-                            user.setEmail(data.getString("email"));
-                            user.setImgUser(data.getString("imgUser"));
-                            user.setDisplayName(data.getString("displayName"));
-
+                            User user = new Gson().fromJson(data.toString(),User.class);
+                            callback.successReq(user);
                             helper_sp.setUser(user);
                             helper_sp.setAccessToken(accessToken);
                             helper_sp.setRefreshToken(refreshToken);
-                            log("User SP:\n" + helper_sp.getUser().toString());
-                            log("Access Token:\n" + helper_sp.getAccessToken());
-                            log("Refresh Token:\n" + helper_sp.getRefreshToken());
-                            toast("Đăng nhập thành công");
-                            context.startActivity(new Intent(context, MainActivity.class));
                         }
 
                     }
@@ -97,7 +86,7 @@ public class DAO_Auth {
 
     }
 
-    private void signOut() {
+    private void signOut(Helper_Callback callback) {
         String userId = helper_sp.getUser().getId();
         HashMap<String, String> map = new HashMap<>();
         map.put("userId", userId);
@@ -107,14 +96,16 @@ public class DAO_Auth {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        log(jObjError.getString("error"));
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        String msg = err.getString("message");
+                        log(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
 
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
-                            log(err.toString());
+                            String msg = err.getString("message");
+                            log(msg);
                         } else {
                             helper_sp.clearSP();
                             log(responseData.toString());
@@ -132,7 +123,7 @@ public class DAO_Auth {
         });
     }
 
-    public void signUp(String realPath, String email, String password, String displayName) {
+    public void signUp(String realPath, String email, String password, String displayName,Helper_Callback callback) {
         RequestBody requestBody;
         if (realPath.isEmpty()) {
             requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
@@ -151,17 +142,24 @@ public class DAO_Auth {
 
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        log(jObjError.getString("error"));
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
+                        callback.failedReq(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
 
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
-                            log(err.toString());
+                            String msg = err.getString("message");
+                            log(msg);
+                            callback.failedReq(msg);
+
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
-                            log(data.toString());
+                            User user = new Gson().fromJson(data.toString(),User.class);
+                            callback.successReq(user);
                         }
 
                     }
@@ -177,7 +175,7 @@ public class DAO_Auth {
         });
     }
 
-    public void refreshToken() {
+    public void refreshToken(Helper_Callback callback) {
         String refreshToken = helper_sp.getRefreshToken();
         String userId = helper_sp.getUser().getId();
         HashMap<String, String> map = new HashMap<>();
@@ -190,18 +188,22 @@ public class DAO_Auth {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        log(jObjError.getString("error"));
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        log(err.getString("error"));
+                        String msg = err.getString("message");
+                        log(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
 
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
-                            log(err.toString());
+                            String msg = err.getString("message");
+                            log(msg);
+                            callback.failedReq(msg);
                         } else {
                             String newAccessToken = responseData.getString("data");
                             helper_sp.setAccessToken(newAccessToken);
-                            log("New Access Token:\n" + helper_sp.getAccessToken());
+                            callback.successReq(newAccessToken);
                         }
                     }
                 } catch (Exception e) {
@@ -216,13 +218,8 @@ public class DAO_Auth {
         });
 
     }
-
     private void log(String s) {
         Log.d("log", s);
-    }
-
-    private void toast(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
 }

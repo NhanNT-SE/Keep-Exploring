@@ -29,7 +29,9 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,10 +64,16 @@ public class Fragment_Restaurant extends Fragment {
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
         initView();
         dao_post = new DAO_Post(view.getContext());
-        dao_post.getPostByCategory("food", new Helper_Callback() {
+        dao_post.getPostByCategory("", new Helper_Callback() {
             @Override
-            public void postList(List<Post> postList) {
+            public void successReq(Object response) {
+                List<Post> postList = (List<Post>) response;
+                log(postList.toString());
                 refreshLV(postList);
+            }
+
+            @Override
+            public void failedReq(String msg) {
             }
         });
         return view;
@@ -119,7 +127,7 @@ public class Fragment_Restaurant extends Fragment {
 
     private void refreshLV(List<Post> postList) {
         listPost = new ArrayList<>(postList);
-        adapterPost = new Adapter_LV_PostUser(getActivity(), listPost);
+        adapterPost = new Adapter_LV_PostUser(getContext(), listPost);
         listView.setAdapter(adapterPost);
         if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);

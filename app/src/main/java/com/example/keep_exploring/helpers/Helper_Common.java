@@ -82,13 +82,13 @@ public class Helper_Common {
         return sb.toString();
     }
 
-    public void alertDialog(Context context, String message, Helper_Callback helper_callback) {
+    public void alertDialog(Context context, String message, Helper_Event event) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(message);
         dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                helper_callback.onSubmitAlertDialog();
+                event.onSubmitAlertDialog();
             }
         });
 

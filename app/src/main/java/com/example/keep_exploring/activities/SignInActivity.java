@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.model.User;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -57,11 +59,20 @@ public class SignInActivity extends AppCompatActivity {
       btnLogIn.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-//              String email = "admin@keep-exploring.com";
-//              String pass = "123456";
               String email = etEmail.getText().toString();
               String pass = etPass.getText().toString();
-              dao_auth.signIn(email,pass);
+              dao_auth.signIn(email,pass,new Helper_Callback(){
+                  @Override
+                  public void failedReq(String message) {
+                      toast(message);
+                  }
+
+                  @Override
+                  public void successReq(Object response) {
+                      User user = (User) response;
+                      toast("Đăng nhâp thành công");
+                  }
+              });
           }
       });
 

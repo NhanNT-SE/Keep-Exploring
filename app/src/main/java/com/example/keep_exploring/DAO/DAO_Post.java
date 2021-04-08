@@ -10,11 +10,14 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +40,7 @@ public class DAO_Post {
         helper_sp = new Helper_SP(context);
     }
 
-    public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback helper_callback) {
+    public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback callback) {
         String accessToken = helper_sp.getAccessToken();
         List<MultipartBody.Part> imageList = new ArrayList<>();
         for (int i = 0; i < imageSubmitList.size(); i++) {
@@ -57,16 +60,17 @@ public class DAO_Post {
                         log(err.getString("error"));
                         String msg = err.getString("message");
                         log(msg);
-
+                        callback.failedReq(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
                             log(msg);
+                            callback.failedReq(msg);
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
-                            helper_callback.successReq(data);
+                            callback.successReq(data);
                         }
                     }
                 } catch (Exception e) {
@@ -82,7 +86,7 @@ public class DAO_Post {
 
     }
 
-    public void deletePost(String postId, Helper_Callback helper_callback) {
+    public void deletePost(String postId, Helper_Callback callback) {
         String accessToken = helper_sp.getAccessToken();
         Call<String> call = api_post.deletePost(accessToken, postId);
         call.enqueue(new Callback<String>() {
@@ -93,16 +97,18 @@ public class DAO_Post {
                         JSONObject err = new JSONObject(response.errorBody().string());
                         log(err.getString("error"));
                         String msg = err.getString("message");
+                        callback.failedReq(msg);
                         toast(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
+                            callback.failedReq(msg);
                             toast(msg);
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
-                            helper_callback.successReq(data);
+                            callback.successReq(data);
                         }
 
                     }
@@ -129,47 +135,20 @@ public class DAO_Post {
                         JSONObject err = new JSONObject(response.errorBody().string());
                         log(err.getString("error"));
                         String msg = err.getString("message");
+                        callback.failedReq(msg);
                         log(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
+                            callback.failedReq(msg);
                             log(msg);
                         } else {
                             JSONObject jsonData = responseData.getJSONObject("data");
-//                            JSONArray jsonImageList = jsonData.getJSONArray("imgs");
-//                            JSONObject jsonOwner = jsonData.getJSONObject("owner");
-//                            JSONArray jsonArrayLike = jsonData.getJSONArray("like_list");
-//                            JSONArray jsonArrayComment = jsonData.getJSONArray("comment");
-//                            Post post = new Post();
-//                            User user = new User();
-//                            List<String> imageList = new ArrayList<>();
-//                            for (int i = 0; i < jsonImageList.length(); i++) {
-//                                imageList.add(jsonImageList.get(i).toString());
-//                            }
-////                            SET OWNER FOR POST
-//                            user.setId(jsonOwner.getString("_id"));
-//                            user.setEmail(jsonOwner.getString("email"));
-//                            user.setDisplayName(jsonOwner.getString("displayName"));
-//                            user.setImgUser(jsonOwner.getString("imgUser"));
-////                            SET POST
-//                            post.set_id(jsonData.getString("_id"));
-//                            post.setCategory(jsonData.getString("category"));
-//                            post.setTitle(jsonData.getString("title"));
-//                            post.setDesc(jsonData.getString("desc"));
-//                            post.setAddress(jsonData.getString("address"));
-//                            post.setStatus(jsonData.getString("status"));
-//                            post.setCreated_on(jsonData.getString("created_on"));
-//                            post.setRating(Integer.parseInt(jsonData.getString("rating")));
-//                            post.setComments(jsonArrayComment.length());
-//                            post.setLikes(jsonArrayLike.length());
-//                            post.setImgs(imageList);
-//                            post.setOwner(user);
-//                            callback.getPostById(post);
-
+                            Post post = new Gson().fromJson(jsonData.toString(), Post.class);
+                            callback.successReq(post);
                         }
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -184,7 +163,7 @@ public class DAO_Post {
 
     }
 
-    public void getPostByCategory(String category, Helper_Callback helper_callback) {
+    public void getPostByCategory(String category, Helper_Callback callback) {
         Call<String> call = api_post.getPostList(category);
         call.enqueue(new Callback<String>() {
             @Override
@@ -195,49 +174,19 @@ public class DAO_Post {
                         log(err.getString("error"));
                         String msg = err.getString("message");
                         toast(msg);
+                        callback.failedReq(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
                             toast(msg);
+                            callback.failedReq(msg);
                         } else {
-                            List<Post> postList = new ArrayList<>();
-                            List<String> listImg = new ArrayList<>();
                             JSONArray data = responseData.getJSONArray("data");
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject jsonPost = data.getJSONObject(i);
-                                JSONObject jsonOwner = jsonPost.getJSONObject("owner");
-                                JSONArray jsonArrayImg = jsonPost.getJSONArray("imgs");
-                                JSONArray jsonArrayLike = jsonPost.getJSONArray("like_list");
-                                JSONArray jsonArrayComment = jsonPost.getJSONArray("comment");
-                                for (int j = 0; j < jsonArrayImg.length(); j++) {
-                                    listImg.add(jsonArrayImg.get(i).toString());
-                                }
-                                Post post = new Post();
-                                User user = new User();
-//                                Populate Owner
-                                user.setId(jsonOwner.getString("_id"));
-                                user.setEmail(jsonOwner.getString("email"));
-                                user.setDisplayName(jsonOwner.getString("displayName"));
-                                user.setImgUser(jsonOwner.getString("imgUser"));
-//                                Set post to add list
-                                post.set_id(jsonPost.getString("_id"));
-                                post.setCategory(jsonPost.getString("category"));
-                                post.setImgs(listImg);
-                                post.setStatus(jsonPost.getString("status"));
-                                post.setCreated_on(jsonPost.getString("created_on"));
-                                post.setLikes(jsonArrayLike.length());
-                                post.setComments(jsonArrayComment.length());
-                                post.setTitle(jsonPost.getString("title"));
-                                post.setDesc(jsonPost.getString("desc"));
-                                post.setAddress(jsonPost.getString("address"));
-                                post.setRating(jsonPost.getInt("rating"));
-                                post.setOwner(user);
-                                postList.add(post);
-                                log("post" + post.toString());
-                            }
-                            helper_callback.postList(postList);
+                            Type listType = new TypeToken<List<Post>>() {}.getType();
+                            List<Post> postList = new Gson().fromJson(data.toString(),listType);
+                            callback.successReq(postList);
                         }
 
                     }
@@ -258,7 +207,7 @@ public class DAO_Post {
             HashMap<String, RequestBody> map,
             String idPost,
             List<String> imageSubmitList,
-            Helper_Callback helper_callback) {
+            Helper_Callback callback) {
         String accessToken = helper_sp.getAccessToken();
         List<MultipartBody.Part> imageList = new ArrayList<>();
         for (int i = 0; i < imageSubmitList.size(); i++) {
@@ -278,16 +227,17 @@ public class DAO_Post {
                         log(err.getString("error"));
                         String msg = err.getString("message");
                         log(msg);
-
+                        callback.failedReq(msg);
                     } else {
                         JSONObject responseData = new JSONObject(response.body());
                         if (responseData.has("error")) {
                             JSONObject err = responseData.getJSONObject("error");
                             String msg = err.getString("message");
                             log(msg);
+                            callback.failedReq(msg);
                         } else {
                             JSONObject data = responseData.getJSONObject("data");
-                            helper_callback.successReq(data);
+                            callback.successReq(data);
                         }
                     }
                 } catch (Exception e) {

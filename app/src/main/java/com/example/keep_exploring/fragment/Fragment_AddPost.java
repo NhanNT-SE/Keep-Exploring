@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -84,7 +85,7 @@ public class Fragment_AddPost extends Fragment {
         view = inflater.inflate(R.layout.fragment_add_post, container, false);
         initView();
         initVariable();
-        handlerFunction();
+        handlerEvent();
         return view;
     }
 
@@ -113,7 +114,7 @@ public class Fragment_AddPost extends Fragment {
         user = helper_sp.getUser();
     }
 
-    private void handlerFunction() {
+    private void handlerEvent() {
         helper_common.formatDate(tvPubDate);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
@@ -121,7 +122,7 @@ public class Fragment_AddPost extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Callback() {
+                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Event() {
                     @Override
                     public void selectImage() {
                         Intent intent = new Intent();
@@ -246,7 +247,7 @@ public class Fragment_AddPost extends Fragment {
                 map.put("rating", bRating);
                 dao_post.createPost(map, imagesSubmitList, new Helper_Callback() {
                     @Override
-                    public void successReq(JSONObject data) {
+                    public void successReq(Object data) {
                         if (data != null) {
                             toast("Tạo bài viết thành công");
                             imagesSubmitList.clear();
@@ -258,6 +259,11 @@ public class Fragment_AddPost extends Fragment {
                             ratingBar.setRating(0f);
                             refreshViewPager();
                         }
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+
                     }
                 });
             }
