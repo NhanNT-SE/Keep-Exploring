@@ -24,14 +24,6 @@ const createPost = async (req, res, next) => {
     });
 
     await post.save();
-
-    //Tim address de push idPost vao
-    // const addressID = req.body.address;
-    // const addressPost = await Address.findById(addressID);
-    // addressPost.idPost = post._id;
-    // await addressPost.save();
-
-    //Add post vào list post của user
     user.post.push(post._id);
     await user.save();
 
