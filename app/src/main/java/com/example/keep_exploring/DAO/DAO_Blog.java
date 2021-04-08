@@ -14,8 +14,11 @@ import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -148,7 +151,6 @@ public class DAO_Blog {
                                 blogDetailsList.add(blogDetails);
                             }
                             blog.setBlogDetails(blogDetailsList);
-//                            callback.getBlogById(blog);
                             callback.successReq(blog);
                         }
                     }
@@ -175,26 +177,30 @@ public class DAO_Blog {
             StorageReference storageBlog = storageRef.child(helper_common.getMillisTime() + "");
             UploadTask uploadTask = storageBlog.putFile(uri);
             int k = i;
-            uploadTask.addOnFailureListener(new OnFailureListener() {
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    callback.failedReq(exception.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    storageBlog.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Blog_Details blog_details = blog_detailsList.get(k);
-                            blog_details.setImg(uri.toString());
-                            if (k + 1 == uriList.size()) {
-                                callback.successReq(blog_detailsList);
-                            }
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
 
+                    // Continue with the task to get the download URL
+                    return storageBlog.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        Blog_Details blog_details = blog_detailsList.get(k);
+                        blog_details.setImg(downloadUri.toString());
+                        if (k + 1 == uriList.size()) {
+                            callback.successReq(blog_detailsList);
                         }
-                    });
+                    } else {
+                        // Handle failures
+                        // ...
+                    }
                 }
             });
         }

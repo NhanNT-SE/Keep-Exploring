@@ -106,7 +106,7 @@ public class Fragment_EditBlog extends Fragment {
         helper_image = new Helper_Image(getContext());
         blogDetailsList = new ArrayList<>();
         user = helper_sp.getUser();
-        dao_blog.getBlogById("606dc6e237f4f71c54e04dd6", new Helper_Callback(){
+        dao_blog.getBlogById("606eabd45250620a240fa59d", new Helper_Callback(){
             @Override
             public void successReq(Object response) {
                 Blog blog = (Blog) response;
@@ -115,7 +115,6 @@ public class Fragment_EditBlog extends Fragment {
                 etTitle.setText(blog.getTitle());
                 refreshListView();
             }
-
             @Override
             public void failedReq(String msg) {
             }
@@ -178,8 +177,6 @@ public class Fragment_EditBlog extends Fragment {
                 dialog.dismiss();
             }
         });
-
-
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -326,13 +323,6 @@ public class Fragment_EditBlog extends Fragment {
 
 
     }
-
-    private void setPubDate(TextView tv) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        tv.setText(format.format(calendar.getTime()));
-    }
-
     private void currentFragment(String current) {
         if (current.equalsIgnoreCase("Restaurants")) {
             replaceFragment(new Fragment_Restaurant());
@@ -411,9 +401,7 @@ public class Fragment_EditBlog extends Fragment {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
     }
-
     private void log(String s) {
         Log.d("log", s);
     }
-
 }
