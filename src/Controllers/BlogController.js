@@ -43,7 +43,6 @@ const createBlog = async (req, res, next) => {
       message: "Tạo bài viết thành công",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -61,8 +60,13 @@ const deleteBlog = async (req, res, next) => {
     if (user.role === "admin" || user._id == blogFound.owner.toString()) {
       if (blogFound && detailFound) {
         for (let i = 0; i < len; i++) {
-          fs.unlinkSync(
-            "src/public/images/blog/" + detailFound.detail_list[i].img
+          fs.unlink(
+            "src/public/images/blog/" + detailFound.detail_list[i].img,
+            (err) => {
+              if (err) {
+                console.log(err);
+              }
+            }
           );
         }
         await Blog_Detail.findByIdAndDelete(idBlog);
@@ -137,9 +141,56 @@ const likeBlog = async (req, res, next) => {
     next(error);
   }
 };
+const updateBlog = async (req, res, next) => {
+  try {
+    const { title, created_on, detail_list } = req.body;
+    const { idBlog } = req.params;
+    const blog = await Blog.findById(idBlog);
+    const blog_detail = await Blog_Detail.findById(idBlog);
+    const file = req.file;
+    if (file) {
+      fs.unlink(`src/public/images/blog/${blog.img}`, (err) => {
+        if (err) {
+          console.log(err);
+        } 
+      });
+    }
+    blog.img = file.filename;
+    blog.title = title;
+    blog.created_on = created_on;
+    let tempList = [];
+    const isArray = Array.isArray(detail_list);
+    if (!isArray) {
+      tempList.push(JSON.parse(detail_list));
+    } else {
+      tempList = detail_list.map((e) => JSON.parse(e));
+    }
+    tempList.forEach((element) => {
+      delete element.uriImage;
+    });
+
+    blog_detail.detail_list = [];
+    blog_detail.detail_list = [...tempList];
+    await blog.save();
+    await blog_detail.save();
+    console.log(blog_detail);
+    console.log(blog);
+    console.log(created_on);
+
+    return res.status(200).send({
+      status: 200,
+      data: blog_detail,
+      message: "Đã cập nhật bài viết",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
 module.exports = {
   createBlog,
   deleteBlog,
   likeBlog,
+  updateBlog,
 };
