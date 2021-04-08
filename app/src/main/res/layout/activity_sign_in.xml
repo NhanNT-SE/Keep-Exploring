@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="user@gmail.com"
+                android:text="user-test@keep-exploring.com"
                 android:hint="Enter Your Email" />
 
             <TextView
