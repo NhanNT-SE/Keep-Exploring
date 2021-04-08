@@ -38,9 +38,7 @@ import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,6 +61,7 @@ public class Fragment_EditBlog extends Fragment {
     private ListView lvContent;
     private Blog_Details blogDetails;
     private List<Blog_Details> blogDetailsList;
+    private List<String> deleteDetailList;
     private Adapter_LV_Content adapterContent;
     private int index = -1;
     private String imageBlog = "";
@@ -105,6 +104,7 @@ public class Fragment_EditBlog extends Fragment {
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
         blogDetailsList = new ArrayList<>();
+        deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
         dao_blog.getBlogById("606eabd45250620a240fa59d", new Helper_Callback(){
             @Override
@@ -113,6 +113,7 @@ public class Fragment_EditBlog extends Fragment {
                 blogDetailsList = blog.getBlogDetails();
                 Picasso.get().load(helper_common.getBaseUrlImage()+"blog/"+blog.getImage()).into(imgBlog);
                 etTitle.setText(blog.getTitle());
+                idBlog = blog.get_id();
                 refreshListView();
             }
             @Override
@@ -140,6 +141,7 @@ public class Fragment_EditBlog extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 index = position;
+                blogDetails = blogDetailsList.get(position);
                 dialogLongClick();
             }
         });
@@ -205,14 +207,17 @@ public class Fragment_EditBlog extends Fragment {
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_add_content);
-        blogDetails = new Blog_Details();
-        final Blog_Details update = blogDetailsList.get(index);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-        dEtDescription.setText(update.getContent());
+        dEtDescription.setText(blogDetails.getContent());
+        if (blogDetails.getUriImage() != null) {
+            imgContent.setImageURI(blogDetails.getUriImage());
+        } else {
+            Picasso.get().load(blogDetails.getImg()).into(imgContent);
+        }
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,11 +246,14 @@ public class Fragment_EditBlog extends Fragment {
                 } else if (title.isEmpty()) {
                     toast("Please, add a description");
                 } else {
+                    blogDetails.setContent(dEtDescription.getText().toString());
+
 //                    blogDetails.setContent(dEtDescription.getText().toString());
 //                    blogDetailsList.add(index, blogDetails);
 //                    blogDetailsList.remove(update);
 //                    adapterContent.notifyDataSetChanged();
-//                    dialog.dismiss();
+                    refreshListView();
+                    dialog.dismiss();
                 }
 
             }
@@ -275,7 +283,10 @@ public class Fragment_EditBlog extends Fragment {
             @Override
             public void onClick(View v) {
                 blogDetailsList.remove(delete);
-                adapterContent.notifyDataSetChanged();
+                if (delete.getUriImage() == null) {
+                    deleteDetailList.add(delete.getId());
+                }
+                refreshListView();
                 dialog.dismiss();
             }
         });
@@ -345,9 +356,6 @@ public class Fragment_EditBlog extends Fragment {
 
     }
 
-    private void toast(String s) {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
-    }
 
     private void clearBlog() {
         etTitle.setText("");
@@ -374,6 +382,20 @@ public class Fragment_EditBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
+                String title = etTitle.getText().toString();
+//                dao_blog.updateBlog(idBlog, title, imageBlog, blogDetailsList, new Helper_Callback() {
+//                    @Override
+//                    public void successReq(Object response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void failedReq(String msg) {
+//
+//                    }
+//                });
+
+                dao_blog.updateImageBlogDetail(blogDetailsList);
 //                uploadData();
                 break;
             case R.id.menu_post_clear:
@@ -393,7 +415,6 @@ public class Fragment_EditBlog extends Fragment {
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -401,7 +422,13 @@ public class Fragment_EditBlog extends Fragment {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
     }
+
     private void log(String s) {
         Log.d("log", s);
     }
+
+    private void toast(String s) {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+    }
+
 }

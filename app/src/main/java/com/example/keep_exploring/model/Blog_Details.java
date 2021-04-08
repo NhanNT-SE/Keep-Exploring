@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Blog_Details {
     @SerializedName("_id")
-    String id;
-    String content, img;
-    Uri uriImage;
+    private String id;
+    private String content, img;
+    private Uri uriImage;
 
     @Override
     public String toString() {

@@ -38,12 +38,14 @@ public interface Api_Blog {
     );
 
     @Multipart
-    @PATCH("/blog/{idPost}")
+    @PATCH("/blog/update/{idBlog}")
     Call<String> updateBlog(
             @Header("Authorization") String accessToken,
-            @Path("idPost") String idPost,
-            @PartMap() HashMap<String, RequestBody> partMap,
-            @Part List<MultipartBody.Part> imageList
+            @Path("idBlog") String idBlog,
+            @Part("title") RequestBody titleBlog,
+            @Part("created_on") RequestBody created_on,
+            @Part MultipartBody.Part imageBlog,
+            @Part("detail_list") List<Blog_Details> contentList
     );
 
     @DELETE("/blog/{blogID}")

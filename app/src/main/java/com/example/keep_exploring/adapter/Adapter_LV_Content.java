@@ -48,10 +48,11 @@ public class Adapter_LV_Content extends BaseAdapter {
 
         Blog_Details blogDetails = blogDetailsList.get(position);
         tvDescription.setText(blogDetails.getContent());
-        if (blogDetails.getImg() != null){
-            Picasso.get().load(Uri.parse(blogDetails.getImg())).into(imgContent);
-        }else {
+        if (blogDetails.getUriImage() != null) {
             imgContent.setImageURI(blogDetails.getUriImage());
+        } else {
+            Picasso.get().load(Uri.parse(blogDetails.getImg())).into(imgContent);
+
         }
 
         return convertView;

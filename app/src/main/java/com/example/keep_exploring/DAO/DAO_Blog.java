@@ -47,6 +47,7 @@ public class DAO_Blog {
     private StorageReference storageRef;
     private Helper_SP helper_sp;
     private Api_Blog api_blog;
+    private StorageReference storageBlog;
 
     public DAO_Blog(Context context) {
         this.context = context;
@@ -167,6 +168,60 @@ public class DAO_Blog {
 
     }
 
+    public void updateBlog(
+            String idBlog,
+            String titleBlog,
+            String imageBlog,
+            List<Blog_Details> contentList,
+            Helper_Callback callback) {
+        RequestBody requestBody;
+        if (imageBlog.isEmpty()) {
+            requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+        } else {
+            File file = new File(imageBlog);
+            requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        }
+        String accessToken = helper_sp.getAccessToken();
+        RequestBody rTitleBlog = helper_common.createPartFromString(titleBlog);
+        RequestBody rCreated_on = helper_common.createPartFromString(helper_common.getIsoDate());
+        MultipartBody.Part image_blog = MultipartBody.Part.createFormData("image_blog", imageBlog, requestBody);
+        Call<String> call = api_blog.updateBlog(accessToken, idBlog, rTitleBlog, rCreated_on, image_blog, contentList);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        JSONObject err = new JSONObject(response.errorBody().string());
+                        String msg = err.getJSONObject("error").getString("message");
+                        log(msg);
+                        callback.failedReq(msg);
+
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        if (responseData.has("error")) {
+                            String msg = responseData.getJSONObject("error").getString("message");
+                            log(msg);
+                            callback.failedReq(msg);
+                        } else {
+                            JSONObject data = responseData.getJSONObject("data");
+                            log(data.toString());
+                            callback.successReq(data);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+                log(t.getMessage());
+            }
+        });
+    }
+
+
     private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback callback) {
         List<Uri> uriList = new ArrayList<>();
         for (Blog_Details item : blog_detailsList) {
@@ -174,13 +229,14 @@ public class DAO_Blog {
         }
         for (int i = 0; i < uriList.size(); i++) {
             Uri uri = uriList.get(i);
-            StorageReference storageBlog = storageRef.child(helper_common.getMillisTime() + "");
+            storageBlog = storageRef.child(helper_common.getMillisTime() + "");
             UploadTask uploadTask = storageBlog.putFile(uri);
             int k = i;
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
+                        callback.failedReq("Tạo bài viết không thành công, vui lòng thử lại sau it phút");
                         throw task.getException();
                     }
 
@@ -203,6 +259,53 @@ public class DAO_Blog {
                     }
                 }
             });
+        }
+    }
+
+    public void updateImageBlogDetail(List<Blog_Details> blog_detailsList) {
+        int sideList = blog_detailsList.size();
+        for (int i = 0; i < sideList; i++) {
+            Blog_Details blog_details = blog_detailsList.get(i);
+            int k = i;
+            if (blog_details.getUriImage() != null) {
+                if (blog_details.getImg() != null) {
+                    storageBlog = storageRef.child(blog_details.getImg());
+                } else {
+                    storageBlog = storageRef.child(helper_common.getMillisTime() + "");
+                }
+
+            }
+
+            if (blog_details.getUriImage() != null) {
+                Uri uri = blog_details.getUriImage();
+                UploadTask uploadTask = storageBlog.putFile(uri);
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        // Continue with the task to get the download URL
+                        return storageBlog.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            blog_details.setImg(downloadUri.toString());
+                            if (k + 1 == sideList) {
+                                log(blog_detailsList.toString());
+                            }
+                        } else {
+                            // Handle failures
+                            // ...
+                        }
+                    }
+                });
+            }
+
         }
     }
 

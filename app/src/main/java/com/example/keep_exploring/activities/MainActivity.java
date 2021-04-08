@@ -154,15 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }).check();
     }
 
-    private String getToken(String key){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("storage_token", Context.MODE_PRIVATE);
-        String value = sharedPreferences.getString(key, "");
-        return value;
-
-    }
-
-
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
