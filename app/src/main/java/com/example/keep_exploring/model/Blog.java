@@ -8,7 +8,7 @@ public class Blog {
     private String _id, title;
     @SerializedName("img")
     private String image;
-    private String status, created_on;
+    private String status, created_on,folder_storage;
     @SerializedName("like_list")
     private List<String> likes;
     @SerializedName("comment")
@@ -24,6 +24,7 @@ public class Blog {
                 ", image='" + image + '\'' +
                 ", status='" + status + '\'' +
                 ", created_on='" + created_on + '\'' +
+                ", folder_storage='" + folder_storage + '\'' +
                 ", likes=" + likes +
                 ", comments=" + comments +
                 ", blogDetails=" + blogDetails +
@@ -102,5 +103,13 @@ public class Blog {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public String getFolder_storage() {
+        return folder_storage;
+    }
+
+    public void setFolder_storage(String folder_storage) {
+        this.folder_storage = folder_storage;
     }
 }

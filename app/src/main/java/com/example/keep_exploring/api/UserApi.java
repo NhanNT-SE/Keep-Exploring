@@ -31,10 +31,4 @@ public interface UserApi {
 
     @POST("/user/signIn")
     Call<String> signIn(@Body User user);
-
-
-
-
-
-
 }

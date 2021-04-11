@@ -5,7 +5,7 @@
     android:paddingHorizontal="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
-        android:id="@+id/dAddContent_tvTitle"
+        android:id="@+id/dModifyContent_tvTitle"
         android:gravity="center"
         android:textSize="20sp"
         android:fontFamily="@font/nabila"
@@ -17,17 +17,17 @@
 
     <ImageView
         android:scaleType="fitXY"
-        android:id="@+id/dAddContent_imgContent"
-        android:layout_below="@+id/dAddContent_tvTitle"
+        android:id="@+id/dModifyContent_imgContent"
+        android:layout_below="@+id/dModifyContent_tvTitle"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="230dp"
         android:src="@drawable/add_image"
         />
     <EditText
-        android:id="@+id/dAddContent_etDescriptions"
+        android:id="@+id/dModifyContent_etDescriptions"
         android:hint="Add Description..."
-        android:layout_below="@+id/dAddContent_imgContent"
+        android:layout_below="@+id/dModifyContent_imgContent"
         android:layout_marginTop="3dp"
         android:paddingHorizontal="5dp"
         android:gravity="top"
@@ -36,27 +36,29 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"/>
     <LinearLayout
-        android:layout_below="@+id/dAddContent_etDescriptions"
+        android:layout_below="@+id/dModifyContent_etDescriptions"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/dAddContent_btnAdd"
+            android:id="@+id/dModifyContent_btnAdd"
             android:text="Add"
             app:cornerRadius="10dp"
             android:layout_weight="1"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="#FFFFFF"
+            android:layout_marginEnd="5dp"
             android:layout_width="0dp"
             android:textAllCaps="false"
             android:layout_height="wrap_content"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/dAddContent_btnCancel"
+            android:id="@+id/dModifyContent_btnCancel"
             android:text="Hủy"
             app:cornerRadius="10dp"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="#FFFFFF"
+            android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:textAllCaps="false"

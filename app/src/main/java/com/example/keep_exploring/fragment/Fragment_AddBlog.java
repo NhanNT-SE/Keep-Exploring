@@ -144,14 +144,14 @@ public class Fragment_AddBlog extends Fragment {
 
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
+        dialog.setContentView(R.layout.dialog_modify_content);
         blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         dTvTitle.setText("Thêm nội dung chi tiết");
         btnAdd.setText("Thêm");
         imgContent.setOnClickListener(new View.OnClickListener() {
@@ -180,7 +180,7 @@ public class Fragment_AddBlog extends Fragment {
                         getContext().getDrawable(R.drawable.add_image).getConstantState()) {
                     toast("Vui lòng chọn hình ảnh để hiển thị");
                 } else if (description.isEmpty()) {
-                    toast("Vui lòng điền nội dung miêu tả");
+                    toast("Vui lòng thêm nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
                     blogDetailsList.add(blogDetails);
@@ -208,14 +208,14 @@ public class Fragment_AddBlog extends Fragment {
 
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
+        dialog.setContentView(R.layout.dialog_modify_content);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-        dTvTitle.setText("Chỉnh sửa nội dụng dung chi tiết");
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
         btnAdd.setText("Cập nhật");
         imgContent.setImageURI(blogDetails.getUriImage());
         dEtDescription.setText(blogDetails.getContent());
@@ -261,7 +261,6 @@ public class Fragment_AddBlog extends Fragment {
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -33,6 +33,7 @@ public interface Api_Blog {
     Call<String> createBlog(
             @Header("Authorization") String accessToken,
             @Part("title") RequestBody titleBlog,
+            @Part("folder_storage") RequestBody folder_storage,
             @Part MultipartBody.Part imageBlog,
             @Part("detail_list") List<Blog_Details> contentList
     );
@@ -48,9 +49,9 @@ public interface Api_Blog {
             @Part("detail_list") List<Blog_Details> contentList
     );
 
-    @DELETE("/blog/{blogID}")
+    @DELETE("/blog/delete/{idBlog}")
     Call<String> deleteBlog(
             @Header("Authorization") String accessToken,
-            @Path("blogID") String blogID
+            @Path("idBlog") String idBlog
     );
 }

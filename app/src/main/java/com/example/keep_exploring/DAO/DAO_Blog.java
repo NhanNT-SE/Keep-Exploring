@@ -58,7 +58,7 @@ public class DAO_Blog {
         api_blog = Retrofit_config.retrofit.create(Api_Blog.class);
         storageRef = FirebaseStorage
                 .getInstance()
-                .getReference("Images/Blog Details/" + helper_sp.getUser().getId());
+                .getReference("Images/" + helper_sp.getUser().getId());
         signInAnonymously();
     }
 
@@ -68,7 +68,8 @@ public class DAO_Blog {
             String imageBlog,
             Helper_Callback callback
     ) {
-        uploadImageBlogDetail(blogDetailsList, new Helper_Callback() {
+        String folderStorage = helper_common.getMillisTime() + "";
+        uploadImageBlogDetail(folderStorage, blogDetailsList, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
@@ -83,7 +84,8 @@ public class DAO_Blog {
 
                 MultipartBody.Part image_blog = MultipartBody.Part.createFormData("image_blog", imageBlog, requestBody);
                 RequestBody title_blog = helper_common.createPartFromString(titleBlog);
-                Call<String> call = api_blog.createBlog(accessToken, title_blog, image_blog, blog_detailsList);
+                RequestBody folder_storage = helper_common.createPartFromString(folderStorage);
+                Call<String> call = api_blog.createBlog(accessToken, title_blog, folder_storage, image_blog, blog_detailsList);
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -119,7 +121,49 @@ public class DAO_Blog {
 
     }
 
-    public void getBlogById(String idBlog,Helper_Callback callback) {
+    public void deleteBlog(String idBlog,List<Blog_Details> blog_detailsList, String folder_storage, Helper_Callback callback) {
+        deleteFolderImage(
+                folder_storage, blog_detailsList,new Helper_Callback() {
+                    @Override
+                    public void successReq(Object response) {
+                        String accessToken = helper_sp.getAccessToken();
+                        Call<String> call = api_blog.deleteBlog(accessToken, idBlog);
+                        call.enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                try {
+                                    if (response.errorBody() != null) {
+                                        String msg = new JSONObject(response.errorBody().string())
+                                                .getJSONObject("error")
+                                                .getString("message");
+                                        log(msg);
+                                        callback.failedReq(msg);
+                                    } else {
+                                        JSONObject responseData = new JSONObject(response.body());
+                                        JSONObject data = responseData.getJSONObject("data");
+                                        callback.successReq(data);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+                        log(msg);
+                    }
+                }
+        );
+    }
+
+    public void getBlogById(String idBlog, Helper_Callback callback) {
         Call<String> call = api_blog.getBlogById(idBlog);
         call.enqueue(new Callback<String>() {
             @Override
@@ -168,10 +212,11 @@ public class DAO_Blog {
     public void updateBlog(
             String idBlog,
             String titleBlog,
+            String folder_storage,
             String imageBlog,
             List<Blog_Details> contentList,
             Helper_Callback callback) {
-        updateImageBlogDetail(contentList, new Helper_Callback() {
+        updateImageBlogDetail(folder_storage, contentList, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
@@ -228,13 +273,11 @@ public class DAO_Blog {
         });
     }
 
-
-    private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback callback) {
-
+    private void uploadImageBlogDetail(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
         for (int i = 0; i < blog_detailsList.size(); i++) {
             Uri uri = blog_detailsList.get(i).getUriImage();
             String fileName = helper_common.getMillisTime() + "";
-            storageBlog = storageRef.child(fileName);
+            storageBlog = storageRef.child(folder_storage + "/" + fileName);
             UploadTask uploadTask = storageBlog.putFile(uri);
             int k = i;
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -257,7 +300,7 @@ public class DAO_Blog {
         }
     }
 
-    public void updateImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+    private void updateImageBlogDetail(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
         String childStorage;
         countUpdate = 0;
         List<Blog_Details> updateList = blog_detailsList.stream()
@@ -277,7 +320,7 @@ public class DAO_Blog {
                         childStorage = fileName;
 
                     }
-                    storageBlog = storageRef.child(childStorage);
+                    storageBlog = storageRef.child(folder_storage + "/" + childStorage);
                     if (blog_details.getFileName() == null) {
                         blog_details.setFileName(fileName);
                     }
@@ -305,9 +348,33 @@ public class DAO_Blog {
                 }
 
             }
-        }else {
+        } else {
             callback.successReq(blog_detailsList);
         }
+    }
+
+    private void deleteFolderImage(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+        storageBlog = storageRef.child(folder_storage);
+        int sizeList = blog_detailsList.size();
+        for (int i = 0; i < sizeList; i++) {
+            Blog_Details blog_details = blog_detailsList.get(i);
+            StorageReference storageChild = storageBlog.child(blog_details.getFileName());
+            int k = i;
+            storageChild.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    if (k + 1 == sizeList) {
+                        callback.successReq(sizeList);
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    callback.failedReq(exception.getMessage());
+                }
+            });
+        }
+
     }
 
     private void signInAnonymously() {

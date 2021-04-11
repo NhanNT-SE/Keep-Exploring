@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
@@ -71,6 +72,7 @@ public class Fragment_EditBlog extends Fragment {
     private Helper_Common helper_common;
     private Helper_SP helper_sp;
     private Helper_Image helper_image;
+    private String folder_storage;
 
     public Fragment_EditBlog() {
         // Required empty public constructor
@@ -106,21 +108,7 @@ public class Fragment_EditBlog extends Fragment {
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
-        dao_blog.getBlogById("60727439d146014238e33b8d", new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                Blog blog = (Blog) response;
-                blogDetailsList = blog.getBlogDetails();
-                Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
-                etTitle.setText(blog.getTitle());
-                idBlog = blog.get_id();
-                refreshListView();
-            }
-
-            @Override
-            public void failedReq(String msg) {
-            }
-        });
+        reloadData();
     }
 
     private void handlerEvent() {
@@ -156,14 +144,16 @@ public class Fragment_EditBlog extends Fragment {
 
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
+        dialog.setContentView(R.layout.dialog_modify_content);
         blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        dTvTitle.setText("Thêm nội dung chi tiết");
+        btnAdd.setText("Thêm");
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,10 +177,10 @@ public class Fragment_EditBlog extends Fragment {
                 String description = dEtDescription.getText().toString();
                 if (imgContent.getDrawable().getConstantState() ==
                         getContext().getDrawable(R.drawable.add_image).getConstantState()) {
-                    toast("Please, choose a picture");
+                    toast("Vui lòng chọn hình ảnh để hiển thị");
 
                 } else if (description.isEmpty()) {
-                    toast("Please, add a description");
+                    toast("Vui lòng thêm nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
                     blogDetailsList.add(blogDetails);
@@ -207,12 +197,15 @@ public class Fragment_EditBlog extends Fragment {
 
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
+        dialog.setContentView(R.layout.dialog_modify_content);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
+        btnAdd.setText("Cập nhật");
         dEtDescription.setText(blogDetails.getContent());
         if (blogDetails.getUriImage() != null) {
             imgContent.setImageURI(blogDetails.getUriImage());
@@ -241,23 +234,13 @@ public class Fragment_EditBlog extends Fragment {
             @Override
             public void onClick(View v) {
                 String title = etTitle.getText().toString();
-                if (imgContent.getDrawable() == null) {
-                    toast("Please, choose a picture");
-
-                } else if (title.isEmpty()) {
-                    toast("Please, add a description");
+                if (title.isEmpty()) {
+                    toast("Vui lòng thêm nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
-
-//                    blogDetails.setContent(dEtDescription.getText().toString());
-//                    blogDetailsList.add(index, blogDetails);
-//                    blogDetailsList.remove(update);
-//                    adapterContent.notifyDataSetChanged();
                     refreshListView();
-
                     dialog.dismiss();
                 }
-
             }
         });
 
@@ -319,10 +302,11 @@ public class Fragment_EditBlog extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {
                     String title = etTitle.getText().toString();
 
-                    dao_blog.updateBlog(idBlog, title, imageBlog, blogDetailsList, new Helper_Callback() {
+                    dao_blog.updateBlog(idBlog, title, folder_storage, imageBlog, blogDetailsList, new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
-
+                            toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
+                            reloadData();
                         }
 
                         @Override
@@ -368,10 +352,10 @@ public class Fragment_EditBlog extends Fragment {
 
     private void clearBlog() {
         etTitle.setText("");
-        blogDetailsList.clear();
-        adapterContent.notifyDataSetChanged();
         imgBlog.setImageResource(R.drawable.add_image);
         imageBlog = "";
+        blogDetailsList.clear();
+        adapterContent.notifyDataSetChanged();
     }
 
     @Override
@@ -394,7 +378,29 @@ public class Fragment_EditBlog extends Fragment {
                 uploadData();
                 break;
             case R.id.menu_post_clear:
-                clearBlog();
+                reloadData();
+                break;
+            case R.id.menu_post_delete:
+                String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
+                helper_common.alertDialog(getContext(), message, new Helper_Event() {
+                    @Override
+                    public void onSubmitAlertDialog() {
+                        dao_blog.deleteBlog(idBlog, blogDetailsList, folder_storage, new Helper_Callback() {
+                            @Override
+                            public void successReq(Object data) {
+                                if (data != null) {
+                                    clearBlog();
+                                    toast("Đã xóa bài viết");
+                                }
+                            }
+
+                            @Override
+                            public void failedReq(String msg) {
+
+                            }
+                        });
+                    }
+                });
                 break;
         }
 
@@ -411,6 +417,25 @@ public class Fragment_EditBlog extends Fragment {
             blogDetails.setUriImage(data.getData());
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void reloadData() {
+        dao_blog.getBlogById("607298ee0a80aa22386f1b33", new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                Blog blog = (Blog) response;
+                blogDetailsList = blog.getBlogDetails();
+                Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
+                etTitle.setText(blog.getTitle());
+                idBlog = blog.get_id();
+                folder_storage = blog.getFolder_storage();
+                refreshListView();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+            }
+        });
     }
 
     private void refreshListView() {
