@@ -62,7 +62,7 @@ public class Fragment_EditBlog extends Fragment {
     private ListView lvContent;
     private Blog_Details blogDetails;
     private List<Blog_Details> blogDetailsList;
-    private List<String> deleteDetailList;
+    private List<Blog_Details> deleteDetailList;
     private Adapter_LV_Content adapterContent;
     private int index = -1;
     private String imageBlog = "";
@@ -190,11 +190,8 @@ public class Fragment_EditBlog extends Fragment {
 
             }
         });
-
-
         dialog.show();
     }
-
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_modify_content);
@@ -252,7 +249,7 @@ public class Fragment_EditBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Blog_Details delete = blogDetailsList.get(index);
+
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
@@ -266,9 +263,9 @@ public class Fragment_EditBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                blogDetailsList.remove(delete);
-                if (delete.getUriImage() == null) {
-                    deleteDetailList.add(delete.getId());
+                blogDetailsList.remove(blogDetails);
+                if (blogDetails.getFileName() != null) {
+                    deleteDetailList.add(blogDetails);
                 }
                 refreshListView();
                 dialog.dismiss();
@@ -306,6 +303,7 @@ public class Fragment_EditBlog extends Fragment {
                         @Override
                         public void successReq(Object response) {
                             toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
+                            dao_blog.deleteFolderImage(folder_storage,deleteDetailList);
                             reloadData();
                         }
 
@@ -351,6 +349,7 @@ public class Fragment_EditBlog extends Fragment {
 
 
     private void clearBlog() {
+        deleteDetailList.clear();
         etTitle.setText("");
         imgBlog.setImageResource(R.drawable.add_image);
         imageBlog = "";
@@ -385,12 +384,14 @@ public class Fragment_EditBlog extends Fragment {
                 helper_common.alertDialog(getContext(), message, new Helper_Event() {
                     @Override
                     public void onSubmitAlertDialog() {
-                        dao_blog.deleteBlog(idBlog, blogDetailsList, folder_storage, new Helper_Callback() {
+                        dao_blog.deleteBlog(idBlog, new Helper_Callback() {
                             @Override
                             public void successReq(Object data) {
                                 if (data != null) {
-                                    clearBlog();
                                     toast("Đã xóa bài viết");
+                                    dao_blog.deleteFolderImage(folder_storage,blogDetailsList);
+                                    clearBlog();
+
                                 }
                             }
 
@@ -420,9 +421,10 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void reloadData() {
-        dao_blog.getBlogById("607298ee0a80aa22386f1b33", new Helper_Callback() {
+        dao_blog.getBlogById("607301792f992d3c302ab66d", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
+                deleteDetailList.clear();
                 Blog blog = (Blog) response;
                 blogDetailsList = blog.getBlogDetails();
                 Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
