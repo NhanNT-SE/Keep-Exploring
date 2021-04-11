@@ -3,7 +3,6 @@ const postSlice = createSlice({
   name: "post",
   initialState: {
     postList: [],
-    commentList: [],
     selectedPost: null,
     selectedPostList: null,
     statisticsData: null,
@@ -11,7 +10,6 @@ const postSlice = createSlice({
   reducers: {
     actionDeletePost: () => {},
     actionGetAllPost: () => {},
-    actionGetCommentList: () => {},
     actionGetPost: () => {},
     actionGetStatistics() {},
 
@@ -22,9 +20,7 @@ const postSlice = createSlice({
     actionSetSelectedPost: (state, action) => {
       state.selectedPost = action.payload;
     },
-    actionSetCommentList: (state, action) => {
-      state.commentList = action.payload;
-    },
+
     actionSetSelectedPostList: (state, action) => {
       state.selectedPostList = action.payload;
     },
@@ -39,7 +35,6 @@ export const {
   actionGetCommentList,
   actionGetPost,
   actionSetPostList,
-  actionSetCommentList,
   actionSetSelectedPost,
   actionSetSelectedPostList,
   actionUpdatePost,

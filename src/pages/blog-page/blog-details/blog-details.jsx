@@ -8,6 +8,7 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { actionGetBlog } from "redux/slices/blogSlice";
+import { actionGetCommentList } from "redux/slices/commentSlice";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
@@ -19,6 +20,7 @@ function BlogDetailsPage() {
   const opLike = useRef(null);
   const isMounted = useRef(false);
   const blog = useSelector((state) => state.blog.selectedBlog);
+  const commentList = useSelector((state) => state.comment.commentList);
   useEffect(() => {
     if (isMounted.current) {
       opLike.current.hide();
@@ -34,9 +36,14 @@ function BlogDetailsPage() {
     };
     dispatch(actionGetBlog(payload));
   }, []);
+
   useEffect(() => {
-    console.log("blog:", blog);
-  }, [blog]);
+    const payload = {
+      type: "blog",
+      id: blogId,
+    };
+    dispatch(actionGetCommentList(payload));
+  }, []);
   return (
     blog && (
       <div className="blog-details-container">
@@ -89,9 +96,7 @@ function BlogDetailsPage() {
                 </div>
               </div>
               <div className="content-details">
-                {blog.blog_detail.detail_list.map((item) => (
-                  <BlogContent blogDetail={item} key={item._id} />
-                ))}
+                <BlogContent blog={blog} />
               </div>
             </TabPanel>
             <TabPanel
@@ -100,7 +105,9 @@ function BlogDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={blog.comment} type="blog" />
+                {commentList && (
+                  <CommentComponent commentList={commentList} type="blog" />
+                )}
               </div>
             </TabPanel>
           </TabView>

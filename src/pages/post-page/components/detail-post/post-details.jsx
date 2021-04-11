@@ -14,10 +14,11 @@ import { useHistory, useParams } from "react-router";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import "./post-details.scss";
 import { actionGetPost } from "redux/slices/postSlice";
+import { actionGetCommentList } from "redux/slices/commentSlice";
 function PostDetailsPage() {
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
-  const commentList = useSelector((state) => state.post.commentList);
+  const commentList = useSelector((state) => state.comment.commentList);
   const [urlImageOverlayPanel, setUrlImageOverlayPanel] = useState("");
   const op = useRef(null);
   const opLike = useRef(null);
@@ -40,9 +41,16 @@ function PostDetailsPage() {
     };
     dispatch(actionGetPost(payload));
   }, []);
+  useEffect(() => {
+    const payload = {
+      type: "post",
+      id: postId,
+    };
+    dispatch(actionGetCommentList(payload));
+  }, []);
+
   return (
-    post &&
-    commentList && (
+    post && (
       <div className="post-details-container">
         <div className="carousel-container">
           <Carousel
@@ -122,7 +130,9 @@ function PostDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={commentList} type="post" />
+                {commentList && (
+                  <CommentComponent commentList={commentList} type="post" />
+                )}
               </div>
             </TabPanel>
           </TabView>
