@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,19 +33,11 @@ import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog_Details;
-import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -74,14 +62,12 @@ public class Fragment_AddBlog extends Fragment {
     private Adapter_LV_Content adapterContent;
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
-    private int index = -1;
     private String imageBlog = "";
     //    DAO & HELPER
     private DAO_Blog dao_blog;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
-
 
     public Fragment_AddBlog() {
         // Required empty public constructor
@@ -137,7 +123,7 @@ public class Fragment_AddBlog extends Fragment {
         lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                index = position;
+                blogDetails = blogDetailsList.get(position);
                 dialogLongClick();
             }
         });
@@ -146,6 +132,7 @@ public class Fragment_AddBlog extends Fragment {
             @Override
             public void onClick(View v) {
                 dialogAddContent();
+
             }
         });
     }
@@ -157,14 +144,14 @@ public class Fragment_AddBlog extends Fragment {
 
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
+        dialog.setContentView(R.layout.dialog_modify_content);
         blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         dTvTitle.setText("Thêm nội dung chi tiết");
         btnAdd.setText("Thêm");
         imgContent.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +180,7 @@ public class Fragment_AddBlog extends Fragment {
                         getContext().getDrawable(R.drawable.add_image).getConstantState()) {
                     toast("Vui lòng chọn hình ảnh để hiển thị");
                 } else if (description.isEmpty()) {
-                    toast("Vui lòng điền nội dung miêu tả");
+                    toast("Vui lòng thêm nội dung miêu tả");
                 } else {
                     blogDetails.setContent(dEtDescription.getText().toString());
                     blogDetailsList.add(blogDetails);
@@ -221,15 +208,14 @@ public class Fragment_AddBlog extends Fragment {
 
     private void dialogUpdateContent() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_content);
-        blogDetails = blogDetailsList.get(index);
+        dialog.setContentView(R.layout.dialog_modify_content);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dAddContent_etDescriptions);
-        imgContent = (ImageView) dialog.findViewById(R.id.dAddContent_imgContent);
-        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dAddContent_tvTitle);
-        Button btnAdd = (Button) dialog.findViewById(R.id.dAddContent_btnAdd);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dAddContent_btnCancel);
-        dTvTitle.setText("Chỉnh sửa nội dụng dung chi tiết");
+        final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
+        imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
+        TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
         btnAdd.setText("Cập nhật");
         imgContent.setImageURI(blogDetails.getUriImage());
         dEtDescription.setText(blogDetails.getContent());
@@ -272,11 +258,9 @@ public class Fragment_AddBlog extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_longclick);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Blog_Details delete = blogDetailsList.get(index);
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -288,7 +272,7 @@ public class Fragment_AddBlog extends Fragment {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                blogDetailsList.remove(delete);
+                blogDetailsList.remove(blogDetails);
                 refreshListView();
                 dialog.dismiss();
             }
@@ -352,6 +336,7 @@ public class Fragment_AddBlog extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
                 uploadData();
+
                 break;
             case R.id.menu_post_clear:
                     clearBlog();

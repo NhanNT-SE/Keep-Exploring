@@ -14,7 +14,6 @@ import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,6 +31,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -47,6 +47,9 @@ public class DAO_Blog {
     private StorageReference storageRef;
     private Helper_SP helper_sp;
     private Api_Blog api_blog;
+    private StorageReference storageBlog;
+    private int countUpdate;
+
 
     public DAO_Blog(Context context) {
         this.context = context;
@@ -55,7 +58,7 @@ public class DAO_Blog {
         api_blog = Retrofit_config.retrofit.create(Api_Blog.class);
         storageRef = FirebaseStorage
                 .getInstance()
-                .getReference("Images/Blog Details/" + helper_sp.getUser().getId());
+                .getReference("Images/" + helper_sp.getUser().getId());
         signInAnonymously();
     }
 
@@ -65,7 +68,8 @@ public class DAO_Blog {
             String imageBlog,
             Helper_Callback callback
     ) {
-        uploadImageBlogDetail(blogDetailsList, new Helper_Callback() {
+        String folderStorage = helper_common.getMillisTime() + "";
+        uploadImageBlogDetail(folderStorage, blogDetailsList, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
@@ -80,26 +84,22 @@ public class DAO_Blog {
 
                 MultipartBody.Part image_blog = MultipartBody.Part.createFormData("image_blog", imageBlog, requestBody);
                 RequestBody title_blog = helper_common.createPartFromString(titleBlog);
-                Call<String> call = api_blog.createBlog(accessToken, title_blog, image_blog, blog_detailsList);
+                RequestBody folder_storage = helper_common.createPartFromString(folderStorage);
+                Call<String> call = api_blog.createBlog(accessToken, title_blog, folder_storage, image_blog, blog_detailsList);
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         try {
                             if (response.errorBody() != null) {
-                                String msg = new JSONObject(response.errorBody().string()).getString("message");
+                                String msg = new JSONObject(response.errorBody().string())
+                                        .getJSONObject("error")
+                                        .getString("message");
                                 log(msg);
                                 callback.failedReq(msg);
-
                             } else {
                                 JSONObject responseData = new JSONObject(response.body());
-                                if (responseData.has("error")) {
-                                    String msg = responseData.getJSONObject("error").getString("message");
-                                    log(msg);
-                                    callback.failedReq(msg);
-                                } else {
-                                    JSONObject data = responseData.getJSONObject("data");
-                                    callback.successReq(data);
-                                }
+                                JSONObject data = responseData.getJSONObject("data");
+                                callback.successReq(data);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -121,7 +121,49 @@ public class DAO_Blog {
 
     }
 
-    public void getBlogById(String idBlog,Helper_Callback callback) {
+    public void deleteBlog(String idBlog,List<Blog_Details> blog_detailsList, String folder_storage, Helper_Callback callback) {
+        deleteFolderImage(
+                folder_storage, blog_detailsList,new Helper_Callback() {
+                    @Override
+                    public void successReq(Object response) {
+                        String accessToken = helper_sp.getAccessToken();
+                        Call<String> call = api_blog.deleteBlog(accessToken, idBlog);
+                        call.enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                try {
+                                    if (response.errorBody() != null) {
+                                        String msg = new JSONObject(response.errorBody().string())
+                                                .getJSONObject("error")
+                                                .getString("message");
+                                        log(msg);
+                                        callback.failedReq(msg);
+                                    } else {
+                                        JSONObject responseData = new JSONObject(response.body());
+                                        JSONObject data = responseData.getJSONObject("data");
+                                        callback.successReq(data);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+                        log(msg);
+                    }
+                }
+        );
+    }
+
+    public void getBlogById(String idBlog, Helper_Callback callback) {
         Call<String> call = api_blog.getBlogById(idBlog);
         call.enqueue(new Callback<String>() {
             @Override
@@ -167,43 +209,172 @@ public class DAO_Blog {
 
     }
 
-    private void uploadImageBlogDetail(List<Blog_Details> blog_detailsList, Helper_Callback callback) {
-        List<Uri> uriList = new ArrayList<>();
-        for (Blog_Details item : blog_detailsList) {
-            uriList.add(item.getUriImage());
-        }
-        for (int i = 0; i < uriList.size(); i++) {
-            Uri uri = uriList.get(i);
-            StorageReference storageBlog = storageRef.child(helper_common.getMillisTime() + "");
-            UploadTask uploadTask = storageBlog.putFile(uri);
-            int k = i;
-            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
+    public void updateBlog(
+            String idBlog,
+            String titleBlog,
+            String folder_storage,
+            String imageBlog,
+            List<Blog_Details> contentList,
+            Helper_Callback callback) {
+        updateImageBlogDetail(folder_storage, contentList, new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
+                RequestBody requestBody;
+                if (imageBlog.isEmpty()) {
+                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                } else {
+                    File file = new File(imageBlog);
+                    requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                }
+                String accessToken = helper_sp.getAccessToken();
+                RequestBody rTitleBlog = helper_common.createPartFromString(titleBlog);
+                RequestBody rCreated_on = helper_common.createPartFromString(helper_common.getIsoDate());
+                MultipartBody.Part image_blog = MultipartBody.Part.createFormData("image_blog", imageBlog, requestBody);
+                Call<String> call = api_blog.updateBlog(accessToken, idBlog, rTitleBlog, rCreated_on, image_blog, blog_detailsList);
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        try {
+                            if (response.errorBody() != null) {
+                                JSONObject err = new JSONObject(response.errorBody().string());
+                                String msg = err.getJSONObject("error").getString("message");
+                                log(msg);
+                                callback.failedReq(msg);
+
+                            } else {
+                                JSONObject responseData = new JSONObject(response.body());
+                                if (responseData.has("error")) {
+                                    String msg = responseData.getJSONObject("error").getString("message");
+                                    log(msg);
+                                    callback.failedReq(msg);
+                                } else {
+                                    JSONObject data = responseData.getJSONObject("data");
+                                    callback.successReq(data);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
 
-                    // Continue with the task to get the download URL
-                    return storageBlog.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        Blog_Details blog_details = blog_detailsList.get(k);
-                        blog_details.setImg(downloadUri.toString());
-                        if (k + 1 == uriList.size()) {
-                            callback.successReq(blog_detailsList);
-                        }
-                    } else {
-                        // Handle failures
-                        // ...
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        callback.failedReq(t.getMessage());
+                        log(t.getMessage());
                     }
+                });
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+    }
+
+    private void uploadImageBlogDetail(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+        for (int i = 0; i < blog_detailsList.size(); i++) {
+            Uri uri = blog_detailsList.get(i).getUriImage();
+            String fileName = helper_common.getMillisTime() + "";
+            storageBlog = storageRef.child(folder_storage + "/" + fileName);
+            UploadTask uploadTask = storageBlog.putFile(uri);
+            int k = i;
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    taskSnapshot.getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            Uri downloadUri = task.getResult();
+                            Blog_Details blog_details = blog_detailsList.get(k);
+                            blog_details.setImg(downloadUri.toString());
+                            blog_details.setFileName(fileName);
+                            if (k + 1 == blog_detailsList.size()) {
+                                callback.successReq(blog_detailsList);
+                            }
+                        }
+                    });
                 }
             });
         }
+    }
+
+    private void updateImageBlogDetail(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+        String childStorage;
+        countUpdate = 0;
+        List<Blog_Details> updateList = blog_detailsList.stream()
+                .filter(p -> p.getUriImage() != null).collect(Collectors.toList());
+        int sideList = blog_detailsList.size();
+        if (updateList.size() > 0) {
+            for (int i = 0; i < sideList; i++) {
+                Blog_Details blog_details = blog_detailsList.get(i);
+                int k = i;
+                Uri uri = blog_detailsList.get(i).getUriImage();
+                String fileName = helper_common.getMillisTime() + "";
+                if (uri != null) {
+                    countUpdate++;
+                    if (blog_details.getFileName() != null) {
+                        childStorage = blog_details.getFileName();
+                    } else {
+                        childStorage = fileName;
+
+                    }
+                    storageBlog = storageRef.child(folder_storage + "/" + childStorage);
+                    if (blog_details.getFileName() == null) {
+                        blog_details.setFileName(fileName);
+                    }
+                    UploadTask uploadTask = storageBlog.putFile(uri);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    Uri downloadUri = task.getResult();
+                                    Blog_Details blog_details = blog_detailsList.get(k);
+                                    blog_details.setImg(downloadUri.toString());
+                                    if (blog_details.getFileName() == null) {
+                                        blog_details.setFileName(fileName);
+                                    }
+                                    if (countUpdate == updateList.size()) {
+                                        callback.successReq(blog_detailsList);
+                                        log(blog_detailsList.toString());
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+            }
+        } else {
+            callback.successReq(blog_detailsList);
+        }
+    }
+
+    private void deleteFolderImage(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+        storageBlog = storageRef.child(folder_storage);
+        int sizeList = blog_detailsList.size();
+        for (int i = 0; i < sizeList; i++) {
+            Blog_Details blog_details = blog_detailsList.get(i);
+            StorageReference storageChild = storageBlog.child(blog_details.getFileName());
+            int k = i;
+            storageChild.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    if (k + 1 == sizeList) {
+                        callback.successReq(sizeList);
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    callback.failedReq(exception.getMessage());
+                }
+            });
+        }
+
     }
 
     private void signInAnonymously() {

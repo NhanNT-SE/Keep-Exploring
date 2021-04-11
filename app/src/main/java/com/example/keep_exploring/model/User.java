@@ -1,42 +1,44 @@
 package com.example.keep_exploring.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class User implements Serializable {
     private String email;
-    private String _id;
+    @SerializedName("_id")
+    private String id;
     private String displayName;
     private String imgUser;
-    private List<Post> post;
-    private List<Blog> blog;
+    @SerializedName("post")
+    private List<String> postList;
+    @SerializedName("blog")
+    private List<String> blogList;
 
     @Override
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
-                ", _id='" + _id + '\'' +
+                ", _id='" + id + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", imgUser='" + imgUser + '\'' +
-                ", post=" + post +
-                ", blog=" + blog +
+                ", postList=" + postList +
+                ", blogList=" + blogList +
                 '}';
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getId() {
-        return _id;
+        return id;
     }
 
-    public void setId(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDisplayName() {
@@ -46,6 +48,7 @@ public class User implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
     public String getImgUser() {
         return imgUser;
     }
@@ -54,19 +57,19 @@ public class User implements Serializable {
         this.imgUser = imgUser;
     }
 
-    public List<Post> getPost() {
-        return post;
+    public List<String> getPostList() {
+        return postList;
     }
 
-    public void setPost(List<Post> post) {
-        this.post = post;
+    public void setPostList(List<String> postList) {
+        this.postList = postList;
     }
 
-    public List<Blog> getBlog() {
-        return blog;
+    public List<String> getBlogList() {
+        return blogList;
     }
 
-    public void setBlog(List<Blog> blog) {
-        this.blog = blog;
+    public void setBlogList(List<String> blogList) {
+        this.blogList = blogList;
     }
 }
