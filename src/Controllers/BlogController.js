@@ -8,10 +8,10 @@ const handlerCustomError = require("../middleware/customError");
 
 const createBlog = async (req, res, next) => {
   try {
-    let { title, detail_list } = req.body;
+    let { title, detail_list, folder_storage } = req.body;
     const file = req.file;
     const user = await User.findById(req.user._id);
-    const blog = new Blog({ title });
+    const blog = new Blog({ title, folder_storage });
     const blog_detail = new Blog_Detail({});
     if (file) {
       blog.img = file.filename;
@@ -43,44 +43,37 @@ const createBlog = async (req, res, next) => {
       message: "Tạo bài viết thành công",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 const deleteBlog = async (req, res, next) => {
   try {
-    console.log("abc");
     const user = req.user;
     const { idBlog } = req.params;
 
     //Kiem tra xem bai viet co ton tai khong
     const blogFound = await Blog.findById(idBlog);
     const detailFound = await Blog_Detail.findById(idBlog);
-    const len = detailFound.detail_list.length;
-
     if (user.role === "admin" || user._id == blogFound.owner.toString()) {
       if (blogFound && detailFound) {
-        for (let i = 0; i < len; i++) {
-          fs.unlinkSync(
-            "src/public/images/blog/" + detailFound.detail_list[i].img
-          );
-        }
+        fs.unlink("src/public/images/blog/" + blogFound.img, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
         await Blog_Detail.findByIdAndDelete(idBlog);
         await Blog.findByIdAndDelete(idBlog);
-
         //Xoa bai blog khoi bloglist cua user
         await User.findByIdAndUpdate(user._id, { $pull: { blog: idBlog } });
-
         return res.status(200).send({
           status: 200,
-          data: null,
+          data: blogFound,
           message: "Xóa bài viết thành công",
         });
       }
       handlerCustomError(201, "Bài viết không tồn tại");
     }
-
-    handlerCustomError(201, "Bạn không phải admin/owner bài viết này");
+    handlerCustomError(201, "Bạn thể xóa bài viết của người khác");
   } catch (error) {
     next(error);
   }
@@ -137,9 +130,50 @@ const likeBlog = async (req, res, next) => {
     next(error);
   }
 };
+const updateBlog = async (req, res, next) => {
+  try {
+    const { title, created_on, detail_list } = req.body;
+    const { idBlog } = req.params;
+    const blog = await Blog.findById(idBlog);
+    const blog_detail = await Blog_Detail.findById(idBlog);
+    const file = req.file;
+    if (file) {
+      fs.unlink(`src/public/images/blog/${blog.img}`, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+      blog.img = file.filename;
+    }
+    blog.title = title;
+    blog.created_on = created_on;
+    let tempList = [];
+    const isArray = Array.isArray(detail_list);
+    if (!isArray) {
+      tempList.push(JSON.parse(detail_list));
+    } else {
+      tempList = detail_list.map((e) => JSON.parse(e));
+    }
+    tempList.forEach((element) => {
+      delete element.uriImage;
+    });
+
+    await Blog.findByIdAndUpdate(idBlog, { ...blog });
+    await Blog_Detail.findByIdAndUpdate(idBlog, { detail_list: tempList });
+    return res.status(200).send({
+      status: 200,
+      data: blog_detail,
+      message: "Đã cập nhật bài viết",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
 module.exports = {
   createBlog,
   deleteBlog,
   likeBlog,
+  updateBlog,
 };

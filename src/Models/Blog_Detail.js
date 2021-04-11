@@ -7,10 +7,12 @@ const BlogDetail_Schema = new Schema(
       type: String,
     },
     detail_list: [
-      new Schema({
+      {
+        type: Object,
         img: String,
         content: String,
-      }),
+        file_name: String,
+      },
     ],
   },
   { collection: "Blog_Detail" }
