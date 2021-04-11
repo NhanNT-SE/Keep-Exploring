@@ -106,16 +106,17 @@ public class Fragment_EditBlog extends Fragment {
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
-        dao_blog.getBlogById("606eabd45250620a240fa59d", new Helper_Callback(){
+        dao_blog.getBlogById("60727439d146014238e33b8d", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 Blog blog = (Blog) response;
                 blogDetailsList = blog.getBlogDetails();
-                Picasso.get().load(helper_common.getBaseUrlImage()+"blog/"+blog.getImage()).into(imgBlog);
+                Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
                 etTitle.setText(blog.getTitle());
                 idBlog = blog.get_id();
                 refreshListView();
             }
+
             @Override
             public void failedReq(String msg) {
             }
@@ -253,6 +254,7 @@ public class Fragment_EditBlog extends Fragment {
 //                    blogDetailsList.remove(update);
 //                    adapterContent.notifyDataSetChanged();
                     refreshListView();
+
                     dialog.dismiss();
                 }
 
@@ -271,7 +273,6 @@ public class Fragment_EditBlog extends Fragment {
         Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
         Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
         Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -305,22 +306,30 @@ public class Fragment_EditBlog extends Fragment {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-
-        if (imgBlog.getDrawable().getConstantState() ==
-                getContext().getDrawable(R.drawable.add_image).getConstantState()) {
-            toast("Vui lòng chọn hình ảnh đại diện cho bài viết");
-        } else if (etTitle.getText().toString().isEmpty()) {
+        if (etTitle.getText().toString().isEmpty()) {
             toast("Vui lòng thêm thông tin mô tả cho bài viết");
 
         } else if (blogDetailsList.size() == 0) {
             toast("Vui lòng thêm ít nhất 1 nội dung chi tiết cho bài viết");
         } else {
-            dialog.setTitle("Bạn có cập nhật lại bài viết?");
+            dialog.setTitle("Bạn có muốn cập nhật lại bài viết?");
 
             dialog.setNegativeButton("Cập nhật", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    String title = etTitle.getText().toString();
 
+                    dao_blog.updateBlog(idBlog, title, imageBlog, blogDetailsList, new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+
+                        }
+                    });
                 }
             });
             dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
@@ -382,21 +391,7 @@ public class Fragment_EditBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                String title = etTitle.getText().toString();
-//                dao_blog.updateBlog(idBlog, title, imageBlog, blogDetailsList, new Helper_Callback() {
-//                    @Override
-//                    public void successReq(Object response) {
-//
-//                    }
-//
-//                    @Override
-//                    public void failedReq(String msg) {
-//
-//                    }
-//                });
-
-                dao_blog.updateImageBlogDetail(blogDetailsList);
-//                uploadData();
+                uploadData();
                 break;
             case R.id.menu_post_clear:
                 clearBlog();

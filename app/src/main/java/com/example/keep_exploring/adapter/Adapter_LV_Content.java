@@ -50,7 +50,7 @@ public class Adapter_LV_Content extends BaseAdapter {
         tvDescription.setText(blogDetails.getContent());
         if (blogDetails.getUriImage() != null) {
             imgContent.setImageURI(blogDetails.getUriImage());
-        } else {
+        } else if (blogDetails.getImg() != null) {
             Picasso.get().load(Uri.parse(blogDetails.getImg())).into(imgContent);
 
         }

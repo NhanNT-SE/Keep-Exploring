@@ -70,18 +70,6 @@ public class Helper_Common {
         return calendar.getTimeInMillis();
     }
 
-    public String convertListToString(String stringList) {
-        StringBuilder sb = new StringBuilder(stringList);
-
-        sb.deleteCharAt(stringList.length() - 1);
-
-
-        sb.deleteCharAt(0);
-
-
-        return sb.toString();
-    }
-
     public void alertDialog(Context context, String message, Helper_Event event) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(message);
@@ -100,4 +88,5 @@ public class Helper_Common {
         });
         dialog.show();
     }
+
 }

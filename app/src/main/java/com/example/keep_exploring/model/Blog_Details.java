@@ -8,6 +8,8 @@ public class Blog_Details {
     @SerializedName("_id")
     private String id;
     private String content, img;
+    @SerializedName("file_name")
+    private String fileName;
     private Uri uriImage;
 
     @Override
@@ -16,6 +18,7 @@ public class Blog_Details {
                 "id='" + id + '\'' +
                 ", content='" + content + '\'' +
                 ", img='" + img + '\'' +
+                ", fileName='" + fileName + '\'' +
                 ", uriImage=" + uriImage +
                 '}';
     }
@@ -50,5 +53,12 @@ public class Blog_Details {
 
     public void setUriImage(Uri uriImage) {
         this.uriImage = uriImage;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

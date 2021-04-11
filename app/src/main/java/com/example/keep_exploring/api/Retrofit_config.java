@@ -37,7 +37,7 @@ public class Retrofit_config {
             .setLenient()
             .create();
     public static Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(URL_LOCAL )
+            .baseUrl(URL_LOCAL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
