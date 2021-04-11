@@ -14,7 +14,9 @@ const BlogSchema = new Schema(
     img: {
       type: String,
     },
-
+    folder_storage: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["pending", "done", "need_update"],
