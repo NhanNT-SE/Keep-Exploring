@@ -74,19 +74,6 @@ function TablePostComponent() {
   }, []);
   useEffect(() => {
     const resultList = JSON.parse(JSON.stringify(postList));
-    resultList.forEach((item) => {
-      if (item.address) {
-        const { province, ward, district, additional } = item.address;
-        if (additional) {
-          item.address = `${additional}, Phuong ${ward}, ${district}, ${province}`;
-        } else {
-          item.address = `${ward}, ${district}, ${province}`;
-        }
-      } else {
-        item.address = "";
-      }
-    });
-
     setPosts(resultList);
   }, [postList]);
   const header = (

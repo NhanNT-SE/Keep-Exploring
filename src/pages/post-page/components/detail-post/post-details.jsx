@@ -14,10 +14,15 @@ import { useHistory, useParams } from "react-router";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import "./post-details.scss";
 import { actionGetPost } from "redux/slices/postSlice";
+import {
+  actionGetCommentList,
+  actionGetLikeList,
+} from "redux/slices/commentSlice";
 function PostDetailsPage() {
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
-  const commentList = useSelector((state) => state.post.commentList);
+  const commentState = useSelector((state) => state.comment);
+  const { commentList, likeList } = commentState;
   const [urlImageOverlayPanel, setUrlImageOverlayPanel] = useState("");
   const op = useRef(null);
   const opLike = useRef(null);
@@ -29,20 +34,24 @@ function PostDetailsPage() {
       op.current.hide();
       opLike.current.hide();
     }
-  }, []);
-  useEffect(() => {
     isMounted.current = true;
+    dispatch(
+      actionGetPost({
+        postId: postId,
+        history: history,
+      })
+    );
+    dispatch(
+      actionGetCommentList({
+        type: "post",
+        id: postId,
+      })
+    );
+    dispatch(actionGetLikeList({ type: "post", body: { idPost: postId } }));
   }, []);
-  useEffect(() => {
-    const payload = {
-      postId: postId,
-      history: history,
-    };
-    dispatch(actionGetPost(payload));
-  }, []);
+
   return (
-    post &&
-    commentList && (
+    post && (
       <div className="post-details-container">
         <div className="carousel-container">
           <Carousel
@@ -122,13 +131,15 @@ function PostDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={commentList} type="post" />
+                {commentList && (
+                  <CommentComponent commentList={commentList} type="post" />
+                )}
               </div>
             </TabPanel>
           </TabView>
         </div>
         <DialogEditPost post={post} />
-        <OverlayUserLike opLike={opLike} likeList={post.like_list} />
+        <OverlayUserLike opLike={opLike} likeList={likeList ? likeList : []} />
         <OverLayPanelImagePost
           op={op}
           urlImageOverlayPanel={urlImageOverlayPanel}

@@ -8,6 +8,10 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { actionGetBlog } from "redux/slices/blogSlice";
+import {
+  actionGetCommentList,
+  actionGetLikeList,
+} from "redux/slices/commentSlice";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
@@ -19,24 +23,17 @@ function BlogDetailsPage() {
   const opLike = useRef(null);
   const isMounted = useRef(false);
   const blog = useSelector((state) => state.blog.selectedBlog);
+  const commentState = useSelector((state) => state.comment);
+  const { commentList, likeList } = commentState;
   useEffect(() => {
     if (isMounted.current) {
       opLike.current.hide();
     }
-  }, []);
-  useEffect(() => {
     isMounted.current = true;
+    dispatch(actionGetBlog({ blogId, history }));
+    dispatch(actionGetCommentList({ type: "blog", id: blogId }));
+    dispatch(actionGetLikeList({ type: "blog", body: { idBlog: blogId } }));
   }, []);
-  useEffect(() => {
-    const payload = {
-      blogId,
-      history,
-    };
-    dispatch(actionGetBlog(payload));
-  }, []);
-  useEffect(() => {
-    console.log("blog:", blog);
-  }, [blog]);
   return (
     blog && (
       <div className="blog-details-container">
@@ -89,9 +86,7 @@ function BlogDetailsPage() {
                 </div>
               </div>
               <div className="content-details">
-                {blog.blog_detail.detail_list.map((item) => (
-                  <BlogContent blogDetail={item} key={item._id} />
-                ))}
+                <BlogContent blog={blog} />
               </div>
             </TabPanel>
             <TabPanel
@@ -100,13 +95,15 @@ function BlogDetailsPage() {
               leftIcon="pi pi-comments"
             >
               <div className="comment-container">
-                <CommentComponent commentList={blog.comment} type="blog" />
+                {commentList && (
+                  <CommentComponent commentList={commentList} type="blog" />
+                )}
               </div>
             </TabPanel>
           </TabView>
         </div>
         <DialogEditPost post={blog} type="blog" />
-        <OverlayUserLike opLike={opLike} likeList={blog.like_list} />
+        <OverlayUserLike opLike={opLike} likeList={likeList ? likeList : []} />
       </div>
     )
   );

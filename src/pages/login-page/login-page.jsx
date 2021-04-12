@@ -1,7 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import localStorageService from "utils/localStorageService";
 import DialogMessage from "common-components/dialog/dialog-message/dialog-message";
 import LoadingComponent from "common-components/loading/loading";
 import CheckBoxField from "custom-fields/checkbox-field";
@@ -52,12 +51,7 @@ function LoginPage(props) {
     setValue(name, value);
     callBack(value || checked);
   };
-  const loginFacebook = () => {
-    console.log("Facebook");
-  };
-  const loginGoogle = () => {
-    console.log("Google");
-  };
+
   useEffect(() => {
     if (user && user.remember) {
       history.push("/home");
@@ -92,33 +86,16 @@ function LoginPage(props) {
             type="password"
             onChange={(e) => handlerOnChange(e, "password", setPassword)}
           />
-          <CheckBoxField
+          {/* <CheckBoxField
             name="remember"
             control={control}
             label="remember me?"
             checked={isRemember}
             inputRef={register}
             onChange={(e) => dispatch(actionSetIsRemember(e.target.checked))}
-          />
+          /> */}
           <Button variant="contained" color="primary" type="submit">
             Sign in
-          </Button>
-          <Divider />
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ backgroundColor: "#3B5998" }}
-            onClick={loginFacebook}
-          >
-            Sign in with facebook
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ backgroundColor: "#dd4b39" }}
-            onClick={loginGoogle}
-          >
-            Sign in with google
           </Button>
         </form>
       </div>

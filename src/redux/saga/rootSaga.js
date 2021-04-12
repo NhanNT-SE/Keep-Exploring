@@ -1,11 +1,15 @@
 import { all } from "redux-saga/effects";
 import {
   sagaDeleteBlog,
-  sagaDeleteComment,
   sagaGetAllBlog,
   sagaGetBlog,
   sagaUpdateBlog,
 } from "./blogSaga";
+import {
+  sagaDeleteComment,
+  sagaGetCommentList,
+  sagaGetLikeList,
+} from "./commentSaga";
 import {
   sagaDeletePost,
   sagaGetAllPost,
@@ -24,12 +28,17 @@ import {
   sagaUpdateProfile,
   sagaChangePassword,
 } from "./userSaga";
+
+const sagaComment = [
+  sagaDeleteComment(),
+  sagaGetCommentList(),
+  sagaGetLikeList(),
+];
 const sagaBlog = [
   sagaDeleteBlog(),
   sagaGetAllBlog(),
   sagaGetBlog(),
   sagaUpdateBlog(),
-  sagaDeleteComment(),
 ];
 const sagaPost = [
   sagaDeletePost(),
@@ -49,7 +58,7 @@ const sagaUser = [
   sagaRefreshToken(),
   sagaUpdateProfile(),
 ];
-const sagaList = sagaUser.concat(sagaBlog, sagaPost);
+const sagaList = sagaUser.concat(sagaComment, sagaBlog, sagaPost);
 
 export default function* rootSaga() {
   yield all(sagaList);

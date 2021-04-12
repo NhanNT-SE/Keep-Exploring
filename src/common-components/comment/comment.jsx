@@ -6,7 +6,7 @@ import GLOBAL_VARIABLE from "utils/global_variable";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import "./comment.scss";
 import { useDispatch } from "react-redux";
-import { actionDeleteComment } from "redux/slices/blogSlice";
+import { actionDeleteComment } from "redux/slices/commentSlice";
 function CommentComponent(props) {
   const { commentList, type } = props;
   const history = useHistory();
@@ -33,11 +33,7 @@ function CommentComponent(props) {
     const stringDate = dayString + "-" + monthString + "-" + year;
     return stringDate;
   };
-  useEffect(() => {
-    // 6055a4b2b69c7033b4c89dee 6055a4ceb69c7033b4c89df0
 
-    console.log("temp list:", list);
-  }, [list]);
   const confirmDelete = (commentId) => {
     confirmDialog({
       message: "Do you want to delete this comment?",
@@ -84,7 +80,7 @@ function CommentComponent(props) {
           style={{
             background: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/comment/${type}/${item.img})`,
           }}
-        />
+        ></div>
       )}
     </div>
   ));

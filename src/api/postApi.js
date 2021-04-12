@@ -9,11 +9,6 @@ const postApi = {
     const url = "/admin/posts";
     return axiosClient.get(url);
   },
-  getCommentList: (postId) => {
-    const url = `/public/post/comments/${postId}`;
-    return axiosClient.get(url);
-  },
-
   getPost: (postId) => {
     const url = `/public/post/${postId}`;
     return axiosClient.get(url);

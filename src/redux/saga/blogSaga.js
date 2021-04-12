@@ -36,18 +36,7 @@ function* handlerDeleteBlog(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-function* handlerDeleteComment(action) {
-  try {
-    localStorageService.setLatestAction(actionDeleteComment.type);
-    const commentId = action.payload;
-    yield put(actionLoading("Loading deleting comment...!"));
-    yield call(() => commentApi.deleteComment(commentId));
-    yield call(() => handlerSuccessSaga("Delete comment successfully!"));
-  } catch (error) {
-    console.log("post saga: ", error);
-    yield call(() => handlerFailSaga(error));
-  }
-}
+
 
 function* handlerGetAllBlog() {
   try {
@@ -55,7 +44,6 @@ function* handlerGetAllBlog() {
     yield put(actionLoading("Loading get all blog list ...!"));
     const response = yield call(blogApi.getAll);
     const { data } = response;
-    console.log("blog list:", data);
     yield put(actionSetBlogList(data));
     yield put(actionSuccess("Fetch blog list successfully!"));
   } catch (error) {
@@ -99,9 +87,7 @@ function* handlerUpdateBlog(action) {
 export function* sagaDeleteBlog() {
   yield takeLatest(actionDeleteBlog.type, handlerDeleteBlog);
 }
-export function* sagaDeleteComment() {
-  yield takeLatest(actionDeleteComment.type, handlerDeleteComment);
-}
+
 export function* sagaGetAllBlog() {
   yield takeLatest(actionGetAllBlog.type, handlerGetAllBlog);
 }

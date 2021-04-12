@@ -7,7 +7,7 @@ import {
   actionGetPost,
   actionUpdatePost,
   actionDeletePost,
-  actionSetCommentList,
+  // actionSetCommentList,
   actionSetStatistics,
   actionGetStatistics,
 } from "redux/slices/postSlice";
@@ -55,14 +55,9 @@ function* handlerGetPost(action) {
   try {
     localStorageService.setLatestAction(actionGetPost.type);
     yield put(actionLoading("Loading get post...!"));
-    const responsePost = yield call(() => postApi.getPost(postId));
-    const responseComment = yield call(() => postApi.getCommentList(postId));
-    const data = {
-      dataPost: responsePost.data,
-      dataComment: responseComment.data,
-    };
-    yield put(actionSetSelectedPost(data.dataPost));
-    yield put(actionSetCommentList(data.dataComment));
+    const response = yield call(() => postApi.getPost(postId));
+    const { data } = response;
+    yield put(actionSetSelectedPost(data));
     yield put(actionSuccess("Fetch post successfully!"));
   } catch (error) {
     console.log("post slice: ", error);

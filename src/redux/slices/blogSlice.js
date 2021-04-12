@@ -23,7 +23,6 @@ const blogSlice = createSlice({
 
 export const {
   actionDeleteBlog,
-  actionDeleteComment,
   actionGetAllBlog,
   actionSetBlogList,
   actionGetBlog,

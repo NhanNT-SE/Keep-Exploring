@@ -6,8 +6,6 @@ import "./like.scss";
 function LikeComponent(props) {
   const { likeList } = props;
   const history = useHistory();
-  console.log(likeList);
-
   return likeList.map((item) => (
     <div
       key={item._id}
@@ -18,7 +16,6 @@ function LikeComponent(props) {
         image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${item.imgUser}`}
         imageAlt="avatar"
         className="p-mr-2"
-        src
         shape="circle"
       />
       <div>{item.displayName}</div>
