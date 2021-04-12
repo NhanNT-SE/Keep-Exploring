@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import androidx.fragment.app.Fragment;
 import com.example.keep_exploring.DAO.DAO_User;
 import com.example.keep_exploring.R;
 
+import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Feedback;
 import com.example.keep_exploring.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +39,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -50,14 +54,14 @@ import dmax.dialog.SpotsDialog;
 public class Fragment_UserInfo extends Fragment {
     private View view;
     private Button btnEdit, btnFeedBack;
-    private TextView tvName, tvEmail, tvID, tvPhone, tvBOD, tvAddress;
+    private TextView tvName, tvEmail, tvGender, tvBirthday;
+    private TextView tvAddress, tvTotalPost, tvTotalBlog, tvCreatedOn;
     private ImageView imgAvatar;
     private CircleImageView imgAvatarUser;
     private DAO_User dao_user;
-    private User update;
-    private FirebaseUser currentUser;
+    private User user;
     private Dialog spotDialog;
-    private StorageReference storageReference;
+    private Helper_Common helper_common;
 
 
     public Fragment_UserInfo() {
@@ -71,25 +75,24 @@ public class Fragment_UserInfo extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user_infor, container, false);
         initView();
-        showInfo();
+        initVariable();
+        handlerEvent();
         return view;
     }
 
-    private void showInfo() {
-        dao_user = new DAO_User(getContext());
-        dao_user.getMyProfile();
-    }
 
     private void initView() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
         spotDialog = new SpotsDialog(getActivity());
-        tvName = (TextView) view.findViewById(R.id.fUserInfo_tvName);
+        tvName = (TextView) view.findViewById(R.id.fUserInfo_tvDisplayName);
         tvEmail = (TextView) view.findViewById(R.id.fUserInfo_tvEmail);
-        tvID = (TextView) view.findViewById(R.id.fUserInfo_tvId);
-        tvPhone = (TextView) view.findViewById(R.id.fUserInfo_tvPhone);
-        tvBOD = (TextView) view.findViewById(R.id.fUserInfo_tvBOD);
+        tvGender = (TextView) view.findViewById(R.id.fUserInfo_tvGender);
         tvAddress = (TextView) view.findViewById(R.id.fUserInfo_tvAddress);
+        tvTotalPost = (TextView) view.findViewById(R.id.fUserInfo_tvTotalPost);
+        tvTotalBlog = (TextView) view.findViewById(R.id.fUserInfo_tvTotalBlog);
+        tvCreatedOn = (TextView) view.findViewById(R.id.fUserInfo_tvCreatedOn);
+        tvBirthday = (TextView) view.findViewById(R.id.fUserInfo_tvBirthday);
+
+
         btnEdit = (Button) view.findViewById(R.id.fUserInfo_btnEdit);
         btnFeedBack = (Button) view.findViewById(R.id.fUserInfo_btnFeedBack);
         imgAvatar = (ImageView) view.findViewById(R.id.fUserInfo_imgAvatar);
@@ -102,6 +105,44 @@ public class Fragment_UserInfo extends Fragment {
             }
         });
 
+
+    }
+    private void initVariable() {
+        user = new User();
+        helper_common = new Helper_Common();
+    }
+    private void handlerEvent() {
+        dao_user = new DAO_User(getContext());
+        dao_user.getMyProfile(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                user = (User) response;
+                showInfo();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+    }
+
+    private void showInfo(){
+        if (user != null){
+            tvName.setText(user.getDisplayName());
+            tvEmail.setText(user.getEmail());
+            tvGender.setText(user.getGender());
+            tvTotalPost.setText(String.valueOf(user.getPostList().size()));
+            tvTotalBlog.setText(String.valueOf(user.getBlogList().size()));
+            tvCreatedOn.setText(user.getCreated_on());
+            if (user.getAddress() != null){
+                tvAddress.setText(user.getAddress());
+            }
+            if (user.getBirthday() != null){
+                tvBirthday.setText(user.getBirthday());
+            }
+            Picasso.get().load(helper_common.getBaseUrlImage()+"user/" + user.getImgUser()).into(imgAvatar);
+        }
 
     }
 
@@ -173,7 +214,6 @@ public class Fragment_UserInfo extends Fragment {
             @Override
             public void onClick(View v) {
                 etName.setText("");
-
                 etPass.setText("");
                 etDOB.setText("");
                 etPhone.setText("");
@@ -192,62 +232,7 @@ public class Fragment_UserInfo extends Fragment {
         dialog.show();
     }
 
-    private void updateInfo(final String name, final String pass) {
-        String uID = currentUser.getUid();
-        storageReference = FirebaseStorage.getInstance()
-                .getReference().child("AvatarUser/" + uID);
-        imgAvatarUser.setDrawingCacheEnabled(true);
-        imgAvatarUser.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) imgAvatarUser.getDrawable()).getBitmap();
-        ByteArrayOutputStream bAOS = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bAOS);
-        byte[] data = bAOS.toByteArray();
-        UploadTask uploadTask = storageReference.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        editInfo(name, pass, uri);
 
-                    }
-                });
-            }
-        });
-    }
-
-    private void editInfo(final String name, final String pass, final Uri uriImage) {
-        UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .setPhotoUri(uriImage)
-                .build();
-        currentUser.updateProfile(profileUpdate)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        currentUser.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    toast("Your account has been successfully updated!");
-                                    spotDialog.dismiss();
-                                } else {
-                                    toast("Error");
-                                    spotDialog.dismiss();
-                                }
-
-                            }
-                        });
-                    }
-                });
-
-    }
 
     private void datePicker(final EditText et) {
         final Calendar calendar = Calendar.getInstance();
@@ -291,5 +276,8 @@ public class Fragment_UserInfo extends Fragment {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    private void log(String s) {
+        Log.d("log", s);
     }
 }

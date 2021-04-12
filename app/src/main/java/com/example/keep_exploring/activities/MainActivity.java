@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.fragment.Fragment_AddBlog;
+import com.example.keep_exploring.fragment.Fragment_AddPost;
+import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
+        replaceFragment(new Fragment_Tab_UserInfo());
     }
 
     private void handlerEvent() {

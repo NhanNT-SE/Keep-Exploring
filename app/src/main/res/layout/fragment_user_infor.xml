@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.Fragment_PostListAdmin">
+    tools:context=".fragment.Fragment_UserInfo">
 
     <TextView
         android:text="User Profile"
@@ -27,124 +27,111 @@
         android:src="@drawable/avatar_header" />
    <LinearLayout
        android:layout_marginTop="20dp"
-       android:orientation="vertical"
+       android:orientation="horizontal"
        android:paddingLeft="10dp"
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
        <LinearLayout
-           android:orientation="horizontal"
+           android:layout_weight="3"
+           android:orientation="vertical"
            android:layout_gravity="center_horizontal"
-           android:layout_width="250dp"
+           android:gravity="end"
+           android:layout_width="0dp"
            android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/account"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
+           <TextView
+               android:text="Email:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Display Name:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Address:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
 
            <TextView
-               android:id="@+id/fUserInfo_tvName"
-               android:text="Nguyễn Trọng Nhân"
+               android:text="Gender:"
                android:textStyle="bold"
-               android:layout_gravity="center_vertical"
-               android:layout_marginLeft="5dp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Total Post:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Total Blog:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Created On:"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:text="Birthday:"
+               android:textStyle="bold"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
        </LinearLayout>
        <LinearLayout
-           android:orientation="horizontal"
+           android:layout_weight="7"
+           android:orientation="vertical"
            android:layout_gravity="center_horizontal"
-           android:layout_marginTop="5dp"
-           android:layout_width="250dp"
+           android:layout_width="0dp"
+           android:paddingStart="10dp"
            android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/email"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
            <TextView
                android:id="@+id/fUserInfo_tvEmail"
-               android:text="nhanntps10674@fpt.edu.vn"
                android:textStyle="bold"
-               android:layout_marginLeft="5dp"
-               android:layout_gravity="center_vertical"
-               android:layout_width="match_parent"
+               android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
-       </LinearLayout>
-       <LinearLayout
-           android:orientation="horizontal"
-           android:layout_marginTop="5dp"
-           android:layout_gravity="center_horizontal"
-           android:layout_width="250dp"
-           android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/id"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
            <TextView
-               android:id="@+id/fUserInfo_tvId"
-               android:text="ID101001310132213515121"
+               android:id="@+id/fUserInfo_tvDisplayName"
+
                android:textStyle="bold"
-               android:layout_marginLeft="5dp"
-               android:layout_width="match_parent"
+               android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
-       </LinearLayout>
-       <LinearLayout
-           android:orientation="horizontal"
-           android:layout_marginTop="5dp"
-           android:layout_gravity="center_horizontal"
-           android:layout_width="250dp"
-           android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/phone"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
-           <TextView
-               android:id="@+id/fUserInfo_tvPhone"
-               android:text="01669320364"
-               android:textStyle="bold"
-               android:layout_gravity="center_vertical"
-               android:layout_marginLeft="5dp"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"/>
-       </LinearLayout>
-       <LinearLayout
-           android:orientation="horizontal"
-           android:layout_gravity="center_horizontal"
-           android:gravity="center_horizontal"
-           android:layout_marginTop="5dp"
-           android:layout_width="250dp"
-           android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/cake"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
-           <TextView
-               android:id="@+id/fUserInfo_tvBOD"
-               android:text="20/02/2020"
-               android:textStyle="bold"
-               android:layout_marginLeft="5dp"
-               android:layout_gravity="center_vertical"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"/>
-       </LinearLayout>
-       <LinearLayout
-           android:orientation="horizontal"
-           android:layout_gravity="center_horizontal"
-           android:layout_width="250dp"
-           android:layout_marginTop="5dp"
-           android:layout_height="match_parent">
-           <ImageView
-               android:src="@drawable/address"
-               android:layout_width="24dp"
-               android:layout_height="24dp"/>
            <TextView
                android:id="@+id/fUserInfo_tvAddress"
-               android:text="Cộng Hòa, Tân Bình, TP.HCM"
+
                android:textStyle="bold"
-               android:layout_marginLeft="5dp"
-               android:layout_gravity="center_vertical"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+
+           <TextView
+               android:id="@+id/fUserInfo_tvGender"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:id="@+id/fUserInfo_tvTotalPost"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:id="@+id/fUserInfo_tvTotalBlog"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:id="@+id/fUserInfo_tvCreatedOn"
+               android:textStyle="bold"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+           <TextView
+               android:id="@+id/fUserInfo_tvBirthday"
+               android:textStyle="bold"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
        </LinearLayout>
+
    </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
