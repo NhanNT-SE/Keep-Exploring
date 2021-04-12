@@ -32,16 +32,16 @@ public class Fragment_Tab_UserInfo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Bundle bundle = getArguments();
-        if (bundle != null){
+        if (bundle != null) {
             user = (User) bundle.getSerializable("user");
         }
         view = inflater.inflate(R.layout.fragment_tab_user, container, false);
         tabLayout = (TabLayout) view.findViewById(R.id.fTabUser_tabLayout);
         viewPager = (ViewPager) view.findViewById(R.id.fTabUser_viewPager);
-        viewPager.setAdapter(new Adapter_Tab_User(getChildFragmentManager(),1));
+        viewPager.setAdapter(new Adapter_Tab_User(getChildFragmentManager(), 1));
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.post_list);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_people_black_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.post_list);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_people_black_24dp);
         return view;
     }
 
