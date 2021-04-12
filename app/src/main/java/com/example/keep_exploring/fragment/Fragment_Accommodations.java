@@ -115,7 +115,7 @@ public class Fragment_Accommodations extends Fragment {
     private void refreshLV(List<Post> postList){
         listPost = new ArrayList<>(postList);
         adapterPost = new Adapter_LV_PostUser(getActivity(),listPost);
-        listView.setAdapter(adapterPost);
+//        listView.setAdapter(adapterPost);
         if (postList.size()>0){
             tvNothing.setVisibility(View.GONE);
         }else {

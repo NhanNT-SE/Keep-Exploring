@@ -11,12 +11,12 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 
-public interface UserApi {
+public interface Api_User {
 
     //GET Method
     @GET("/user")
     Call<String> getMyProfile(
-            @Header("Authenticator") String accessToken
+            @Header("Authorization") String accessToken
     );
 
     //POST Method

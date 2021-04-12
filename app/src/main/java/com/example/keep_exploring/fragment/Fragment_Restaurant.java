@@ -128,7 +128,7 @@ public class Fragment_Restaurant extends Fragment {
     private void refreshLV(List<Post> postList) {
         listPost = new ArrayList<>(postList);
         adapterPost = new Adapter_LV_PostUser(getContext(), listPost);
-        listView.setAdapter(adapterPost);
+//        listView.setAdapter(adapterPost);
         if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
         } else {

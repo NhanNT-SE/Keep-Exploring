@@ -8,58 +8,68 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
 
+import java.io.PipedInputStream;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Adapter_LV_PostUser extends BaseAdapter {
+public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUser.ViewHolder> {
     private Context context;
     private List<Post> postList;
-    public static final String POST = "post";
-    private final Helper_Common helper_common;
+    private Helper_Common helper_common = new Helper_Common();
+
     public Adapter_LV_PostUser(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
-        helper_common = new Helper_Common();
     }
+
+    @NonNull
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.raw_post, parent, false);
+
+
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String URL_IMAGE = helper_common.getBaseUrlImage();
+        Post post = postList.get(position);
+
+        holder.tvUserName.setText(post.getOwner().getDisplayName());
+        holder.tvTitle.setText(post.getTitle());
+        holder.tvPubDate.setText(post.getCreated_on());
+        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
+        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
+    }
+
+    @Override
+    public int getItemCount() {
         return postList.size();
     }
 
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private CircleImageView civUser;
+        private TextView tvUserName, tvPubDate, tvTitle;
+        private ImageView imgPost;
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        String URL_IMAGE = helper_common.getBaseUrlImage();
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.raw_post, null);
-        TextView tvPubDate = (TextView) convertView.findViewById(R.id.raw_post_tvPubDate);
-        TextView tvTitle = (TextView) convertView.findViewById(R.id.raw_post_tvTitle);
-        TextView tvUser = (TextView) convertView.findViewById(R.id.raw_post_tvUser);
-        TextView tvAddress = (TextView) convertView.findViewById(R.id.raw_post_tvAddress);
-        ImageView imgPost = (ImageView) convertView.findViewById(R.id.raw_post_imgPost);
-        CircleImageView imgAvatar = (CircleImageView) convertView.findViewById(R.id.raw_post_imgAvatarUser);
-        final Post post = postList.get(position);
-        tvUser.setText(post.getOwner().getDisplayName());
-        tvPubDate.setText(post.getCreated_on());
-        tvTitle.setText(post.getTitle());
-        tvAddress.setText(post.getAddress());
-        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(imgPost);
-        Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(imgAvatar);
-        return convertView;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            civUser = (CircleImageView) itemView.findViewById(R.id.raw_user_imgAvatar);
+            tvUserName = (TextView) itemView.findViewById(R.id.raw_user_tvName);
+            tvPubDate = (TextView) itemView.findViewById(R.id.raw_post_tvPubDate);
+            tvTitle = (TextView) itemView.findViewById(R.id.raw_post_tvTitle);
+            imgPost = (ImageView) itemView.findViewById(R.id.raw_post_imgPost);
+        }
     }
 }
