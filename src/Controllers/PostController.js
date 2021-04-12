@@ -102,48 +102,32 @@ const getPostListByUser = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
   try {
-    //Lay id bai viet va id nguoi dung tu req
     const { idPost } = req.body;
     const user = req.user;
-
-    //Kiem tra bai viet co ton tai hay khong
     const postFound = await Post.findById(idPost);
     if (postFound) {
-      //Kiem tra nguoi dung da like bai viet hay chua
-      var i = 0;
-      var like_list = postFound.like_list;
-      const len = like_list.length;
-
-      for (i; i < len; i++) {
-        //Neu nguoi dung da like bai viet thi doi thanh dislike- remove idUser khoi like_list
-        if ((user._id = like_list[i])) {
-          await postFound.like_list.splice(i, 1);
-          await postFound.save();
-          return res.send({
-            data: null,
-            status: 201,
-            message: "Đã bỏ thích bài viết",
-          });
-        }
+      let like_list = [...postFound.like_list];
+      const index = like_list.findIndex((e) => e == user._id);
+      let notification = null;
+      if (index >= 0) {
+        like_list.splice(index, 1);
+      } else {
+        like_list.push(user._id);
+        const notify = new Notification({
+          idUser: postFound.owner.toString(),
+          idPost: idPost,
+          status: "new",
+          content: "like",
+        });
+        notification = createNotification(notify);
       }
-
-      //Tao notify khi co nguoi like bai viet
-      const notify = new Notification({
-        idUser: postFound.owner.toString(),
-        idPost: idPost,
-        status: "new",
-        content: "like",
-      });
-      const notification = await createNotification(notify);
-
-      //Con neu nguoi dung chua like bai viet thi push idUser vao like_list
-      await postFound.like_list.push(user._id);
-      await postFound.save();
+      postFound.like_list = like_list;
+      await Post.findByIdAndUpdate(idPost, { ...postFound });
 
       return res.send({
-        data: notification,
+        data: postFound,
         status: 200,
-        message: "Đã thích bài viết",
+        message: notification ? "Đã thích bài viết" : "Đã bỏ thích bài viết",
       });
     }
 

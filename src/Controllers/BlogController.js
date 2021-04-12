@@ -80,47 +80,32 @@ const deleteBlog = async (req, res, next) => {
 };
 const likeBlog = async (req, res, next) => {
   try {
-    //Lay id bai viet va id nguoi dung tu req
     const { idBlog } = req.body;
     const user = req.user;
-
-    //Kiem tra bai viet co ton tai hay khong
     const blogFound = await Blog.findById(idBlog);
     if (blogFound) {
-      //Kiem tra nguoi dung da like bai viet hay chua
-      var i = 0;
-      var like_list = blogFound.like_list;
-      const len = like_list.length;
-
-      for (i; i < len; i++) {
-        //Neu nguoi dung da like bai viet thi doi thanh dislike- remove idUser khoi like_list va return status code 200
-        if ((user._id = like_list[i])) {
-          await blogFound.like_list.splice(i, 1);
-          await blogFound.save();
-          return res.status(200).send({
-            status: 200,
-            message: "Đã bỏ like bài viết",
-            data: null,
-          });
-        }
+      let like_list = [...blogFound.like_list];
+      const index = like_list.findIndex((e) => e == user._id);
+      let notification = null;
+      if (index >= 0) {
+        like_list.splice(index, 1);
+      } else {
+        like_list.push(user._id);
+        const notify = new Notification({
+          idUser: blogFound.owner.toString(),
+          idBlog,
+          status: "new",
+          content: "like",
+        });
+        notification = createNotification(notify);
       }
-      //Con neu nguoi dung chua like bai viet thi push idUser vao like_list va return status code 201
-      await blogFound.like_list.push(user._id);
-      await blogFound.save();
-
-      //Tao notify khi co nguoi like bai viet
-      const notify = new Notification({
-        idUser: blogFound.owner.toString(),
-        idPost: idBlog,
-        status: "new",
-        content: "like",
-      });
-      const notification = await createNotification(notify);
+      blogFound.like_list = like_list;
+      await Blog.findByIdAndUpdate(idBlog, { ...blogFound });
 
       return res.send({
-        status: 201,
-        data: notification,
-        message: "Đã like bài viết",
+        data: blogFound,
+        status: 200,
+        message: notification ? "Đã thích bài viết" : "Đã bỏ thích bài viết",
       });
     }
 
