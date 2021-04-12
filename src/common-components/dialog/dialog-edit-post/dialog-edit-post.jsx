@@ -49,7 +49,7 @@ function DialogEditPost(props) {
   };
   const deletePost = () => {
     const payload = {
-      idUser: post.owner._id,
+      idUser: [post.owner._id],
       contentAdmin: notify,
       history,
     };

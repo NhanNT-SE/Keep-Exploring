@@ -5,7 +5,11 @@ import {
   sagaGetBlog,
   sagaUpdateBlog,
 } from "./blogSaga";
-import { sagaDeleteComment, sagaGetCommentList } from "./commentSaga";
+import {
+  sagaDeleteComment,
+  sagaGetCommentList,
+  sagaGetLikeList,
+} from "./commentSaga";
 import {
   sagaDeletePost,
   sagaGetAllPost,
@@ -25,7 +29,11 @@ import {
   sagaChangePassword,
 } from "./userSaga";
 
-const sagaComment = [sagaDeleteComment(), sagaGetCommentList()];
+const sagaComment = [
+  sagaDeleteComment(),
+  sagaGetCommentList(),
+  sagaGetLikeList(),
+];
 const sagaBlog = [
   sagaDeleteBlog(),
   sagaGetAllBlog(),

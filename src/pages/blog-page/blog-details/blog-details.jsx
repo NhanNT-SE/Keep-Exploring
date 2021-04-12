@@ -8,7 +8,10 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { actionGetBlog } from "redux/slices/blogSlice";
-import { actionGetCommentList } from "redux/slices/commentSlice";
+import {
+  actionGetCommentList,
+  actionGetLikeList,
+} from "redux/slices/commentSlice";
 import { actionShowDialog } from "redux/slices/commonSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
@@ -20,29 +23,16 @@ function BlogDetailsPage() {
   const opLike = useRef(null);
   const isMounted = useRef(false);
   const blog = useSelector((state) => state.blog.selectedBlog);
-  const commentList = useSelector((state) => state.comment.commentList);
+  const commentState = useSelector((state) => state.comment);
+  const { commentList, likeList } = commentState;
   useEffect(() => {
     if (isMounted.current) {
       opLike.current.hide();
     }
-  }, []);
-  useEffect(() => {
     isMounted.current = true;
-  }, []);
-  useEffect(() => {
-    const payload = {
-      blogId,
-      history,
-    };
-    dispatch(actionGetBlog(payload));
-  }, []);
-
-  useEffect(() => {
-    const payload = {
-      type: "blog",
-      id: blogId,
-    };
-    dispatch(actionGetCommentList(payload));
+    dispatch(actionGetBlog({ blogId, history }));
+    dispatch(actionGetCommentList({ type: "blog", id: blogId }));
+    dispatch(actionGetLikeList({ type: "blog", body: { idBlog: blogId } }));
   }, []);
   return (
     blog && (
@@ -113,7 +103,7 @@ function BlogDetailsPage() {
           </TabView>
         </div>
         <DialogEditPost post={blog} type="blog" />
-        <OverlayUserLike opLike={opLike} likeList={blog.like_list} />
+        <OverlayUserLike opLike={opLike} likeList={likeList ? likeList : []} />
       </div>
     )
   );

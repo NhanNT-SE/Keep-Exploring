@@ -3,7 +3,9 @@ import commentApi from "api/commentApi";
 import {
   actionDeleteComment,
   actionGetCommentList,
+  actionGetLikeList,
   actionSetCommentList,
+  actionSetLikeList,
 } from "redux/slices/commentSlice";
 import {
   actionFailed,
@@ -39,6 +41,21 @@ function* handlerGetCommentList(action) {
     yield put(actionFailed(error.message));
   }
 }
+
+function* handlerGetLikeList(action) {
+  try {
+    localStorageService.setLatestAction(actionGetLikeList.type);
+    const { body, type } = action.payload;
+    yield put(actionLoading("Loading get like list ...!"));
+    const response = yield call(() => commentApi.getLikeList(body, type));
+    const { data } = response;
+    yield put(actionSetLikeList(data));
+    yield put(actionSuccess("Fetch like list successfully!"));
+  } catch (error) {
+    console.log("comment saga: ", error);
+    yield put(actionFailed(error.message));
+  }
+}
 // ***** Watcher Functions *****
 
 export function* sagaDeleteComment() {
@@ -46,5 +63,9 @@ export function* sagaDeleteComment() {
 }
 export function* sagaGetCommentList() {
   yield takeLatest(actionGetCommentList.type, handlerGetCommentList);
+}
+
+export function* sagaGetLikeList() {
+  yield takeLatest(actionGetLikeList.type, handlerGetLikeList);
 }
 // ***** Watcher Functions *****
