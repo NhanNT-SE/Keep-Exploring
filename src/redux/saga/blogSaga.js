@@ -44,7 +44,6 @@ function* handlerGetAllBlog() {
     yield put(actionLoading("Loading get all blog list ...!"));
     const response = yield call(blogApi.getAll);
     const { data } = response;
-    console.log("blog list:", data);
     yield put(actionSetBlogList(data));
     yield put(actionSuccess("Fetch blog list successfully!"));
   } catch (error) {

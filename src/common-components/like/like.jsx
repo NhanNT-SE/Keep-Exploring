@@ -6,8 +6,6 @@ import "./like.scss";
 function LikeComponent(props) {
   const { likeList } = props;
   const history = useHistory();
-  console.log(likeList);
-
   return likeList.map((item) => (
     <div
       key={item._id}
