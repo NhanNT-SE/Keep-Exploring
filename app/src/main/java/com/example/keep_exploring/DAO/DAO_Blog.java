@@ -121,46 +121,34 @@ public class DAO_Blog {
 
     }
 
-    public void deleteBlog(String idBlog,List<Blog_Details> blog_detailsList, String folder_storage, Helper_Callback callback) {
-        deleteFolderImage(
-                folder_storage, blog_detailsList,new Helper_Callback() {
-                    @Override
-                    public void successReq(Object response) {
-                        String accessToken = helper_sp.getAccessToken();
-                        Call<String> call = api_blog.deleteBlog(accessToken, idBlog);
-                        call.enqueue(new Callback<String>() {
-                            @Override
-                            public void onResponse(Call<String> call, Response<String> response) {
-                                try {
-                                    if (response.errorBody() != null) {
-                                        String msg = new JSONObject(response.errorBody().string())
-                                                .getJSONObject("error")
-                                                .getString("message");
-                                        log(msg);
-                                        callback.failedReq(msg);
-                                    } else {
-                                        JSONObject responseData = new JSONObject(response.body());
-                                        JSONObject data = responseData.getJSONObject("data");
-                                        callback.successReq(data);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<String> call, Throwable t) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void failedReq(String msg) {
+    public void deleteBlog(String idBlog, Helper_Callback callback) {
+        String accessToken = helper_sp.getAccessToken();
+        Call<String> call = api_blog.deleteBlog(accessToken, idBlog);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    if (response.errorBody() != null) {
+                        String msg = new JSONObject(response.errorBody().string())
+                                .getJSONObject("error")
+                                .getString("message");
                         log(msg);
+                        callback.failedReq(msg);
+                    } else {
+                        JSONObject responseData = new JSONObject(response.body());
+                        JSONObject data = responseData.getJSONObject("data");
+                        callback.successReq(data);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-        );
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 
     public void getBlogById(String idBlog, Helper_Callback callback) {
@@ -353,24 +341,22 @@ public class DAO_Blog {
         }
     }
 
-    private void deleteFolderImage(String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+    public void deleteFolderImage(String folder_storage, List<Blog_Details> deleteList) {
         storageBlog = storageRef.child(folder_storage);
-        int sizeList = blog_detailsList.size();
+        int sizeList = deleteList.size();
         for (int i = 0; i < sizeList; i++) {
-            Blog_Details blog_details = blog_detailsList.get(i);
+            Blog_Details blog_details = deleteList.get(i);
+            log(blog_details.getFileName());
             StorageReference storageChild = storageBlog.child(blog_details.getFileName());
-            int k = i;
             storageChild.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    if (k + 1 == sizeList) {
-                        callback.successReq(sizeList);
-                    }
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    callback.failedReq(exception.getMessage());
+                    log("Delete storage: " + exception.getMessage());
                 }
             });
         }
