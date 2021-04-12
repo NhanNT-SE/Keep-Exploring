@@ -1,18 +1,32 @@
 package com.example.keep_exploring.helpers;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.keep_exploring.R;
+import com.example.keep_exploring.activities.MainActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
@@ -68,6 +82,31 @@ public class Helper_Common {
     public long getMillisTime() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
+    }
+    public void hideBottomNavigation(Context context){
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) ((Activity)context).findViewById(R.id.main_coordinatorLayout);
+        coordinatorLayout.setVisibility(View.GONE);
+    }
+    public void runtimePermission(Context context) {
+        Dexter.withContext(context)
+                .withPermissions(
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            Log.d("log", "All permission granted");
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                    }
+                }).check();
     }
 
     public void alertDialog(Context context, String message, Helper_Event event) {

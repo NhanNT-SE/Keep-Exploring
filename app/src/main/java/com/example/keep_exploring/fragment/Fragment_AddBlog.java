@@ -105,6 +105,7 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     private void handlerEvents() {
+        helper_common.hideBottomNavigation(getContext());
         helper_common.formatDate(tvPubDate);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);

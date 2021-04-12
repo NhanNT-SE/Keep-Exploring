@@ -1,80 +1,80 @@
 package com.example.keep_exploring.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
-
-import com.example.keep_exploring.fragment.Fragment_Accommodations;
-import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
-import com.example.keep_exploring.fragment.Fragment_BeautifulPlaces;
-import com.example.keep_exploring.fragment.Fragment_EditBlog;
-import com.example.keep_exploring.fragment.Fragment_Edit_Post;
-import com.example.keep_exploring.fragment.Fragment_JourneyDiary;
-import com.example.keep_exploring.fragment.Fragment_Restaurant;
-import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Places;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.squareup.picasso.Picasso;
+import com.ramotion.circlemenu.CircleMenuView;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private ActionBarDrawerToggle toggle;
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private FirebaseUser currentUser;
     private String password;
     private String email;
     private TextView number;
     private Helper_SP helper_sp;
+    private BottomNavigationView bottomNavigationView;
+    private Helper_Common helper_common;
     private DAO_Address dao_address;
+    private CircleMenuView circleMenuView;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initView();
+        initVariable();
+        handlerEvent();
+    }
+
+    private void initView() {
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
+        circleMenuView = findViewById(R.id.main_circleMenu);
+        fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
+        replaceFragment(new Fragment_AddPost());
+
+    }
+
+    private void initVariable() {
+        helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
-        Intent getPass = getIntent();
-        if (getPass != null) {
-            password = getPass.getStringExtra("pass");
-            email = getPass.getStringExtra("email");
+
+    }
+
+    private void handlerEvent() {
+        helper_common.runtimePermission(this);
+        bottomNavigationView.setBackground(null);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.getMenu().getItem(2).setEnabled(false);
+        if (currentUser != null) {
+//            Toast.makeText(this, "Hello " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         }
-        dao_address.getProvinceList(new Helper_Callback(){
+        dao_address.getProvinceList(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 List<String> provinceList = (List<String>) response;
@@ -85,121 +85,103 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        initView();
+        circleMenuView.setEventListener(new CircleMenuView.EventListener() {
+            @Override
+            public void onMenuOpenAnimationStart(@NonNull CircleMenuView view) {
+                super.onMenuOpenAnimationStart(view);
+            }
 
+            @Override
+            public void onButtonClickAnimationEnd(@NonNull CircleMenuView view, int buttonIndex) {
+                super.onButtonClickAnimationStart(view, buttonIndex);
+                switch (buttonIndex) {
+                    case 0:
+                        view.setVisibility(View.GONE);
+                        toast("Food");
+                        break;
+                    case 1:
+                        view.setVisibility(View.GONE);
+                        toast("Hotel");
+                        break;
+                    case 2:
+                        view.setVisibility(View.GONE);
+                        toast("Check in");
+                        break;
+                }
+            }
+
+            @Override
+            public void onMenuCloseAnimationStart(@NonNull CircleMenuView view) {
+                super.onMenuCloseAnimationStart(view);
+                view.setVisibility(View.GONE);
+            }
+        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideCircleMenu();
+                popupMenu();
+            }
+        });
+        hideCircleMenu();
     }
 
-    private void initView() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser!=null){
-//            Toast.makeText(this, "Hello " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
-        }
-        drawerLayout = (DrawerLayout) findViewById(R.id.main_Drawer);
-        navigationView = (NavigationView) findViewById(R.id.main_Navigation);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
-        navigationView.setNavigationItemSelectedListener(this);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        replaceFragment(new Fragment_AddBlog());
-//        showInfo();
-
-    }
-
-    private void showInfo() {
-        if (currentUser != null) {
-            View headerView = navigationView.getHeaderView(0);
-            CircleImageView imgAvatar = (CircleImageView) headerView.findViewById(R.id.header_imgAvatar);
-            TextView tvDisplayName = (TextView) headerView.findViewById(R.id.header_tvDisplayName);
-            TextView tvEmail = (TextView) headerView.findViewById(R.id.header_tvEmail);
-            Uri uriAvatar = currentUser.getPhotoUrl();
-            Picasso.get().load(uriAvatar).into(imgAvatar);
-            tvDisplayName.setText(currentUser.getDisplayName());
-            tvEmail.setText(currentUser.getEmail());
-        }
-    }
     private void insertPlaces(){
         String[] placeList = {"An Ging", "Vung Tau", "Bac Giang", "Bac Kan","Bac Lieu","Bac Ninh",
         "Ben Tre", "Binh Dinh", "Binh Duong", "Binh Phuoc", "Binh Thuan", "Ca Mau", "Cao Bang",
         "Dak Lak", "Dak Nong", "Dien Bien", "Dong Nai", "Dong Thap", "Gia Lai", "Ha Giang","Ha Nam",
         "Ha Tinh", "Hai Duong", "Hau Gian","Hoa Binh", "Hung Yen","Khanh Hoa","Kien Giang", "Kon Tum",
         "Lai Chau", "Lam Dong", "Lang Son","Lao Cai","Long An", "Nam Dinh","Nghe An", "Ninh Binh",
-        "Ninh Thuan","Phu Tho","Quang Binh", "Quang Nam","Quang Ngai","Quang Ninh", "Quang Tri",
-        "Soc Trang","Son La","Tay Ninh", "Thai Binh", "Thai Binh","Thai Nguyen","Thanh Hoa","Thua Thien Hue",
-        "Tien Giang","Tra Vinh","Tuyen Quang","Vinh Long", "Vinh Phuc","Yen Bai", "Phu Yen","Ha Noi",
-        "TP HCM", "Da Nang","Can Tho","Hai Phong","Da Lat","Phu Quoc","Nha Trang"};
-        for (int i =0; i<placeList.length; i++){
+                "Ninh Thuan", "Phu Tho", "Quang Binh", "Quang Nam", "Quang Ngai", "Quang Ninh", "Quang Tri",
+                "Soc Trang", "Son La", "Tay Ninh", "Thai Binh", "Thai Binh", "Thai Nguyen", "Thanh Hoa", "Thua Thien Hue",
+                "Tien Giang", "Tra Vinh", "Tuyen Quang", "Vinh Long", "Vinh Phuc", "Yen Bai", "Phu Yen", "Ha Noi",
+                "TP HCM", "Da Nang", "Can Tho", "Hai Phong", "Da Lat", "Phu Quoc", "Nha Trang"};
+        for (int i = 0; i < placeList.length; i++) {
             Places places = new Places();
             places.setName(placeList[i]);
         }
     }
-    private void runtimePermission() {
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            Toast.makeText(MainActivity.this, "All granted", Toast.LENGTH_SHORT).show();
-                        }
-                    }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+    private void popupMenu() {
+        PopupMenu popup = new PopupMenu(MainActivity.this, fab);
+        popup.getMenuInflater().inflate(R.menu.menu_popup_fab, popup.getMenu());
 
-                    }
-                }).check();
-    }
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.menu_popup_fab_post) {
+                    toast("Add Post");
+                }
+                if (item.getItemId() == R.id.menu_popup_fab_blog) {
+                    toast("Add Blog");
+                }
+                return true;
+            }
+        });
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (toggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        popup.show();
+
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_drawer_Restaurant:
-                replaceFragment(new Fragment_Restaurant());
+            case R.id.menu_bottom_home:
+                hideCircleMenu();
+                toast("Home");
                 break;
-            case R.id.menu_drawer_Accommodations:
-                replaceFragment(new Fragment_Accommodations());
+            case R.id.menu_bottom_post:
+                showCircleMenu();
                 break;
-            case R.id.menu_drawer_CheckIn:
-                replaceFragment(new Fragment_BeautifulPlaces());
+            case R.id.menu_bottom_blog:
+                hideCircleMenu();
+                toast("Blog");
                 break;
-            case R.id.menu_drawer_Blog:
-                replaceFragment(new Fragment_JourneyDiary());
+            case R.id.menu_bottom_notify:
+                hideCircleMenu();
+                toast("Notification");
                 break;
-            case R.id.menu_drawer_Admin:
-                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                intent.putExtra("name", currentUser.getDisplayName());
-                intent.putExtra("avatar", String.valueOf(currentUser.getPhotoUrl()));
-                intent.putExtra("email", email);
-                intent.putExtra("pass", password);
-                startActivity(intent);
-                break;
-            case R.id.menu_drawer_Information:
-                replaceFragment(new Fragment_Tab_UserInfo());
-                break;
-            case R.id.menu_drawer_SignOut:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivity.this, SignInActivity.class));
-                break;
-            case R.id.menu_drawer_Exit:
-                FirebaseAuth.getInstance().signOut();
-                finishAffinity();
-                break;
-
         }
-        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -210,5 +192,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .commit();
     }
 
+    private void showCircleMenu() {
+        circleMenuView.setVisibility(View.VISIBLE);
+        circleMenuView.open(true);
+    }
 
+    private void hideCircleMenu() {
+        circleMenuView.close(false);
+        circleMenuView.setVisibility(View.INVISIBLE);
+    }
+
+    private void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 }
