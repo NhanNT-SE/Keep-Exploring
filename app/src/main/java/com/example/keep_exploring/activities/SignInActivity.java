@@ -71,6 +71,7 @@ public class SignInActivity extends AppCompatActivity {
                   public void successReq(Object response) {
                       User user = (User) response;
                       toast("Đăng nhâp thành công");
+                      startActivity(new Intent(SignInActivity.this, MainActivity.class));
                   }
               });
           }
@@ -146,6 +147,8 @@ public class SignInActivity extends AppCompatActivity {
 //        dialog.show();
 //
 //    }
+
+
     private void runtimePermission() {
         Dexter.withContext(this).withPermissions(
                 Manifest.permission.INTERNET,

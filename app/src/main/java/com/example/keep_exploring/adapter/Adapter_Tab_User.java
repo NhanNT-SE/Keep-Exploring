@@ -16,11 +16,11 @@ public class Adapter_Tab_User extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             case 0:
-                return new Fragment_PostList();
-            case 1:
                 return new Fragment_UserInfo();
+            case 1:
+                return new Fragment_PostList();
         }
         return null;
     }

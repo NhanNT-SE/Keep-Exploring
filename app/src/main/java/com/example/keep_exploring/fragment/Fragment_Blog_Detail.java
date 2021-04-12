@@ -61,7 +61,7 @@ public class Fragment_Blog_Detail extends Fragment {
 
     private void initView() {
         Bundle bundle = getArguments();
-        post = (Post) bundle.getSerializable(Adapter_LV_PostUser.POST);
+//        post = (Post) bundle.getSerializable(Adapter_LV_PostUser.POST);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         tvEmail = (TextView) view.findViewById(R.id.fDetail_tvEmail);
         tvPubDate = (TextView) view.findViewById(R.id.fDetail_tvPubDate);

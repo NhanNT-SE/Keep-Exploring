@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_User;
 import com.example.keep_exploring.R;
 
 import com.example.keep_exploring.model.Feedback;
@@ -52,7 +53,7 @@ public class Fragment_UserInfo extends Fragment {
     private TextView tvName, tvEmail, tvID, tvPhone, tvBOD, tvAddress;
     private ImageView imgAvatar;
     private CircleImageView imgAvatarUser;
-
+    private DAO_User dao_user;
     private User update;
     private FirebaseUser currentUser;
     private Dialog spotDialog;
@@ -70,7 +71,13 @@ public class Fragment_UserInfo extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user_infor, container, false);
         initView();
+        showInfo();
         return view;
+    }
+
+    private void showInfo() {
+        dao_user = new DAO_User(getContext());
+        dao_user.getMyProfile();
     }
 
     private void initView() {
@@ -94,40 +101,36 @@ public class Fragment_UserInfo extends Fragment {
                 dialogEdit();
             }
         });
-        btnFeedBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogFeedback();
-            }
-        });
+
+
     }
 
-    private void dialogFeedback(){
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_feedback);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText etFeedback = (EditText) dialog.findViewById(R.id.dAddFeedback_etFeedback);
-        ImageView imgPost = (ImageView) dialog.findViewById(R.id.dAddFeedback_imgPost);
-        final Feedback feedback = new Feedback();
-        imgPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (etFeedback.getText().toString().isEmpty()){
-                    toast("Add your feedback");
-                }else {
-                    feedback.setContentFeedBack(etFeedback.getText().toString());
-                    feedback.setStringPubDate(stringPubDate());
-                    feedback.setLongPubDate(longPubDate());
-                    feedback.setEmailUser(currentUser.getEmail());
-                    feedback.setUriAvatarUser(String.valueOf(currentUser.getPhotoUrl()));
-                    feedback.setIdUser(currentUser.getUid());
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        dialog.show();
-    }
+//    private void dialogFeedback(){
+//        final Dialog dialog = new Dialog(getActivity());
+//        dialog.setContentView(R.layout.dialog_add_feedback);
+//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        final EditText etFeedback = (EditText) dialog.findViewById(R.id.dAddFeedback_etFeedback);
+//        ImageView imgPost = (ImageView) dialog.findViewById(R.id.dAddFeedback_imgPost);
+//        final Feedback feedback = new Feedback();
+//        imgPost.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (etFeedback.getText().toString().isEmpty()){
+//                    toast("Add your feedback");
+//                }else {
+//                    feedback.setContentFeedBack(etFeedback.getText().toString());
+//                    feedback.setStringPubDate(stringPubDate());
+//                    feedback.setLongPubDate(longPubDate());
+//                    feedback.setEmailUser(currentUser.getEmail());
+//                    feedback.setUriAvatarUser(String.valueOf(currentUser.getPhotoUrl()));
+//                    feedback.setIdUser(currentUser.getUid());
+//                    dialog.dismiss();
+//                }
+//            }
+//        });
+//
+//        dialog.show();
+//    }
 
     private void dialogEdit() {
         final Dialog dialog = new Dialog(getActivity());
@@ -139,7 +142,7 @@ public class Fragment_UserInfo extends Fragment {
         imgAvatarUser = (CircleImageView) dialog.findViewById(R.id.dEditInfo_imgAvatar);
         etName = (EditText) dialog.findViewById(R.id.dEditInfo_etName);
         tvEmail = (TextView) dialog.findViewById(R.id.dEditInfo_tvEmail);
-        etPass = (EditText) dialog.findViewById(R.id.dEditInfo_etPass);
+        etPass = (EditText)      dialog.findViewById(R.id.dEditInfo_etPass);
         etDOB = (EditText) dialog.findViewById(R.id.dEditInfo_etDOB);
         etPhone = (EditText) dialog.findViewById(R.id.dEditInfo_etPhone);
         etAddress = (EditText) dialog.findViewById(R.id.dEditInfo_etAddress);
@@ -154,7 +157,6 @@ public class Fragment_UserInfo extends Fragment {
                 datePicker(etDOB);
             }
         });
-
 
 
         imgAvatarUser.setOnClickListener(new View.OnClickListener() {
@@ -187,11 +189,10 @@ public class Fragment_UserInfo extends Fragment {
         });
 
 
-
         dialog.show();
     }
 
-    private void updateInfo( final String name, final String pass){
+    private void updateInfo(final String name, final String pass) {
         String uID = currentUser.getUid();
         storageReference = FirebaseStorage.getInstance()
                 .getReference().child("AvatarUser/" + uID);
@@ -213,7 +214,7 @@ public class Fragment_UserInfo extends Fragment {
                 storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        editInfo(name,pass,uri);
+                        editInfo(name, pass, uri);
 
                     }
                 });
@@ -221,7 +222,7 @@ public class Fragment_UserInfo extends Fragment {
         });
     }
 
-    private void editInfo(final String name , final String pass, final Uri uriImage ){
+    private void editInfo(final String name, final String pass, final Uri uriImage) {
         UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                 .setDisplayName(name)
                 .setPhotoUri(uriImage)
@@ -233,10 +234,10 @@ public class Fragment_UserInfo extends Fragment {
                         currentUser.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     toast("Your account has been successfully updated!");
                                     spotDialog.dismiss();
-                                }else {
+                                } else {
                                     toast("Error");
                                     spotDialog.dismiss();
                                 }
@@ -247,7 +248,8 @@ public class Fragment_UserInfo extends Fragment {
                 });
 
     }
-    private void datePicker(final EditText et){
+
+    private void datePicker(final EditText et) {
         final Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DATE);
         int month = calendar.get(Calendar.MONTH);
@@ -256,28 +258,32 @@ public class Fragment_UserInfo extends Fragment {
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    calendar.set(year,month,dayOfMonth);
-                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                    et.setText(format.format(calendar.getTime()));
+                calendar.set(year, month, dayOfMonth);
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                et.setText(format.format(calendar.getTime()));
             }
-        },year,month,day);
+        }, year, month, day);
 
         dialog.show();
     }
+
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
-    private String stringPubDate(){
+
+    private String stringPubDate() {
         String date;
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         date = format.format(calendar.getTime());
         return date;
     }
-    private long longPubDate(){
+
+    private long longPubDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 5 && data != null) {

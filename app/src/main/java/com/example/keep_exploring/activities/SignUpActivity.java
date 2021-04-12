@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.api.Retrofit_config;
-import com.example.keep_exploring.api.UserApi;
+import com.example.keep_exploring.api.Api_User;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.model.User;
@@ -33,7 +33,7 @@ public class SignUpActivity extends AppCompatActivity {
     private CircleImageView imgAvatar;
     private Button btnSignUp;
     private AlertDialog dialog;
-    private UserApi userApi;
+    private Api_User apiUser;
     private String realPath= "";
     private static final int PICK_IMAGE_CODE = 1;
     private Helper_Image helper_image;
@@ -44,7 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setTitle("SIGN UP");
-        userApi = Retrofit_config.retrofit.create(UserApi.class);
+        apiUser = Retrofit_config.retrofit.create(Api_User.class);
         helper_image = new Helper_Image(this);
         dao_auth = new DAO_Auth(this);
         initView();
@@ -86,6 +86,8 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void successReq(Object response) {
                         User user = (User) response;
+                        toast("Tạo tài khoản thành công!");
+                        startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
                         log(user.toString());
                     }
 
