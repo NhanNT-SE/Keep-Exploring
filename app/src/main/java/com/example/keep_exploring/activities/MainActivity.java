@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,14 +13,12 @@ import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Places;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ramotion.circlemenu.CircleMenuView;
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
         circleMenuView = findViewById(R.id.main_circleMenu);
         fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
-        replaceFragment(new Fragment_AddPost());
 
     }
 
@@ -63,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
-
     }
 
     private void handlerEvent() {
@@ -97,16 +92,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 switch (buttonIndex) {
                     case 0:
                         view.setVisibility(View.GONE);
-                        toast("Food");
+                        toast("add Blog");
                         break;
                     case 1:
                         view.setVisibility(View.GONE);
-                        toast("Hotel");
+                        toast("add post");
                         break;
-                    case 2:
-                        view.setVisibility(View.GONE);
-                        toast("Check in");
-                        break;
+
                 }
             }
 
@@ -119,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideCircleMenu();
-                popupMenu();
+                showCircleMenu();
             }
         });
         hideCircleMenu();
@@ -142,25 +133,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    private void popupMenu() {
-        PopupMenu popup = new PopupMenu(MainActivity.this, fab);
-        popup.getMenuInflater().inflate(R.menu.menu_popup_fab, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.menu_popup_fab_post) {
-                    toast("Add Post");
-                }
-                if (item.getItemId() == R.id.menu_popup_fab_blog) {
-                    toast("Add Blog");
-                }
-                return true;
-            }
-        });
-
-        popup.show();
-
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -171,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 toast("Home");
                 break;
             case R.id.menu_bottom_post:
-                showCircleMenu();
+                hideCircleMenu();
                 break;
             case R.id.menu_bottom_blog:
                 hideCircleMenu();
@@ -201,6 +174,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         circleMenuView.close(false);
         circleMenuView.setVisibility(View.INVISIBLE);
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return (true);
+        }
+        return (super.onOptionsItemSelected(item));
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+
 
     private void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

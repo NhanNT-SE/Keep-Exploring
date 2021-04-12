@@ -69,8 +69,9 @@ public class TestUI extends AppCompatActivity implements BottomNavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideCircleMenu();
-                popupMenu();
+//                hideCircleMenu();
+//                popupMenu();
+                showCircleMenu();
             }
         });
 
@@ -107,7 +108,7 @@ public class TestUI extends AppCompatActivity implements BottomNavigationView.On
                 Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_bottom_post:
-                showCircleMenu();
+                hideCircleMenu();
                 break;
             case R.id.menu_bottom_blog:
                 hideCircleMenu();

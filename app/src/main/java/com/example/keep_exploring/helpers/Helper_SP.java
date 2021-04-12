@@ -77,4 +77,17 @@ public class Helper_SP {
         String provincesString = sharedPreferences.getString("province_list", null);
         return new ArrayList<String>(Arrays.asList(provincesString.split(",")));
     }
+
+    public void setCurrentCategory(String category) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_category", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("category", category);
+        editor.apply();
+    }
+
+    public String getCurrentCategory() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_category", Context.MODE_PRIVATE);
+        String category = sharedPreferences.getString("category", null);
+        return category;
+    }
 }
