@@ -46,11 +46,11 @@ public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUse
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Post post = postList.get(position);
 
-        holder.tvUserName.setText(post.getOwner().getDisplayName());
-        holder.tvTitle.setText(post.getTitle());
-        holder.tvPubDate.setText(post.getCreated_on());
-        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
-        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
+//        holder.tvUserName.setText(post.getOwner().getDisplayName());
+//        holder.tvTitle.setText(post.getTitle());
+//        holder.tvPubDate.setText(post.getCreated_on());
+//        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
+//        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
     }
 
     @Override

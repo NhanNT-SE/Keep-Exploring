@@ -2,7 +2,6 @@ package com.example.keep_exploring.adapter;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,12 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.keep_exploring.R;
-import com.example.keep_exploring.fragment.Fragment_Accommodations;
-import com.example.keep_exploring.fragment.Fragment_AddBlog;
-import com.example.keep_exploring.fragment.Fragment_BeautifulPlaces;
 import com.example.keep_exploring.fragment.Fragment_Category;
-import com.example.keep_exploring.fragment.Fragment_Restaurant;
 
 
 public class Adapter_Tab_Category extends FragmentStatePagerAdapter {
@@ -28,35 +22,38 @@ public class Adapter_Tab_Category extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Log.d("log", "position: "+position);
+        Log.d("log", "position: " + position);
 
         switch (position) {
             case 0:
-                getCategory("");
+//                getCategory("");
+//                return categoryFragment;
                 Log.d("log", "position1: "+position);
                 Log.d("log", "getItem: all");
-                return categoryFragment;
+                return getCategory("");
+
 
             case 1:
-                getCategory("food");
+//                getCategory("food");
                 Log.d("log", "position1: "+position);
                 Log.d("log", "getItem: food");
 
-                return categoryFragment;
+                return getCategory("food");
             case 2:
-                getCategory("check_in");
+//                getCategory("check_in");
                 Log.d("log", "position1: "+position);
                 Log.d("log", "getItem: checkin");
+//                return categoryFragment;
+                return getCategory("check_in");
 
-                return categoryFragment;
             case 3:
-                getCategory("hotel");
+//                getCategory("hotel");
                 Log.d("log", "position1: "+position);
                 Log.d("log", "getItem: hotel");
-                return categoryFragment;
-            default:
-                return categoryFragment;
+//                return categoryFragment;
+                return getCategory("hotel");
         }
+        return null;
     }
 
     @Override
@@ -76,16 +73,16 @@ public class Adapter_Tab_Category extends FragmentStatePagerAdapter {
                 return "Check-in";
             case 3:
                 return "Accommodation";
-            default:
-                return null;
+
         }
+        return null;
     }
 
-    private void getCategory(String category) {
+    private Fragment_Category getCategory(String category) {
         categoryFragment = new Fragment_Category();
         Bundle bundle = new Bundle();
         bundle.putString("category", category);
         categoryFragment.setArguments(bundle);
-
+        return categoryFragment;
     }
 }
