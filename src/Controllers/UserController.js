@@ -32,9 +32,7 @@ const getMyProfile = async (req, res, next) => {
   try {
     const user = req.user;
     if (user) {
-      const profile = await User.findById(user._id)
-        .populate("post")
-        .populate("blog");
+      const profile = await User.findById(user._id);
       return res.status(200).send({
         data: profile,
         status: 200,
@@ -54,9 +52,7 @@ const getMyProfile = async (req, res, next) => {
 const getAnotherProfile = async (req, res, next) => {
   try {
     const { idUser } = req.params;
-    const profile = await User.findById(idUser)
-      .populate("post")
-      .populate("blog");
+    const profile = await User.findById(idUser);
 
     if (profile) {
       return res.status(200).send({
