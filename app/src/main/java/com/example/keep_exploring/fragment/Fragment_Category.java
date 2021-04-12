@@ -64,7 +64,7 @@ public class Fragment_Category extends Fragment {
             @Override
             public void successReq(Object response) {
                 List<Post> postList = (List<Post>) response;
-                log(postList.toString());
+//                log(postList.toString());
                 refreshLV(postList);
             }
 
