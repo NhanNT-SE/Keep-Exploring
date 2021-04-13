@@ -88,7 +88,6 @@ const deletePost = async (req, res, next) => {
 };
 
 const getPostListByUser = async (req, res, next) => {
-<<<<<<< HEAD
   try {
     const user = req.user;
     const { idUser } = req.params;
@@ -106,27 +105,6 @@ const getPostListByUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-=======
-	try {
-		const { idUser } = req.params;
-		const user = req.user;
-		var postList = '';
-const userFound = await User.findById(user._id);
-
-		if (idUser == user._id  || userFound.role == "admin" ) {
-			postList = await Post.find({ owner: idUser });
-		} else {
-			postList = await Post.find({ owner: idUser, status: 'done' });
-		}
-    
-		if (postList) {
-			return res.send({ data: postList, status: 200, message: '' });
-		}
-		return  res.send({ data: [], status: 201, message: 'Người dùng này chưa có bài viết' });
-	} catch (error) {
-		next(error);
-	}
->>>>>>> 37033ce73a832e5628249570a6512718cb88fa95
 };
 
 const likePost = async (req, res, next) => {
