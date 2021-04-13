@@ -25,8 +25,12 @@ const limitImgs = async (req, res) => {
 
 const upload = multer({ storage: storage });
 
+//Get Method
+router.get("/:idUser",  postController.getPostListByUser);
+
 //Post Method
 router.post("/", upload.array("image_post", 20), postController.createPost);
+
 
 //Patch Method
 router.patch("/like", postController.likePost);

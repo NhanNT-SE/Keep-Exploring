@@ -22,6 +22,10 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+//Get Method
+router.get("/:idUser",BlogController.getBlogListByUser)
+
 //Post Method
 router.post("/add", upload.single("image_blog"), BlogController.createBlog);
 

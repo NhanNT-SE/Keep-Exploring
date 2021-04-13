@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //GET Method
-router.get("/", userController.getMyProfile);
+// router.get("/", userController.getMyProfile);
 router.get("/:idUser", userController.getAnotherProfile);
 
 //PUT Method
