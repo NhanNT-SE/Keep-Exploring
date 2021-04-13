@@ -29,43 +29,50 @@ const changePass = async (req, res, next) => {
 };
 
 const getMyProfile = async (req, res, next) => {
-  try {
-    const user = req.user;
-    if (user) {
-      const profile = await User.findById(user._id);
-      return res.status(200).send({
-        data: profile,
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
-    }
+	try {
+		const user = req.user;
+		if (user) {
+			const profile = await User.findById(user._id);
+			return res.status(200).send({
+				data: profile,
+				status: 200,
+				message: 'Lấy dữ liệu thành công',
+			});
+		}
 
-    return handlerCustomError(
-      201,
-      "Không tồn tại người dùng này trong hệ thống"
-    );
-  } catch (error) {
-    next(error);
-  }
+		return res.send({
+			data: [],
+			status: 201,
+			message: 'Người dùng chưa có bài viết',
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 const getAnotherProfile = async (req, res, next) => {
-  try {
-    const { idUser } = req.params;
-    const profile = await User.findById(idUser);
+	try {
+		const { idUser } = req.params;
+		const user = req.user;
+		var profile = '';
+		if (idUser == user) {
+			profile = await User.findById(idUser);
+		} else {
+			profile = await User.find({_id:idUser})
+		}
 
-    if (profile) {
-      return res.status(200).send({
-        data: profile,
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
-    }
+		if (profile) {
+			return res.status(200).send({
+				data: profile,
+				status: 200,
+				message: 'Lấy dữ liệu thành công',
+			});
+		}
 
-    return handlerCustomError(201, "Người dùng không tồn tại hoặc đã bị xóa");
-  } catch (error) {
-    next(error);
-  }
+		return handlerCustomError(201, 'Người dùng không tồn tại hoặc đã bị xóa');
+	} catch (error) {
+		next(error);
+	}
 };
 
 const updateProfile = async (req, res, next) => {
