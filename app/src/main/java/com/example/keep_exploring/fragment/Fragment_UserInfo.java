@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import com.example.keep_exploring.DAO.DAO_User;
 import com.example.keep_exploring.R;
 
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.model.Feedback;
 import com.example.keep_exploring.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -77,7 +79,17 @@ public class Fragment_UserInfo extends Fragment {
 
     private void showInfo() {
         dao_user = new DAO_User(getContext());
-        dao_user.getMyProfile();
+        dao_user.getMyProfile(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                Log.d("log", "successReq: "+response);
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
     }
 
     private void initView() {

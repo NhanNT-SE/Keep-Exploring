@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.fragment.Fragment_Category;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.menu_bottom_home:
                 hideCircleMenu();
+                replaceFragment(new Fragment_Category());
                 toast("Home");
                 break;
             case R.id.menu_bottom_post:

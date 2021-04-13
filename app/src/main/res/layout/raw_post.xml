@@ -32,13 +32,13 @@
                     android:id="@+id/raw_post_tvUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
                     android:layout_marginLeft="3dp"
-                    android:textSize="15dp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
+                    android:layout_marginTop="15dp"
                     android:layout_toRightOf="@+id/raw_post_imgAvatarUser"
-                    android:text="Nguyễn Trọng Nhân" />
+                    android:text="Nguyễn Trọng Nhân"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/raw_post_tvPubDate"

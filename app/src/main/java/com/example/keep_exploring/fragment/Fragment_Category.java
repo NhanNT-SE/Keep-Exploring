@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.keep_exploring.DAO.DAO_Post;
@@ -29,43 +30,71 @@ public class Fragment_Category extends Fragment {
     private Adapter_LV_PostUser adapter_lv_post;
     private DAO_Post dao_post;
     private String category;
-    private List<Post> listPost;
+    private List<Post> listPost = new ArrayList<>();
     private TextView tvNothing;
+    private Button btnAll, btnFood, btnCheckin, btnHotel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment__category, container, false);
         init();
-        showPost();
-        // Inflate the layout for this fragment
+        showPost("");
         return view;
     }
 
     private void init() {
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
+        btnAll = (Button) view.findViewById(R.id.fCategory_btnAll);
+        btnFood = (Button) view.findViewById(R.id.fCategory_btnFood);
+        btnCheckin = (Button) view.findViewById(R.id.fCategory_btnCheckin);
+        btnHotel = (Button) view.findViewById(R.id.fCategory_btnHotel);
 
-        //get Category
-        Bundle bundle = getArguments();
-        category = bundle.getString("category");
-        log("category: " + category);
-        //setup RecycleView
+        //RecycleView config
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-
         rv_PostList.setLayoutManager(layoutManager);
         rv_PostList.addItemDecoration(decoration);
+
+        btnAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPost("");
+            }
+        });
+
+        btnFood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPost("food");
+            }
+        });
+
+        btnCheckin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPost("check_in");
+            }
+        });
+
+        btnHotel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPost("hotel");
+            }
+        });
+
+
     }
 
-    private void showPost() {
+    private void showPost(String category) {
         dao_post = new DAO_Post(view.getContext());
         dao_post.getPostByCategory(category, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                List<Post> postList = (List<Post>) response;
-//                log(postList.toString());
-                refreshLV(postList);
+                List<Post> postList1 = (List<Post>) response;
+                refreshLV(postList1);
             }
 
             @Override
@@ -76,9 +105,8 @@ public class Fragment_Category extends Fragment {
     }
 
     private void refreshLV(List<Post> postList) {
-        listPost = new ArrayList<>(postList);
+        listPost = postList;
         adapter_lv_post = new Adapter_LV_PostUser(getContext(), listPost);
-        log(listPost.toString());
         rv_PostList.setAdapter(adapter_lv_post);
         if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
