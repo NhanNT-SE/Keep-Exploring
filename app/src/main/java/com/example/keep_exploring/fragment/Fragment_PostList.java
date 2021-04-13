@@ -33,14 +33,12 @@ public class Fragment_PostList extends Fragment {
     private TextView tvNothing;
     private Adapter_LV_PostUser adapterPost;
     private List<Post> listPost;
-
     private FirebaseUser currentUser;
     private int index = -1;
 
     public Fragment_PostList() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

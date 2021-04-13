@@ -1,6 +1,7 @@
 package com.example.keep_exploring.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,6 @@ public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUse
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.raw_post, parent, false);
-
-
         return new ViewHolder(view);
     }
 
@@ -46,11 +45,12 @@ public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUse
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Post post = postList.get(position);
 
-//        holder.tvUserName.setText(post.getOwner().getDisplayName());
-//        holder.tvTitle.setText(post.getTitle());
-//        holder.tvPubDate.setText(post.getCreated_on());
-//        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
-//        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
+        holder.tvUserName.setText(post.getOwner().getDisplayName());
+        holder.tvTitle.setText(post.getTitle());
+        String dateFormated = post.getCreated_on().substring(0,10);
+        holder.tvPubDate.setText(dateFormated);
+        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
+        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUse
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            civUser = (CircleImageView) itemView.findViewById(R.id.raw_user_imgAvatar);
-            tvUserName = (TextView) itemView.findViewById(R.id.raw_user_tvName);
+            civUser = (CircleImageView) itemView.findViewById(R.id.raw_post_imgAvatarUser);
+            tvUserName = (TextView) itemView.findViewById(R.id.raw_post_tvUser);
             tvPubDate = (TextView) itemView.findViewById(R.id.raw_post_tvPubDate);
             tvTitle = (TextView) itemView.findViewById(R.id.raw_post_tvTitle);
             imgPost = (ImageView) itemView.findViewById(R.id.raw_post_imgPost);
