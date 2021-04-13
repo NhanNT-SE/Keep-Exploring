@@ -16,7 +16,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_LV_PostUser;
+import com.example.keep_exploring.adapter.Adapter_RV_Post;
 
 import com.example.keep_exploring.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +31,7 @@ public class Fragment_PostList extends Fragment {
     private View view;
     private ListView lvPost;
     private TextView tvNothing;
-    private Adapter_LV_PostUser adapterPost;
+    private Adapter_RV_Post adapterPost;
     private List<Post> listPost;
     private FirebaseUser currentUser;
     private int index = -1;

@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_LV_PostUser;
+import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.model.Post;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class Fragment_Category extends Fragment {
     private View view;
     private RecyclerView rv_PostList;
-    private Adapter_LV_PostUser adapter_lv_post;
+    private Adapter_RV_Post adapter_lv_post;
     private DAO_Post dao_post;
     private String category;
     private List<Post> listPost = new ArrayList<>();
@@ -37,7 +37,7 @@ public class Fragment_Category extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment__category, container, false);
+        view = inflater.inflate(R.layout.fragment_category, container, false);
         init();
         showPost("");
         return view;
@@ -106,7 +106,7 @@ public class Fragment_Category extends Fragment {
 
     private void refreshLV(List<Post> postList) {
         listPost = postList;
-        adapter_lv_post = new Adapter_LV_PostUser(getContext(), listPost);
+        adapter_lv_post = new Adapter_RV_Post(getContext(), listPost);
         rv_PostList.setAdapter(adapter_lv_post);
         if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);

@@ -53,13 +53,13 @@ public class Adapter_LV_Comment extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.raw_comment,null);
+        convertView = inflater.inflate(R.layout.row_comment,null);
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        TextView tvEmail = (TextView) convertView.findViewById(R.id.raw_comment_tvEmail);
-        TextView tvPubDate = (TextView) convertView.findViewById(R.id.raw_comment_tvPubDate);
-        TextView tvComment = (TextView) convertView.findViewById(R.id.raw_comment_tvComment);
-        CircleImageView imgAvatar = (CircleImageView) convertView.findViewById(R.id.raw_comment_imgAvatar);
-        final ImageView imgMore = (ImageView) convertView.findViewById(R.id.raw_comment_imgMore);
+        TextView tvEmail = (TextView) convertView.findViewById(R.id.row_comment_tvEmail);
+        TextView tvPubDate = (TextView) convertView.findViewById(R.id.row_comment_tvPubDate);
+        TextView tvComment = (TextView) convertView.findViewById(R.id.row_comment_tvComment);
+        CircleImageView imgAvatar = (CircleImageView) convertView.findViewById(R.id.row_comment_imgAvatar);
+        final ImageView imgMore = (ImageView) convertView.findViewById(R.id.row_comment_imgMore);
         final Comment comment = commentList.get(position);
         tvEmail.setText(comment.getDisplayName());
         tvPubDate.setText(comment.getPubDate());

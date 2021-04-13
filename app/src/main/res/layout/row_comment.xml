@@ -6,7 +6,7 @@
     android:paddingHorizontal="5dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/raw_comment_imgAvatar"
+        android:id="@+id/row_comment_imgAvatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:civ_border_color="#FFFFFF"
@@ -18,7 +18,7 @@
         android:layout_margin="10dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@+id/raw_comment_imgAvatar"
+        android:layout_toRightOf="@+id/row_comment_imgAvatar"
         android:backgroundTint="#EBEBEC"
         app:cardCornerRadius="10dp"
        >
@@ -35,7 +35,7 @@
                 android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/raw_comment_tvEmail"
+                android:id="@+id/row_comment_tvEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -45,7 +45,7 @@
                 android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/raw_comment_imgMore"
+                    android:id="@+id/row_comment_imgMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -55,17 +55,17 @@
 
 
             <TextView
-                android:id="@+id/raw_comment_tvComment"
+                android:id="@+id/row_comment_tvComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/raw_comment_tvPubDate"
+                android:layout_below="@+id/row_comment_tvPubDate"
                 android:layout_marginHorizontal="5dp"
                 android:hint="Comment 1 2 4 5  6 7"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/raw_comment_tvPubDate"
+                android:id="@+id/row_comment_tvPubDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

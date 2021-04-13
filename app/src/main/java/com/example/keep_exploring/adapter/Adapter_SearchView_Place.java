@@ -44,8 +44,8 @@ public class Adapter_SearchView_Place extends BaseAdapter implements Filterable 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.raw_places, null);
-        TextView tvName = convertView.findViewById(R.id.raw_places_tvName);
+        convertView = inflater.inflate(R.layout.row_places, null);
+        TextView tvName = convertView.findViewById(R.id.row_places_tvName);
         final String placeName = placeList.get(position);
         tvName.setText(placeName);
 
