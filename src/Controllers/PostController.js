@@ -89,12 +89,19 @@ const deletePost = async (req, res, next) => {
 
 const getPostListByUser = async (req, res, next) => {
   try {
+    const user = req.user;
     const { idUser } = req.params;
-    const postList = await Post.find({ owner: idUser });
-    if (postList) {
-      return res.send({ data: postList, status: 200, message: "" });
+    let postList = [];
+    if (idUser === user._id) {
+      postList = await Post.find({ owner: idUser });
+    } else {
+      postList = await Post.find({ owner: idUser, status: "done" });
     }
-    return handleCustomError(201, "Người dùng này chưa có bài viết");
+    return res.send({
+      data: postList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
   } catch (error) {
     next(error);
   }

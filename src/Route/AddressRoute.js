@@ -9,7 +9,7 @@ router.post("/", addressController.createAddress);
 router.delete("/:idPost", addressController.deleteAddress);
 
 //Patch Method
-router.patch("/:idAddress", addressController.updateAddress);
+// router.patch("/:idAddress", addressController.updateAddress);
 router.patch("/", addressController.updateDistrict);
 
 module.exports = router;

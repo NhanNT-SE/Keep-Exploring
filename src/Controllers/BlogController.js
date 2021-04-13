@@ -115,6 +115,26 @@ const likeBlog = async (req, res, next) => {
     next(error);
   }
 };
+
+const getBlogListByUser = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { idUser } = req.params;
+    let blogList = [];
+    if (idUser === user._id) {
+      blogList = await Blog.find({ owner: idUser });
+    } else {
+      blogList = await Blog.find({ owner: idUser, status: "done" });
+    }
+    return res.send({
+      data: blogList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const updateBlog = async (req, res, next) => {
   try {
     const { title, created_on, detail_list } = req.body;
@@ -160,5 +180,6 @@ module.exports = {
   createBlog,
   deleteBlog,
   likeBlog,
+  getBlogListByUser,
   updateBlog,
 };
