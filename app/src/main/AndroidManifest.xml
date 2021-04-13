@@ -20,7 +20,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".TestUI">
-
         </activity>
         <activity android:name=".activities.WelcomeActivity">
 
