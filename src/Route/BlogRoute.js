@@ -24,9 +24,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 //Post Method
 router.post("/add", upload.single("image_blog"), BlogController.createBlog);
-//Patch method
-router.patch("/like", BlogController.likeBlog);
 
+//Patch method
+router.patch(
+  "/update/:idBlog",
+  upload.single("image_blog"),
+  BlogController.updateBlog
+);
+
+router.patch("/like", BlogController.likeBlog);
 //Delete Method
 router.delete("/delete/:idBlog", BlogController.deleteBlog);
 

@@ -129,7 +129,12 @@ const deleteCommentByID = async (req, res, next) => {
     if (user.role == "admin" || user._id == commentFound.idUser) {
       if (commentFound.idPost) {
         if (commentFound.img) {
-          fs.unlinkSync("src/public/images/comment/post/" + commentFound.img);
+          fs.unlink(
+            "src/public/images/comment/post/" + commentFound.img,
+            (err) => {
+              console.log(err);
+            }
+          );
         }
 
         await Post.findByIdAndUpdate(commentFound.idPost, {
@@ -139,7 +144,12 @@ const deleteCommentByID = async (req, res, next) => {
 
       if (commentFound.idBlog) {
         if (commentFound.img) {
-          fs.unlinkSync("src/public/images/comment/blog/" + commentFound.img);
+          fs.unlink(
+            "src/public/images/comment/blog/" + commentFound.img,
+            (err) => {
+              console.log(err);
+            }
+          );
         }
         await Blog.findByIdAndUpdate(commentFound.idBlog, {
           $pull: { comment: idComment },
@@ -206,8 +216,10 @@ const editCommentPost = async (req, res, next) => {
     }
 
     if (user._id != commentFound.idUser.toString()) {
-
-      return handlerCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
+      return handlerCustomError(
+        202,
+        "Bạn không có quyền chỉnh sửa comment này"
+      );
     }
 
     if (commentFound.img && deleteImg) {
