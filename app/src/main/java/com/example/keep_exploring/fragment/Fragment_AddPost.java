@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
@@ -38,8 +39,6 @@ import com.example.keep_exploring.model.ImageDisplay;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +63,7 @@ public class Fragment_AddPost extends Fragment {
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
+    private Helper_Date helper_date;
     private DAO_Address dao_address;
     private DAO_Post dao_post;
     private String categorySubmit;
@@ -108,6 +108,7 @@ public class Fragment_AddPost extends Fragment {
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
+        helper_date = new Helper_Date();
         helper_post = new Helper_Post(getContext(), additionalAddress, addressSubmit, categorySubmit);
         imagesSubmitList = new ArrayList<>();
         imageDisplayList = new ArrayList<>();
@@ -115,11 +116,11 @@ public class Fragment_AddPost extends Fragment {
     }
 
     private void handlerEvent() {
-        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
-
+        helper_common.toggleBottomNavigation(getContext(),false);
+        tvPubDate.setText(helper_date.formatDateDisplay(""));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
-        helper_common.setTransformerViewPager(viewPager);
+        helper_common.configTransformerViewPager(viewPager);
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

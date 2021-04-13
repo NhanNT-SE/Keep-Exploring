@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -67,12 +68,13 @@ public class Fragment_EditBlog extends Fragment {
     private int index = -1;
     private String imageBlog = "";
     private User user;
+    private String folder_storage;
     //    DAO & Helpers
     private DAO_Blog dao_blog;
     private Helper_Common helper_common;
     private Helper_SP helper_sp;
     private Helper_Image helper_image;
-    private String folder_storage;
+    private Helper_Date helper_date;
 
     public Fragment_EditBlog() {
         // Required empty public constructor
@@ -105,15 +107,15 @@ public class Fragment_EditBlog extends Fragment {
         helper_sp = new Helper_SP(view.getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
+        helper_date = new Helper_Date();
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
-        reloadData();
+        loadData();
     }
 
     private void handlerEvent() {
-        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
-
+        helper_common.toggleBottomNavigation(getContext(),false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
@@ -305,7 +307,7 @@ public class Fragment_EditBlog extends Fragment {
                         public void successReq(Object response) {
                             toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
                             dao_blog.deleteFolderImage(folder_storage,deleteDetailList);
-                            reloadData();
+                            loadData();
                         }
 
                         @Override
@@ -358,7 +360,7 @@ public class Fragment_EditBlog extends Fragment {
                 uploadData();
                 break;
             case R.id.menu_post_clear:
-                reloadData();
+                loadData();
                 break;
             case R.id.menu_post_delete:
                 String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
@@ -401,8 +403,8 @@ public class Fragment_EditBlog extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void reloadData() {
-        dao_blog.getBlogById("607301792f992d3c302ab66d", new Helper_Callback() {
+    private void loadData() {
+        dao_blog.getBlogById("607306c119c68e0b99291ffd", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 deleteDetailList.clear();
@@ -412,6 +414,7 @@ public class Fragment_EditBlog extends Fragment {
                 etTitle.setText(blog.getTitle());
                 idBlog = blog.get_id();
                 folder_storage = blog.getFolder_storage();
+                tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();
             }
 

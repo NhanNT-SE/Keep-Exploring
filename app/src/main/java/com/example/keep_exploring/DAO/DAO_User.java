@@ -27,7 +27,7 @@ public class DAO_User {
         this.helper_sp = new Helper_SP(context);
     }
 
-    public void getMyProfile(Helper_Callback callback, String idUser) {
+    public void getProfile(Helper_Callback callback, String idUser) {
         String accessToken = helper_sp.getAccessToken();
         Call<String> callProfile = apiUser.getProfile(accessToken,idUser);
         callProfile.enqueue(new Callback<String>() {
@@ -54,10 +54,12 @@ public class DAO_User {
                 Log.d("TAG", "onFailure: "+t.getMessage());
             }
         });
+    }
 
-
+    public void updateProfile(){
 
     }
+
     private void log(String s) {
         Log.d("log", s);
     }

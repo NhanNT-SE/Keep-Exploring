@@ -13,7 +13,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.fragment.Fragment_AddBlog;
+import com.example.keep_exploring.fragment.Fragment_AddPost;
+import com.example.keep_exploring.fragment.Fragment_BlogList;
 import com.example.keep_exploring.fragment.Fragment_Category;
+import com.example.keep_exploring.fragment.Fragment_Notification;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
@@ -93,11 +97,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 switch (buttonIndex) {
                     case 0:
                         view.setVisibility(View.GONE);
-                        toast("add Blog");
+                        replaceFragment(new Fragment_AddBlog());
                         break;
                     case 1:
                         view.setVisibility(View.GONE);
-                        toast("add post");
+                        replaceFragment(new Fragment_AddPost());
                         break;
 
                 }
@@ -139,33 +143,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_bottom_home:
-                hideCircleMenu();
-                replaceFragment(new Fragment_Category());
-                toast("Home");
-                break;
+
             case R.id.menu_bottom_post:
-                hideCircleMenu();
+                replaceFragment(new Fragment_Category());
                 break;
             case R.id.menu_bottom_blog:
-                hideCircleMenu();
-                toast("Blog");
+                replaceFragment(new Fragment_BlogList());
                 break;
             case R.id.menu_bottom_notify:
-                hideCircleMenu();
-                toast("Notification");
+                replaceFragment(new Fragment_Notification());
+                break;
+            case R.id.menu_bottom_profile:
+                replaceFragment(new Fragment_Tab_UserInfo());
                 break;
         }
         return true;
     }
 
     private void replaceFragment(Fragment fragment) {
+        hideCircleMenu();
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.main_FrameLayout, fragment)
                 .addToBackStack(null)
                 .commit();
     }
-
     private void showCircleMenu() {
         circleMenuView.setVisibility(View.VISIBLE);
         circleMenuView.open(true);
@@ -188,8 +189,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void onBackPressed() {
         super.onBackPressed();
     }
-
-
 
     private void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

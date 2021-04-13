@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog_Details;
@@ -68,6 +69,7 @@ public class Fragment_AddBlog extends Fragment {
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
+    private Helper_Date helper_date;
 
     public Fragment_AddBlog() {
         // Required empty public constructor
@@ -100,13 +102,14 @@ public class Fragment_AddBlog extends Fragment {
         helper_sp = new Helper_SP(view.getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
+        helper_date = new Helper_Date();
         blogDetailsList = new ArrayList<>();
         user = helper_sp.getUser();
     }
 
     private void handlerEvents() {
-        helper_common.hideBottomNavigation(getContext());
-        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
+        helper_common.toggleBottomNavigation(getContext(),false);
+        tvPubDate.setText(helper_date.formatDateDisplay(""));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();

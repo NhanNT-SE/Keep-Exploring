@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fragment_PostList extends Fragment {
+public class Fragment_Profile_PostList extends Fragment {
     private View view;
     private ListView lvPost;
     private TextView tvNothing;
@@ -36,14 +36,14 @@ public class Fragment_PostList extends Fragment {
     private FirebaseUser currentUser;
     private int index = -1;
 
-    public Fragment_PostList() {
+    public Fragment_Profile_PostList() {
         // Required empty public constructor
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_post_list, container, false);
+        view = inflater.inflate(R.layout.fragment_profile_post_list, container, false);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         lvPost = (ListView) view.findViewById(R.id.fPostList_lvPost);
