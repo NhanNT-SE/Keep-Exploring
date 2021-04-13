@@ -106,7 +106,7 @@ public class Fragment_AddBlog extends Fragment {
 
     private void handlerEvents() {
         helper_common.hideBottomNavigation(getContext());
-        helper_common.formatDate(tvPubDate);
+        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
@@ -368,26 +368,6 @@ public class Fragment_AddBlog extends Fragment {
         imageBlog = "";
     }
 
-    private void currentFragment(String current) {
-        if (current.equalsIgnoreCase("Restaurants")) {
-            replaceFragment(new Fragment_Restaurant());
-        } else if (current.equalsIgnoreCase("Accommodations")) {
-            replaceFragment(new Fragment_Accommodations());
-        } else if (current.equalsIgnoreCase("Beautiful Places")) {
-            replaceFragment(new Fragment_BeautifulPlaces());
-        } else {
-            replaceFragment(new Fragment_JourneyDiary());
-        }
-
-    }
-
-    private void replaceFragment(Fragment fragment) {
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_FrameLayout, fragment)
-                .commit();
-
-    }
 
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();

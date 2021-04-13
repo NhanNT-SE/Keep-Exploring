@@ -38,8 +38,6 @@ import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +46,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.RequestBody;
 
 
-public class Fragment_Edit_Post extends Fragment {
+public class Fragment_EditPost extends Fragment {
 
     private View view;
     public static final int CHOOSE_IMAGE_POST = 1;
@@ -76,7 +74,7 @@ public class Fragment_Edit_Post extends Fragment {
     private List<ImageDisplay> imageDisplayList;
     private List<String> imagesSubmitList, imageDeleteList, imageDefaultList;
 
-    public Fragment_Edit_Post() {
+    public Fragment_EditPost() {
         // Required empty public constructor
     }
 
@@ -145,7 +143,7 @@ public class Fragment_Edit_Post extends Fragment {
     }
 
     private void handlerFunction() {
-        helper_common.formatDate(tvPubDate);
+        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         helper_common.setTransformerViewPager(viewPager);

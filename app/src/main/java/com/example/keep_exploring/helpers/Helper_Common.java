@@ -70,11 +70,12 @@ public class Helper_Common {
         viewPager.setPageTransformer(compositePageTransformer);
     }
 
-    public void formatDate(TextView tv) {
+    public String formatDateDisplay(String stringDate) {
         Calendar calendar = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        tv.setText(format.format(calendar.getTime()));
+        return  format.format(calendar.getTime());
+//        tv.setText(format.format(calendar.getTime()));
     }
 
     public String getIsoDate() {
