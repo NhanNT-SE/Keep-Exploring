@@ -7,18 +7,10 @@ import com.example.keep_exploring.api.Api_User;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,33 +27,22 @@ public class DAO_User {
         this.helper_sp = new Helper_SP(context);
     }
 
-    public void getMyProfile(Helper_Callback callback) {
+    public void getMyProfile(Helper_Callback callback, String idUser) {
         String accessToken = helper_sp.getAccessToken();
-        Call<String> callProfile =apiUser.getMyProfile(accessToken);
-        Log.d("TAG", "accessToken: "+accessToken);
+        Call<String> callProfile = apiUser.getProfile(accessToken,idUser);
         callProfile.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string());
-                        log(err.getString("error"));
+                        JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
                         String msg = err.getString("message");
                         callback.failedReq(msg);
-                        log(msg);
+                        log(err.toString());
                     } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                            log(msg);
-                        } else {
-                            JSONObject jsonData = responseData.getJSONObject("data");
-                            User user = new Gson().fromJson(jsonData.toString(), User.class);
-                            log(user.toString());
-                            callback.successReq(user);
-                        }
+                        JSONObject responseData = new JSONObject(response.body()).getJSONObject("data");
+                        User user = new Gson().fromJson(responseData.toString(), User.class);
+                        callback.successReq(user);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

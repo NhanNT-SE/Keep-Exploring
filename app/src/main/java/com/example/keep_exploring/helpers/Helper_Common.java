@@ -6,11 +6,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -20,8 +18,6 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.activities.MainActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -40,11 +36,17 @@ import okhttp3.RequestBody;
 
 public class Helper_Common {
 
+    public String getBaseUrl() {
+        String URL_LOCAL = "http://10.0.2.2:3000";
+        String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
+        return URL_LOCAL;
+    }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
+
 
     @NonNull
     public RequestBody createPartFromString(String string) {

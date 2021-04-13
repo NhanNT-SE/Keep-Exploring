@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_Category;
+import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -53,13 +54,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
         circleMenuView = findViewById(R.id.main_circleMenu);
         fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
-
     }
 
     private void initVariable() {
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
+        replaceFragment(new Fragment_Tab_UserInfo());
     }
 
     private void handlerEvent() {
@@ -86,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public void onMenuOpenAnimationStart(@NonNull CircleMenuView view) {
                 super.onMenuOpenAnimationStart(view);
             }
-
             @Override
             public void onButtonClickAnimationEnd(@NonNull CircleMenuView view, int buttonIndex) {
                 super.onButtonClickAnimationStart(view, buttonIndex);
@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 }
             }
-
             @Override
             public void onMenuCloseAnimationStart(@NonNull CircleMenuView view) {
                 super.onMenuCloseAnimationStart(view);
