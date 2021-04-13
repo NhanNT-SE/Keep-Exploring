@@ -12,8 +12,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_Tab_Category;
 import com.google.android.material.tabs.TabLayout;
-
-
 public class Fragment_TabCategory extends Fragment {
     private View view;
     private TabLayout tab;

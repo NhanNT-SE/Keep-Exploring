@@ -1,5 +1,6 @@
 package com.example.keep_exploring.api;
 
+import com.example.keep_exploring.helpers.Helper_Common;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,12 +16,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class Retrofit_config {
-    private static final String URL_LOCAL ="http://192.168.0.104:3000";
-    private static final String URL_GLOBAL ="http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
+    private static final Helper_Common helper_common = new Helper_Common();
     static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(360, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -37,7 +37,7 @@ public class Retrofit_config {
             .setLenient()
             .create();
     public static Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(URL_GLOBAL)
+            .baseUrl(helper_common.getBaseUrl())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
