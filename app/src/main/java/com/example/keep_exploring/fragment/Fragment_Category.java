@@ -1,12 +1,6 @@
 package com.example.keep_exploring.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
 
 import java.util.ArrayList;
@@ -27,8 +25,9 @@ import java.util.List;
 public class Fragment_Category extends Fragment {
     private View view;
     private RecyclerView rv_PostList;
-    private Adapter_RV_Post adapter_lv_post;
+    private Adapter_RV_Post adapter_rv_post;
     private DAO_Post dao_post;
+    private Helper_Common helper_common;
     private String category;
     private List<Post> listPost = new ArrayList<>();
     private TextView tvNothing;
@@ -44,19 +43,14 @@ public class Fragment_Category extends Fragment {
     }
 
     private void init() {
+        helper_common = new Helper_Common();
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
         btnAll = (Button) view.findViewById(R.id.fCategory_btnAll);
         btnFood = (Button) view.findViewById(R.id.fCategory_btnFood);
         btnCheckin = (Button) view.findViewById(R.id.fCategory_btnCheckin);
         btnHotel = (Button) view.findViewById(R.id.fCategory_btnHotel);
-
-        //RecycleView config
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        rv_PostList.setLayoutManager(layoutManager);
-        rv_PostList.addItemDecoration(decoration);
-
+        helper_common.configRecycleView(getContext(), rv_PostList);
         btnAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,8 +100,8 @@ public class Fragment_Category extends Fragment {
 
     private void refreshLV(List<Post> postList) {
         listPost = postList;
-        adapter_lv_post = new Adapter_RV_Post(getContext(), listPost);
-        rv_PostList.setAdapter(adapter_lv_post);
+        adapter_rv_post = new Adapter_RV_Post(getContext(), listPost);
+        rv_PostList.setAdapter(adapter_rv_post);
         if (postList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
         } else {

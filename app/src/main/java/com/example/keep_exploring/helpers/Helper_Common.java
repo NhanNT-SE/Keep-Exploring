@@ -8,10 +8,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
@@ -25,10 +26,12 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -53,7 +56,7 @@ public class Helper_Common {
         return RequestBody.create(MediaType.parse("text/plain"), string);
     }
 
-    public void setTransformerViewPager(ViewPager2 viewPager) {
+    public void configTransformerViewPager(ViewPager2 viewPager) {
         viewPager.setClipToPadding(false);
         viewPager.setClipChildren(false);
         viewPager.setOffscreenPageLimit(3);
@@ -71,11 +74,24 @@ public class Helper_Common {
     }
 
     public String formatDateDisplay(String stringDate) {
-        Calendar calendar = Calendar.getInstance();
+        String dateFormat;
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        return  format.format(calendar.getTime());
-//        tv.setText(format.format(calendar.getTime()));
+        if (stringDate.isEmpty()) {
+            Calendar calendar = Calendar.getInstance();
+            dateFormat = format.format(calendar.getTime());
+        } else {
+            Date date = Date.from(Instant.parse(stringDate));
+            dateFormat = format.format(date);
+        }
+        return dateFormat;
+    }
+
+    public void configRecycleView(Context context, RecyclerView recyclerView) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration decoration = new DividerItemDecoration(context, layoutManager.getOrientation());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(decoration);
     }
 
     public String getIsoDate() {
@@ -86,10 +102,12 @@ public class Helper_Common {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis();
     }
-    public void hideBottomNavigation(Context context){
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) ((Activity)context).findViewById(R.id.main_coordinatorLayout);
+
+    public void hideBottomNavigation(Context context) {
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) ((Activity) context).findViewById(R.id.main_coordinatorLayout);
         coordinatorLayout.setVisibility(View.GONE);
     }
+
     public void runtimePermission(Context context) {
         Dexter.withContext(context)
                 .withPermissions(
