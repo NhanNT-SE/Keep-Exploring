@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +24,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
     private Context context;
     private List<Post> postList;
     private Helper_Common helper_common = new Helper_Common();
-
+    private Helper_Date helper_date = new Helper_Date();
     public Adapter_RV_Post(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
@@ -43,7 +44,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
         Post post = postList.get(position);
         holder.tvUserName.setText(post.getOwner().getDisplayName());
         holder.tvTitle.setText(post.getTitle());
-        holder.tvPubDate.setText(helper_common.formatDateDisplay(post.getCreated_on()));
+        holder.tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
         Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
     }

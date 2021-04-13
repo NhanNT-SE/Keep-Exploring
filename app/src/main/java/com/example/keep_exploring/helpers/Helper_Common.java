@@ -27,9 +27,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -73,19 +70,6 @@ public class Helper_Common {
         viewPager.setPageTransformer(compositePageTransformer);
     }
 
-    public String formatDateDisplay(String stringDate) {
-        String dateFormat;
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        if (stringDate.isEmpty()) {
-            Calendar calendar = Calendar.getInstance();
-            dateFormat = format.format(calendar.getTime());
-        } else {
-            Date date = Date.from(Instant.parse(stringDate));
-            dateFormat = format.format(date);
-        }
-        return dateFormat;
-    }
 
     public void configRecycleView(Context context, RecyclerView recyclerView) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
@@ -94,18 +78,16 @@ public class Helper_Common {
         recyclerView.addItemDecoration(decoration);
     }
 
-    public String getIsoDate() {
-        return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
-    }
 
-    public long getMillisTime() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getTimeInMillis();
-    }
 
-    public void hideBottomNavigation(Context context) {
+
+    public void toggleBottomNavigation(Context context, boolean isIsShow) {
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) ((Activity) context).findViewById(R.id.main_coordinatorLayout);
-        coordinatorLayout.setVisibility(View.GONE);
+        if (isIsShow) {
+            coordinatorLayout.setVisibility(View.VISIBLE);
+        } else {
+            coordinatorLayout.setVisibility(View.GONE);
+        }
     }
 
     public void runtimePermission(Context context) {

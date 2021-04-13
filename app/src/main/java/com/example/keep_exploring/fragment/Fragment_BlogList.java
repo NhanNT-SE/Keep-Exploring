@@ -60,7 +60,6 @@ public class Fragment_BlogList extends Fragment {
 
     private void initView() {
         user = FirebaseAuth.getInstance().getCurrentUser();
-
         tvTitle = (TextView) view.findViewById(R.id.fJDiary_tvTitle);
         tvNothing = (TextView) view.findViewById(R.id.fJDiary_tvNothing);
         fbaAdd = (FloatingActionButton) view.findViewById(R.id.fJDiary_fabAddPost);

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".fragment.Fragment_UserInfo"
+    tools:context=".fragment.Fragment_Profile_BlogList"
     android:orientation="vertical"
     android:paddingHorizontal="3dp"
     android:layout_width="match_parent"

@@ -28,6 +28,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
@@ -58,6 +59,7 @@ public class Fragment_EditPost extends Fragment {
     private Helper_SP helper_sp;
     private Helper_Image helper_image;
     private Helper_Post helper_post;
+    private Helper_Date helper_date;
     //  VIEW
     private ViewPager2 viewPager;
     private EditText etTitle, etDescription;
@@ -85,7 +87,7 @@ public class Fragment_EditPost extends Fragment {
         view = inflater.inflate(R.layout.fragment_edit_post, container, false);
         initView();
         initVariable();
-        handlerFunction();
+        handlerEvent();
         return view;
     }
 
@@ -107,43 +109,18 @@ public class Fragment_EditPost extends Fragment {
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
         helper_sp = new Helper_SP(getContext());
+        helper_date = new Helper_Date();
         helper_post = new Helper_Post(getContext(), additionalAddress, addressSubmit, categorySubmit);
         imagesSubmitList = new ArrayList<>();
         imageDeleteList = new ArrayList<>();
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-
-        dao_post.getPostById("606be0b4ef85ad3828e19b9e", new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                Post post = (Post) response;
-                List<String> imageList = post.getImgs();
-                int sizeList = imageList.size();
-                for (int i = 0; i < sizeList; i++) {
-                    ImageDisplay imageDisplay = new ImageDisplay();
-                    imageDisplay.setImageString(imageList.get(i));
-                    imageDisplayList.add(imageDisplay);
-                    imageDefaultList.add(imageDisplay.getImageString());
-                }
-                tvCategory.setText(post.getCategory());
-                etTitle.setText(post.getTitle());
-                etDescription.setText(post.getDesc());
-                ratingBar.setRating(post.getRating());
-                tvAddress.setText(post.getAddress());
-                idPost = post.get_id();
-                refreshViewPager();
-            }
-
-            @Override
-            public void failedReq(String msg) {
-
-            }
-        });
+        loadData();
     }
 
-    private void handlerFunction() {
-        tvPubDate.setText(helper_common.formatDateDisplay(tvPubDate.getText().toString()));
+    private void handlerEvent() {
+        helper_common.toggleBottomNavigation(getContext(),false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         helper_common.configTransformerViewPager(viewPager);
@@ -265,7 +242,7 @@ public class Fragment_EditPost extends Fragment {
                 RequestBody bTitle = helper_common.createPartFromString(titleSubmit);
                 RequestBody bDescription = helper_common.createPartFromString(descriptionSubmit);
                 RequestBody bRating = helper_common.createPartFromString(String.valueOf(ratingSubmit));
-                RequestBody bCreated_on = helper_common.createPartFromString(helper_common.getIsoDate());
+                RequestBody bCreated_on = helper_common.createPartFromString(helper_date.getIsoDate());
                 RequestBody bImageDelete = helper_common.createPartFromString(String.join(",",imageDeleteList));
                 HashMap<String, RequestBody> map = new HashMap<>();
                 map.put("address", bAddress);
@@ -292,7 +269,36 @@ public class Fragment_EditPost extends Fragment {
         }
 
     }
+    private void loadData(){
+        dao_post.getPostById("6045e732ed9eac2464ee2ad8", new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                Post post = (Post) response;
+                List<String> imageList = post.getImgs();
+                int sizeList = imageList.size();
+                for (int i = 0; i < sizeList; i++) {
+                    ImageDisplay imageDisplay = new ImageDisplay();
+                    imageDisplay.setImageString(imageList.get(i));
+                    imageDisplayList.add(imageDisplay);
+                    imageDefaultList.add(imageDisplay.getImageString());
+                }
+                tvCategory.setText(post.getCategory());
+                etTitle.setText(post.getTitle());
+                etDescription.setText(post.getDesc());
+                ratingBar.setRating(post.getRating());
+                tvAddress.setText(post.getAddress());
+                idPost = post.get_id();
+                tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
+                refreshViewPager();
+            }
 
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+
+    }
     private void refreshViewPager() {
         Adapter_RV_Images_Post adapter_rv_images_post = new Adapter_RV_Images_Post(imageDisplayList, imageDeleteList);
         viewPager.setAdapter(adapter_rv_images_post);

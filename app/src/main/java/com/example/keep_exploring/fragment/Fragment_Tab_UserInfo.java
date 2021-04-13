@@ -1,5 +1,6 @@
 package com.example.keep_exploring.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -26,6 +27,8 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_Tab_User;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.tabs.TabLayout;
@@ -33,9 +36,11 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,10 +59,13 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private DAO_User dao_user;
     private Helper_Common helper_common;
     private Helper_SP helper_sp;
+    private Helper_Date helper_date;
+    private Helper_Image helper_image;
     //Variable
     private User user;
     private String gender;
     private String idUser;
+    private String imageUser;
 
     public Fragment_Tab_UserInfo() {
         // Required empty public constructor
@@ -76,6 +84,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
         initView();
         initVariable();
         handlerEvent();
+
         return view;
     }
 
@@ -96,10 +105,12 @@ public class Fragment_Tab_UserInfo extends Fragment {
         user = new User();
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(getContext());
+        helper_date = new Helper_Date();
+        helper_image = new Helper_Image(getContext());
         viewPager.setAdapter(new Adapter_Tab_User(getChildFragmentManager(), 1));
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(1).setIcon(R.drawable.post_list);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_people_black_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_post_black);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_blog_black);
         Bundle bundle = getArguments();
         if (bundle != null) {
             idUser = bundle.getString("idUser");
@@ -109,19 +120,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
     }
 
     private void handlerEvent() {
+        helper_common.toggleBottomNavigation(getContext(), true);
         dao_user = new DAO_User(getContext());
-        dao_user.getMyProfile(new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                user = (User) response;
-                showInfo();
-//                dialogEdit();
-            }
-
-            @Override
-            public void failedReq(String msg) {
-            }
-        }, idUser);
         tvUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +130,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 }
             }
         });
+        loadData();
     }
 
     private void showInfo() {
@@ -243,7 +244,34 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select picture"), 5);
             }
         });
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String birthDay = etBirthday.getText().toString();
+                String address = etAddress.getText().toString();
+                String displayName = etName.getText().toString();
+                if (displayName == null || displayName.isEmpty()) {
+                    toast("Tên hiển thị là bắt buộc");
+                } else {
+                    HashMap<String, RequestBody> map = new HashMap<>();
+                    RequestBody bGender = helper_common.createPartFromString(gender);
+                    RequestBody bDisplayName = helper_common.createPartFromString(displayName);
+                    if (birthDay != null) {
+                        String birthDaySubmit = helper_date.convertStringToIsoDate(birthDay);
+                        RequestBody bBirthDay = helper_common.createPartFromString(birthDaySubmit);
+                        map.put("bod", bBirthDay);
+                    }
+                    if (address != null) {
+                        RequestBody bAddress = helper_common.createPartFromString(address);
+                        map.put("address", bAddress);
+                    }
+                    map.put("gender", bGender);
+                    map.put("displayName", bDisplayName);
+                }
 
+
+            }
+        });
         btnChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,6 +301,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 calendar.set(year, month, dayOfMonth);
+                @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                 et.setText(format.format(calendar.getTime()));
             }
@@ -285,25 +314,28 @@ public class Fragment_Tab_UserInfo extends Fragment {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 
-    private String stringPubDate() {
-        String date;
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        date = format.format(calendar.getTime());
-        return date;
-    }
 
-    private long longPubDate() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getTimeInMillis();
+    private void loadData() {
+        dao_user.getProfile(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                user = (User) response;
+                showInfo();
+                dialogEdit();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+            }
+        }, idUser);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 5 && data != null) {
             imgAvatarUser.setImageURI(data.getData());
+            imageUser = helper_image.getPathFromUri(data.getData());
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

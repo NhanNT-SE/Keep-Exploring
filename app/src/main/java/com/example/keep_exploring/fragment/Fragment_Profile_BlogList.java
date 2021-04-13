@@ -18,7 +18,7 @@ import com.example.keep_exploring.model.User;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fragment_UserInfo extends Fragment {
+public class Fragment_Profile_BlogList extends Fragment {
     //View
     private View view;
     //DAO & Helper
@@ -29,7 +29,7 @@ public class Fragment_UserInfo extends Fragment {
     private User user;
     private String idUser;
 
-    public Fragment_UserInfo() {
+    public Fragment_Profile_BlogList() {
         // Required empty public constructor
     }
 
@@ -37,7 +37,7 @@ public class Fragment_UserInfo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_user_infor, container, false);
+        view = inflater.inflate(R.layout.fragment_profile_blog_list, container, false);
         initView();
         initVariable();
         handlerEvent();

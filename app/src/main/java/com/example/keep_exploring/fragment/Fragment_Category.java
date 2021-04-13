@@ -44,6 +44,7 @@ public class Fragment_Category extends Fragment {
 
     private void init() {
         helper_common = new Helper_Common();
+        helper_common.toggleBottomNavigation(getContext(),true);
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
         btnAll = (Button) view.findViewById(R.id.fCategory_btnAll);
