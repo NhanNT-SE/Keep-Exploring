@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +57,8 @@ public class Fragment_EditBlog extends Fragment {
     private FloatingActionButton fabAddContent;
     private ImageView imgBlog, imgContent;
     private CircleImageView imgAvatarUser;
+    private Dialog spotDialog;
+
     //    Variables
     public static final int CHOOSE_IMAGE_BLOG = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
@@ -93,6 +96,7 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         tvUser = (TextView) view.findViewById(R.id.fEditBlog_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fEditBlog_tvPubDate);
         etTitle = (EditText) view.findViewById(R.id.fEditBlog_etTitle);
@@ -300,11 +304,12 @@ public class Fragment_EditBlog extends Fragment {
             dialog.setNegativeButton("Cập nhật", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    spotDialog.show();
                     String title = etTitle.getText().toString();
-
                     dao_blog.updateBlog(idBlog, title, folder_storage, imageBlog, blogDetailsList, new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
+                            spotDialog.dismiss();
                             toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
                             dao_blog.deleteFolderImage(folder_storage,deleteDetailList);
                             loadData();
@@ -312,7 +317,8 @@ public class Fragment_EditBlog extends Fragment {
 
                         @Override
                         public void failedReq(String msg) {
-
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
                         }
                     });
                 }
@@ -329,16 +335,6 @@ public class Fragment_EditBlog extends Fragment {
 
     }
 
-
-
-    private void clearBlog() {
-        deleteDetailList.clear();
-        etTitle.setText("");
-        imgBlog.setImageResource(R.drawable.add_image);
-        imageBlog = "";
-        blogDetailsList.clear();
-        adapterContent.notifyDataSetChanged();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -367,20 +363,23 @@ public class Fragment_EditBlog extends Fragment {
                 helper_common.alertDialog(getContext(), message, new Helper_Event() {
                     @Override
                     public void onSubmitAlertDialog() {
+                        spotDialog.show();
                         dao_blog.deleteBlog(idBlog, new Helper_Callback() {
                             @Override
                             public void successReq(Object data) {
-                                if (data != null) {
-                                    toast("Đã xóa bài viết");
-                                    dao_blog.deleteFolderImage(folder_storage,blogDetailsList);
-                                    clearBlog();
-
-                                }
+                                toast("Đã xóa bài viết");
+                                dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
+                                spotDialog.dismiss();
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
+                                        .commit();
                             }
 
                             @Override
                             public void failedReq(String msg) {
-
+                                spotDialog.dismiss();
+                                toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
                             }
                         });
                     }
@@ -404,7 +403,7 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void loadData() {
-        dao_blog.getBlogById("607306c119c68e0b99291ffd", new Helper_Callback() {
+        dao_blog.getBlogById("60768ad574132637443ea910", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 deleteDetailList.clear();

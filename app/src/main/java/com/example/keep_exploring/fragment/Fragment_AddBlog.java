@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,7 +56,7 @@ public class Fragment_AddBlog extends Fragment {
     private ImageView imgPost, imgContent;
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
-
+    private Dialog spotDialog;
     //    VARIABLES
     private User user;
     private Blog_Details blogDetails;
@@ -88,6 +89,7 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         tvUser = (TextView) view.findViewById(R.id.fAddBlog_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fAddBlog_tvPubDate);
         etTitle = (EditText) view.findViewById(R.id.fAddBlog_etTitle);
@@ -310,17 +312,20 @@ public class Fragment_AddBlog extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String title = etTitle.getText().toString();
+                    spotDialog.show();
                     dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
                         public void successReq(Object data) {
-                            if (data != null) {
-                                toast("Thêm bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
-                                clearBlog();
-                            }
+                            toast("Tạo bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
+                            clearBlog();
+                            refreshListView();
+                            spotDialog.dismiss();
                         }
 
                         @Override
                         public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
                         }
                     });
                 }

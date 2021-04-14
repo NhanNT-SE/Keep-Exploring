@@ -5,6 +5,7 @@ import java.util.HashMap;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -28,5 +29,11 @@ public interface Api_User {
             @Header("Authorization") String accessToken,
             @PartMap() HashMap<String, RequestBody> partMap,
             @Part MultipartBody.Part imgUser
+    );
+
+    @PATCH("/user/changePass")
+    Call<String> changePassword(
+            @Header("Authorization") String accessToken,
+            @Body HashMap<String, String> partMap
     );
 }

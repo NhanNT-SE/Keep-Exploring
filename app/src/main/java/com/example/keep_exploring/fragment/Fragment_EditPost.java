@@ -1,6 +1,7 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
@@ -44,30 +45,31 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 import okhttp3.RequestBody;
 
 
 public class Fragment_EditPost extends Fragment {
-
-    private View view;
-    public static final int CHOOSE_IMAGE_POST = 1;
-    //  DAO
-    private DAO_Post dao_post;
-    private DAO_Address dao_address;
-    //  HELPER
-    private Helper_Common helper_common;
-    private Helper_SP helper_sp;
-    private Helper_Image helper_image;
-    private Helper_Post helper_post;
-    private Helper_Date helper_date;
     //  VIEW
+    private View view;
     private ViewPager2 viewPager;
     private EditText etTitle, etDescription;
     private TextView tvUser, tvPubDate, tvAddress, tvCategory;
     private FloatingActionButton fabAddContent;
     private CircleImageView imgAvatarUser;
     private RatingBar ratingBar;
+    private Dialog spotDialog;
+
+    //  Helper & DAO
+    private Helper_Common helper_common;
+    private Helper_SP helper_sp;
+    private Helper_Image helper_image;
+    private Helper_Post helper_post;
+    private Helper_Date helper_date;
+    private DAO_Post dao_post;
+    private DAO_Address dao_address;
     //  VARIABLE
+    public static final int CHOOSE_IMAGE_POST = 1;
     private String categorySubmit;
     private String addressSubmit;
     private String additionalAddress;
@@ -92,6 +94,7 @@ public class Fragment_EditPost extends Fragment {
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         viewPager = (ViewPager2) view.findViewById(R.id.fEditPost_viewPager);
         tvUser = (TextView) view.findViewById(R.id.fEditPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fEditPost_tvPubDate);
@@ -196,17 +199,22 @@ public class Fragment_EditPost extends Fragment {
                helper_common.alertDialog(getContext(),message,new Helper_Event(){
                    @Override
                    public void onSubmitAlertDialog() {
+                       spotDialog.show();
                        dao_post.deletePost(idPost,new Helper_Callback(){
                            @Override
                            public void successReq(Object data) {
-                              if(data != null){
-                                  toast("Đã xóa bài viết");
-                              }
+                               toast("Đã xóa bài viết");
+                               spotDialog.dismiss();
+                               getActivity().getSupportFragmentManager()
+                                       .beginTransaction()
+                                       .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
+                                       .commit();
                            }
 
                            @Override
                            public void failedReq(String msg) {
-
+                               spotDialog.dismiss();
+                               toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
                            }
                        });
                    }
@@ -252,25 +260,26 @@ public class Fragment_EditPost extends Fragment {
                 map.put("rating", bRating);
                 map.put("imgs_deleted",bImageDelete);
                 map.put("created_on",bCreated_on);
+                spotDialog.show();
                 dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {
-                        if (data != null) {
                             toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
-                        }
+                            spotDialog.dismiss();
+
                     }
 
                     @Override
                     public void failedReq(String msg) {
-
+                        spotDialog.dismiss();
+                        toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
                     }
                 });
             }
         }
-
     }
     private void loadData(){
-        dao_post.getPostById("6045e732ed9eac2464ee2ad8", new Helper_Callback() {
+        dao_post.getPostById("6075c0fb6e5a5e20e8241100", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 Post post = (Post) response;
@@ -299,6 +308,7 @@ public class Fragment_EditPost extends Fragment {
         });
 
     }
+
     private void refreshViewPager() {
         Adapter_RV_Images_Post adapter_rv_images_post = new Adapter_RV_Images_Post(imageDisplayList, imageDeleteList);
         viewPager.setAdapter(adapter_rv_images_post);

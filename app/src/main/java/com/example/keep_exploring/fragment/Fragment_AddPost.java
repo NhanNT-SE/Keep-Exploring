@@ -1,16 +1,11 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,10 +18,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
@@ -45,12 +44,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_AddPost extends Fragment {
+    //    View
     private View view;
     private EditText etTitle, etDescription;
     private TextView tvUser, tvPubDate, tvAddress, tvCategory;
@@ -58,21 +59,24 @@ public class Fragment_AddPost extends Fragment {
     private ViewPager2 viewPager;
     private CircleImageView imgAvatarUser;
     private RatingBar ratingBar;
-    private User user;
-    public static final int CHOOSE_IMAGE_POST = 1;
+    private Dialog spotDialog;
+    //    Helper & DAO
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
     private Helper_Date helper_date;
+    private Helper_Post helper_post;
     private DAO_Address dao_address;
     private DAO_Post dao_post;
+    //    Variable
+    public static final int CHOOSE_IMAGE_POST = 1;
     private String categorySubmit;
     private String addressSubmit;
     private String additionalAddress;
     private List<String> imagesSubmitList;
     private List<ImageDisplay> imageDisplayList;
+    private User user;
 
-    private Helper_Post helper_post;
 
     public Fragment_AddPost() {
         // Required empty public constructor
@@ -90,6 +94,7 @@ public class Fragment_AddPost extends Fragment {
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         tvUser = (TextView) view.findViewById(R.id.fAddPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fAddPost_tvPubDate);
         etDescription = (EditText) view.findViewById(R.id.fAddPost_etDescription);
@@ -227,29 +232,34 @@ public class Fragment_AddPost extends Fragment {
                 map.put("title", bTitle);
                 map.put("desc", bDescription);
                 map.put("rating", bRating);
+                spotDialog.show();
                 dao_post.createPost(map, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {
-                        if (data != null) {
-                            toast("Tạo bài viết thành công");
-                            imagesSubmitList.clear();
-                            imageDisplayList.clear();
-                            tvAddress.setText("");
-                            tvCategory.setText("");
-                            etTitle.setText("");
-                            etDescription.setText("");
-                            ratingBar.setRating(0f);
-                            refreshViewPager();
-                        }
+                        toast("Tạo bài viết thành công");
+                        clearPost();
+                        refreshViewPager();
+                        spotDialog.dismiss();
                     }
 
                     @Override
                     public void failedReq(String msg) {
-
+                        spotDialog.dismiss();
+                        toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
                     }
                 });
             }
         }
+    }
+
+    private void clearPost() {
+        imagesSubmitList.clear();
+        imageDisplayList.clear();
+        tvAddress.setText("");
+        tvCategory.setText("");
+        etTitle.setText("");
+        etDescription.setText("");
+        ratingBar.setRating(0f);
     }
 
     private void refreshViewPager() {

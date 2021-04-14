@@ -17,6 +17,8 @@ import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BlogList;
 import com.example.keep_exploring.fragment.Fragment_Category;
+import com.example.keep_exploring.fragment.Fragment_EditBlog;
+import com.example.keep_exploring.fragment.Fragment_EditPost;
 import com.example.keep_exploring.fragment.Fragment_Notification;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
@@ -52,21 +54,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         initVariable();
         handlerEvent();
     }
-
     private void initView() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
         circleMenuView = findViewById(R.id.main_circleMenu);
         fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
     }
-
     private void initVariable() {
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
-        replaceFragment(new Fragment_Tab_UserInfo());
+        replaceFragment(new Fragment_EditBlog());
     }
-
     private void handlerEvent() {
         helper_common.runtimePermission(this);
         bottomNavigationView.setBackground(null);

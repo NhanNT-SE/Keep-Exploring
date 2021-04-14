@@ -5,6 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.keep_exploring.DAO.DAO_User;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.adapter.Adapter_Tab_User;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
@@ -31,7 +35,9 @@ import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -54,7 +60,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private ImageView imgAvatar;
     private CircleImageView imgAvatarUser;
     private Dialog spotDialog;
-
+    private MaterialButton mBtn_submit;
     //DAO & Helper
     private DAO_User dao_user;
     private Helper_Common helper_common;
@@ -66,6 +72,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private String gender;
     private String idUser;
     private String imageUser;
+    private boolean isValidRequire, isValidMatch;
 
     public Fragment_Tab_UserInfo() {
         // Required empty public constructor
@@ -96,12 +103,15 @@ public class Fragment_Tab_UserInfo extends Fragment {
         tvTotalPost = (TextView) view.findViewById(R.id.fTabUser_tvTotalPost);
         tvTotalBlog = (TextView) view.findViewById(R.id.fTabUser_tvTotalBlog);
         tvUpdateProfile = (TextView) view.findViewById(R.id.fTabUser_tvUpdateProfile);
-        tvFeedBack = (TextView) view.findViewById(R.id.fTabUser_tvFeedback);
         imgAvatar = (ImageView) view.findViewById(R.id.fTabUser_imgAvatar);
+        spotDialog = new SpotsDialog(getActivity());
     }
 
     private void initVariable() {
-        spotDialog = new SpotsDialog(getActivity());
+        imageUser = "";
+        isValidRequire = false;
+        isValidMatch = false;
+
         user = new User();
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(getContext());
@@ -148,33 +158,59 @@ public class Fragment_Tab_UserInfo extends Fragment {
 
     }
 
-//    private void dialogFeedback(){
-//        final Dialog dialog = new Dialog(getActivity());
-//        dialog.setContentView(R.layout.dialog_add_feedback);
-//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        final EditText etFeedback = (EditText) dialog.findViewById(R.id.dAddFeedback_etFeedback);
-//        ImageView imgPost = (ImageView) dialog.findViewById(R.id.dAddFeedback_imgPost);
-//        final Feedback feedback = new Feedback();
-//        imgPost.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (etFeedback.getText().toString().isEmpty()){
-//                    toast("Add your feedback");
-//                }else {
-//                    feedback.setContentFeedBack(etFeedback.getText().toString());
-//                    feedback.setStringPubDate(stringPubDate());
-//                    feedback.setLongPubDate(longPubDate());
-//                    feedback.setEmailUser(currentUser.getEmail());
-//                    feedback.setUriAvatarUser(String.valueOf(currentUser.getPhotoUrl()));
-//                    feedback.setIdUser(currentUser.getUid());
-//                    dialog.dismiss();
-//                }
-//            }
-//        });
-//
-//        dialog.show();
-//    }
 
+    private void dialogChangePassword() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_change_password);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        TextInputLayout tIL_currentPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILCurrentPassword);
+        TextInputLayout tIL_newPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILNewPassword);
+        TextInputLayout tIL_confirmPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILConfirmPassword);
+        mBtn_submit = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnSubmit);
+        MaterialButton mBtn_cancel = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnCancel);
+        toggleEnableButton();
+        validateRequiredAndLength(tIL_currentPassword, mBtn_submit);
+        validateRequiredAndLength(tIL_newPassword, mBtn_submit);
+        validateMatchPassword(tIL_confirmPassword, tIL_newPassword);
+        mBtn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        mBtn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String oldPass = tIL_currentPassword.getEditText().getText().toString();
+                String newPass = tIL_newPassword.getEditText().getText().toString();
+                spotDialog.show();
+                dao_user.changePassword(oldPass, newPass, new Helper_Callback() {
+                    @Override
+                    public void successReq(Object response) {
+                        toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
+                        spotDialog.dismiss();
+                        dialog.dismiss();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getContext().startActivity(new Intent(getContext(),SignInActivity.class));
+                            }
+                        }, 2000);
+                    }
+
+                    @Override
+                    public void failedReq(String msg) {
+                        spotDialog.dismiss();
+                        toast(msg);
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
     private void dialogEdit() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_edit_info);
@@ -202,7 +238,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 etAddress.setText(user.getAddress());
             }
             if (user.getBirthday() != null) {
-                etBirthday.setText(user.getBirthday());
+                etBirthday.setText(helper_date.formatDateDisplay(user.getBirthday()));
             }
             Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         }
@@ -267,6 +303,22 @@ public class Fragment_Tab_UserInfo extends Fragment {
                     }
                     map.put("gender", bGender);
                     map.put("displayName", bDisplayName);
+                    spotDialog.show();
+                    dao_user.updateProfile(imageUser, map, new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            toast("Cập nhật thông tin cá nhân thành công");
+                            spotDialog.dismiss();
+                            dialog.dismiss();
+                            loadData();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            toast(msg);
+                            spotDialog.dismiss();
+                        }
+                    });
                 }
 
 
@@ -275,6 +327,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
         btnChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialogChangePassword();
+                dialog.dismiss();
 
             }
         });
@@ -310,24 +364,80 @@ public class Fragment_Tab_UserInfo extends Fragment {
         dialog.show();
     }
 
-    private void toast(String s) {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+    private void toggleEnableButton() {
+        mBtn_submit.setEnabled(isValidMatch && isValidRequire);
+    }
+    private void validateMatchPassword(TextInputLayout tIL_confirmPass, TextInputLayout tIL_newPass) {
+
+        tIL_confirmPass.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String match = tIL_newPass.getEditText().getText().toString();
+                if (s.toString().equals(match)) {
+                    tIL_confirmPass.setErrorEnabled(false);
+                    isValidMatch = true;
+                } else {
+                    tIL_confirmPass.setError("Mật khẩu xác nhận của bạn không khớp với mật khẩu mới");
+                    tIL_confirmPass.setErrorEnabled(true);
+                    isValidMatch = false;
+                }
+                toggleEnableButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
+    private void validateRequiredAndLength(TextInputLayout textInputLayout, MaterialButton mBtn_submit) {
+        String length = textInputLayout.getEditText().getText().toString();
+        if (length.isEmpty()) {
+            textInputLayout.setError("Đây là trường bắt buộc");
+            textInputLayout.setErrorEnabled(true);
+            isValidRequire = false;
+        }
+        textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 6) {
+                    textInputLayout.setError("Mật khẩu phải có ít nhất 6 ký tự");
+                    textInputLayout.setErrorEnabled(true);
+                    isValidRequire = false;
+                } else {
+                    textInputLayout.setErrorEnabled(false);
+                    isValidRequire = true;
+                }
+                toggleEnableButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
 
     private void loadData() {
-        dao_user.getProfile(new Helper_Callback() {
+        dao_user.getProfile(idUser,new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 user = (User) response;
                 showInfo();
-                dialogEdit();
             }
 
             @Override
             public void failedReq(String msg) {
             }
-        }, idUser);
+        } );
     }
 
     @Override
@@ -339,8 +449,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void log(String s) {
-        Log.d("log", s);
+    private void toast(String s) {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 
 

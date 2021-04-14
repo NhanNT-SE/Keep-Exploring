@@ -2,7 +2,6 @@ package com.example.keep_exploring.DAO;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.keep_exploring.api.Api_Post;
 import com.example.keep_exploring.api.Retrofit_config;
@@ -37,38 +36,15 @@ public class DAO_Post {
         helper_sp = new Helper_SP(context);
         helper_image = new Helper_Image();
         accessToken = helper_sp.getAccessToken();
-
     }
-
     public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback callback) {
         Call<String> call = api_post.createPost(accessToken, map, helper_image.uploadMulti(imageSubmitList, "image_post"));
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string());
-                        log(err.getString("error"));
-                        String msg = err.getString("message");
-                        log(msg);
-                        callback.failedReq(msg);
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            log(msg);
-                            callback.failedReq(msg);
-                        } else {
-                            JSONObject data = responseData.getJSONObject("data");
-                            callback.successReq(data);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                callback.successReq(data);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
@@ -82,29 +58,9 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(err.toString());
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                        } else {
-                            JSONObject data = responseData.getJSONObject("data");
-                            callback.successReq(data);
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                callback.successReq(data);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
@@ -118,30 +74,10 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(err.toString());
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                            log(msg);
-                        } else {
-                            JSONObject jsonData = responseData.getJSONObject("data");
-                            Post post = new Gson().fromJson(jsonData.toString(), Post.class);
-                            callback.successReq(post);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject jsonData = callback.getJsonObject(response);
+                Post post = new Gson().fromJson(jsonData.toString(), Post.class);
+                callback.successReq(post);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
@@ -155,39 +91,18 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(err.toString());
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                        } else {
-                            JSONArray data = responseData.getJSONArray("data");
-                            Type listType = new TypeToken<List<Post>>() {}.getType();
-                            List<Post> postList = new Gson().fromJson(data.toString(),listType);
-                            callback.successReq(postList);
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONArray data = callback.getJsonArray(response);
+                Type listType = new TypeToken<List<Post>>() {
+                }.getType();
+                List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                callback.successReq(postList);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
             }
         });
-
     }
-
     public void updatePost(
             HashMap<String, RequestBody> map,
             String idPost,
@@ -198,27 +113,8 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(err.toString());
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            log(msg);
-                            callback.failedReq(msg);
-                        } else {
-                            JSONObject data = responseData.getJSONObject("data");
-                            callback.successReq(data);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                callback.successReq(data);
             }
 
             @Override
