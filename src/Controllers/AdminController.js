@@ -68,7 +68,10 @@ const deleteAllCommentBlog = async (req, res, next) => {
 };
 const getAllUser = async (req, res, next) => {
   try {
-    const userList = await User.find({ role: "user" }, { pass: 0, role: 0 });
+    const userList = await User.find(
+      { role: "user" },
+      { pass: 0, role: 0 }
+    ).sort({ created_on: -1 });
     return res.send({
       data: userList,
       status: 201,
@@ -80,11 +83,9 @@ const getAllUser = async (req, res, next) => {
 };
 const getAllPost = async (req, res, next) => {
   try {
-    const post_list = await Post.find({}).populate("owner", [
-      "displayName",
-      "imgUser",
-      "email",
-    ]);
+    const post_list = await Post.find({})
+      .populate("owner", ["displayName", "imgUser", "email"])
+      .sort({ created_on: -1 });
     return res.status(200).send({
       data: post_list,
       status: 200,
@@ -96,11 +97,9 @@ const getAllPost = async (req, res, next) => {
 };
 const getAllBlog = async (req, res, next) => {
   try {
-    const blog_list = await Blog.find({}).populate("owner", [
-      "displayName",
-      "imgUser",
-      "email",
-    ]);
+    const blog_list = await Blog.find({})
+      .populate("owner", ["displayName", "imgUser", "email"])
+      .sort({ created_on: -1 });
     return res.send({
       data: blog_list,
       status: 200,

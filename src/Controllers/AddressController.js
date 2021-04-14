@@ -85,7 +85,7 @@ const updateDistrict = async (req, res, next) => {
     }
     handlerCustomError(
       201,
-      "Địa điểm này chưa tồn tại trong hệ thống, vui lòng tạo mới hoặc cập nhật lại"
+      `Địa điểm ${province} chưa tồn tại trong hệ thống, vui lòng tạo mới hoặc cập nhật lại`
     );
   } catch (error) {
     next(error);
@@ -118,7 +118,6 @@ const updateAddress = async (req, res, next) => {
 module.exports = {
   createAddress,
   deleteAddress,
-  updateAddress,
   updateDistrict,
 };
 
