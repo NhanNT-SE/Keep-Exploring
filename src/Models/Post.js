@@ -41,13 +41,6 @@ const PostSchema = new Schema(
       default: 0,
       required: true,
     },
-
-    // address: {
-    // 	type: Schema.Types.ObjectId,
-    // 	ref: 'Address',
-    // 	required: true,
-    // },
-	
     address: {
       type: String,
       lowercase: true,

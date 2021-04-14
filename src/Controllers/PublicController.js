@@ -90,16 +90,13 @@ const getPostList = async (req, res, next) => {
     const { category } = req.query;
     let postList;
     if (category === "" || !category) {
-      postList = await Post.find({ status: "done" }).populate("owner", [
-        "displayName",
-        "imgUser",
-        "email",
-      ]);
+      postList = await Post.find({ status: "done" })
+        .populate("owner", ["displayName", "imgUser", "email","post","blog"])
+        .sort({ created_on: -1 });
     } else {
-      postList = await Post.find({ status: "done", category }).populate(
-        "owner",
-        ["displayName", "imgUser", "email"]
-      );
+      postList = await Post.find({ status: "done", category })
+        .populate("owner", ["displayName", "imgUser", "email","post","blog"])
+        .sort({ created_on: -1 });
     }
     return res.send({
       data: postList,
@@ -169,11 +166,9 @@ const getBlogComment = async (req, res, next) => {
 };
 const getBlogList = async (req, res, next) => {
   try {
-    const blogList = await Blog.find({ status: "done" }).populate("owner", [
-      "displayName",
-      "imgUser",
-      "email",
-    ]);
+    const blogList = await Blog.find({ status: "done" })
+      .populate("owner", ["displayName", "imgUser", "email","blog","post"])
+      .sort({ created_on: -1 });
     return res.status(200).send({
       data: blogList,
       status: 200,

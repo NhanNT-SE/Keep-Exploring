@@ -77,7 +77,7 @@ const signOut = async (req, res, next) => {
       await token.save();
       return res.send({
         status: 200,
-        data: null,
+        data: {},
         msg: "Đăng xuất thành công",
       });
     }

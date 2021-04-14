@@ -78,27 +78,6 @@ const deleteBlog = async (req, res, next) => {
     next(error);
   }
 };
-const getBlogListByUser = async (req, res, next) => {
-	try {
-		const { idUser } = req.params;
-		const user = req.user;
-		var blogList = '';
-const userFound = await User.findById(user._id);
-
-		if (idUser == user._id  || userFound.role == "admin" ) {
-			blogList = await Blog.find({ owner: idUser });
-		} else {
-			blogList = await Blog.find({ owner: idUser, status: 'done' });
-		}
-    
-		if (blogList) {
-			return res.send({ data: blogList, status: 200, message: '' });
-		}
-		return  res.send({ data: [], status: 201, message: 'Người dùng này chưa có bài viết' });
-	} catch (error) {
-		next(error);
-	}
-};
 const likeBlog = async (req, res, next) => {
   try {
     const { idBlog } = req.body;
@@ -143,9 +122,16 @@ const getBlogListByUser = async (req, res, next) => {
     const { idUser } = req.params;
     let blogList = [];
     if (idUser === user._id) {
-      blogList = await Blog.find({ owner: idUser });
+      blogList = await Blog.find({ owner: idUser })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .sort({ created_on: 1 });
     } else {
-      blogList = await Blog.find({ owner: idUser, status: "done" });
+      blogList = await Blog.find({
+        owner: idUser,
+        status: "done",
+      })
+        .populate("owner", ["displayName", "imgUser", "email"])
+        .sort({ created_on: -1 });
     }
     return res.send({
       data: blogList,
@@ -200,7 +186,6 @@ const updateBlog = async (req, res, next) => {
 module.exports = {
   createBlog,
   deleteBlog,
-  getBlogListByUser,
   likeBlog,
   getBlogListByUser,
   updateBlog,
