@@ -115,10 +115,15 @@ public class Fragment_EditBlog extends Fragment {
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
-        loadData();
     }
 
     private void handlerEvent() {
+        idBlog = "";
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            idBlog = bundle.getString("idBlog");
+        }
+        loadData();
         helper_common.toggleBottomNavigation(getContext(),false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
@@ -370,10 +375,7 @@ public class Fragment_EditBlog extends Fragment {
                                 toast("Đã xóa bài viết");
                                 dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
                                 spotDialog.dismiss();
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
-                                        .commit();
+                                helper_common.replaceFragment(getContext(),new Fragment_Tab_UserInfo());
                             }
 
                             @Override
@@ -403,7 +405,7 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void loadData() {
-        dao_blog.getBlogById("60768ad574132637443ea910", new Helper_Callback() {
+        dao_blog.getBlogById(idBlog, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 deleteDetailList.clear();
@@ -411,7 +413,6 @@ public class Fragment_EditBlog extends Fragment {
                 blogDetailsList = blog.getBlogDetails();
                 Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
                 etTitle.setText(blog.getTitle());
-                idBlog = blog.get_id();
                 folder_storage = blog.getFolder_storage();
                 tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();

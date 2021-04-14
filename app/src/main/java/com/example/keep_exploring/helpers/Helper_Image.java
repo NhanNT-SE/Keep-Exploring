@@ -102,7 +102,10 @@ public class Helper_Image {
         return imageList;
     }
 
-    public void uploadImageBlogDetail(StorageReference storageRef, String folder_storage, List<Blog_Details> blog_detailsList, Helper_Callback callback) {
+    public void uploadImageBlogDetail(StorageReference storageRef,
+                                      String folder_storage,
+                                      List<Blog_Details> blog_detailsList,
+                                      Helper_Callback callback) {
         for (int i = 0; i < blog_detailsList.size(); i++) {
             Uri uri = blog_detailsList.get(i).getUriImage();
             String fileName = helper_date.getMillisTime() + "";

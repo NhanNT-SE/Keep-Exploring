@@ -83,17 +83,23 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
+
         android:text="Nothing to show here"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fCategory_rvPostList"
-        android:layout_width="match_parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/fCategory_refreshLayout"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/fCategory_lnCategory">
 
-        android:layout_below="@+id/fCategory_lnCategory"
-        android:layout_marginTop="10px" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fCategory_rvPostList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </RelativeLayout>

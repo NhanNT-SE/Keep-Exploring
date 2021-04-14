@@ -119,11 +119,16 @@ public class Fragment_EditPost extends Fragment {
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-        loadData();
     }
 
     private void handlerEvent() {
-        helper_common.toggleBottomNavigation(getContext(),false);
+        idPost = "";
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idPost = bundle.getString("idPost");
+        }
+        loadData();
+        helper_common.toggleBottomNavigation(getContext(), false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         helper_common.configTransformerViewPager(viewPager);
@@ -205,10 +210,7 @@ public class Fragment_EditPost extends Fragment {
                            public void successReq(Object data) {
                                toast("Đã xóa bài viết");
                                spotDialog.dismiss();
-                               getActivity().getSupportFragmentManager()
-                                       .beginTransaction()
-                                       .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
-                                       .commit();
+                               helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
                            }
 
                            @Override
@@ -279,7 +281,7 @@ public class Fragment_EditPost extends Fragment {
         }
     }
     private void loadData(){
-        dao_post.getPostById("6075c0fb6e5a5e20e8241100", new Helper_Callback() {
+        dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 Post post = (Post) response;
@@ -296,7 +298,6 @@ public class Fragment_EditPost extends Fragment {
                 etDescription.setText(post.getDesc());
                 ratingBar.setRating(post.getRating());
                 tvAddress.setText(post.getAddress());
-                idPost = post.get_id();
                 tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
                 refreshViewPager();
             }

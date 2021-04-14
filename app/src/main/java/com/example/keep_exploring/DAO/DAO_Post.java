@@ -48,6 +48,8 @@ public class DAO_Post {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
+                callback.failedReq(t.getMessage());
+
             }
         });
 
@@ -64,6 +66,8 @@ public class DAO_Post {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
+                callback.failedReq(t.getMessage());
+
             }
         });
 
@@ -81,6 +85,8 @@ public class DAO_Post {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
+                callback.failedReq(t.getMessage());
+
             }
         });
 
@@ -92,17 +98,39 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Post>>() {
-                }.getType();
+                Type listType = new TypeToken<List<Post>>() {}.getType();
                 List<Post> postList = new Gson().fromJson(data.toString(), listType);
                 callback.successReq(postList);
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
+                callback.failedReq(t.getMessage());
+
             }
         });
     }
+
+    public void getPostByUser(String idUser, Helper_Callback callback) {
+        Call<String> call = api_post.getPostByUser(accessToken, idUser);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONArray data = callback.getJsonArray(response);
+                Type listType = new TypeToken<List<Post>>() {}.getType();
+                List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                callback.successReq(postList);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                log(t.getMessage());
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
     public void updatePost(
             HashMap<String, RequestBody> map,
             String idPost,
@@ -120,6 +148,7 @@ public class DAO_Post {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
 
