@@ -35,8 +35,6 @@ public class DAO_Auth {
         helper_image = new Helper_Image();
         helper_common = new Helper_Common();
     }
-
-
     public void signIn(String email, String pass,Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         map.put("email", email);
@@ -46,19 +44,14 @@ public class DAO_Auth {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
-                    String err = callback.getResponseError(response);
-                    if (err.isEmpty()) {
-                        JSONObject responseData = new JSONObject(response.body());
-                        JSONObject data = responseData.getJSONObject("data");
-                        String accessToken = data.getString("accessToken");
-                        String refreshToken = data.getString("refreshToken");
-                        User user = new Gson().fromJson(data.toString(), User.class);
-                        callback.successReq(user);
-                        helper_sp.setUser(user);
-                        helper_sp.setAccessToken(accessToken);
-                        helper_sp.setRefreshToken(refreshToken);
-                    }
-
+                    JSONObject data = callback.getJsonObject(response);
+                    String accessToken = data.getString("accessToken");
+                    String refreshToken = data.getString("refreshToken");
+                    User user = new Gson().fromJson(data.toString(), User.class);
+                    callback.successReq(user);
+                    helper_sp.setUser(user);
+                    helper_sp.setAccessToken(accessToken);
+                    helper_sp.setRefreshToken(refreshToken);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -80,25 +73,16 @@ public class DAO_Auth {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    String err = callback.getResponseError(response);
-                    if (err.isEmpty()) {
-                        helper_sp.clearSP();
-                        callback.successReq("Log out successfully");
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                helper_sp.clearSP();
+                callback.successReq(data);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
             }
         });
     }
-
     public void signUp(String realPath, String email, String password, String displayName,Helper_Callback callback) {
         RequestBody r_email = helper_common.createPartFromString(email);
         RequestBody r_password = helper_common.createPartFromString(password);
@@ -111,17 +95,9 @@ public class DAO_Auth {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    String err = callback.getResponseError(response);
-                    if (err.isEmpty()) {
-                        JSONObject responseData = new JSONObject(response.body());
-                        JSONObject data = responseData.getJSONObject("data");
-                        User user = new Gson().fromJson(data.toString(), User.class);
-                        callback.successReq(user);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                User user = new Gson().fromJson(data.toString(), User.class);
+                callback.successReq(user);
             }
 
             @Override
@@ -137,25 +113,19 @@ public class DAO_Auth {
         HashMap<String, String> map = new HashMap<>();
         map.put("refreshToken", refreshToken);
         map.put("userId", userId);
-
         Call<String> call = api_auth.refreshToken(map);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
-                    String err = callback.getResponseError(response);
-                    if (err.isEmpty()) {
-                        JSONObject responseData = new JSONObject(response.body());
-                        String newAccessToken = responseData.getString("data");
-                        helper_sp.setAccessToken(newAccessToken);
-                        callback.successReq(newAccessToken);
-                    }
-
+                    JSONObject responseData = new JSONObject(response.body());
+                    String newAccessToken = responseData.getString("data");
+                    helper_sp.setAccessToken(newAccessToken);
+                    callback.successReq(newAccessToken);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());

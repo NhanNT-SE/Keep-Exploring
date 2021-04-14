@@ -60,7 +60,6 @@ public class DAO_Blog {
                 .getReference("Images/" + helper_sp.getUser().getId());
         signInAnonymously();
     }
-
     public void createBlog(
             List<Blog_Details> blogDetailsList,
             String titleBlog,
@@ -79,23 +78,9 @@ public class DAO_Blog {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        try {
-                            if (response.errorBody() != null) {
-                                String msg = new JSONObject(response.errorBody().string())
-                                        .getJSONObject("error")
-                                        .getString("message");
-                                log(msg);
-                                callback.failedReq(msg);
-                            } else {
-                                JSONObject responseData = new JSONObject(response.body());
-                                JSONObject data = responseData.getJSONObject("data");
-                                callback.successReq(data);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        JSONObject data = callback.getJsonObject(response);
+                        callback.successReq(data);
                     }
-
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         log(t.getMessage());
@@ -105,7 +90,6 @@ public class DAO_Blog {
 
             @Override
             public void failedReq(String msg) {
-
             }
         });
 
@@ -116,26 +100,12 @@ public class DAO_Blog {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        String msg = new JSONObject(response.errorBody().string())
-                                .getJSONObject("error")
-                                .getString("message");
-                        log(msg);
-                        callback.failedReq(msg);
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        JSONObject data = responseData.getJSONObject("data");
-                        callback.successReq(data);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONObject data = callback.getJsonObject(response);
+                callback.successReq(data);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                log(t.getMessage());
             }
         });
     }
@@ -146,33 +116,19 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
-                    if (response.errorBody() != null) {
-                        String msg = new JSONObject(response.errorBody().string()).getString("message");
-                        callback.failedReq(msg);
-                        log(msg);
-
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            String msg = responseData.getJSONObject("error").getString("message");
-                            callback.failedReq(msg);
-                            log(msg);
-                        } else {
-                            JSONObject jsonData = responseData.getJSONObject("data");
-                            JSONArray jsonArrayBlogDetail = jsonData
-                                    .getJSONObject("blog_detail")
-                                    .getJSONArray("detail_list");
-                            Blog blog = new Gson().fromJson(jsonData.toString(), Blog.class);
-                            List<Blog_Details> blogDetailsList = new ArrayList<>();
-                            for (int i = 0; i < jsonArrayBlogDetail.length(); i++) {
-                                JSONObject jsonBlogDetail = jsonArrayBlogDetail.getJSONObject(i);
-                                Blog_Details blogDetails = new Gson().fromJson(jsonBlogDetail.toString(), Blog_Details.class);
-                                blogDetailsList.add(blogDetails);
-                            }
-                            blog.setBlogDetails(blogDetailsList);
-                            callback.successReq(blog);
-                        }
+                    JSONObject jsonData = callback.getJsonObject(response);
+                    JSONArray jsonArrayBlogDetail = jsonData
+                            .getJSONObject("blog_detail")
+                            .getJSONArray("detail_list");
+                    Blog blog = new Gson().fromJson(jsonData.toString(), Blog.class);
+                    List<Blog_Details> blogDetailsList = new ArrayList<>();
+                    for (int i = 0; i < jsonArrayBlogDetail.length(); i++) {
+                        JSONObject jsonBlogDetail = jsonArrayBlogDetail.getJSONObject(i);
+                        Blog_Details blogDetails = new Gson().fromJson(jsonBlogDetail.toString(), Blog_Details.class);
+                        blogDetailsList.add(blogDetails);
                     }
+                    blog.setBlogDetails(blogDetailsList);
+                    callback.successReq(blog);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -204,32 +160,12 @@ public class DAO_Blog {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        try {
-                            if (response.errorBody() != null) {
-                                JSONObject err = new JSONObject(response.errorBody().string());
-                                String msg = err.getJSONObject("error").getString("message");
-                                log(msg);
-                                callback.failedReq(msg);
+                        JSONObject data = callback.getJsonObject(response);
+                        callback.successReq(data);
 
-                            } else {
-                                JSONObject responseData = new JSONObject(response.body());
-                                if (responseData.has("error")) {
-                                    String msg = responseData.getJSONObject("error").getString("message");
-                                    log(msg);
-                                    callback.failedReq(msg);
-                                } else {
-                                    JSONObject data = responseData.getJSONObject("data");
-                                    callback.successReq(data);
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     }
-
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        callback.failedReq(t.getMessage());
                         log(t.getMessage());
                     }
                 });

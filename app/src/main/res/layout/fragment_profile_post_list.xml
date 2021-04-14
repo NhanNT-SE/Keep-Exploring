@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.Fragment_PostListAdmin">
+    tools:context=".fragment.Fragment_Profile_PostList">
    <TextView
        android:id="@+id/fPostList_tvTile"
        android:text="Post List"

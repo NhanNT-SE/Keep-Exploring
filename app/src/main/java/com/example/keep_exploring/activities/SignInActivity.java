@@ -1,36 +1,26 @@
 package com.example.keep_exploring.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Callback;
-import com.example.keep_exploring.model.User;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import java.util.List;
+import com.example.keep_exploring.helpers.Helper_Common;
 
 public class SignInActivity extends AppCompatActivity {
     private EditText etEmail, etPass;
     private Button btnLogIn, btnJustGo;
-
-
     private TextView tvSignUp, tvForgot;
     private DAO_Auth dao_auth;
+    private Helper_Common helper_common;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +28,8 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
         getSupportActionBar().setTitle("SIGN IN");
         dao_auth = new DAO_Auth(this);
-        runtimePermission();
+        helper_common= new Helper_Common();
+        helper_common.runtimePermission(this);
         initView();
     }
     private void initView() {
@@ -69,14 +60,12 @@ public class SignInActivity extends AppCompatActivity {
 
                   @Override
                   public void successReq(Object response) {
-                      User user = (User) response;
                       toast("Đăng nhâp thành công");
                       startActivity(new Intent(SignInActivity.this, MainActivity.class));
                   }
               });
           }
       });
-
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,16 +73,12 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
             }
         });
-
         tvForgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
-
     }
-
 
     //dialogForgot
 //    private void dialogForgot() {
@@ -147,30 +132,6 @@ public class SignInActivity extends AppCompatActivity {
 //        dialog.show();
 //
 //    }
-
-
-    private void runtimePermission() {
-        Dexter.withContext(this).withPermissions(
-                Manifest.permission.INTERNET,
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                if (multiplePermissionsReport.areAllPermissionsGranted()) {
-                    log("All permissions granted");
-                }
-            }
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-                permissionToken.continuePermissionRequest();
-            }
-        }).check();
-    }
-    private void log(String s) {
-        Log.d("log", s);
-    }
-
     private void toast(String s) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
