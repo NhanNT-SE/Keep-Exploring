@@ -35,7 +35,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.raw_comment, parent, false);
+        View view = inflater.inflate(R.layout.row_comment, parent, false);
         return new ViewHolder(view);
     }
 
@@ -49,7 +49,6 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         holder.tvUserName.setText(comment.getIdUser().getDisplayName());
         String dateFormated = comment.getDate().substring(0, 10);
         holder.tvPubDate.setText(dateFormated);
-        Log.d("log", "onBindViewHolder: "+comment.getImg());
 
         if (comment.getImg().isEmpty()){
             holder.imgComment.setVisibility(View.GONE);
@@ -73,12 +72,12 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            civUser = (CircleImageView) itemView.findViewById(R.id.raw_comment_imgAvatar);
-            tvUserName = (TextView) itemView.findViewById(R.id.raw_comment_tvUserName);
-            tvPubDate = (TextView) itemView.findViewById(R.id.raw_comment_tvPubDate);
-            tvComment = (TextView) itemView.findViewById(R.id.raw_comment_tvComment);
-            imgMenu = (ImageView) itemView.findViewById(R.id.raw_comment_imgMore);
-            imgComment = (ImageView) itemView.findViewById(R.id.raw_comment_imgComment);
+            civUser = (CircleImageView) itemView.findViewById(R.id.row_comment_imgAvatar);
+            tvUserName = (TextView) itemView.findViewById(R.id.row_places_tvName);
+            tvPubDate = (TextView) itemView.findViewById(R.id.row_comment_tvPubDate);
+            tvComment = (TextView) itemView.findViewById(R.id.row_comment_tvComment);
+            imgMenu = (ImageView) itemView.findViewById(R.id.row_comment_imgMore);
+            imgComment = (ImageView) itemView.findViewById(R.id.row_comment_imgComment);
         }
     }
 }

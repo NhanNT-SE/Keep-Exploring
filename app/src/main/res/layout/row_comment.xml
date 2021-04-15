@@ -35,11 +35,7 @@
                 android:orientation="horizontal">
 
             <TextView
-<<<<<<< HEAD:app/src/main/res/layout/raw_comment.xml
                 android:id="@+id/raw_comment_tvUserName"
-=======
-                android:id="@+id/row_comment_tvEmail"
->>>>>>> mobile:app/src/main/res/layout/row_comment.xml
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -60,7 +56,7 @@
             <ImageView
                 android:layout_width="200px"
                 android:layout_height="200px"
-                android:id="@+id/raw_comment_imgComment"
+                android:id="@+id/row_comment_imgComment"
                 android:visibility="gone"
                 />
 

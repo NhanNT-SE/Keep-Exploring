@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_LV_Comment;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 
 import com.example.keep_exploring.model.Comment;

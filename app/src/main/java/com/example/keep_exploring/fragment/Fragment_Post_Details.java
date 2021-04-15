@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class Fragment_Post_Details extends Fragment {
@@ -42,7 +45,7 @@ public class Fragment_Post_Details extends Fragment {
     private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes;
     private ImageView imgLike, imgComment;
     private Post post;
-    private Helper_Common helper_common;
+    private Helper_Common helper_common = new Helper_Common();
 
     private TextView dComment_tvDone, dComment_tvNothing;
     private EditText dComment_etComment;
@@ -51,6 +54,10 @@ public class Fragment_Post_Details extends Fragment {
     private Adapter_RV_Comment adapter_rv_comment;
     private DAO_Comment dao_comment;
     private List<Comment> commentList = new ArrayList<>();
+
+    private RecyclerView dUserLike_rcUserList;
+    private TextView dUserLike_tvCancel;
+
 
     public Fragment_Post_Details() {
         // Required empty public constructor
@@ -90,7 +97,6 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void showPost() {
-        helper_common = new Helper_Common();
         String URL_IMAGE = helper_common.getBaseUrlImage();
 
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(civUser);
@@ -114,14 +120,8 @@ public class Fragment_Post_Details extends Fragment {
         dComment_rvCommentList = (RecyclerView) dialogComment.findViewById(R.id.dComment_rvComment);
 
         //recycle
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        dComment_rvCommentList.setLayoutManager(layoutManager);
-        dComment_rvCommentList.addItemDecoration(decoration);
-
-
+        helper_common.configRecycleView(getContext(), dComment_rvCommentList);
         showCommentList();
-
 
         dComment_tvDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,7 +140,7 @@ public class Fragment_Post_Details extends Fragment {
             @Override
             public void successReq(Object response) {
                 List<Comment> list = (List<Comment>) response;
-                               rfCommentList(list);
+                rfCommentList(list);
             }
 
             @Override
@@ -161,6 +161,43 @@ public class Fragment_Post_Details extends Fragment {
             dComment_tvNothing.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private void dialogUserLiked() {
+        final Dialog dialogUserLike = new Dialog(getActivity());
+        dialogUserLike.setContentView(R.layout.dialog_user_like);
+        dialogUserLike.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        //anh xa
+        dUserLike_tvCancel = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvCancel);
+        dUserLike_rcUserList = (RecyclerView) dialogUserLike.findViewById(R.id.dUserLike_rcUserList);
+
+        //recycle
+        helper_common.configRecycleView(getContext(), dUserLike_rcUserList);
+
+        //fetch data from server
+        dao_post = new DAO_Post(getContext());
+        dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+
+
+        dUserLike_tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogUserLike.dismiss();
+            }
+        });
+
+        dialogUserLike.show();
     }
 
     private void log(String s) {
