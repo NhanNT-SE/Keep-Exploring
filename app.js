@@ -75,4 +75,3 @@ app.use((error, req, res, next) => {
   });
 });
 app.listen(port, console.log(`start on port ${port}`));
-// android:background="@color/light_transparent"
