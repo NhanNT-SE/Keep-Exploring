@@ -30,6 +30,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog_Details;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +56,7 @@ public class Fragment_AddBlog extends Fragment {
     private ImageView imgPost, imgContent;
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
-
+    private Dialog spotDialog;
     //    VARIABLES
     private User user;
     private Blog_Details blogDetails;
@@ -68,6 +70,7 @@ public class Fragment_AddBlog extends Fragment {
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
+    private Helper_Date helper_date;
 
     public Fragment_AddBlog() {
         // Required empty public constructor
@@ -86,6 +89,7 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         tvUser = (TextView) view.findViewById(R.id.fAddBlog_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fAddBlog_tvPubDate);
         etTitle = (EditText) view.findViewById(R.id.fAddBlog_etTitle);
@@ -100,13 +104,14 @@ public class Fragment_AddBlog extends Fragment {
         helper_sp = new Helper_SP(view.getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
+        helper_date = new Helper_Date();
         blogDetailsList = new ArrayList<>();
         user = helper_sp.getUser();
     }
 
     private void handlerEvents() {
-        helper_common.hideBottomNavigation(getContext());
-        helper_common.formatDate(tvPubDate);
+        helper_common.toggleBottomNavigation(getContext(),false);
+        tvPubDate.setText(helper_date.formatDateDisplay(""));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
@@ -307,17 +312,20 @@ public class Fragment_AddBlog extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String title = etTitle.getText().toString();
+                    spotDialog.show();
                     dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
                         public void successReq(Object data) {
-                            if (data != null) {
-                                toast("Thêm bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
-                                clearBlog();
-                            }
+                            toast("Tạo bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
+                            clearBlog();
+                            refreshListView();
+                            spotDialog.dismiss();
                         }
 
                         @Override
                         public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
                         }
                     });
                 }
@@ -368,6 +376,7 @@ public class Fragment_AddBlog extends Fragment {
         imageBlog = "";
     }
 
+<<<<<<< HEAD
 //    private void currentFragment(String current) {
 //        if (current.equalsIgnoreCase("Restaurants")) {
 ////            replaceFragment(new Fragment_Restaurant());
@@ -388,6 +397,8 @@ public class Fragment_AddBlog extends Fragment {
                 .commit();
 
     }
+=======
+>>>>>>> mobile
 
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();

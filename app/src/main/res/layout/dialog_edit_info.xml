@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragment.Fragment_Profile_BlogList"
     android:orientation="vertical"
     android:paddingHorizontal="3dp"
     android:layout_width="match_parent"
@@ -13,45 +15,49 @@
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/avatar_header" />
-    <TextView
-        android:id="@+id/dEditInfo_tvEmail"
-        android:layout_marginTop="10dp"
-        android:hint="account@gmail.com"
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="Gender:"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/dEditInfo_radioMale"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="male" />
+            <RadioButton
+                android:id="@+id/dEditInfo_radioFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="female" />
+        </RadioGroup>
+    </LinearLayout>
     <EditText
-        android:id="@+id/dEditInfo_etName"
+        android:id="@+id/dEditInfo_etDisplayName"
         android:layout_marginTop="5dp"
         android:background="@drawable/border_tv"
         android:hint="Display Name"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
+
     <EditText
-        android:id="@+id/dEditInfo_etPass"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/border_tv"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dEditInfo_etDOB"
-        android:hint="Birthday (Account Recovery)"
+        android:id="@+id/dEditInfo_etBirthday"
+        android:hint="Birthday"
         android:gravity="center"
         android:layout_marginTop="5dp"
         android:background="@drawable/border_tv"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dEditInfo_etPhone"
-        android:hint="Phone Numbers (Account Recovery)"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/border_tv"
-        android:gravity="center"
-        android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <EditText
@@ -64,36 +70,41 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"/>
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dEditInfo_btnUpdate"
             app:cornerRadius="10dp"
             android:textColor="#FFFFFF"
-            android:text="UPDATE"
+            android:layout_width="match_parent"
             android:textSize="12sp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:text="Update profile"
+            android:textAllCaps="false" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/dEditInfo_btnClear"
-            android:text="CLEAR"
+            android:id="@+id/dEditInfo_btnChangePassword"
+            android:layout_width="match_parent"
             app:cornerRadius="10dp"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
-            android:layout_marginHorizontal="5dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:text="Change password"
+            android:textAllCaps="false" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dEditInfo_btnCancel"
             android:text="Cancel"
             app:cornerRadius="10dp"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="0dp"
+            android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>

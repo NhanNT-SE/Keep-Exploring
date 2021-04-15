@@ -4,13 +4,150 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.Fragment_Tab_UserInfoAdmin">
+    tools:context=".fragment.Fragment_Tab_UserInfo">
+    <LinearLayout
+        android:id="@+id/fTabUser_infoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/fTabUser_imgAvatar"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/avatar_header" />
+
+                <TextView
+                    android:id="@+id/fTabUser_tvDisplayName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fTabUser_tvTotalPost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Post"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fTabUser_tvTotalBlog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blog"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fTabUser_tvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/fTabUser_tvUpdateProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/border_tv"
+                android:gravity="center"
+                android:paddingVertical="5dp"
+                android:text="Update profile"
+                android:textStyle="bold" />
+
+<!--            <TextView-->
+<!--                android:id="@+id/fTabUser_tvFeedback"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="5dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/border_tv"-->
+<!--                android:gravity="center"-->
+<!--                android:paddingVertical="5dp"-->
+<!--                android:text="Send Feedback"-->
+<!--                android:textStyle="bold" />-->
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
+        android:layout_marginTop="5dp"
         android:id="@+id/fTabUser_tabLayout"
+        android:layout_height="wrap_content"
         app:tabIconTint="@color/colorPrimaryDark"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_below="@+id/fTabUser_infoLayout" />
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/fTabUser_viewPager"
         android:layout_below="@+id/fTabUser_tabLayout"

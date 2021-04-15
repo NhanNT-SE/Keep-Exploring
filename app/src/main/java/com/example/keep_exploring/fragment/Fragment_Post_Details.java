@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_LV_PostUser;
 import com.example.keep_exploring.adapter.Adapter_RV_Comment;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;

@@ -37,62 +37,42 @@ public class DAO_Address {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    JSONObject responseData = new JSONObject(response.body());
-                    if (responseData.has("error")) {
-                        JSONObject err = responseData.getJSONObject("error");
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(msg);
-                    } else {
-                        JSONArray data = responseData.getJSONArray("data");
-                        List provinceList = new Gson().fromJson(data.toString(),List.class);
-                        helper_sp.setProvinceList(provinceList);
-                        callback.successReq(provinceList);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                JSONArray data = callback.getJsonArray(response);
+                List provinceList = new Gson().fromJson(data.toString(), List.class);
+                helper_sp.setProvinceList(provinceList);
+                callback.successReq(provinceList);
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 log(t.getMessage());
             }
         });
     }
-    public void getAddressList(String province, String district, Helper_Callback helper_callback) {
-        HashMap<String,String> map = new HashMap<>();
-        map.put("province",province);
-        map.put("district",district);
+
+    public void getAddressList(String province, String district, Helper_Callback callback) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("province", province);
+        map.put("district", district);
         Call<String> call = api_address.getAddressList(map);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
-                    JSONObject responseData = new JSONObject(response.body());
-                    if (responseData.has("error")) {
-                        JSONObject err = responseData.getJSONObject("error");
-                        String msg = err.getString("message");
-                        log(msg);
-                    } else {
-                        JSONObject data = responseData.getJSONObject("data");
-                        JSONArray jsonDistrictList = data.getJSONArray("districtList");
-                        JSONArray jsonWardList = data.getJSONArray("wardList");
-                        List<String> districtList = new ArrayList<>();
-                        List<String> wardList = new ArrayList<>();
-                        for (int i = 0 ; i <jsonDistrictList.length(); i++){
-                            districtList.add(jsonDistrictList.get(i).toString());
-                        }
-                        for (int i = 0 ; i <jsonWardList.length(); i++){
-                            wardList.add(jsonWardList.get(i).toString());
-                        }
-                        Map<String,List<String>> map = new HashMap<>();
-                        map.put("districtList",districtList);
-                        map.put("wardList", wardList);
-                        helper_callback.successReq(map);
-
+                    JSONObject data = callback.getJsonObject(response);
+                    JSONArray jsonDistrictList = data.getJSONArray("districtList");
+                    JSONArray jsonWardList = data.getJSONArray("wardList");
+                    List<String> districtList = new ArrayList<>();
+                    List<String> wardList = new ArrayList<>();
+                    for (int i = 0; i < jsonDistrictList.length(); i++) {
+                        districtList.add(jsonDistrictList.get(i).toString());
                     }
+                    for (int i = 0; i < jsonWardList.length(); i++) {
+                        wardList.add(jsonWardList.get(i).toString());
+                    }
+                    Map<String, List<String>> map = new HashMap<>();
+                    map.put("districtList", districtList);
+                    map.put("wardList", wardList);
+                    callback.successReq(map);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

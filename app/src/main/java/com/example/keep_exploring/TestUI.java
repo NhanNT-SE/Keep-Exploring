@@ -103,10 +103,10 @@ public class TestUI extends AppCompatActivity implements BottomNavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.menu_bottom_home:
-                hideCircleMenu();
-                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.menu_bottom_home:
+//                hideCircleMenu();
+//                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
+//                break;
             case R.id.menu_bottom_post:
                 hideCircleMenu();
                 break;

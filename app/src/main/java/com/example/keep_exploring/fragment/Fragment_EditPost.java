@@ -1,6 +1,7 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
@@ -38,36 +40,36 @@ import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 import okhttp3.RequestBody;
 
 
-public class Fragment_Edit_Post extends Fragment {
-
-    private View view;
-    public static final int CHOOSE_IMAGE_POST = 1;
-    //  DAO
-    private DAO_Post dao_post;
-    private DAO_Address dao_address;
-    //  HELPER
-    private Helper_Common helper_common;
-    private Helper_SP helper_sp;
-    private Helper_Image helper_image;
-    private Helper_Post helper_post;
+public class Fragment_EditPost extends Fragment {
     //  VIEW
+    private View view;
     private ViewPager2 viewPager;
     private EditText etTitle, etDescription;
     private TextView tvUser, tvPubDate, tvAddress, tvCategory;
     private FloatingActionButton fabAddContent;
     private CircleImageView imgAvatarUser;
     private RatingBar ratingBar;
+    private Dialog spotDialog;
+
+    //  Helper & DAO
+    private Helper_Common helper_common;
+    private Helper_SP helper_sp;
+    private Helper_Image helper_image;
+    private Helper_Post helper_post;
+    private Helper_Date helper_date;
+    private DAO_Post dao_post;
+    private DAO_Address dao_address;
     //  VARIABLE
+    public static final int CHOOSE_IMAGE_POST = 1;
     private String categorySubmit;
     private String addressSubmit;
     private String additionalAddress;
@@ -76,7 +78,7 @@ public class Fragment_Edit_Post extends Fragment {
     private List<ImageDisplay> imageDisplayList;
     private List<String> imagesSubmitList, imageDeleteList, imageDefaultList;
 
-    public Fragment_Edit_Post() {
+    public Fragment_EditPost() {
         // Required empty public constructor
     }
 
@@ -87,11 +89,12 @@ public class Fragment_Edit_Post extends Fragment {
         view = inflater.inflate(R.layout.fragment_edit_post, container, false);
         initView();
         initVariable();
-        handlerFunction();
+        handlerEvent();
         return view;
     }
 
     private void initView() {
+        spotDialog = new SpotsDialog(getActivity());
         viewPager = (ViewPager2) view.findViewById(R.id.fEditPost_viewPager);
         tvUser = (TextView) view.findViewById(R.id.fEditPost_tvUser);
         tvPubDate = (TextView) view.findViewById(R.id.fEditPost_tvPubDate);
@@ -109,46 +112,21 @@ public class Fragment_Edit_Post extends Fragment {
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
         helper_sp = new Helper_SP(getContext());
+        helper_date = new Helper_Date();
         helper_post = new Helper_Post(getContext(), additionalAddress, addressSubmit, categorySubmit);
         imagesSubmitList = new ArrayList<>();
         imageDeleteList = new ArrayList<>();
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-
-        dao_post.getPostById("606be0b4ef85ad3828e19b9e", new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                Post post = (Post) response;
-                List<String> imageList = post.getImgs();
-                int sizeList = imageList.size();
-                for (int i = 0; i < sizeList; i++) {
-                    ImageDisplay imageDisplay = new ImageDisplay();
-                    imageDisplay.setImageString(imageList.get(i));
-                    imageDisplayList.add(imageDisplay);
-                    imageDefaultList.add(imageDisplay.getImageString());
-                }
-                tvCategory.setText(post.getCategory());
-                etTitle.setText(post.getTitle());
-                etDescription.setText(post.getDesc());
-                ratingBar.setRating(post.getRating());
-                tvAddress.setText(post.getAddress());
-                idPost = post.get_id();
-                refreshViewPager();
-            }
-
-            @Override
-            public void failedReq(String msg) {
-
-            }
-        });
+        loadData();
     }
 
-    private void handlerFunction() {
-        helper_common.formatDate(tvPubDate);
+    private void handlerEvent() {
+        helper_common.toggleBottomNavigation(getContext(),false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
-        helper_common.setTransformerViewPager(viewPager);
+        helper_common.configTransformerViewPager(viewPager);
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,17 +199,22 @@ public class Fragment_Edit_Post extends Fragment {
                helper_common.alertDialog(getContext(),message,new Helper_Event(){
                    @Override
                    public void onSubmitAlertDialog() {
+                       spotDialog.show();
                        dao_post.deletePost(idPost,new Helper_Callback(){
                            @Override
                            public void successReq(Object data) {
-                              if(data != null){
-                                  toast("Đã xóa bài viết");
-                              }
+                               toast("Đã xóa bài viết");
+                               spotDialog.dismiss();
+                               getActivity().getSupportFragmentManager()
+                                       .beginTransaction()
+                                       .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
+                                       .commit();
                            }
 
                            @Override
                            public void failedReq(String msg) {
-
+                               spotDialog.dismiss();
+                               toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
                            }
                        });
                    }
@@ -267,7 +250,7 @@ public class Fragment_Edit_Post extends Fragment {
                 RequestBody bTitle = helper_common.createPartFromString(titleSubmit);
                 RequestBody bDescription = helper_common.createPartFromString(descriptionSubmit);
                 RequestBody bRating = helper_common.createPartFromString(String.valueOf(ratingSubmit));
-                RequestBody bCreated_on = helper_common.createPartFromString(helper_common.getIsoDate());
+                RequestBody bCreated_on = helper_common.createPartFromString(helper_date.getIsoDate());
                 RequestBody bImageDelete = helper_common.createPartFromString(String.join(",",imageDeleteList));
                 HashMap<String, RequestBody> map = new HashMap<>();
                 map.put("address", bAddress);
@@ -277,21 +260,52 @@ public class Fragment_Edit_Post extends Fragment {
                 map.put("rating", bRating);
                 map.put("imgs_deleted",bImageDelete);
                 map.put("created_on",bCreated_on);
+                spotDialog.show();
                 dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {
-                        if (data != null) {
                             toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
-                        }
+                            spotDialog.dismiss();
+
                     }
 
                     @Override
                     public void failedReq(String msg) {
-
+                        spotDialog.dismiss();
+                        toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
                     }
                 });
             }
         }
+    }
+    private void loadData(){
+        dao_post.getPostById("6075c0fb6e5a5e20e8241100", new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                Post post = (Post) response;
+                List<String> imageList = post.getImgs();
+                int sizeList = imageList.size();
+                for (int i = 0; i < sizeList; i++) {
+                    ImageDisplay imageDisplay = new ImageDisplay();
+                    imageDisplay.setImageString(imageList.get(i));
+                    imageDisplayList.add(imageDisplay);
+                    imageDefaultList.add(imageDisplay.getImageString());
+                }
+                tvCategory.setText(post.getCategory());
+                etTitle.setText(post.getTitle());
+                etDescription.setText(post.getDesc());
+                ratingBar.setRating(post.getRating());
+                tvAddress.setText(post.getAddress());
+                idPost = post.get_id();
+                tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
+                refreshViewPager();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
 
     }
 

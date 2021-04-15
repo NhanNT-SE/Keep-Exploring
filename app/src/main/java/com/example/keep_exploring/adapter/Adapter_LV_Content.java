@@ -42,9 +42,9 @@ public class Adapter_LV_Content extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.raw_content, null);
-        TextView tvDescription = (TextView) convertView.findViewById(R.id.raw_content_tvDescription);
-        ImageView imgContent = (ImageView) convertView.findViewById(R.id.raw_content_imgContent);
+        convertView = inflater.inflate(R.layout.row_content, null);
+        TextView tvDescription = (TextView) convertView.findViewById(R.id.row_content_tvDescription);
+        ImageView imgContent = (ImageView) convertView.findViewById(R.id.row_content_imgContent);
 
         Blog_Details blogDetails = blogDetailsList.get(position);
         tvDescription.setText(blogDetails.getContent());
