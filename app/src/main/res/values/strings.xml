@@ -19,4 +19,5 @@
      If you encounter any problems, please CONTACT US before leaving any negative feedback.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="desc_notify">Vừa có người bình luận về nội dung bài viết của bạn. Bấm vào thông báo để xem chi tiết</string>
 </resources>

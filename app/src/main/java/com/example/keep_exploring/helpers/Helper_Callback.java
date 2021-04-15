@@ -21,6 +21,7 @@ public abstract class Helper_Callback {
                 msg = "Error from error body:\n" + err.getString("message");
 
             } else {
+                assert response.body() != null;
                 JSONObject responseData = new JSONObject(response.body());
                 if (responseData.has("error")) {
                     JSONObject err = responseData.getJSONObject("error");
@@ -43,6 +44,7 @@ public abstract class Helper_Callback {
         String error = getResponseError(response);
         if (error.isEmpty()) {
             try {
+                assert response.body() != null;
                 JSONObject responseData = new JSONObject(response.body());
                 data = responseData.getJSONObject("data");
             } catch (JSONException e) {
@@ -58,9 +60,9 @@ public abstract class Helper_Callback {
         String error = getResponseError(response);
         if (error.isEmpty()) {
             try {
+                assert response.body() != null;
                 JSONObject responseData = new JSONObject(response.body());
                 data = responseData.getJSONArray("data");
-
             } catch (JSONException e) {
                 log(e.getMessage());
                 e.printStackTrace();
