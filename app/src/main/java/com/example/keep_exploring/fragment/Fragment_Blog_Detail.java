@@ -39,7 +39,6 @@ public class Fragment_Blog_Detail extends Fragment {
     private TextView tvTitle, tvPubDate, tvDescription, tvAddress, tvEmail;
     private FirebaseUser currentUser;
     private Post post;
-    private Adapter_LV_Comment adapterComment;
     private Adapter_LV_Content adapterContent;
 
 

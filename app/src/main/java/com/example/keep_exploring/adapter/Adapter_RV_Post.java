@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.activities.MainActivity;
 import com.example.keep_exploring.fragment.Fragment_Post_Details;
@@ -20,6 +22,7 @@ import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,6 +32,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
     private List<Post> postList;
     private Helper_Common helper_common = new Helper_Common();
     private Helper_Date helper_date = new Helper_Date();
+
     public Adapter_RV_Post(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
@@ -46,11 +50,17 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Post post = postList.get(position);
+
         holder.tvUserName.setText(post.getOwner().getDisplayName());
         holder.tvTitle.setText(post.getTitle());
-        holder.tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()).substring(0,10));
-        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
-        Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
+        holder.tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()).substring(0, 10));
+        Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(holder.civUser);
+
+        List<SlideModel> slideModels = new ArrayList<>();
+        for (String img : post.getImgs()) {
+            slideModels.add(new SlideModel(img));
+        }
+        holder.isPost.setImageList(slideModels,true);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +71,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
                 fragment_post_details.setArguments(bundle);
                 ((MainActivity) context).getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_FrameLayout,fragment_post_details)
+                        .replace(R.id.main_FrameLayout, fragment_post_details)
                         .addToBackStack(null)
                         .commit();
 
@@ -78,7 +88,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView civUser;
         private TextView tvUserName, tvPubDate, tvTitle;
-        private ImageView imgPost;
+        private ImageSlider isPost;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,7 +96,7 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
             tvUserName = (TextView) itemView.findViewById(R.id.row_post_tvUser);
             tvPubDate = (TextView) itemView.findViewById(R.id.row_post_tvPubDate);
             tvTitle = (TextView) itemView.findViewById(R.id.row_post_tvTitle);
-            imgPost = (ImageView) itemView.findViewById(R.id.row_post_imgPost);
+            isPost = (ImageSlider) itemView.findViewById(R.id.row_post_imgPost);
         }
     }
 }

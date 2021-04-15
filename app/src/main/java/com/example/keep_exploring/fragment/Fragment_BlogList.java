@@ -67,21 +67,7 @@ public class Fragment_BlogList extends Fragment {
         categoryNode = "Journey Diary";
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment_Blog_Detail fragment_blog_detail = new Fragment_Blog_Detail();
-                Bundle bundle = new Bundle();
-                Post post = listPost.get(position);
-                bundle.putSerializable("post", post);
-                fragment_blog_detail.setArguments(bundle);
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_blog_detail)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+
 
 
         if (user == null) {

@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.keep_exploring.fragment.Fragment_UserInfo;
 
 public class Adapter_Tab_User extends FragmentStatePagerAdapter {
     public Adapter_Tab_User(@NonNull FragmentManager fm, int behavior) {
@@ -18,9 +17,9 @@ public class Adapter_Tab_User extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new Fragment_Profile_PostList();
+//                return new Fragment_Profile_PostList();
             case 1:
-                return new Fragment_Profile_BlogList();
+//                return new Fragment_Profile_BlogList();
         }
         return null;
     }
