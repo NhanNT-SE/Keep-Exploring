@@ -15,6 +15,7 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
+import com.example.keep_exploring.model.Post;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -22,10 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +86,7 @@ public class DAO_Blog {
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        log(t.getMessage());
+                        callback.failedReq(t.getMessage());
                     }
                 });
             }
@@ -105,7 +108,7 @@ public class DAO_Blog {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -136,12 +139,28 @@ public class DAO_Blog {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                callback.failedReq(t.getMessage());
             }
         });
 
     }
+    public void getBlogByUser(String idUser, Helper_Callback callback) {
+        Call<String> call = api_blog.getBlogByUser(accessToken, idUser);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONArray data = callback.getJsonArray(response);
+                Type listType = new TypeToken<List<Blog>>() {}.getType();
+                List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
+                callback.successReq(blogList);
+            }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
     public void updateBlog(
             String idBlog,
             String titleBlog,
@@ -166,7 +185,7 @@ public class DAO_Blog {
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        log(t.getMessage());
+                        callback.failedReq(t.getMessage());
                     }
                 });
             }

@@ -151,8 +151,8 @@ public class Fragment_AddBlog extends Fragment {
     private void dialogAddContent() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_modify_content);
-        blogDetails = new Blog_Details();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        blogDetails = new Blog_Details();
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
@@ -377,7 +377,6 @@ public class Fragment_AddBlog extends Fragment {
     }
 
 
-
     private void replaceFragment(Fragment fragment) {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -385,7 +384,6 @@ public class Fragment_AddBlog extends Fragment {
                 .commit();
 
     }
-
 
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();

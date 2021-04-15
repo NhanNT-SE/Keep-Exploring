@@ -1,136 +1,111 @@
 package com.example.keep_exploring.fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_RV_Post;
-
+import com.example.keep_exploring.adapter.Adapter_RV_ProfilePost;
+import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_Profile_PostList extends Fragment {
+    //    View
     private View view;
-    private ListView lvPost;
-    private TextView tvNothing;
-    private Adapter_RV_Post adapterPost;
+    private RecyclerView rvPost;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    //    DAO & Helper
+    private DAO_Post dao_post;
+    private Helper_SP helper_sp;
+    private Helper_Common helper_common;
+    //    Variable
+    private Adapter_RV_ProfilePost adapterPost;
     private List<Post> listPost;
-    private FirebaseUser currentUser;
-    private int index = -1;
-
+    private String idUser;
+    private String type;
+    private Bundle bundle;
     public Fragment_Profile_PostList() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_profile_post_list, container, false);
-
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        lvPost = (ListView) view.findViewById(R.id.fPostList_lvPost);
-        tvNothing = (TextView) view.findViewById(R.id.fPostList_tvNothing);
-
-
-        lvPost.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment_Blog_Detail fragment_blog_detail = new Fragment_Blog_Detail();
-                Bundle bundle = new Bundle();
-                Post post = listPost.get(position);
-                bundle.putSerializable("post", post);
-                fragment_blog_detail.setArguments(bundle);
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_blog_detail)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        lvPost.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                index = position;
-                dialogLongClick();
-                return true;
-            }
-        });
+        rvPost = (RecyclerView) view.findViewById(R.id.fProfilePostList_rvPost);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fProfilePostList_refreshLayout);
+        initVariable();
+        handlerEvent();
         return view;
     }
-    private void dialogLongClick(){
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_longclick);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final Post post = listPost.get(index);
-        Button btnEdit = (Button) dialog.findViewById(R.id.dLongClick_btnEdit);
-        Button btnDelete = (Button) dialog.findViewById(R.id.dLongClick_btnDelete);
-        Button btnCancel = (Button) dialog.findViewById(R.id.dLongClick_btnCancel);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final AlertDialog.Builder dialogDelete = new AlertDialog.Builder(getActivity());
-                dialogDelete.setMessage("Delete an article?");
-                dialogDelete.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog1, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-                dialogDelete.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog1, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialogDelete.show();
-            }
-        });
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment_EditBlog fragment_editBlog = new Fragment_EditBlog();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("post", post);
-                fragment_editBlog.setArguments(bundle);
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_FrameLayout, fragment_editBlog)
-                        .addToBackStack(null)
-                        .commit();
-
-
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
+    private void initVariable() {
+        dao_post = new DAO_Post(getContext());
+        helper_sp = new Helper_SP(getContext());
+        helper_common = new Helper_Common();
+        listPost = new ArrayList<>();
+        type = "owner";
+        bundle = getParentFragment().getArguments();
     }
-    private void toast(String s){
+    private void handlerEvent(){
+        helper_common.configRecycleView(getContext(), rvPost);
+        helper_common.configAnimBottomNavigation(getContext(), rvPost);
+        helper_common.showSkeleton(rvPost,adapterPost,R.layout.row_skeleton_post);
+        if (bundle != null) {
+            idUser = bundle.getString("idUser");
+        } else {
+            idUser = helper_sp.getUser().getId();
+        }
+        if (!idUser.equals(helper_sp.getUser().getId())) {
+            type = "visit";
+        }
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
+        loadData();
+    }
+    private void loadData() {
+        dao_post.getPostByUser(idUser, new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                listPost = (List<Post>) response;
+                refreshRV();
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+    }
+    private void refreshRV() {
+        adapterPost = new Adapter_RV_ProfilePost(getContext(), listPost, type);
+        rvPost.setAdapter(adapterPost);
+    }
+    private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 }

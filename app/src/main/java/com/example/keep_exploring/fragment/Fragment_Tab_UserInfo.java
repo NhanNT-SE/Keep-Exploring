@@ -124,8 +124,16 @@ public class Fragment_Tab_UserInfo extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             idUser = bundle.getString("idUser");
+
         } else {
             idUser = helper_sp.getUser().getId();
+        }
+
+        if (idUser.equals(helper_sp.getUser().getId())){
+            tvUpdateProfile.setVisibility(View.VISIBLE);
+        }else {
+            tvUpdateProfile.setVisibility(View.GONE);
+
         }
     }
 

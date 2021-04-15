@@ -18,23 +18,21 @@ public abstract class Helper_Callback {
         try {
             if (response.errorBody() != null) {
                 JSONObject err = new JSONObject(response.errorBody().string()).getJSONObject("error");
-                msg = err.getString("message");
-                log("error body: " + msg);
+                msg = "Error from error body:\n" + err.getString("message");
 
             } else {
                 JSONObject responseData = new JSONObject(response.body());
                 if (responseData.has("error")) {
                     JSONObject err = responseData.getJSONObject("error");
-                    msg = err.getString("message");
-                    log("response data error: " + msg);
-
+                    msg = "Error from response data:\n" + err.getString("message");
                 }
             }
         } catch (Exception e) {
-            msg = e.getMessage();
+            msg =  "Error form exception:\n" + e.getMessage();
             e.printStackTrace();
         }
         if (!msg.isEmpty()) {
+            log(msg);
             failedReq(msg);
         }
         return msg;

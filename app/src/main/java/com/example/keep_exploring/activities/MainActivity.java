@@ -17,8 +17,6 @@ import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BlogList;
 import com.example.keep_exploring.fragment.Fragment_Category;
-import com.example.keep_exploring.fragment.Fragment_EditBlog;
-import com.example.keep_exploring.fragment.Fragment_EditPost;
 import com.example.keep_exploring.fragment.Fragment_Notification;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
-        replaceFragment(new Fragment_EditBlog());
     }
     private void handlerEvent() {
         helper_common.runtimePermission(this);
@@ -118,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         hideCircleMenu();
+        replaceFragment(new Fragment_Category());
     }
 
     private void insertPlaces(){
@@ -161,10 +159,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void replaceFragment(Fragment fragment) {
         hideCircleMenu();
-        getSupportFragmentManager().beginTransaction().
-                replace(R.id.main_FrameLayout, fragment)
-                .addToBackStack(null)
-                .commit();
+        helper_common.replaceFragment(this, fragment);
     }
     private void showCircleMenu() {
         circleMenuView.setVisibility(View.VISIBLE);
