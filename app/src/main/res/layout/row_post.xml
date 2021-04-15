@@ -86,12 +86,12 @@
 
 
             <com.denzcoskun.imageslider.ImageSlider
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_width="wrap_content"
+                android:layout_height="220dp"
+                app:placeholder="@drawable/background_grey"
                 android:layout_below="@+id/row_post_layoutContainer"
                 android:id="@+id/row_post_imgPost"
-                android:layout_marginBottom="2dp"
-                android:scaleType="fitXY"
+                android:layout_marginBottom="5dp"
             />
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
