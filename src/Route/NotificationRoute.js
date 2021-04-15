@@ -6,8 +6,9 @@ const router = express.Router();
 router.get("/", notificationController.getAllByUser);
 //Patch Method
 router.patch("/status", notificationController.changeSeenStatusNotify);
-router.patch("/status/new", notificationController.changeNewStatusNotify);
+router.patch("/status/update", notificationController.updateStatusNotify);
 //Delete Method
-router.delete("/:idNoti", notificationController.deleteNotify);
+router.delete("/delete", notificationController.deleteAllNotify);
+router.delete("/delete/:idNotify", notificationController.deleteNotifyById);
 
 module.exports = router;
