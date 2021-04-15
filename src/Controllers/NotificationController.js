@@ -1,5 +1,6 @@
 const handlerCustomError = require("../middleware/customError");
 const Notification = require("../Models/Notification");
+const User = require("../Models/User");
 
 const createNotification = async (notify) => {
   try {
@@ -30,64 +31,72 @@ const createNotification = async (notify) => {
     return error;
   }
 };
-
-const changeNewStatusNotify = async (req, res, next) => {
+const updateStatusNotify = async (req, res, next) => {
   try {
-    const { idNoti } = req.body;
-    const notiFound = await Notification.findById(idNoti);
-
+    const { idNotify, status } = req.body;
+    const notiFound = await Notification.findById(idNotify);
     if (!notiFound) {
-      handleCustomError(201, "Thông báo không tồn tại");
+      handlerCustomError(201, "Thông báo không tồn tại");
     }
-
-    notiFound.status = "new";
-    await notiFound.save();
+    await await Notification.findByIdAndUpdate(idNotify, { status });
     return res.send({
-      data: null,
+      data: { idNotify, status },
       status: 200,
-      message: "Đã đánh dấu thành thông báo chưa đọc",
+      message: "Đã đổi trạng thái thông báo",
     });
   } catch (error) {
     next(error);
   }
 };
-
 const changeSeenStatusNotify = async (req, res, next) => {
   try {
     const idUser = req.user._id;
-    const newNoti_list = await Notification.find({
-      status: "new",
-      idUser: idUser,
+    await Notification.updateMany(
+      { idUser, status: "new" },
+      { status: "seen" }
+    );
+    const newNotify_list = await Notification.find({ idUser });
+    return res.status(200).send({
+      data: newNotify_list,
+      status: 200,
+      message: "Cập nhật trạng thái thành công",
     });
-
-    if (!newNoti_list) {
-      handleCustomError(201, "Bạn đã xem hết thông báo mới");
+  } catch (error) {
+    next(error);
+  }
+};
+const deleteNotifyById = async (req, res, next) => {
+  try {
+    const { idNotify } = req.params;
+    const user = await User.findById(req.user._id);
+    const notiFound = await Notification.findById(idNotify);
+    if (!notiFound) {
+      return handlerCustomError(201, "Thông báo không tồn tại hoặc đã bị xóa");
     }
-
-    newNoti_list.forEach(async (item) => {
-      item.status = "seen";
-      await item.save();
-    });
-
-    return res.send(newNoti_list);
+    if (user.role === "admin" || user._id == notiFound.idUser.toString()) {
+      await Notification.findByIdAndDelete(idNotify);
+      return res.send({
+        data: { idNotify },
+        status: 200,
+        message: "Đã xóa thông báo",
+      });
+    }
+    return handlerCustomError(202, "Bạn không thể xóa thông báo này");
   } catch (error) {
     next(error);
   }
 };
 
-const deleteNotify = async (req, res, next) => {
+const deleteAllNotify = async (req, res, next) => {
   try {
-    const { idNoti } = req.params;
-    const user = req.user;
-    const notiFound = await Notification.findById(idNoti);
-    if (!notiFound) {
-      return handleCustomError(201, "Thông báo không tồn tại hoặc đã bị xóa");
-    }
-    if (user.role === "admin" || user._id == notiFound.idUser.toString()) {
-      await Notification.findByIdAndDelete(idNoti);
-      return res.send({ data: null, status: 200, message: "Đã xóa thông báo" });
-    }
-    return handleCustomError(202, "Bạn không có quyền xóa thông báo này");
+    const idUser = req.user._id;
+    await Notification.deleteMany({ idUser });
+    const notifyFound = await Notification.find({ idUser });
+    return res.send({
+      data: notifyFound,
+      status: 200,
+      message: "Đã xóa tất cả thông báo",
+    });
   } catch (error) {
     next(error);
   }
@@ -96,29 +105,14 @@ const deleteNotify = async (req, res, next) => {
 const getAllByUser = async (req, res, next) => {
   try {
     const user = req.user;
-    const { status } = req.query;
-    const notification_list = await Notification.find({
+    const notifyList = (resultList = await Notification.find({
       idUser: user._id,
-    }).sort({ created_on: -1 });
-    if (!notification_list) {
-      handlerCustomError(201, "Bạn chưa có thông báo nào");
-    }
-
-    if (status) {
-      const resultList = notification_list.filter((item) => {
-        return item.status == status;
-      });
-      return res.send({
-        data: { resultList },
-        status: 200,
-        message: "List thông báo đã lọc",
-      });
-    }
+    }).sort({ created_on: -1 }));
 
     return res.send({
-      data: { notification_list },
+      data: notifyList,
       status: 200,
-      message: "List tất cả thông báo",
+      message: "Lấy dữ liệu thành công",
     });
   } catch (error) {
     next(error);
@@ -127,8 +121,9 @@ const getAllByUser = async (req, res, next) => {
 
 module.exports = {
   createNotification,
-  changeNewStatusNotify,
   changeSeenStatusNotify,
-  deleteNotify,
+  deleteAllNotify,
+  deleteNotifyById,
   getAllByUser,
+  updateStatusNotify,
 };

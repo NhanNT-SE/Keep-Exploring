@@ -50,7 +50,6 @@ app.use("/auth", authRouter);
 app.use("/public", publicRouter);
 // ----------AUTH ROUTER----------
 app.use(isAuth);
-app.use("/address", addressRouter);
 app.use("/blog", blogRouter);
 app.use("/comment", commentRouter);
 app.use("/notification", notifyRouter);
@@ -59,6 +58,7 @@ app.use("/user", userRouter);
 // ----------ADMIN ROUTER----------
 app.use(isAdmin);
 app.use("/admin", adminRouter);
+app.use("/address", addressRouter);
 // ----------HANDLER ERROR----------
 app.use((req, res, next) => {
   const error = new Error("Not found");
@@ -75,3 +75,4 @@ app.use((error, req, res, next) => {
   });
 });
 app.listen(port, console.log(`start on port ${port}`));
+// android:background="@color/light_transparent"
