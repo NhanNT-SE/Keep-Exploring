@@ -1,6 +1,8 @@
 package com.example.keep_exploring.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
+import com.example.keep_exploring.activities.MainActivity;
+import com.example.keep_exploring.fragment.Fragment_Post_Details;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -59,6 +63,21 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
                 } else {
                     helper_common.dialogViewProfile(context, post.getOwner());
                 }
+            }
+        });
+         holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment_Post_Details fragment_post_details = new Fragment_Post_Details();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("post", post);
+                fragment_post_details.setArguments(bundle);
+                ((MainActivity) context).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_FrameLayout,fragment_post_details)
+                        .addToBackStack(null)
+                        .commit();
+
             }
         });
     }

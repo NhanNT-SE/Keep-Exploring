@@ -9,11 +9,11 @@
     <HorizontalScrollView
         android:id="@+id/fCategory_lnCategory"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:foregroundGravity="center_vertical"
         android:scrollbars="none">
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
@@ -21,7 +21,7 @@
                 android:id="@+id/fCategory_btnAll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10sp"
+                android:layout_marginStart="10sp"
                 android:backgroundTint="@color/white"
                 android:text="Home"
                 android:textAlignment="center"
@@ -30,12 +30,11 @@
                 app:cornerRadius="8dp"
                 app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnFood"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10sp"
+                android:layout_marginStart="10sp"
                 android:backgroundTint="@color/white"
                 android:text="Food"
                 android:textAllCaps="false"
@@ -43,12 +42,11 @@
                 app:cornerRadius="8dp"
                 app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnCheckin"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10sp"
+                android:layout_marginStart="10sp"
                 android:backgroundTint="@color/white"
                 android:text="Check in"
                 android:textAllCaps="false"
@@ -56,7 +54,6 @@
                 app:cornerRadius="8dp"
                 app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnHotel"
                 android:layout_width="wrap_content"
@@ -70,11 +67,8 @@
                 app:cornerRadius="8dp"
                 app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
-
-
         </LinearLayout>
     </HorizontalScrollView>
-
     <TextView
         android:id="@+id/fCategory_tvNothing"
         android:layout_width="match_parent"
@@ -95,6 +89,4 @@
             android:layout_height="match_parent"
             android:layout_marginTop="10dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
 </RelativeLayout>

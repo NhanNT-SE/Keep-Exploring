@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         hideCircleMenu();
-        replaceFragment(new Fragment_Notification());
+        replaceFragment(new Fragment_Category());
     }
 
     private void insertPlaces(){

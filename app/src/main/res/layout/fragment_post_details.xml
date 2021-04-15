@@ -1,14 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="5dp"
+    android:scrollbars="none"
     tools:context=".fragment.Fragment_Post_Details">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/fDetailPost_civAvatarAdmin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/fDetailPost_tvPubDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="5dp"
+            android:text="01/01/2020"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:textStyle="italic" />
+
+        <TextView
+        android:id="@+id/fDetailPost_tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@+id/fDetailPost_civAvatarAdmin"
+        android:text="Kim Ngan"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+
+
+         />
+
+    <ImageView
+        android:id="@+id/fDetailPost_imgPost"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@+id/fDetailPost_civAvatarAdmin"
+        android:layout_marginTop="5dp"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/fDetailPost_tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fDetailPost_imgPost"
+        android:text="Title"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/fDetailPost_tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fDetailPost_tvTitle"
+        android:text="Description"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/fDetailPost_imgLike"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:layout_below="@id/fDetailPost_tvDescription"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:src="@drawable/heart_outline_90px"
+
+        />
+
+    <ImageView
+        android:id="@+id/fDetailPost_imgComment"
+        android:layout_width="20sp"
+        android:layout_height="20sp"
+        android:layout_below="@id/fDetailPost_tvDescription"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@+id/fDetailPost_imgLike"
+        android:src="@drawable/topic_90px" />
+
+    <TextView
+        android:id="@+id/fDetailPost_tvLikes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fDetailPost_imgLike"
+        android:layout_marginLeft="10dp"
+        android:text="lượt thích"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        />
+
+    </RelativeLayout>
+
+</ScrollView>
+
+
+
+
