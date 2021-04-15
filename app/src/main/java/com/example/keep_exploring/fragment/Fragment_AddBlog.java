@@ -368,18 +368,18 @@ public class Fragment_AddBlog extends Fragment {
         imageBlog = "";
     }
 
-    private void currentFragment(String current) {
-        if (current.equalsIgnoreCase("Restaurants")) {
-            replaceFragment(new Fragment_Restaurant());
-        } else if (current.equalsIgnoreCase("Accommodations")) {
-            replaceFragment(new Fragment_Accommodations());
-        } else if (current.equalsIgnoreCase("Beautiful Places")) {
-            replaceFragment(new Fragment_BeautifulPlaces());
-        } else {
-            replaceFragment(new Fragment_JourneyDiary());
-        }
-
-    }
+//    private void currentFragment(String current) {
+//        if (current.equalsIgnoreCase("Restaurants")) {
+////            replaceFragment(new Fragment_Restaurant());
+//        } else if (current.equalsIgnoreCase("Accommodations")) {
+//            replaceFragment(new Fragment_Accommodations());
+//        } else if (current.equalsIgnoreCase("Beautiful Places")) {
+//            replaceFragment(new Fragment_BeautifulPlaces());
+//        } else {
+//            replaceFragment(new Fragment_JourneyDiary());
+//        }
+//
+//    }
 
     private void replaceFragment(Fragment fragment) {
         getActivity().getSupportFragmentManager()

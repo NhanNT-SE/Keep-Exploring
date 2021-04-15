@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.keep_exploring.fragment.Fragment_PostList;
 import com.example.keep_exploring.fragment.Fragment_UserInfo;
 
 public class Adapter_Tab_User extends FragmentStatePagerAdapter {
@@ -20,7 +19,7 @@ public class Adapter_Tab_User extends FragmentStatePagerAdapter {
             case 0:
                 return new Fragment_UserInfo();
             case 1:
-                return new Fragment_PostList();
+//                return new Fragment_PostList();
         }
         return null;
     }

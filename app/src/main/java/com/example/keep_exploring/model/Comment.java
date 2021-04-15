@@ -1,72 +1,29 @@
 package com.example.keep_exploring.model;
 
 public class Comment {
-    private String idComment, idPost ,idUser , emailUser, displayName;
-    private String pubDate,contentComment, uriAvatarUser;
-    private long longPubDate;
+    private String _id, idPost, idBlog;
+    private String date, content, img;
+    private User idUser;
 
-    public String getDisplayName() {
-        return displayName;
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "_id='" + _id + '\'' +
+                ", idPost='" + idPost + '\'' +
+                ", idBlog='" + idBlog + '\'' +
+                ", date='" + date + '\'' +
+                ", content='" + content + '\'' +
+                ", img='" + img + '\'' +
+                ", idUser=" + idUser +
+                '}';
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public String get_id() {
+        return _id;
     }
 
-    public String getIdComment() {
-        return idComment;
-    }
-
-    public void setIdComment(String idComment) {
-        this.idComment = idComment;
-    }
-
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
-
-    public String getPubDate() {
-        return pubDate;
-    }
-
-    public void setPubDate(String pubDate) {
-        this.pubDate = pubDate;
-    }
-
-    public String getContentComment() {
-        return contentComment;
-    }
-
-    public void setContentComment(String contentComment) {
-        this.contentComment = contentComment;
-    }
-
-    public String getUriAvatarUser() {
-        return uriAvatarUser;
-    }
-
-    public void setUriAvatarUser(String uriAvatarUser) {
-        this.uriAvatarUser = uriAvatarUser;
-    }
-
-    public long getLongPubDate() {
-        return longPubDate;
-    }
-
-    public void setLongPubDate(long longPubDate) {
-        this.longPubDate = longPubDate;
-    }
-
-    public String getEmailUser() {
-        return emailUser;
-    }
-
-    public void setEmailUser(String emailUser) {
-        this.emailUser = emailUser;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getIdPost() {
@@ -75,5 +32,45 @@ public class Comment {
 
     public void setIdPost(String idPost) {
         this.idPost = idPost;
+    }
+
+    public String getIdBlog() {
+        return idBlog;
+    }
+
+    public void setIdBlog(String idBlog) {
+        this.idBlog = idBlog;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public User getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(User idUser) {
+        this.idUser = idUser;
     }
 }

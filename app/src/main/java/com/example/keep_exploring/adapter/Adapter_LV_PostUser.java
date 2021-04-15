@@ -1,6 +1,7 @@
 package com.example.keep_exploring.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.activities.MainActivity;
+import com.example.keep_exploring.fragment.Fragment_Post_Details;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
@@ -47,10 +50,27 @@ public class Adapter_LV_PostUser extends RecyclerView.Adapter<Adapter_LV_PostUse
 
         holder.tvUserName.setText(post.getOwner().getDisplayName());
         holder.tvTitle.setText(post.getTitle());
-        String dateFormated = post.getCreated_on().substring(0,10);
+        String dateFormated = post.getCreated_on().substring(0, 10);
         holder.tvPubDate.setText(dateFormated);
-        Picasso.get().load(URL_IMAGE+"user/"+post.getOwner().getImgUser()).into(holder.civUser);
+        Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(holder.civUser);
         Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment_Post_Details fragment_post_details = new Fragment_Post_Details();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("post", post);
+                fragment_post_details.setArguments(bundle);
+                ((MainActivity) context).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_FrameLayout,fragment_post_details)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+
     }
 
     @Override
