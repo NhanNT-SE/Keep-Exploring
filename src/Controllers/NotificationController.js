@@ -1,3 +1,6 @@
+require("../Models/Blog");
+require("../Models/Post");
+
 const handlerCustomError = require("../middleware/customError");
 const Notification = require("../Models/Notification");
 const User = require("../Models/User");
@@ -31,16 +34,16 @@ const createNotification = async (notify) => {
     return error;
   }
 };
-const updateStatusNotify = async (req, res, next) => {
+const changeNewStatusNotify = async (req, res, next) => {
   try {
-    const { idNotify, status } = req.body;
+    const { idNotify } = req.params;
     const notiFound = await Notification.findById(idNotify);
     if (!notiFound) {
       handlerCustomError(201, "Thông báo không tồn tại");
     }
-    await await Notification.findByIdAndUpdate(idNotify, { status });
+    await await Notification.findByIdAndUpdate(idNotify, { status: "new" });
     return res.send({
-      data: { idNotify, status },
+      data: notiFound,
       status: 200,
       message: "Đã đổi trạng thái thông báo",
     });
@@ -55,9 +58,8 @@ const changeSeenStatusNotify = async (req, res, next) => {
       { idUser, status: "new" },
       { status: "seen" }
     );
-    const newNotify_list = await Notification.find({ idUser });
     return res.status(200).send({
-      data: newNotify_list,
+      data: {},
       status: 200,
       message: "Cập nhật trạng thái thành công",
     });
@@ -91,9 +93,8 @@ const deleteAllNotify = async (req, res, next) => {
   try {
     const idUser = req.user._id;
     await Notification.deleteMany({ idUser });
-    const notifyFound = await Notification.find({ idUser });
     return res.send({
-      data: notifyFound,
+      data: {},
       status: 200,
       message: "Đã xóa tất cả thông báo",
     });
@@ -107,7 +108,10 @@ const getAllByUser = async (req, res, next) => {
     const user = req.user;
     const notifyList = (resultList = await Notification.find({
       idUser: user._id,
-    }).sort({ created_on: -1 }));
+    })
+      .populate("idPost",["status","imgs","title"])
+      .populate("idBlog",["status","img","title"])
+      .sort({ created_on: -1 }));
 
     return res.send({
       data: notifyList,
@@ -125,5 +129,5 @@ module.exports = {
   deleteAllNotify,
   deleteNotifyById,
   getAllByUser,
-  updateStatusNotify,
+  changeNewStatusNotify,
 };
