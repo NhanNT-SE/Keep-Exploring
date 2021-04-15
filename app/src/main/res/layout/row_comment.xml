@@ -12,16 +12,15 @@
         app:civ_border_color="#FFFFFF"
         app:civ_border_width="1dp" />
 
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_margin="10dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@+id/row_comment_imgAvatar"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/row_comment_imgAvatar"
         android:backgroundTint="#EBEBEC"
         app:cardCornerRadius="10dp"
-       >
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,54 +32,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-            <TextView
-<<<<<<< HEAD:app/src/main/res/layout/raw_comment.xml
-                android:id="@+id/raw_comment_tvUserName"
-=======
-                android:id="@+id/row_comment_tvEmail"
->>>>>>> mobile:app/src/main/res/layout/row_comment.xml
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="nhan@gmail.com"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
+                <TextView
+                    android:id="@+id/row_comment_tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="nhan@gmail.com"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
                 <ImageView
                     android:id="@+id/row_comment_imgMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_more_horiz_black_24dp" />
             </RelativeLayout>
 
-
             <ImageView
-                android:layout_width="200px"
-                android:layout_height="200px"
-                android:id="@+id/raw_comment_imgComment"
+                android:id="@+id/row_comment_imgComment"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:visibility="gone"
                 />
-
-
             <TextView
                 android:id="@+id/row_comment_tvComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/row_comment_tvPubDate"
                 android:layout_marginHorizontal="5dp"
                 android:hint="Comment 1 2 4 5  6 7"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
-
             <TextView
                 android:id="@+id/row_comment_tvPubDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
                 android:layout_gravity="bottom|end"
                 android:layout_marginTop="5dp"
                 android:text="30/03/2020 21:11"
@@ -88,7 +74,6 @@
                 android:textSize="12sp"
                 android:textStyle="italic" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

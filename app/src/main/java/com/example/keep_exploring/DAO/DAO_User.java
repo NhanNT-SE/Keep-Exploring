@@ -48,7 +48,7 @@ public class DAO_User {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -65,7 +65,7 @@ public class DAO_User {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -82,7 +82,7 @@ public class DAO_User {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }

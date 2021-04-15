@@ -28,6 +28,10 @@ public interface Api_Blog {
     @GET("/public/blog/{idBlog}")
     Call<String> getBlogById(@Path("idBlog") String idBlog);
 
+    @GET("/blog/{idUser}")
+    Call<String> getBlogByUser(
+            @Header("Authorization") String accessToken,
+            @Path("idUser") String idUser);
     @Multipart
     @POST("/blog/add")
     Call<String> createBlog(

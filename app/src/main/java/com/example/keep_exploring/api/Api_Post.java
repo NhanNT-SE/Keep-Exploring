@@ -25,6 +25,11 @@ public interface Api_Post {
     @GET("/public/post/{idPost}")
     Call<String> getPostById(@Path("idPost") String idPost);
 
+    @GET("/post/{idUser}")
+    Call<String> getPostByUser(
+            @Header("Authorization") String accessToken,
+            @Path("idUser") String idUser);
+
     @Multipart
     @POST("/post")
     Call<String> createPost(

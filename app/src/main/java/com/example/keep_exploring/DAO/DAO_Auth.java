@@ -59,7 +59,7 @@ public class DAO_Auth {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
 
@@ -79,7 +79,7 @@ public class DAO_Auth {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -102,7 +102,7 @@ public class DAO_Auth {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -128,7 +128,7 @@ public class DAO_Auth {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
 

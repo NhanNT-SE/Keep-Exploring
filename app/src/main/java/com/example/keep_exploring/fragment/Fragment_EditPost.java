@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +78,6 @@ public class Fragment_EditPost extends Fragment {
     private User user;
     private List<ImageDisplay> imageDisplayList;
     private List<String> imagesSubmitList, imageDeleteList, imageDefaultList;
-
     public Fragment_EditPost() {
         // Required empty public constructor
     }
@@ -105,6 +105,7 @@ public class Fragment_EditPost extends Fragment {
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditPost_fabAddContent);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         ratingBar = (RatingBar) view.findViewById(R.id.fEditPost_ratingBar);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.fEditPost_mainLayout);
     }
     private void initVariable() {
         dao_address = new DAO_Address(getContext());
@@ -119,11 +120,17 @@ public class Fragment_EditPost extends Fragment {
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-        loadData();
     }
 
     private void handlerEvent() {
-        helper_common.toggleBottomNavigation(getContext(),false);
+        spotDialog.show();
+        idPost = "";
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idPost = bundle.getString("idPost");
+        }
+        loadData();
+        helper_common.toggleBottomNavigation(getContext(), false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         helper_common.configTransformerViewPager(viewPager);
@@ -205,10 +212,7 @@ public class Fragment_EditPost extends Fragment {
                            public void successReq(Object data) {
                                toast("Đã xóa bài viết");
                                spotDialog.dismiss();
-                               getActivity().getSupportFragmentManager()
-                                       .beginTransaction()
-                                       .replace(R.id.main_FrameLayout, new Fragment_Tab_UserInfo())
-                                       .commit();
+                               helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
                            }
 
                            @Override
@@ -278,8 +282,9 @@ public class Fragment_EditPost extends Fragment {
             }
         }
     }
-    private void loadData(){
-        dao_post.getPostById("6075c0fb6e5a5e20e8241100", new Helper_Callback() {
+
+    private void loadData() {
+        dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 Post post = (Post) response;
@@ -296,14 +301,14 @@ public class Fragment_EditPost extends Fragment {
                 etDescription.setText(post.getDesc());
                 ratingBar.setRating(post.getRating());
                 tvAddress.setText(post.getAddress());
-                idPost = post.get_id();
                 tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
                 refreshViewPager();
+                spotDialog.dismiss();
             }
 
             @Override
             public void failedReq(String msg) {
-
+                spotDialog.dismiss();
             }
         });
 
