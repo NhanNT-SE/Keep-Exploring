@@ -1,25 +1,27 @@
 package com.example.keep_exploring.fragment;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.ethanhua.skeleton.Skeleton;
-import com.ethanhua.skeleton.SkeletonScreen;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +36,9 @@ public class Fragment_Category extends Fragment {
     private String category;
     private List<Post> postList;
     private TextView tvNothing;
-    private Button btnAll, btnFood, btnCheckin, btnHotel;
+    private MaterialButton btnAll, btnFood, btnCheckin, btnHotel;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SkeletonScreen skeletonScreen;
+    private HorizontalScrollView topView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,19 +56,15 @@ public class Fragment_Category extends Fragment {
         category = "";
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
-        btnAll = (Button) view.findViewById(R.id.fCategory_btnAll);
-        btnFood = (Button) view.findViewById(R.id.fCategory_btnFood);
-        btnCheckin = (Button) view.findViewById(R.id.fCategory_btnCheckin);
-        btnHotel = (Button) view.findViewById(R.id.fCategory_btnHotel);
+        btnAll = (MaterialButton) view.findViewById(R.id.fCategory_btnAll);
+        btnFood = (MaterialButton) view.findViewById(R.id.fCategory_btnFood);
+        btnCheckin = (MaterialButton) view.findViewById(R.id.fCategory_btnCheckin);
+        btnHotel = (MaterialButton) view.findViewById(R.id.fCategory_btnHotel);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fCategory_refreshLayout);
+        topView = (HorizontalScrollView) view.findViewById(R.id.fCategory_lnCategory);
         tvNothing.setVisibility(View.GONE);
         helper_common.configRecycleView(getContext(), rv_PostList);
         helper_common.configAnimBottomNavigation(getContext(), rv_PostList);
-        skeletonScreen = Skeleton.bind(rv_PostList)
-                .adapter(adapter_rv_post)
-                .load(R.layout.row_sekeleton_post)
-                .show();
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -110,6 +108,8 @@ public class Fragment_Category extends Fragment {
     }
 
     private void showPost() {
+        setColorButton();
+        helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
         dao_post.getPostByCategory(category, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -128,6 +128,53 @@ public class Fragment_Category extends Fragment {
                 }
             }
         });
+    }
+
+    private void setColorButton() {
+        switch (category) {
+            case "":
+                setActiveButton(btnAll);
+                setInactiveButton(btnFood);
+                setInactiveButton(btnHotel);
+                setInactiveButton(btnCheckin);
+                break;
+
+            case "food":
+                setActiveButton(btnFood);
+                setInactiveButton(btnAll);
+                setInactiveButton(btnHotel);
+                setInactiveButton(btnCheckin);
+                break;
+            case "hotel":
+                setActiveButton(btnHotel);
+                setInactiveButton(btnAll);
+                setInactiveButton(btnFood);
+                setInactiveButton(btnCheckin);
+                break;
+            case "check_in":
+                setActiveButton(btnCheckin);
+                setInactiveButton(btnAll);
+                setInactiveButton(btnFood);
+                setInactiveButton(btnHotel);
+                break;
+        }
+    }
+
+    private void setActiveButton(MaterialButton materialButton) {
+        @SuppressLint("ResourceType")
+        ColorStateList activeColor = ColorStateList
+                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
+
+        materialButton.setTextColor(activeColor);
+        materialButton.setStrokeColor(activeColor);
+    }
+
+    private void setInactiveButton(MaterialButton materialButton) {
+        @SuppressLint("ResourceType")
+        ColorStateList inactiveColor = ColorStateList
+                .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
+        materialButton.setTextColor(inactiveColor);
+        materialButton.setStrokeColor(inactiveColor);
     }
 
     private void refreshLV() {

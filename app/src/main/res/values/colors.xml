@@ -9,4 +9,5 @@
     <color name="colorAccent">#F86C6C</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="inactive_button">#19C9FF</color>
 </resources>

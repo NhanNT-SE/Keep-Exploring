@@ -39,6 +39,7 @@ public class Fragment_Profile_BlogList extends Fragment {
     private List<Blog> blogList;
     private String idUser;
     private String type;
+    private Bundle bundle;
 
     public Fragment_Profile_BlogList() {
         // Required empty public constructor
@@ -52,18 +53,22 @@ public class Fragment_Profile_BlogList extends Fragment {
         rvBlog = (RecyclerView) view.findViewById(R.id.fProfileBlogList_rvBlog);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fProfileBlogList_refreshLayout);
         initVariable();
+        handlerEvent();
         return view;
     }
-
     private void initVariable() {
         dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
+        bundle = getParentFragment().getArguments();
         blogList = new ArrayList<>();
         type = "owner";
+    }
+
+    private void handlerEvent() {
         helper_common.configRecycleView(getContext(), rvBlog);
         helper_common.configAnimBottomNavigation(getContext(), rvBlog);
-        Bundle bundle = getParentFragment().getArguments();
+        helper_common.showSkeleton(rvBlog,adapterBlog,R.layout.row_skeleton_blog);
         if (bundle != null) {
             idUser = bundle.getString("idUser");
         } else {
@@ -88,7 +93,7 @@ public class Fragment_Profile_BlogList extends Fragment {
                 blogList = (List<Blog>) response;
                 log(blogList.toString());
                 refreshRV();
-                if (swipeRefreshLayout.isRefreshing()){
+                if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }

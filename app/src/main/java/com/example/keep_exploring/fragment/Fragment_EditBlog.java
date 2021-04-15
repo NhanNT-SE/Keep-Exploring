@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Blog;
@@ -118,6 +119,7 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void handlerEvent() {
+        spotDialog.show();
         idBlog = "";
         Bundle bundle = getArguments();
         if (bundle != null){
@@ -294,7 +296,6 @@ public class Fragment_EditBlog extends Fragment {
 
         dialog.show();
     }
-
     @SuppressLint("UseCompatLoadingForDrawables")
     private void uploadData() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -336,10 +337,7 @@ public class Fragment_EditBlog extends Fragment {
             });
             dialog.show();
         }
-
-
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -416,10 +414,12 @@ public class Fragment_EditBlog extends Fragment {
                 folder_storage = blog.getFolder_storage();
                 tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();
+                spotDialog.dismiss();
             }
 
             @Override
             public void failedReq(String msg) {
+                spotDialog.dismiss();
             }
         });
     }

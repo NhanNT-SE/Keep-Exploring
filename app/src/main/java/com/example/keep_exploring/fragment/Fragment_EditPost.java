@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +78,6 @@ public class Fragment_EditPost extends Fragment {
     private User user;
     private List<ImageDisplay> imageDisplayList;
     private List<String> imagesSubmitList, imageDeleteList, imageDefaultList;
-
     public Fragment_EditPost() {
         // Required empty public constructor
     }
@@ -105,6 +105,7 @@ public class Fragment_EditPost extends Fragment {
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditPost_fabAddContent);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         ratingBar = (RatingBar) view.findViewById(R.id.fEditPost_ratingBar);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.fEditPost_mainLayout);
     }
     private void initVariable() {
         dao_address = new DAO_Address(getContext());
@@ -122,6 +123,7 @@ public class Fragment_EditPost extends Fragment {
     }
 
     private void handlerEvent() {
+        spotDialog.show();
         idPost = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -280,7 +282,8 @@ public class Fragment_EditPost extends Fragment {
             }
         }
     }
-    private void loadData(){
+
+    private void loadData() {
         dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -300,11 +303,12 @@ public class Fragment_EditPost extends Fragment {
                 tvAddress.setText(post.getAddress());
                 tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
                 refreshViewPager();
+                spotDialog.dismiss();
             }
 
             @Override
             public void failedReq(String msg) {
-
+                spotDialog.dismiss();
             }
         });
 

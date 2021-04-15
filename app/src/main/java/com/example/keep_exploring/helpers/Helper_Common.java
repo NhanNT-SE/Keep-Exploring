@@ -25,6 +25,7 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.ethanhua.skeleton.Skeleton;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.animations.Anim_Bottom_Navigation;
@@ -47,13 +48,13 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
 
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
 
     public Helper_Common() {
@@ -103,8 +104,18 @@ public class Helper_Common {
     public void configAnimBottomNavigation(Context context, RecyclerView recyclerView) {
         recyclerView.setOnTouchListener(new Anim_Bottom_Navigation(context,
                 ((Activity) context).findViewById(R.id.main_coordinatorLayout)));
-
     }
+
+
+
+    public void showSkeleton(RecyclerView recyclerView, RecyclerView.Adapter adapter, int layout) {
+        Skeleton.bind(recyclerView)
+                .adapter(adapter)
+                .load(layout)
+                .shimmer(false)
+                .show();
+    }
+
 
     public void runtimePermission(Context context) {
         Dexter.withContext(context)
@@ -214,7 +225,6 @@ public class Helper_Common {
         });
         dialog.show();
     }
-
 
     public void replaceFragment(Context context, Fragment fragment) {
         ((FragmentActivity) context).getSupportFragmentManager()

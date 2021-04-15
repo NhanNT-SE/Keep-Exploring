@@ -38,7 +38,7 @@ public class Fragment_Profile_PostList extends Fragment {
     private List<Post> listPost;
     private String idUser;
     private String type;
-
+    private Bundle bundle;
     public Fragment_Profile_PostList() {
         // Required empty public constructor
     }
@@ -51,18 +51,21 @@ public class Fragment_Profile_PostList extends Fragment {
         rvPost = (RecyclerView) view.findViewById(R.id.fProfilePostList_rvPost);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fProfilePostList_refreshLayout);
         initVariable();
+        handlerEvent();
         return view;
     }
-
     private void initVariable() {
         dao_post = new DAO_Post(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
         listPost = new ArrayList<>();
         type = "owner";
+        bundle = getParentFragment().getArguments();
+    }
+    private void handlerEvent(){
         helper_common.configRecycleView(getContext(), rvPost);
         helper_common.configAnimBottomNavigation(getContext(), rvPost);
-        Bundle bundle = getParentFragment().getArguments();
+        helper_common.showSkeleton(rvPost,adapterPost,R.layout.row_skeleton_post);
         if (bundle != null) {
             idUser = bundle.getString("idUser");
         } else {
@@ -79,7 +82,6 @@ public class Fragment_Profile_PostList extends Fragment {
         });
         loadData();
     }
-
     private void loadData() {
         dao_post.getPostByUser(idUser, new Helper_Callback() {
             @Override
@@ -99,12 +101,10 @@ public class Fragment_Profile_PostList extends Fragment {
             }
         });
     }
-
     private void refreshRV() {
         adapterPost = new Adapter_RV_ProfilePost(getContext(), listPost, type);
         rvPost.setAdapter(adapterPost);
     }
-
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }

@@ -86,7 +86,7 @@ public class DAO_Blog {
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        log(t.getMessage());
+                        callback.failedReq(t.getMessage());
                     }
                 });
             }
@@ -108,7 +108,7 @@ public class DAO_Blog {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -139,7 +139,7 @@ public class DAO_Blog {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                callback.failedReq(t.getMessage());
             }
         });
 
@@ -157,7 +157,7 @@ public class DAO_Blog {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -185,7 +185,7 @@ public class DAO_Blog {
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        log(t.getMessage());
+                        callback.failedReq(t.getMessage());
                     }
                 });
             }

@@ -9,12 +9,10 @@
     <HorizontalScrollView
         android:id="@+id/fCategory_lnCategory"
         android:layout_width="wrap_content"
-        android:layout_height="120px"
+        android:layout_height="wrap_content"
         android:foregroundGravity="center_vertical"
         android:scrollbars="none">
-
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
@@ -28,9 +26,9 @@
                 android:text="Home"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/inactive_button"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/colorPrimary"
+                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -41,9 +39,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Food"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/inactive_button"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/colorPrimary"
+                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -54,9 +52,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Check in"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/inactive_button"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/colorPrimary"
+                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -68,9 +66,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Accomodation"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/inactive_button"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/colorPrimary"
+                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
 
 
@@ -83,17 +81,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-
         android:text="Nothing to show here"
         android:textSize="20sp"
         android:textStyle="bold" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/fCategory_refreshLayout"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_below="@+id/fCategory_lnCategory">
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fCategory_rvPostList"
             android:layout_width="match_parent"
