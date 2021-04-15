@@ -65,19 +65,14 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
                 }
             }
         });
-         holder.itemView.setOnClickListener(new View.OnClickListener() {
+         holder.imgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment_Post_Details fragment_post_details = new Fragment_Post_Details();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("post", post);
                 fragment_post_details.setArguments(bundle);
-                ((MainActivity) context).getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_FrameLayout,fragment_post_details)
-                        .addToBackStack(null)
-                        .commit();
-
+                helper_common.replaceFragment(context,fragment_post_details);
             }
         });
     }
