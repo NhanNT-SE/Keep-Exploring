@@ -141,10 +141,7 @@ public class Fragment_Post_Details extends Fragment {
             @Override
             public void successReq(Object response) {
                 List<Comment> list = (List<Comment>) response;
-                log("show comt list: " + response.toString());
-                log("list Comment " + list.toString());
-                log(list.size() + "size List cmt");
-                rfCommentList(list);
+                               rfCommentList(list);
             }
 
             @Override

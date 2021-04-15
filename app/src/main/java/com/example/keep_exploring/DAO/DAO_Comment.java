@@ -55,10 +55,8 @@ public class DAO_Comment {
                             callback.failedReq(msg);
                         } else {
                             JSONArray data = responseData.getJSONArray("data");
-
                             Type listType = new TypeToken<List<Comment>>() {}.getType();
                             List<Comment> commentList = new Gson().fromJson(data.toString(),listType);
-                            log(commentList.size()+" dao size comment");
                             callback.successReq(commentList);
                         }
                     }
