@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         dao_address = new DAO_Address(this);
-        replaceFragment(new Fragment_Category());
     }
     private void handlerEvent() {
         helper_common.runtimePermission(this);
@@ -116,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         hideCircleMenu();
+        replaceFragment(new Fragment_Notification());
     }
 
     private void insertPlaces(){
