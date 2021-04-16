@@ -117,13 +117,12 @@ public class DAO_Auth {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    JSONObject responseData = new JSONObject(response.body());
-                    String newAccessToken = responseData.getString("data");
+
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    String newAccessToken = data.toString();
                     helper_sp.setAccessToken(newAccessToken);
                     callback.successReq(newAccessToken);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
             @Override

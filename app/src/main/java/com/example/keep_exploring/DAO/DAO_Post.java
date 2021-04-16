@@ -43,7 +43,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -60,7 +62,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -114,9 +118,12 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Post>>() {}.getType();
-                List<Post> postList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(postList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Post>>() {
+                    }.getType();
+                    List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(postList);
+                }
             }
 
             @Override
@@ -137,7 +144,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null){
+                    callback.successReq(data);
+                }
             }
 
             @Override

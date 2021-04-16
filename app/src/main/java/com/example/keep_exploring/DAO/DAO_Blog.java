@@ -15,7 +15,6 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
-import com.example.keep_exploring.model.Post;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -82,7 +81,10 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         JSONObject data = callback.getJsonObject(response);
-                        callback.successReq(data);
+                        if (data != null) {
+                            callback.successReq(data);
+
+                        }
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
@@ -104,7 +106,9 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -150,9 +154,12 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Blog>>() {}.getType();
-                List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(blogList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Blog>>() {
+                    }.getType();
+                    List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(blogList);
+                }
             }
 
             @Override
@@ -180,7 +187,9 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         JSONObject data = callback.getJsonObject(response);
-                        callback.successReq(data);
+                        if (data != null) {
+                            callback.successReq(data);
+                        }
 
                     }
                     @Override

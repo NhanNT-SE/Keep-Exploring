@@ -3,23 +3,50 @@ package com.example.keep_exploring.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Notification {
-    private String status;
-    private String content,contentAdmin, created_on;
+    @SerializedName("_id")
+    private String id;
     @SerializedName("idPost")
     private Post post;
     @SerializedName("idBlog")
     private Blog blog;
+    private String status;
+    private String content, contentAdmin, created_on;
 
     @Override
     public String toString() {
         return "Notification{" +
-                "status='" + status + '\'' +
+                "id='" + id + '\'' +
+                ", post=" + post +
+                ", blog=" + blog +
+                ", status='" + status + '\'' +
                 ", content='" + content + '\'' +
                 ", contentAdmin='" + contentAdmin + '\'' +
                 ", created_on='" + created_on + '\'' +
-                ", post=" + post +
-                ", blog=" + blog +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public Blog getBlog() {
+        return blog;
+    }
+
+    public void setBlog(Blog blog) {
+        this.blog = blog;
     }
 
     public String getStatus() {
@@ -52,21 +79,5 @@ public class Notification {
 
     public void setCreated_on(String created_on) {
         this.created_on = created_on;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public Blog getBlog() {
-        return blog;
-    }
-
-    public void setBlog(Blog blog) {
-        this.blog = blog;
     }
 }

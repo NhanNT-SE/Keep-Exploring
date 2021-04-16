@@ -41,9 +41,11 @@ public class DAO_User {
         callProfile.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject responseData = callback.getJsonObject(response);
-                User user = new Gson().fromJson(responseData.toString(), User.class);
-                callback.successReq(user);
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    User user = new Gson().fromJson(data.toString(), User.class);
+                    callback.successReq(user);
+                }
             }
 
             @Override
@@ -58,11 +60,12 @@ public class DAO_User {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject responseData = callback.getJsonObject(response);
-                User user = new Gson().fromJson(responseData.toString(), User.class);
-                callback.successReq(user);
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    User user = new Gson().fromJson(data.toString(), User.class);
+                    callback.successReq(user);
+                }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());
@@ -77,8 +80,10 @@ public class DAO_User {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                    JSONObject responseData = callback.getJsonObject(response);
-                    callback.successReq(responseData);
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {

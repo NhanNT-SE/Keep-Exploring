@@ -20,10 +20,7 @@ public interface Api_Notification {
     Call<String> changeNewStatusNotify(@Header("Authorization") String accessToken,
                                        @Path("idNotify") String idNotify);
 
-    @DELETE("/notification/delete")
-    Call<String> deleteAllNotify(@Header("Authorization") String accessToken);
-
     @DELETE("/notification/delete/{idNotify}")
-    Call<String> deleteNotifyById(@Header("Authorization") String accessToken,
+    Call<String> deleteNotify(@Header("Authorization") String accessToken,
                                   @Path("idNotify") String idNotify);
 }

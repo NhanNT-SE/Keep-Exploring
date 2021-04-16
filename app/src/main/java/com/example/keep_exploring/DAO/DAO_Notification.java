@@ -39,10 +39,12 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Notification>>() {
-                }.getType();
-                List<Notification> notificationList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(notificationList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Notification>>() {
+                    }.getType();
+                    List<Notification> notificationList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(notificationList);
+                }
             }
 
             @Override
@@ -59,9 +61,46 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
+    public void changeNewStatusNotify(String idNotify, Helper_Callback callback) {
+        Call<String> call = api_notification.changeNewStatusNotify(accessToken, idNotify);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
+    public void deleteNotify(String idNotify, Helper_Callback callback) {
+        Call<String> call = api_notification.deleteNotify(accessToken, idNotify);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
+            }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());

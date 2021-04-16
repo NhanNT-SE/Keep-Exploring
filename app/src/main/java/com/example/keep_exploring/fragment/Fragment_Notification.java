@@ -42,7 +42,6 @@ public class Fragment_Notification extends Fragment {
     private int total, totalSeen, totalNew;
     private Adapter_RV_Notify adapterNotify;
     private String filter;
-
     public Fragment_Notification() {
 
     }
@@ -102,10 +101,7 @@ public class Fragment_Notification extends Fragment {
                 setFilterList();
             }
         });
-
         loadData();
-        changeStatusNotify();
-
     }
 
     private void loadData() {
@@ -115,19 +111,14 @@ public class Fragment_Notification extends Fragment {
             @Override
             public void successReq(Object response) {
                 defaultList = (List<Notification>) response;
-                totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
-                totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
-                total = defaultList.size();
-                log(defaultList.toString());
-                mBtnAll.setText("Tất cả thông báo(" + total + ")");
-                mBtnNew.setText("Thông báo chưa đọc(" + totalNew + ")");
-                mBtnSeen.setText("Thông báo đã đọc(" + totalSeen + ")");
+                setBadgeMButton();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
                 setFilterList();
-            }
+                changeSeenStatusNotify();
 
+            }
             @Override
             public void failedReq(String msg) {
                 if (swipeRefreshLayout.isRefreshing()) {
@@ -153,7 +144,6 @@ public class Fragment_Notification extends Fragment {
     }
 
     private void refreshRV(List<Notification> notificationList) {
-        log(notificationList.toString());
         adapterNotify = new Adapter_RV_Notify(getContext(), notificationList);
         rvNotify.setAdapter(adapterNotify);
         if (notificationList.size() > 0) {
@@ -161,6 +151,15 @@ public class Fragment_Notification extends Fragment {
         } else {
             tvNothing.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setBadgeMButton() {
+        totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
+        totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
+        total = defaultList.size();
+        mBtnAll.setText("Tất cả thông báo(" + total + ")");
+        mBtnNew.setText("Thông báo chưa đọc(" + totalNew + ")");
+        mBtnSeen.setText("Thông báo đã đọc(" + totalSeen + ")");
     }
 
     private void setColorButton() {
@@ -200,7 +199,8 @@ public class Fragment_Notification extends Fragment {
         materialButton.setTextColor(inactiveColor);
         materialButton.setStrokeColor(inactiveColor);
     }
-    private void changeStatusNotify(){
+
+    private void changeSeenStatusNotify() {
         dao_notification.changeSeenStatusNotify(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
