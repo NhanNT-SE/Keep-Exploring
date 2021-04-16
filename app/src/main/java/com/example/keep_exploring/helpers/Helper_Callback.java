@@ -2,14 +2,18 @@ package com.example.keep_exploring.helpers;
 
 import android.util.Log;
 
+import com.example.keep_exploring.model.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import retrofit2.Response;
 
 public abstract class Helper_Callback {
-    public abstract void successReq(Object response);
+    public abstract List<User> successReq(Object response);
 
     public abstract void failedReq(String msg);
 

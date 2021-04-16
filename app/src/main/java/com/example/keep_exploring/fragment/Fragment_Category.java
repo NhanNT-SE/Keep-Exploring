@@ -21,6 +21,7 @@ import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -112,12 +113,13 @@ public class Fragment_Category extends Fragment {
         helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
         dao_post.getPostByCategory(category, new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 postList = (List<Post>) response;
                 refreshLV();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+                return null;
             }
 
             @Override

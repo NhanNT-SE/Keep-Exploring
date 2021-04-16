@@ -15,7 +15,7 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
-import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -72,7 +72,7 @@ public class DAO_Blog {
         String folderStorage = helper_date.getMillisTime() + "";
         helper_image.uploadImageBlogDetail(storageRef, folderStorage, blogDetailsList, new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
                 RequestBody title_blog = helper_common.createPartFromString(titleBlog);
                 RequestBody folder_storage = helper_common.createPartFromString(folderStorage);
@@ -89,6 +89,7 @@ public class DAO_Blog {
                         callback.failedReq(t.getMessage());
                     }
                 });
+                return null;
             }
 
             @Override
@@ -170,7 +171,7 @@ public class DAO_Blog {
             Helper_Callback callback) {
         helper_image.updateImageBlogDetail(storageRef, folder_storage, contentList, new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 List<Blog_Details> blog_detailsList = (List<Blog_Details>) response;
                 RequestBody rTitleBlog = helper_common.createPartFromString(titleBlog);
                 RequestBody rCreated_on = helper_common.createPartFromString(helper_date.getIsoDate());
@@ -188,6 +189,7 @@ public class DAO_Blog {
                         callback.failedReq(t.getMessage());
                     }
                 });
+                return null;
             }
 
             @Override

@@ -209,10 +209,11 @@ public class Fragment_EditPost extends Fragment {
                        spotDialog.show();
                        dao_post.deletePost(idPost,new Helper_Callback(){
                            @Override
-                           public void successReq(Object data) {
+                           public List<User> successReq(Object data) {
                                toast("Đã xóa bài viết");
                                spotDialog.dismiss();
                                helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
+                               return null;
                            }
 
                            @Override
@@ -267,10 +268,11 @@ public class Fragment_EditPost extends Fragment {
                 spotDialog.show();
                 dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
-                    public void successReq(Object data) {
+                    public List<User> successReq(Object data) {
                             toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
                             spotDialog.dismiss();
 
+                        return null;
                     }
 
                     @Override
@@ -286,7 +288,7 @@ public class Fragment_EditPost extends Fragment {
     private void loadData() {
         dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 Post post = (Post) response;
                 List<String> imageList = post.getImgs();
                 int sizeList = imageList.size();
@@ -304,6 +306,7 @@ public class Fragment_EditPost extends Fragment {
                 tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
                 refreshViewPager();
                 spotDialog.dismiss();
+                return null;
             }
 
             @Override

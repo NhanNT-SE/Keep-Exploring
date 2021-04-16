@@ -18,6 +18,7 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
+import com.example.keep_exploring.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,13 +90,14 @@ public class Fragment_Profile_BlogList extends Fragment {
     private void loadData() {
         dao_blog.getBlogByUser(idUser, new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 blogList = (List<Blog>) response;
                 log(blogList.toString());
                 refreshRV();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+                return null;
             }
 
             @Override

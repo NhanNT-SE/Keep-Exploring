@@ -23,6 +23,7 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Places;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         dao_address.getProvinceList(new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 List<String> provinceList = (List<String>) response;
+                return null;
             }
 
             @Override

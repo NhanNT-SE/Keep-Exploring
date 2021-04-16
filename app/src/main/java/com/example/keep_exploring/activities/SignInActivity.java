@@ -14,6 +14,9 @@ import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.model.User;
+
+import java.util.List;
 
 public class SignInActivity extends AppCompatActivity {
     private EditText etEmail, etPass;
@@ -59,9 +62,10 @@ public class SignInActivity extends AppCompatActivity {
                   }
 
                   @Override
-                  public void successReq(Object response) {
+                  public List<User> successReq(Object response) {
                       toast("Đăng nhâp thành công");
                       startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                      return null;
                   }
               });
           }

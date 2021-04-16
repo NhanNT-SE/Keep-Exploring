@@ -22,6 +22,8 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
 
@@ -84,11 +86,12 @@ public class SignUpActivity extends AppCompatActivity {
                 String displayName = etDisplayName.getEditText().getText().toString();
                 dao_auth.signUp(realPath, email, pass, displayName,new Helper_Callback(){
                     @Override
-                    public void successReq(Object response) {
+                    public List<User> successReq(Object response) {
                         User user = (User) response;
                         toast("Tạo tài khoản thành công!");
 //                        startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
                         log(user.toString());
+                        return null;
                     }
 
                     @Override

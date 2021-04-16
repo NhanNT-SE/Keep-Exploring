@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/dUserLike_tvNothing"
+        android:text="Nothing to show here, add first comment"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/dUserLike_layoutTitle"
         android:layout_marginTop="10dp">
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,6 +47,7 @@
         android:id="@+id/dUserLike_rcUserList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/dUserLike_layoutTitle"
         android:layout_marginTop="10dp" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -12,6 +12,7 @@ import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.model.Notification;
+import com.example.keep_exploring.model.User;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class Fragment_Notification extends Fragment {
     private void loadData() {
         dao_notification.getAll(new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 defaultList = (List<Notification>) response;
                 totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
                 totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
@@ -61,6 +62,7 @@ public class Fragment_Notification extends Fragment {
                 log("seen: " + totalSeen);
                 log("seen: " + totalNew);
 
+                return null;
             }
 
             @Override

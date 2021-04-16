@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
@@ -195,7 +195,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 spotDialog.show();
                 dao_user.changePassword(oldPass, newPass, new Helper_Callback() {
                     @Override
-                    public void successReq(Object response) {
+                    public List<User> successReq(Object response) {
                         toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
                         spotDialog.dismiss();
                         dialog.dismiss();
@@ -206,6 +206,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                                 getContext().startActivity(new Intent(getContext(),SignInActivity.class));
                             }
                         }, 2000);
+                        return null;
                     }
 
                     @Override
@@ -314,11 +315,12 @@ public class Fragment_Tab_UserInfo extends Fragment {
                     spotDialog.show();
                     dao_user.updateProfile(imageUser, map, new Helper_Callback() {
                         @Override
-                        public void successReq(Object response) {
+                        public List<User> successReq(Object response) {
                             toast("Cập nhật thông tin cá nhân thành công");
                             spotDialog.dismiss();
                             dialog.dismiss();
                             loadData();
+                            return null;
                         }
 
                         @Override
@@ -437,9 +439,10 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private void loadData() {
         dao_user.getProfile(idUser,new Helper_Callback() {
             @Override
-            public void successReq(Object response) {
+            public List<User> successReq(Object response) {
                 user = (User) response;
                 showInfo();
+                return null;
             }
 
             @Override

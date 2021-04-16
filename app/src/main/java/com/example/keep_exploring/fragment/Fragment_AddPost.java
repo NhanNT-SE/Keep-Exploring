@@ -235,11 +235,12 @@ public class Fragment_AddPost extends Fragment {
                 spotDialog.show();
                 dao_post.createPost(map, imagesSubmitList, new Helper_Callback() {
                     @Override
-                    public void successReq(Object data) {
+                    public List<User> successReq(Object data) {
                         toast("Tạo bài viết thành công");
                         clearPost();
                         refreshViewPager();
                         spotDialog.dismiss();
+                        return null;
                     }
 
                     @Override

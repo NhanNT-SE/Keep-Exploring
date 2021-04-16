@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +129,7 @@ public class Helper_Post {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 dao_address.getAddressList(dProvinceList.get(position), "", new Helper_Callback() {
                     @Override
-                    public void successReq(Object response) {
+                    public List<User> successReq(Object response) {
                         Map<String, List<String>> map = (Map<String, List<String>>) response;
                         dDistrictList.clear();
                         dWardList.clear();
@@ -143,6 +144,7 @@ public class Helper_Post {
                         );
                         dEdtAdditional.setText("");
                         dTvAddress.setText(addressSubmit);
+                        return null;
                     }
 
                     @Override
@@ -165,7 +167,7 @@ public class Helper_Post {
                         dDistrictList.get(position),
                         new Helper_Callback() {
                     @Override
-                    public void successReq(Object response) {
+                    public List<User> successReq(Object response) {
                         Map<String, List<String>> map = (Map<String, List<String>>) response;
                         dWardList.clear();
                         dWardList.addAll(map.get("wardList"));
@@ -177,6 +179,7 @@ public class Helper_Post {
                         );
                         dEdtAdditional.setText("");
                         dTvAddress.setText(addressSubmit);
+                        return null;
                     }
 
                             @Override
