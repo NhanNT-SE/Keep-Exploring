@@ -161,6 +161,8 @@ public class Dialog_Fragment_Comment extends DialogFragment {
 
             }
         });
+
+
         loadData();
     }
 
@@ -172,6 +174,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
                 commentList = (List<Comment>) response;
                 refreshRV();
                 swipeRefreshLayout.setRefreshing(false);
+
             }
             @Override
             public void failedReq(String msg) {
@@ -198,6 +201,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
                 path = "";
                 etContent.setText("");
                 uriImage = null;
+
             }
 
             @Override
@@ -213,6 +217,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
 
     private void refreshRV() {
         adapterComment = new Adapter_RV_Comment(getContext(), commentList);
+
         rvComment.setAdapter(adapterComment);
         if (commentList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
@@ -220,6 +225,18 @@ public class Dialog_Fragment_Comment extends DialogFragment {
             tvNothing.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        log("on Resume");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        log("on stop");
     }
 
     @Override

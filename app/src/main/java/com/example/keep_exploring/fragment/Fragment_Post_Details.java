@@ -94,6 +94,8 @@ public class Fragment_Post_Details extends Fragment {
             @Override
             public void onClick(View v) {
 //                showDialogComment();
+                Dialog_Fragment_Comment dialog_fragment_comment = new Dialog_Fragment_Comment();
+                dialog_fragment_comment.show(getChildFragmentManager(),dialog_fragment_comment.getTag());
             }
         });
     }

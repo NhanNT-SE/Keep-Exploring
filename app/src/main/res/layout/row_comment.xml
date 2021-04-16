@@ -11,7 +11,6 @@
         android:layout_height="40dp"
         app:civ_border_color="#FFFFFF"
         app:civ_border_width="1dp" />
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_margin="10dp"
@@ -21,7 +20,6 @@
         android:backgroundTint="#EBEBEC"
         app:cardCornerRadius="10dp"
         >
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -42,11 +40,11 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
                 <ImageView
-                    android:id="@+id/row_comment_imgMore"
+                    android:id="@+id/row_comment_imgDelete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_more_horiz_black_24dp" />
+                    android:src="@drawable/ic_trash_black" />
             </RelativeLayout>
 
             <ImageView

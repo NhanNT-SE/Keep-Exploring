@@ -42,6 +42,24 @@ public class DAO_Comment {
         accessToken = helper_sp.getAccessToken();
     }
 
+    public void deleteComment(String idComment, Helper_Callback callback) {
+        Call<String> call = api_coment.deleteComment(accessToken, idComment);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
     public void addCommentPost(String sContent, String sIdPost, String path, Helper_Callback callback) {
         RequestBody content = helper_common.createPartFromString(sContent);
         RequestBody idPost = helper_common.createPartFromString(sIdPost);
@@ -101,7 +119,6 @@ public class DAO_Comment {
                 callback.failedReq(t.getMessage());
             }
         });
-
     }
 
     private void log(String s) {
