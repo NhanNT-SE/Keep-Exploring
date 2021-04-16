@@ -78,10 +78,10 @@ const deletePost = async (req, res, next) => {
         });
       }
 
-      return handleCustomError(202, "Bạn không phải admin/owner bài viết này");
+      return handlerCustomError(202, "Bạn không phải admin/owner bài viết này");
     }
 
-    return handleCustomError(201, "Bài viết không tồn tại");
+    return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }

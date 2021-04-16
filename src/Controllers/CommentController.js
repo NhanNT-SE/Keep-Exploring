@@ -57,7 +57,7 @@ const createCommentPost = async (req, res, next) => {
     }
 
     //Neu bai viet khong ton tai thi tra ve status code 201
-    return handleCustomError(201, "Bài viết không tồn tại");
+    return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     return res.status(202).send(error.message);
   }
@@ -115,7 +115,7 @@ const createCommentBlog = async (req, res, next) => {
     }
 
     //Neu bai viet khong ton tai thi tra ve status code 201
-    return handleCustomError(201, "Bài viết không tồn tại");
+    return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
     return res.status(202).send(error.message);
   }
@@ -164,7 +164,7 @@ const deleteCommentByID = async (req, res, next) => {
       });
     }
 
-    return handleCustomError(201, "Bạn không phải admin/chủ comment này");
+    return handlerCustomError(201, "Bạn không phải admin/chủ comment này");
   } catch (error) {
     next(error);
   }
@@ -177,11 +177,11 @@ const editCommentBlog = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return handleCustomError(201, "Bình luận không tồn tại");
+      return handlerCustomError(201, "Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return handleCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
+      return handlerCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
     }
 
     if (commentFound.img && deleteImg) {
@@ -212,7 +212,7 @@ const editCommentPost = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return handleCustomError(201, "Bình luận không tồn tại");
+      return handlerCustomError(201, "Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {

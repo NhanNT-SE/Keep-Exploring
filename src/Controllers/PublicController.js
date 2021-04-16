@@ -140,7 +140,7 @@ const getPostComment = async (req, res, next) => {
         message: "Lấy dữ liệu thành công",
       });
     }
-    return handleCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
+    return handlerCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -188,7 +188,7 @@ const getLikeListPost = async (req, res, next) => {
       "imgUser",
     ]);
     if (!postFound) {
-      return handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = postFound.like_list;
@@ -211,7 +211,7 @@ const getLikeListBlog = async (req, res, next) => {
       "imgUser",
     ]);
     if (!blogFound) {
-      return handleCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = blogFound.like_list;
