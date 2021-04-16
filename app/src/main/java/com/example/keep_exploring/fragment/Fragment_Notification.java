@@ -45,7 +45,6 @@ public class Fragment_Notification extends Fragment {
     public Fragment_Notification() {
 
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,6 +101,7 @@ public class Fragment_Notification extends Fragment {
             }
         });
         loadData();
+        changeSeenStatusNotify();
     }
 
     private void loadData() {
@@ -116,7 +116,6 @@ public class Fragment_Notification extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                 }
                 setFilterList();
-                changeSeenStatusNotify();
 
             }
             @Override
@@ -127,7 +126,6 @@ public class Fragment_Notification extends Fragment {
             }
         });
     }
-
     private void setFilterList() {
         setColorButton();
         filterList.clear();
@@ -140,9 +138,7 @@ public class Fragment_Notification extends Fragment {
             refreshRV(filterList);
         }
         refreshRV(filterList);
-
     }
-
     private void refreshRV(List<Notification> notificationList) {
         adapterNotify = new Adapter_RV_Notify(getContext(), notificationList);
         rvNotify.setAdapter(adapterNotify);
@@ -152,7 +148,6 @@ public class Fragment_Notification extends Fragment {
             tvNothing.setVisibility(View.VISIBLE);
         }
     }
-
     private void setBadgeMButton() {
         totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
         totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
@@ -161,7 +156,6 @@ public class Fragment_Notification extends Fragment {
         mBtnNew.setText("Thông báo chưa đọc(" + totalNew + ")");
         mBtnSeen.setText("Thông báo đã đọc(" + totalSeen + ")");
     }
-
     private void setColorButton() {
         switch (filter) {
             case "":

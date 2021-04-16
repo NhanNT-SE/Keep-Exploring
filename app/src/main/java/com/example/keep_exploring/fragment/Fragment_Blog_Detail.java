@@ -23,6 +23,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Fragment_Blog_Detail extends Fragment {
 
     private View view;
+    private ImageView  imgPost, imgContent, imgComment;
+    private CircleImageView imgAvatar;
+    private TextView tvTitle, tvPubDate, tvDescription, tvAddress, tvEmail;
+    private FirebaseUser currentUser;
+    private Post post;
 
 
     public Fragment_Blog_Detail() {
