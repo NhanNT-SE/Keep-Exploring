@@ -1,9 +1,17 @@
 package com.example.keep_exploring.model;
 
-public class Comment {
+import android.net.Uri;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+public class Comment implements Serializable {
     private String _id, idPost, idBlog;
     private String date, content, img;
-    private User idUser;
+    @SerializedName("idUser")
+    private User user;
+    private Uri uriImg;
 
     @Override
     public String toString() {
@@ -14,7 +22,8 @@ public class Comment {
                 ", date='" + date + '\'' +
                 ", content='" + content + '\'' +
                 ", img='" + img + '\'' +
-                ", idUser=" + idUser +
+                ", user=" + user +
+                ", uriImg=" + uriImg +
                 '}';
     }
 
@@ -66,11 +75,19 @@ public class Comment {
         this.img = img;
     }
 
-    public User getIdUser() {
-        return idUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setIdUser(User idUser) {
-        this.idUser = idUser;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Uri getUriImg() {
+        return uriImg;
+    }
+
+    public void setUriImg(Uri uriImg) {
+        this.uriImg = uriImg;
     }
 }

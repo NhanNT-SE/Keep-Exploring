@@ -39,6 +39,8 @@ public class Helper_Image {
         helper_date = new Helper_Date();
     }
 
+
+
     public String getPathFromUri(Uri uri) {
         final String docId = DocumentsContract.getDocumentId(uri);
         final String[] split = docId.split(":");

@@ -9,7 +9,13 @@
     </style>
 
     <style name="NavigationTheme" parent="AppTheme">
-        <item name="listPreferredItemHeightSmall">38dp</item><!-- menu item height- vary as u need -->
+        <item name="listPreferredItemHeightSmall">38dp
+        </item><!-- menu item height- vary as u need -->
     </style>
 
+    <style name="DialogCommentTheme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
 </resources>
