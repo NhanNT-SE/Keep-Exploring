@@ -25,6 +25,9 @@ public interface Api_Post {
     @GET("/public/post/{idPost}")
     Call<String> getPostById(@Path("idPost") String idPost);
 
+    @GET("/public/post/like")
+    Call<String> getLikeByPost(@Part("idPost") String idPost);
+
     @GET("/post/{idUser}")
     Call<String> getPostByUser(
             @Header("Authorization") String accessToken,

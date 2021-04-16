@@ -8,7 +8,9 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -87,6 +89,43 @@ public class DAO_Post {
             }
         });
 
+    }
+
+    public void getLikeByPost(String idPost, Helper_Callback callback){
+Call<String> call = api_post.getLikeByPost(idPost);
+call.enqueue(new Callback<String>() {
+    @Override
+    public void onResponse(Call<String> call, Response<String> response) {
+        try {
+            if (response.errorBody() != null) {
+                JSONObject err = new JSONObject(response.errorBody().string());
+                log(err.getString("error"));
+                String msg = err.getString("message");
+                callback.failedReq(msg);
+                log(msg);
+            } else {
+                JSONObject responseData = new JSONObject(response.body());
+                if (responseData.has("error")) {
+                    JSONObject err = responseData.getJSONObject("error");
+                    String msg = err.getString("message");
+                    callback.failedReq(msg);
+                } else {
+                    JSONArray data = responseData.getJSONArray("data");
+                    Type listType = new TypeToken<List<User>>() {}.getType();
+                    List<User> userLikedList = new Gson().fromJson(data.toString(),listType);
+                    callback.successReq(userLikedList);
+                }
+            }
+        } catch (Exception e) {
+            log(e.getMessage());
+        }
+    }
+
+    @Override
+    public void onFailure(Call<String> call, Throwable t) {
+log(t.getMessage());
+    }
+});
     }
 
     public void getPostByCategory(String category, Helper_Callback callback) {
