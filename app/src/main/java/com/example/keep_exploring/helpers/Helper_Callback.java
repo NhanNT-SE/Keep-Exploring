@@ -13,7 +13,7 @@ import java.util.List;
 import retrofit2.Response;
 
 public abstract class Helper_Callback {
-    public abstract List<User> successReq(Object response);
+    public abstract void successReq(Object response);
 
     public abstract void failedReq(String msg);
 
