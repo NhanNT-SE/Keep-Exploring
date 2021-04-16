@@ -39,7 +39,6 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
         this.context = context;
         this.postList = postList;
     }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +46,6 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
         View view = inflater.inflate(R.layout.row_post, parent, false);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
@@ -89,17 +87,15 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return postList.size();
     }
-
     class ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView civUser;
         private TextView tvUserName, tvPubDate, tvTitle, tvAddress;
+        private ImageView imgPost;
         private ImageSlider isPost;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             civUser = (CircleImageView) itemView.findViewById(R.id.row_post_imgAvatarUser);
@@ -108,7 +104,6 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
             tvTitle = (TextView) itemView.findViewById(R.id.row_post_tvTitle);
             isPost = (ImageSlider) itemView.findViewById(R.id.row_post_imgPost);
             tvAddress = (TextView) itemView.findViewById(R.id.row_post_tvAddress);
-
         }
     }
 

@@ -38,9 +38,11 @@ public class DAO_Address {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                List provinceList = new Gson().fromJson(data.toString(), List.class);
-                helper_sp.setProvinceList(provinceList);
-                callback.successReq(provinceList);
+                if (data != null) {
+                    List provinceList = new Gson().fromJson(data.toString(), List.class);
+                    helper_sp.setProvinceList(provinceList);
+                    callback.successReq(provinceList);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -59,20 +61,22 @@ public class DAO_Address {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     JSONObject data = callback.getJsonObject(response);
-                    JSONArray jsonDistrictList = data.getJSONArray("districtList");
-                    JSONArray jsonWardList = data.getJSONArray("wardList");
-                    List<String> districtList = new ArrayList<>();
-                    List<String> wardList = new ArrayList<>();
-                    for (int i = 0; i < jsonDistrictList.length(); i++) {
-                        districtList.add(jsonDistrictList.get(i).toString());
+                    if (data != null) {
+                        JSONArray jsonDistrictList = data.getJSONArray("districtList");
+                        JSONArray jsonWardList = data.getJSONArray("wardList");
+                        List<String> districtList = new ArrayList<>();
+                        List<String> wardList = new ArrayList<>();
+                        for (int i = 0; i < jsonDistrictList.length(); i++) {
+                            districtList.add(jsonDistrictList.get(i).toString());
+                        }
+                        for (int i = 0; i < jsonWardList.length(); i++) {
+                            wardList.add(jsonWardList.get(i).toString());
+                        }
+                        Map<String, List<String>> map = new HashMap<>();
+                        map.put("districtList", districtList);
+                        map.put("wardList", wardList);
+                        callback.successReq(map);
                     }
-                    for (int i = 0; i < jsonWardList.length(); i++) {
-                        wardList.add(jsonWardList.get(i).toString());
-                    }
-                    Map<String, List<String>> map = new HashMap<>();
-                    map.put("districtList", districtList);
-                    map.put("wardList", wardList);
-                    callback.successReq(map);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

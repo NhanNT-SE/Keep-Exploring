@@ -2,9 +2,10 @@ package com.example.keep_exploring.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Blog {
+public class Blog implements Serializable {
     private String _id, title;
     @SerializedName("img")
     private String image;

@@ -1,17 +1,18 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.keep_exploring.api.Api_Notification;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Notification;
-import com.example.keep_exploring.model.Post;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -38,17 +39,77 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Notification>>() {
-                }.getType();
-                List<Notification> notificationList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(notificationList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Notification>>() {
+                    }.getType();
+                    List<Notification> notificationList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(notificationList);
+                }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());
 
             }
         });
+    }
+
+    public void changeSeenStatusNotify(Helper_Callback callback){
+        Call<String> call = api_notification.changeSeenStatusNotify(accessToken);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
+    public void changeNewStatusNotify(String idNotify, Helper_Callback callback) {
+        Call<String> call = api_notification.changeNewStatusNotify(accessToken, idNotify);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
+    public void deleteNotify(String idNotify, Helper_Callback callback) {
+        Call<String> call = api_notification.deleteNotify(accessToken, idNotify);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+    }
+
+    private void log(String s) {
+        Log.d("log", s);
     }
 
 }

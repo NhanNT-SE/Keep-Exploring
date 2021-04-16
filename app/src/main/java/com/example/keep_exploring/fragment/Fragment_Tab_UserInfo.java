@@ -91,7 +91,6 @@ public class Fragment_Tab_UserInfo extends Fragment {
         initView();
         initVariable();
         handlerEvent();
-
         return view;
     }
 
@@ -111,7 +110,6 @@ public class Fragment_Tab_UserInfo extends Fragment {
         imageUser = "";
         isValidRequire = false;
         isValidMatch = false;
-
         user = new User();
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(getContext());
