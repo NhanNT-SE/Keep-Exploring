@@ -9,12 +9,10 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
-import com.example.keep_exploring.model.Post;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -41,9 +39,12 @@ public class DAO_Comment {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Comment>>() {}.getType();
-                List<Comment> commentList = new Gson().fromJson(data.toString(),listType);
-                callback.successReq(commentList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Comment>>() {
+                    }.getType();
+                    List<Comment> commentList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(commentList);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {

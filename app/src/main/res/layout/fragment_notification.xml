@@ -1,16 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.Fragment_Notification">
+    tools:context=".fragment.Fragment_Notification">
+
+    <HorizontalScrollView
+        android:id="@+id/fNotification_scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:foregroundGravity="center_vertical"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fNotification_mBtnAll"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10sp"
+                android:backgroundTint="@color/white"
+                android:text="Tất cả thông báo"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/inactive_button"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/inactive_button"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fNotification_mBtnNew"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10sp"
+                android:backgroundTint="@color/white"
+                android:text="Thông báo chưa đọc"
+                android:textAllCaps="false"
+                android:textColor="@color/inactive_button"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/inactive_button"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fNotification_mBtnSeen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10sp"
+                android:backgroundTint="@color/white"
+                android:text="Thông báo đã đọc"
+                android:textAllCaps="false"
+                android:textColor="@color/inactive_button"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/inactive_button"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <TextView
+        android:id="@+id/fNotification_tvNothing"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Thông báo"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Nothing to show here"
         android:textSize="20sp"
+        android:textStyle="bold" />
 
-        />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/fNotification_refreshLayout"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/fNotification_scrollView">
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fNotification_rvNotify"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</RelativeLayout>

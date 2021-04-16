@@ -39,7 +39,6 @@ public class Fragment_Category extends Fragment {
     private TextView tvNothing;
     private MaterialButton btnAll, btnFood, btnCheckin, btnHotel;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private HorizontalScrollView topView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +61,6 @@ public class Fragment_Category extends Fragment {
         btnCheckin = (MaterialButton) view.findViewById(R.id.fCategory_btnCheckin);
         btnHotel = (MaterialButton) view.findViewById(R.id.fCategory_btnHotel);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fCategory_refreshLayout);
-        topView = (HorizontalScrollView) view.findViewById(R.id.fCategory_lnCategory);
         tvNothing.setVisibility(View.GONE);
         helper_common.configRecycleView(getContext(), rv_PostList);
         helper_common.configAnimBottomNavigation(getContext(), rv_PostList);

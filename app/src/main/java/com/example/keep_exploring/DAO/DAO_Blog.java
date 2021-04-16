@@ -82,7 +82,10 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         JSONObject data = callback.getJsonObject(response);
-                        callback.successReq(data);
+                        if (data != null) {
+                            callback.successReq(data);
+
+                        }
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
@@ -105,7 +108,9 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -151,9 +156,12 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Blog>>() {}.getType();
-                List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(blogList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Blog>>() {
+                    }.getType();
+                    List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(blogList);
+                }
             }
 
             @Override
@@ -181,7 +189,9 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         JSONObject data = callback.getJsonObject(response);
-                        callback.successReq(data);
+                        if (data != null) {
+                            callback.successReq(data);
+                        }
 
                     }
                     @Override

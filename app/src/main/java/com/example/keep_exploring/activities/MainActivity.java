@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         hideCircleMenu();
-        replaceFragment(new Fragment_Category());
+        replaceFragment(new Fragment_Tab_UserInfo());
     }
 
     private void insertPlaces(){
@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.menu_bottom_post:
                 replaceFragment(new Fragment_Category());
                 break;
@@ -174,10 +173,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return (true);
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return (true);
         }
         return (super.onOptionsItemSelected(item));
     }

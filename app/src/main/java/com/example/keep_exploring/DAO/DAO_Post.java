@@ -47,7 +47,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
 
             @Override
@@ -65,7 +67,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null) {
+                    callback.successReq(data);
+                }
             }
 
             @Override
@@ -224,7 +228,9 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                callback.successReq(data);
+                if (data != null){
+                    callback.successReq(data);
+                }
             }
 
             @Override

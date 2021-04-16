@@ -19,9 +19,9 @@ public class Adapter_Tab_User extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-//                return new Fragment_Profile_PostList();
+                return new Fragment_Profile_PostList();
             case 1:
-//                return new Fragment_Profile_BlogList();
+                return new Fragment_Profile_BlogList();
         }
         return null;
     }
