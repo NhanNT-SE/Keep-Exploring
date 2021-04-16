@@ -315,12 +315,11 @@ public class Fragment_AddBlog extends Fragment {
                     spotDialog.show();
                     dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
-                        public List<User> successReq(Object data) {
+                        public void successReq(Object data) {
                             toast("Tạo bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
                             clearBlog();
                             refreshListView();
                             spotDialog.dismiss();
-                            return null;
                         }
 
                         @Override

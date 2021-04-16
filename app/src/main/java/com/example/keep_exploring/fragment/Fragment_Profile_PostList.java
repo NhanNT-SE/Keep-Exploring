@@ -86,13 +86,12 @@ public class Fragment_Profile_PostList extends Fragment {
     private void loadData() {
         dao_post.getPostByUser(idUser, new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 listPost = (List<Post>) response;
                 refreshRV();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                return null;
             }
 
             @Override

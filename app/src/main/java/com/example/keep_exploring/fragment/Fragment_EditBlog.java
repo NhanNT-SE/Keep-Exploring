@@ -313,12 +313,11 @@ public class Fragment_EditBlog extends Fragment {
                     String title = etTitle.getText().toString();
                     dao_blog.updateBlog(idBlog, title, folder_storage, imageBlog, blogDetailsList, new Helper_Callback() {
                         @Override
-                        public List<User> successReq(Object response) {
+                        public void successReq(Object response) {
                             spotDialog.dismiss();
                             toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
                             dao_blog.deleteFolderImage(folder_storage,deleteDetailList);
                             loadData();
-                            return null;
                         }
 
                         @Override
@@ -372,12 +371,11 @@ public class Fragment_EditBlog extends Fragment {
                         spotDialog.show();
                         dao_blog.deleteBlog(idBlog, new Helper_Callback() {
                             @Override
-                            public List<User> successReq(Object data) {
+                            public void successReq(Object data) {
                                 toast("Đã xóa bài viết");
                                 dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
                                 spotDialog.dismiss();
                                 helper_common.replaceFragment(getContext(),new Fragment_Tab_UserInfo());
-                                return null;
                             }
 
                             @Override
@@ -409,7 +407,7 @@ public class Fragment_EditBlog extends Fragment {
     private void loadData() {
         dao_blog.getBlogById(idBlog, new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 deleteDetailList.clear();
                 Blog blog = (Blog) response;
                 blogDetailsList = blog.getBlogDetails();
@@ -419,7 +417,6 @@ public class Fragment_EditBlog extends Fragment {
                 tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();
                 spotDialog.dismiss();
-                return null;
             }
 
             @Override

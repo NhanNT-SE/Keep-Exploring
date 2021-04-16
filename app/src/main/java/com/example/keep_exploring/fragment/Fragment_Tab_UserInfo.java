@@ -193,7 +193,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 spotDialog.show();
                 dao_user.changePassword(oldPass, newPass, new Helper_Callback() {
                     @Override
-                    public List<User> successReq(Object response) {
+                    public void successReq(Object response) {
                         toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
                         spotDialog.dismiss();
                         dialog.dismiss();
@@ -204,7 +204,6 @@ public class Fragment_Tab_UserInfo extends Fragment {
                                 getContext().startActivity(new Intent(getContext(),SignInActivity.class));
                             }
                         }, 2000);
-                        return null;
                     }
 
                     @Override
@@ -313,12 +312,11 @@ public class Fragment_Tab_UserInfo extends Fragment {
                     spotDialog.show();
                     dao_user.updateProfile(imageUser, map, new Helper_Callback() {
                         @Override
-                        public List<User> successReq(Object response) {
+                        public void successReq(Object response) {
                             toast("Cập nhật thông tin cá nhân thành công");
                             spotDialog.dismiss();
                             dialog.dismiss();
                             loadData();
-                            return null;
                         }
 
                         @Override
@@ -437,10 +435,9 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private void loadData() {
         dao_user.getProfile(idUser,new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 user = (User) response;
                 showInfo();
-                return null;
             }
 
             @Override

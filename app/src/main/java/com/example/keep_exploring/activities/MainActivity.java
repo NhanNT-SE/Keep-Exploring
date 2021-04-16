@@ -74,9 +74,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         dao_address.getProvinceList(new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 List<String> provinceList = (List<String>) response;
-                return null;
             }
 
             @Override

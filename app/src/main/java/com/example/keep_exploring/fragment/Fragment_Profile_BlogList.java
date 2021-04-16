@@ -90,14 +90,13 @@ public class Fragment_Profile_BlogList extends Fragment {
     private void loadData() {
         dao_blog.getBlogByUser(idUser, new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 blogList = (List<Blog>) response;
                 log(blogList.toString());
                 refreshRV();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                return null;
             }
 
             @Override

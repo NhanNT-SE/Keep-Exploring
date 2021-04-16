@@ -116,7 +116,7 @@ public class Fragment_Notification extends Fragment {
         dao_notification.getAll(new Helper_Callback() {
             @SuppressLint("SetTextI18n")
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 defaultList = (List<Notification>) response;
                 setBadgeMButton();
                 if (swipeRefreshLayout.isRefreshing()) {
@@ -124,7 +124,6 @@ public class Fragment_Notification extends Fragment {
                 }
                 setFilterList();
 
-                return null;
             }
 
             @Override
@@ -210,8 +209,7 @@ public class Fragment_Notification extends Fragment {
     private void changeSeenStatusNotify() {
         dao_notification.changeSeenStatusNotify(new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
-                return null;
+            public void successReq(Object response) {
             }
 
             @Override

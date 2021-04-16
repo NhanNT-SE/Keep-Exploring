@@ -111,13 +111,12 @@ public class Fragment_Category extends Fragment {
         helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
         dao_post.getPostByCategory(category, new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 postList = (List<Post>) response;
                 refreshLV();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                return null;
             }
 
             @Override
@@ -160,21 +159,24 @@ public class Fragment_Category extends Fragment {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void setActiveButton(MaterialButton materialButton) {
         @SuppressLint("ResourceType")
         ColorStateList activeColor = ColorStateList
                 .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
 
         materialButton.setTextColor(activeColor);
-        materialButton.setStrokeColor(activeColor);
+        materialButton.setBackgroundColor(R.color.colorPrimary);
+
     }
 
+    @SuppressLint("ResourceAsColor")
     private void setInactiveButton(MaterialButton materialButton) {
         @SuppressLint("ResourceType")
         ColorStateList inactiveColor = ColorStateList
                 .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
         materialButton.setTextColor(inactiveColor);
-        materialButton.setStrokeColor(inactiveColor);
+        materialButton.setBackgroundColor(R.color.inactive_button);
     }
 
     private void refreshLV() {

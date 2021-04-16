@@ -30,6 +30,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -121,7 +122,8 @@ public class Fragment_Post_Details extends Fragment {
         tvLikes.setText(sizeList + " lượt thích");
 
         getLikeList();
-        log("user like list: " + userLikeList.toString());
+
+//        log("user like list: " + userLikeList.toString());
         isLogIn = checkLogin();
         if (isLogIn) {
             String idUser = helper_sp.getUser().getId();
@@ -184,10 +186,9 @@ public class Fragment_Post_Details extends Fragment {
         dao_comment = new DAO_Comment(getContext());
         dao_comment.getCommentPost(post.get_id(), new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 List<Comment> list = (List<Comment>) response;
                 rfCommentList(list);
-                return null;
             }
 
             @Override
@@ -214,6 +215,7 @@ public class Fragment_Post_Details extends Fragment {
         final Dialog dialogUserLike = new Dialog(getActivity());
         dialogUserLike.setContentView(R.layout.dialog_user_like);
         dialogUserLike.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        log("show dialog: " + userLikeList.toString());
 
         //anh xa
         dUserLike_tvCancel = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvCancel);
@@ -222,7 +224,7 @@ public class Fragment_Post_Details extends Fragment {
 
         //recycle
         helper_common.configRecycleView(getContext(), dUserLike_rcUserList);
-
+        refreshRLike();
 
         dUserLike_tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,17 +242,19 @@ public class Fragment_Post_Details extends Fragment {
 
         dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 List<User> likeList = (List<User>) response;
                 userLikeList = likeList;
-                adapter_userLikeList = new Adapter_UserLikeList(getContext(), userLikeList);
-                dUserLike_rcUserList.setAdapter(adapter_userLikeList);
-                if (userLikeList.size() > 0) {
-                    dUserLike_tvNothing.setVisibility(View.GONE);
+                String idUSer = helper_sp.getUser().getId();
+                List<User> checkList = userLikeList.stream()
+                        .filter(item -> item.getId().equalsIgnoreCase(idUSer))
+                        .collect(Collectors.toList());
+                if (checkList.size() > 0) {
+                    Log.d("TAG", "da like");
                 } else {
-                    dUserLike_tvNothing.setVisibility(View.VISIBLE);
+                    Log.d("TAG", "chua like");
+
                 }
-                return null;
             }
 
             @Override
@@ -263,7 +267,7 @@ public class Fragment_Post_Details extends Fragment {
     private void likePost() {
         dao_post.likePost(post.get_id(), new Helper_Callback() {
             @Override
-            public List<User> successReq(Object response) {
+            public void successReq(Object response) {
                 if (response.equals("Đã thích bài viết")) {
                     isLike = true;
                     sizeList += 1;
@@ -278,7 +282,6 @@ public class Fragment_Post_Details extends Fragment {
                 }
                 checkLike();
 
-                return null;
             }
 
             @Override
@@ -295,6 +298,16 @@ public class Fragment_Post_Details extends Fragment {
             imgLike.setImageResource(R.drawable.heart_outline_90px);
         }
 
+    }
+
+    private void refreshRLike() {
+        adapter_userLikeList = new Adapter_UserLikeList(getContext(), userLikeList);
+        dUserLike_rcUserList.setAdapter(adapter_userLikeList);
+        if (userLikeList.size() > 0) {
+            dUserLike_tvNothing.setVisibility(View.GONE);
+        } else {
+            dUserLike_tvNothing.setVisibility(View.VISIBLE);
+        }
     }
 
     private boolean checkLogin() {

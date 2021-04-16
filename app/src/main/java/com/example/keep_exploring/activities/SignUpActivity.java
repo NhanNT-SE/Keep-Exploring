@@ -86,12 +86,11 @@ public class SignUpActivity extends AppCompatActivity {
                 String displayName = etDisplayName.getEditText().getText().toString();
                 dao_auth.signUp(realPath, email, pass, displayName,new Helper_Callback(){
                     @Override
-                    public List<User> successReq(Object response) {
+                    public void successReq(Object response) {
                         User user = (User) response;
                         toast("Tạo tài khoản thành công!");
 //                        startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
                         log(user.toString());
-                        return null;
                     }
 
                     @Override

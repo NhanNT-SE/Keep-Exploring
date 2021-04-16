@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +128,7 @@ public class Helper_Post {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 dao_address.getAddressList(dProvinceList.get(position), "", new Helper_Callback() {
                     @Override
-                    public List<User> successReq(Object response) {
+                    public void successReq(Object response) {
                         Map<String, List<String>> map = (Map<String, List<String>>) response;
                         dDistrictList.clear();
                         dWardList.clear();
@@ -144,7 +143,6 @@ public class Helper_Post {
                         );
                         dEdtAdditional.setText("");
                         dTvAddress.setText(addressSubmit);
-                        return null;
                     }
 
                     @Override
@@ -166,21 +164,20 @@ public class Helper_Post {
                         dSpProvince.getSelectedItem().toString(),
                         dDistrictList.get(position),
                         new Helper_Callback() {
-                    @Override
-                    public List<User> successReq(Object response) {
-                        Map<String, List<String>> map = (Map<String, List<String>>) response;
-                        dWardList.clear();
-                        dWardList.addAll(map.get("wardList"));
-                        setSpinner(dWardList, dSpWard);
-                        setAddressToDisPLay(
-                                dSpWard.getSelectedItem().toString()
-                                , dSpDistrict.getSelectedItem().toString(),
-                                dSpProvince.getSelectedItem().toString()
-                        );
-                        dEdtAdditional.setText("");
-                        dTvAddress.setText(addressSubmit);
-                        return null;
-                    }
+                            @Override
+                            public void successReq(Object response) {
+                                Map<String, List<String>> map = (Map<String, List<String>>) response;
+                                dWardList.clear();
+                                dWardList.addAll(map.get("wardList"));
+                                setSpinner(dWardList, dSpWard);
+                                setAddressToDisPLay(
+                                        dSpWard.getSelectedItem().toString()
+                                        , dSpDistrict.getSelectedItem().toString(),
+                                        dSpProvince.getSelectedItem().toString()
+                                );
+                                dEdtAdditional.setText("");
+                                dTvAddress.setText(addressSubmit);
+                            }
 
                             @Override
                             public void failedReq(String msg) {
