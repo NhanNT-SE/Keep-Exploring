@@ -45,12 +45,11 @@ const createCommentPost = async (req, res, next) => {
         status: "new",
         content: "comment",
       });
-      const notification = await createNotification(notify);
-
+      await createNotification(notify);
       //Thanh cong tra ve status code 200
 
       return res.send({
-        data: { comment, notification },
+        data: comment,
         status: 200,
         message: "Tạo bình luận thành công",
       });
@@ -158,7 +157,7 @@ const deleteCommentByID = async (req, res, next) => {
 
       await Comment.findByIdAndDelete(idComment);
       return res.send({
-        data: null,
+        data: commentFound,
         status: 200,
         message: "Đã xóa bình luận thành công ",
       });
@@ -181,7 +180,10 @@ const editCommentBlog = async (req, res, next) => {
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return handlerCustomError(202, "Bạn không có quyền chỉnh sửa comment này");
+      return handlerCustomError(
+        202,
+        "Bạn không có quyền chỉnh sửa comment này"
+      );
     }
 
     if (commentFound.img && deleteImg) {

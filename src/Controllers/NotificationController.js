@@ -1,10 +1,8 @@
 require("../Models/Blog");
 require("../Models/Post");
-
 const handlerCustomError = require("../middleware/customError");
 const Notification = require("../Models/Notification");
 const User = require("../Models/User");
-
 const createNotification = async (notify) => {
   try {
     const notiFound_list = await Notification.find({ idPost: notify.idPost });
@@ -88,21 +86,6 @@ const deleteNotifyById = async (req, res, next) => {
     next(error);
   }
 };
-
-const deleteAllNotify = async (req, res, next) => {
-  try {
-    const idUser = req.user._id;
-    await Notification.deleteMany({ idUser });
-    return res.send({
-      data: {},
-      status: 200,
-      message: "Đã xóa tất cả thông báo",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const getAllByUser = async (req, res, next) => {
   try {
     const user = req.user;
@@ -122,12 +105,10 @@ const getAllByUser = async (req, res, next) => {
     next(error);
   }
 };
-
 module.exports = {
   createNotification,
-  changeSeenStatusNotify,
-  deleteAllNotify,
   deleteNotifyById,
-  getAllByUser,
   changeNewStatusNotify,
+  changeSeenStatusNotify,
+  getAllByUser,
 };

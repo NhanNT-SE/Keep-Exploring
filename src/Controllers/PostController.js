@@ -77,7 +77,6 @@ const deletePost = async (req, res, next) => {
           message: "Đã xóa bài viết",
         });
       }
-
       return handlerCustomError(202, "Bạn không phải admin/owner bài viết này");
     }
 
