@@ -201,7 +201,6 @@ public class Helper_Common {
         tvTotal = (TextView) dialog.findViewById(R.id.dViewProfile_tvTotal);
         tvViewProfile = (TextView) dialog.findViewById(R.id.dViewProfile_tvViewProfile);
         tvCancel = (TextView) dialog.findViewById(R.id.dViewProfile_tvCancel);
-
         tvDisplayName.setText(owner.getDisplayName());
         tvTotalPost.setText(String.valueOf(totalPost));
         tvTotalBlog.setText(String.valueOf(totalBlog));
@@ -241,7 +240,6 @@ public class Helper_Common {
                 context.startActivity(new Intent(context, SignInActivity.class));
             }
         });
-
         dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

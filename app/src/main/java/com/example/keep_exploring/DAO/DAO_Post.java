@@ -101,28 +101,6 @@ public class DAO_Post {
 
     }
 
-    public void getLikeByPost(String idPost, Helper_Callback callback) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("idPost", idPost);
-        Call<String> call = api_post.getLikeByPost(map);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<User>>() {
-                }.getType();
-                if (data != null) {
-                    List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
-                    callback.successReq(userLikedList);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                callback.failedReq(t.getMessage());
-            }
-        });
-    }
 
     public void getPostByCategory(String category, Helper_Callback callback) {
         Call<String> call = api_post.getPostList(category);
@@ -167,26 +145,6 @@ public class DAO_Post {
         });
     }
 
-    public void likePost(String idPost, Helper_Callback callback) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("idPost", idPost);
-        log(helper_sp.getUser().toString());
-        Call<String> call = api_post.likePost(accessToken, map);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
-                    callback.successReq(data);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                callback.failedReq(t.getMessage());
-            }
-        });
-    }
 
     public void updatePost(
             HashMap<String, RequestBody> map,

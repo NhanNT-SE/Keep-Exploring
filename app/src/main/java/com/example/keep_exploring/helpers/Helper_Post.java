@@ -26,9 +26,6 @@ public class Helper_Post {
     private String additionalAddress, addressSubmit, categorySubmit;
     private DAO_Address dao_address;
 
-    public Helper_Post() {
-    }
-
     public Helper_Post(Context context, String additionalAddress, String addressSubmit, String categorySubmit) {
         this.context = context;
         this.additionalAddress = additionalAddress;
@@ -38,41 +35,8 @@ public class Helper_Post {
         helper_sp = new Helper_SP(context);
     }
 
-    public void dialogActionPost(TextView tvAddress, TextView tvCategory, Helper_Event event) {
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_action_post);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Button dBtnAddress = (Button) dialog.findViewById(R.id.dActionPost_btnAddress);
-        Button dBtnImages = (Button) dialog.findViewById(R.id.dActionPost_btnImages);
-        Button dBtnCancel = (Button) dialog.findViewById(R.id.dActionPost_btnCancel);
-        dBtnAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                dialogAddAddress(tvAddress, tvCategory);
-            }
-        });
 
-        dBtnImages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                event.selectImage();
-                dialog.dismiss();
-            }
-        });
-
-        dBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-
-        dialog.show();
-    }
-
-    private void dialogAddAddress(TextView tvAddress, TextView tvCategory) {
+    public void dialogAddAddress(TextView tvAddress, TextView tvCategory) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_address);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

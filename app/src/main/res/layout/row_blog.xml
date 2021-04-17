@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/row_blog_gridView"
-            android:background="#E9C5C5C5"
+            android:background="#CBC5C5C5"
             android:gravity="center_vertical|end"
             android:orientation="horizontal"
             android:padding="10dp">

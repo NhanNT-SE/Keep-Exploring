@@ -32,6 +32,8 @@ import com.example.keep_exploring.model.Blog;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -58,7 +60,6 @@ public class Fragment_BlogList extends Fragment {
         rvBlog = (RecyclerView) view.findViewById(R.id.fBlogList_rvBlog);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fBlogList_refreshLayout);
         tvNothing = (TextView) view.findViewById(R.id.fBlogList_tvNothing);
-
         initVariable();
         handlerEvent();
         return view;
@@ -71,8 +72,6 @@ public class Fragment_BlogList extends Fragment {
     private void handlerEvent() {
         helper_common.configRecycleView(getContext(), rvBlog);
         helper_common.configAnimBottomNavigation(getContext(), rvBlog);
-        helper_common.showSkeleton(rvBlog, adapterBlog, R.layout.row_skeleton_blog);
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -83,6 +82,7 @@ public class Fragment_BlogList extends Fragment {
     }
 
     private void loadData() {
+        helper_common.showSkeleton(rvBlog, adapterBlog, R.layout.row_skeleton_blog);
         dao_blog.getBlogList(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -130,12 +130,19 @@ public class Fragment_BlogList extends Fragment {
         refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 return false;
             }
         });
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_search_refresh){
+            loadData();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void toast(String s) {

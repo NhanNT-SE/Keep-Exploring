@@ -4,111 +4,127 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingHorizontal="5dp"
     android:scrollbars="none"
     tools:context=".fragment.Fragment_Post_Details">
-
     <RelativeLayout
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_margin="5dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/fDetailPost_civAvatarAdmin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/fDetailPost_civAvatarAdmin"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
 
         <TextView
             android:id="@+id/fDetailPost_tvPubDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/fDetailPost_imgRefresh"
             android:text="01/01/2020"
             android:textColor="@color/black"
-            android:textSize="17sp"
-            android:textStyle="italic" />
+            android:textSize="12sp"
+            android:textStyle="italic|bold" />
+
+        <ImageView
+            android:id="@+id/fDetailPost_imgRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:src="@drawable/ic_refresh_black" />
 
         <TextView
-        android:id="@+id/fDetailPost_tvUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="15dp"
-        android:layout_toRightOf="@+id/fDetailPost_civAvatarAdmin"
-        android:text="Kim Ngan"
-        android:textColor="@color/black"
-        android:textSize="17sp"
-
-
-         />
-
+            android:id="@+id/fDetailPost_tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/fDetailPost_civAvatarAdmin"
+            android:text="Kim Ngan"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="italic" />
 
         <com.denzcoskun.imageslider.ImageSlider
+            android:id="@+id/fDetailPost_sliderPost"
             android:layout_width="wrap_content"
-            android:layout_height="250dp"
-            app:placeholder="@drawable/background_grey"
+            android:layout_height="200dp"
             android:layout_below="@+id/fDetailPost_civAvatarAdmin"
-            android:id="@+id/fDetailPost_imgPost"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="10sp"
-            />
+            android:layout_marginTop="5dp"
+            app:placeholder="@drawable/background_grey" />
 
-    <TextView
-        android:id="@+id/fDetailPost_tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fDetailPost_imgPost"
-        android:text="Title"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        <RelativeLayout
+            android:id="@+id/fDetailPost_layoutInfo"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/fDetailPost_sliderPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RatingBar
+                android:id="@+id/fDetailPost_ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:isIndicator="true"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+              />
+            <ImageView
+                android:id="@+id/fDetailPost_imgLike"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/fDetailPost_tvLikes"
+                android:src="@drawable/ic_like_outline" />
 
-    <TextView
-        android:id="@+id/fDetailPost_tvDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fDetailPost_tvTitle"
-        android:text="Description"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
-
-    <ImageView
-        android:id="@+id/fDetailPost_imgLike"
-        android:layout_width="30sp"
-        android:layout_height="30sp"
-        android:layout_below="@id/fDetailPost_tvDescription"
-        android:layout_marginTop="8dp"
-        android:background="@color/white"
-        android:src="@drawable/ic_like_outline"
-
-        />
-
-    <ImageView
-        android:id="@+id/fDetailPost_imgComment"
-        android:layout_width="20sp"
-        android:layout_height="20sp"
-        android:layout_below="@id/fDetailPost_tvDescription"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="12dp"
-        android:layout_toRightOf="@+id/fDetailPost_imgLike"
-        android:src="@drawable/topic_90px" />
-
-    <TextView
-        android:id="@+id/fDetailPost_tvLikes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fDetailPost_imgLike"
-        android:layout_marginLeft="10dp"
-        android:text="lượt thích"
-        android:textColor="@color/black"
-        android:textSize="16dp"
-        />
-
+            <ImageView
+                android:id="@+id/fDetailPost_imgComment"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/fDetailPost_tvComments"
+                android:src="@drawable/topic_90px" />
+            <TextView
+                android:id="@+id/fDetailPost_tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/fDetailPost_imgComment"
+                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:text="lượt thích"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/fDetailPost_tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="5dp"
+                android:text="Bình luận"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/fDetailPost_tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_layoutInfo"
+            android:text="Title"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/fDetailPost_tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_tvTitle"
+            android:text="Description"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
     </RelativeLayout>
-
 </ScrollView>
 
 

@@ -17,13 +17,11 @@ public class Helper_Date {
         return sdf.format(date);
     }
 
+    @SuppressLint("SimpleDateFormat")
     public String convertStringToIsoDate(String stringDate) {
         try {
-            @SuppressLint("SimpleDateFormat")
             Date date = new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
-            @SuppressLint("SimpleDateFormat")
-            String isoDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'").format(date);
-            return isoDate;
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'").format(date);
         } catch (ParseException e) {
             Log.d("", "convertStringToIsoDate: " + e.getMessage());
             e.printStackTrace();

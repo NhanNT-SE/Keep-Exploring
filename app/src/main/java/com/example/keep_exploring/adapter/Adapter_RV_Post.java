@@ -2,7 +2,6 @@ package com.example.keep_exploring.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
-import com.example.keep_exploring.activities.MainActivity;
+import com.example.keep_exploring.fragment.Fragment_EditPost;
 import com.example.keep_exploring.fragment.Fragment_Post_Details;
+import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_SP;
@@ -51,7 +51,6 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Helper_SP helper_sp = new Helper_SP(context);
         Post post = postList.get(position);
-
         holder.tvUserName.setText(post.getOwner().getDisplayName());
         holder.tvTitle.setText(post.getTitle());
         holder.tvAddress.setText(post.getAddress());
@@ -73,16 +72,14 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
                 }
             }
         });
-
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment_Post_Details fragment_post_details = new Fragment_Post_Details();
+                Fragment fragment = new Fragment_Post_Details();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("post", post);
-                fragment_post_details.setArguments(bundle);
-                helper_common.replaceFragment(context, fragment_post_details);
+                bundle.putString("idPost", post.get_id());
+                fragment.setArguments(bundle);
+                helper_common.replaceFragment(context, fragment);
             }
         });
     }

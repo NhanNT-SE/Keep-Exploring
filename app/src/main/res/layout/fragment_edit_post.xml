@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fEditPost_mainLayout"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
     android:paddingHorizontal="5dp"
-    tools:context=".fragment.Fragment_Post_Details">
+    tools:context=".fragment.Fragment_EditPost">
+
     <ScrollView
         android:id="@+id/fEditPost_layoutContainer"
         android:layout_width="match_parent"
@@ -20,7 +21,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                 />
+                android:src="@drawable/avatar_facebook" />
             <TextView
                 android:id="@+id/fEditPost_tvUser"
                 android:layout_width="wrap_content"
@@ -28,6 +29,7 @@
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="10dp"
                 android:layout_toEndOf="@+id/fEditPost_imgAvatarUser"
+                android:text="Nguyễn Trọng Nhân"
                 android:textSize="15sp"
                 android:textStyle="italic" />
             <TextView
@@ -36,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="10dp"
+                android:text="20/20/2020"
                 android:textSize="15sp"
                 android:textStyle="italic" />
 
@@ -49,10 +52,10 @@
                 android:layout_height="match_parent"/>
             <TextView
                 android:id="@+id/fEditPost_tvTitleCategory"
+                android:layout_below="@+id/fEditPost_viewPager"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fEditPost_viewPager"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="10dp"
                 android:gravity="top"
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="3dp"
@@ -62,48 +65,50 @@
 
             <TextView
                 android:id="@+id/fEditPost_tvCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_below="@+id/fEditPost_viewPager"
                 android:layout_toEndOf="@+id/fEditPost_tvTitleCategory"
-                android:layout_marginTop="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:gravity="top"
-                android:paddingHorizontal="5dp"
-                android:paddingVertical="3dp"
-                android:textSize="15sp"
+                android:background="@drawable/border_tv"
+                android:maxLines="5"
+                android:padding="5dp"
+                android:hint="Bấm vào để thêm danh mục và  địa chỉ"
+                android:textSize="13sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/fEditPost_tvTitleAddress"
+                android:layout_below="@+id/fEditPost_tvTitleCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fEditPost_tvTitleCategory"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="15dp"
                 android:gravity="top"
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="3dp"
-                android:text="Đại chỉ:"
+                android:text="Địa chỉ:"
                 android:textSize="15sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/fEditPost_tvAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_below="@+id/fEditPost_tvTitleCategory"
                 android:layout_toEndOf="@+id/fEditPost_tvTitleAddress"
-                android:layout_marginTop="3dp"
-                android:gravity="top"
-                android:paddingHorizontal="5dp"
-                android:paddingVertical="3dp"
-                android:textSize="15sp"
+                android:layout_alignStart="@+id/fEditPost_tvCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:maxLines="5"
+                android:padding="5dp"
+                android:background="@drawable/border_tv"
+                android:hint="Bấm vào để thêm danh mục và địa chỉ"
+                android:textSize="13sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/fEditPost_tvTitleRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fEditPost_tvAddress"
-
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="5dp"
                 android:gravity="top"
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="3dp"
@@ -119,16 +124,19 @@
                 android:scaleX=".5"
                 android:scaleY=".5"
                 android:transformPivotX="0dp"
-                android:transformPivotY="0dp"
+                android:transformPivotY="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <EditText
                 android:id="@+id/fEditPost_etTitle"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_below="@+id/fEditPost_ratingBar"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fEditPost_tvTitleRating"
                 android:gravity="top"
                 android:hint="Title..."
+                android:background="@drawable/border_tv"
+                android:maxLines="5"
+                android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -138,8 +146,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fEditPost_etTitle"
-                android:layout_marginTop="3dp"
+                android:layout_marginVertical="5dp"
                 android:gravity="top"
+                android:background="@drawable/border_tv"
                 android:hint="Descriptions..."
                 android:padding="5dp"
                 android:textSize="15sp" />
@@ -155,9 +164,9 @@
         android:layout_marginEnd="3dp"
         android:layout_marginBottom="3dp"
         android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_baseline_edit_24"
+        android:src="@drawable/ic_camera_black_24dp"
         app:fabSize="mini"
         app:maxImageSize="30dp"
         app:tint="@android:color/white" />
-
 </RelativeLayout>
+

@@ -19,53 +19,34 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Api_Post {
-    //    PUBLIC API
     @GET("/public/post")
     Call<String> getPostList(@Query("category") String category);
 
     @GET("/public/post/{idPost}")
     Call<String> getPostById(@Path("idPost") String idPost);
 
-
     @GET("/post/{idUser}")
     Call<String> getPostByUser(
             @Header("Authorization") String accessToken,
             @Path("idUser") String idUser);
-
-
-    @POST("/public/post/like")
-    Call<String> getLikeByPost(@Body HashMap<String, String> map);
-
-
-
-
 
     @Multipart
     @POST("/post")
     Call<String> createPost(
             @Header("Authorization") String accessToken,
             @PartMap() HashMap<String, RequestBody> partMap,
-            @Part List<MultipartBody.Part> imageList
-    );
-
-    @PATCH("/post/like")
-    Call<String> likePost(
-            @Header("Authorization") String accessToken,
-            @Body HashMap<String, String> map);
-
+            @Part List<MultipartBody.Part> imageList);
 
     @Multipart
-    @PATCH("/post/{idPost}")
+    @PATCH("/post/update/{idPost}")
     Call<String> updatePost(
             @Header("Authorization") String accessToken,
             @Path("idPost") String idPost,
             @PartMap() HashMap<String, RequestBody> partMap,
-            @Part List<MultipartBody.Part> imageList
-    );
+            @Part List<MultipartBody.Part> imageList);
 
     @DELETE("/post/delete/{postID}")
     Call<String> deletePost(
             @Header("Authorization") String accessToken,
-            @Path("postID") String postId
-    );
+            @Path("postID") String postId);
 }
