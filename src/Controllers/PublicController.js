@@ -73,7 +73,7 @@ const getBlogList = async (req, res, next) => {
       .populate("owner", ["displayName", "imgUser", "email", "blog", "post"])
       .sort({ created_on: -1 });
     return res.status(200).send({
-      data:blogList,
+      data: blogList,
       status: 200,
       message: "Lấy dữ liệu thành công",
     });
@@ -191,7 +191,6 @@ const getBlogComment = async (req, res, next) => {
   }
 };
 
-
 const getLikeListPost = async (req, res, next) => {
   try {
     const { idPost } = req.body;
@@ -199,6 +198,8 @@ const getLikeListPost = async (req, res, next) => {
       "email",
       "displayName",
       "imgUser",
+      "post",
+      "blog",
     ]);
     if (!postFound) {
       return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
@@ -222,6 +223,8 @@ const getLikeListBlog = async (req, res, next) => {
       "email",
       "displayName",
       "imgUser",
+      "post",
+      "blog",
     ]);
     if (!blogFound) {
       return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");

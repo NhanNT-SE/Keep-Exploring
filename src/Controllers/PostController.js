@@ -16,7 +16,6 @@ const createPost = async (req, res, next) => {
     for (let i = 0; i < length; ++i) {
       img_list.push(files[i].filename);
     }
-
     const post = new Post({
       ...req.body,
       owner: user._id,

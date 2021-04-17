@@ -19,13 +19,13 @@ router.get("/:idUser", blogController.getBlogListByUser);
 router.post("/add", upload.single("image_blog"), blogController.createBlog);
 
 //Patch method
+router.patch("/like", blogController.likeBlog);
 router.patch(
   "/update/:idBlog",
   upload.single("image_blog"),
   blogController.updateBlog
 );
 
-router.patch("/like", blogController.likeBlog);
 //Delete Method
 router.delete("/delete/:idBlog", blogController.deleteBlog);
 

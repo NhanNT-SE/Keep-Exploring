@@ -29,7 +29,7 @@ router.get("/:idUser", postController.getPostListByUser);
 router.post("/", upload.array("image_post", 20), postController.createPost);
 router.patch("/like", postController.likePost);
 router.patch(
-  "/:idPost",
+  "/update/:idPost",
   upload.array("image_post", 20),
   postController.updatePost
 );
