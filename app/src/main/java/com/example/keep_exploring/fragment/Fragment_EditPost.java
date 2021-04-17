@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,7 +104,6 @@ public class Fragment_EditPost extends Fragment {
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditPost_fabAddContent);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditPost_imgAvatarUser);
         ratingBar = (RatingBar) view.findViewById(R.id.fEditPost_ratingBar);
-        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.fEditPost_mainLayout);
     }
     private void initVariable() {
         dao_address = new DAO_Address(getContext());
@@ -120,16 +118,15 @@ public class Fragment_EditPost extends Fragment {
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-    }
-
-    private void handlerEvent() {
-        spotDialog.show();
-        idPost = "";
+        idPost = "6075c0fb6e5a5e20e8241100";
         Bundle bundle = getArguments();
         if (bundle != null) {
             idPost = bundle.getString("idPost");
         }
-        loadData();
+    }
+
+    private void handlerEvent() {
+
         helper_common.toggleBottomNavigation(getContext(), false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
@@ -137,18 +134,28 @@ public class Fragment_EditPost extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Event() {
-                    @Override
-                    public void selectImage() {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_POST);
-                    }
-                });
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_POST);
             }
         });
+
+        tvAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_post.dialogAddAddress(tvAddress, tvCategory);
+            }
+        });
+
+        tvCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_post.dialogAddAddress(tvAddress, tvCategory);
+            }
+        });
+        loadData();
     }
 
     @Override
@@ -199,7 +206,7 @@ public class Fragment_EditPost extends Fragment {
                 submit();
                 break;
             case R.id.menu_post_clear:
-                toast("Quay về fragment cũ");
+                loadData();
                 break;
             case R.id.menu_post_delete:
                String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
@@ -284,6 +291,13 @@ public class Fragment_EditPost extends Fragment {
     }
 
     private void loadData() {
+        imageDefaultList.clear();
+        imagesSubmitList.clear();
+        imageDeleteList.clear();
+        imageDisplayList.clear();
+        if (!spotDialog.isShowing()) {
+            spotDialog.show();
+        }
         dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {

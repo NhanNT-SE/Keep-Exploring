@@ -15,18 +15,20 @@
                 android:id="@+id/row_content_imgContent"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@color/light_transparent"
+                android:src="@drawable/add_image"
                 android:scaleType="fitXY" />
             <TextView
                 android:id="@+id/row_content_tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/row_content_imgContent"
-                android:background="#FFFFFF"
+                android:background="@drawable/border_tv"
                 android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:maxLines="3"
                 android:textColor="@color/black"
                 android:hint="Add Description"
-                android:textSize="16sp" />
+                android:textSize="12sp" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 

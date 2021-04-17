@@ -61,6 +61,7 @@ public class Fragment_Blog_Detail extends Fragment {
     private Dialog_Fragment_Like dialogLike;
     private User user;
     private boolean isLike;
+    private int numLike;
 
 
     public Fragment_Blog_Detail() {
@@ -91,6 +92,7 @@ public class Fragment_Blog_Detail extends Fragment {
         layoutComment = (LinearLayout) view.findViewById(R.id.fBlogDetail_layoutComment);
         layoutLike = (LinearLayout) view.findViewById(R.id.fBlogDetail_layoutLike);
     }
+
     private void initVariable() {
         dao_like = new DAO_Like(getContext());
         dao_blog = new DAO_Blog(getContext());
@@ -99,13 +101,16 @@ public class Fragment_Blog_Detail extends Fragment {
         helper_date = new Helper_Date();
         blogDetailsList = new ArrayList<>();
         user = helper_sp.getUser();
+        numLike = 0;
         idBlog = "6073060019c68e0b99291ffb";
-    }
-    private void handlerEvent() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             idBlog = bundle.getString("idBlog");
         }
+    }
+
+    private void handlerEvent() {
+
 
         layoutComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,23 +151,32 @@ public class Fragment_Blog_Detail extends Fragment {
                 Blog blog = (Blog) response;
                 List<String> likeList = blog.getLikes();
                 blogDetailsList = blog.getBlogDetails();
-                Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
-                tvTitle.setText(blog.getTitle());
-                tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
-                tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
-                tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
+                displayInfo(blog);
                 refreshListView();
                 spotDialog.dismiss();
-                int checkLike = (int) likeList.stream().filter(e -> e.equals(user.getId())).count();
-                isLike = checkLike == 1;
-                toggleLike();
+                if (user != null) {
+                    int checkLike = (int) likeList.stream().filter(e -> e.equals(user.getId())).count();
+                    isLike = checkLike == 1;
+                    toggleLike();
+                }
             }
-
             @Override
             public void failedReq(String msg) {
                 spotDialog.dismiss();
             }
         });
+    }
+
+    private void displayInfo(Blog blog) {
+        Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
+        Picasso.get()
+                .load(helper_common.getBaseUrlImage() + "user/" + blog.getOwner().getImgUser())
+                .into(imgAvatarUser);
+        tvTitle.setText(blog.getTitle());
+        tvUser.setText(blog.getOwner().getDisplayName());
+        tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
+        tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
+        tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
     }
 
     private void toggleLike() {
@@ -172,7 +186,13 @@ public class Fragment_Blog_Detail extends Fragment {
             imgLike.setImageResource(R.drawable.ic_like_outline);
         }
     }
+
     private void setLike() {
+        if (isLike) {
+            numLike += 1;
+        } else {
+            numLike -= 1;
+        }
         spotDialog.show();
         dao_like.setLike(idBlog, "blog", new Helper_Callback() {
             @Override

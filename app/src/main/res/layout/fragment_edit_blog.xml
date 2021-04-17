@@ -5,7 +5,7 @@
     android:id="@+id/fEditBlog_mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="5dp"
+    android:padding="5dp"
     tools:context=".fragment.Fragment_AddPost">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -31,8 +31,7 @@
                         android:id="@+id/fEditBlog_imgAvatarUser"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:src="@drawable/avatar_facebook" />
+                        android:layout_marginTop="5dp" />
                     <TextView
                         android:id="@+id/fEditBlog_tvUser"
                         android:layout_width="wrap_content"
@@ -40,7 +39,6 @@
                         android:layout_marginStart="3dp"
                         android:layout_marginTop="10dp"
                         android:layout_toEndOf="@+id/fEditBlog_imgAvatarUser"
-                        android:text="Nguyễn Trọng Nhân"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="italic" />
@@ -50,7 +48,6 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="10dp"
-                        android:text="20/20/2020"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="italic" />
@@ -58,11 +55,13 @@
                     <ImageView
                         android:id="@+id/fEditBlog_imgBlog"
                         android:layout_width="match_parent"
-                        android:layout_height="250dp"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="5dp"
                         android:layout_below="@+id/fEditBlog_imgAvatarUser"
                         android:layout_centerHorizontal="true"
                         android:scaleType="fitXY"
-                        android:src="@drawable/add_image" />
+                        android:src="@drawable/add_image"
+                        android:background="@color/light_transparent" />
 
                     <EditText
                         android:id="@+id/fEditBlog_etTitle"
@@ -109,7 +108,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fAddPost_layoutContainer"
-        android:layout_marginTop="5dp"
+        android:layout_marginVertical="5dp"
         android:divider="@color/fui_transparent"
         android:dividerHeight="10dp"
         android:stackFromBottom="true"

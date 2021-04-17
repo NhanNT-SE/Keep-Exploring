@@ -58,7 +58,6 @@ public class Fragment_EditBlog extends Fragment {
     private ImageView imgBlog, imgContent;
     private CircleImageView imgAvatarUser;
     private Dialog spotDialog;
-
     //    Variables
     public static final int CHOOSE_IMAGE_BLOG = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
@@ -115,16 +114,14 @@ public class Fragment_EditBlog extends Fragment {
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
+        idBlog = "6073060019c68e0b99291ffb";
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idBlog = bundle.getString("idBlog");
+        }
     }
 
     private void handlerEvent() {
-        spotDialog.show();
-        idBlog = "";
-        Bundle bundle = getArguments();
-        if (bundle != null){
-            idBlog = bundle.getString("idBlog");
-        }
-        loadData();
         helper_common.toggleBottomNavigation(getContext(),false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
@@ -153,6 +150,8 @@ public class Fragment_EditBlog extends Fragment {
                 dialogAddContent();
             }
         });
+        loadData();
+
     }
 
     private void dialogAddContent() {
@@ -377,7 +376,6 @@ public class Fragment_EditBlog extends Fragment {
                                 spotDialog.dismiss();
                                 helper_common.replaceFragment(getContext(),new Fragment_Tab_UserInfo());
                             }
-
                             @Override
                             public void failedReq(String msg) {
                                 spotDialog.dismiss();
@@ -405,6 +403,9 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void loadData() {
+        if (!spotDialog.isShowing()) {
+            spotDialog.show();
+        }
         dao_blog.getBlogById(idBlog, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -416,6 +417,7 @@ public class Fragment_EditBlog extends Fragment {
                 folder_storage = blog.getFolder_storage();
                 tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();
+
                 spotDialog.dismiss();
             }
 

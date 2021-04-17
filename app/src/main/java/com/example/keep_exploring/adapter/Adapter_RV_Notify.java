@@ -79,13 +79,13 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
                 if (post != null) {
                     Fragment_Post_Details fragment_post_details = new Fragment_Post_Details();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("post", post);
+                    bundle.putSerializable("idPost", post.get_id());
                     fragment_post_details.setArguments(bundle);
                     helper_common.replaceFragment(context, fragment_post_details);
                 } else if (blog != null) {
                     Fragment_Blog_Detail fragment_blog_details = new Fragment_Blog_Detail();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("blog", blog);
+                    bundle.putSerializable("idBlog", blog.get_id());
                     fragment_blog_details.setArguments(bundle);
                     helper_common.replaceFragment(context, fragment_blog_details);
                 }

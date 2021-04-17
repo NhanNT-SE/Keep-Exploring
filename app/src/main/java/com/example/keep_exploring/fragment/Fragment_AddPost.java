@@ -129,18 +129,26 @@ public class Fragment_AddPost extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogActionPost(tvAddress, tvCategory, new Helper_Event() {
-                    @Override
-                    public void selectImage() {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(
-                                Intent.createChooser(intent, "Select picture"),
-                                CHOOSE_IMAGE_POST);
-                    }
-                });
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(
+                        Intent.createChooser(intent, "Select picture"),
+                        CHOOSE_IMAGE_POST);
+            }
+        });
+
+        tvAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_post.dialogAddAddress(tvAddress,tvCategory);
+            }
+        });
+        tvCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_post.dialogAddAddress(tvAddress,tvCategory);
             }
         });
     }
