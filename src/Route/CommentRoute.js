@@ -47,6 +47,6 @@ router.patch(
   commentController.editCommentPost
 );
 //DELETE Method
-router.delete("/deletebyId/:idComment", commentController.deleteCommentByID);
+router.delete("/delete/:idComment", commentController.deleteCommentByID);
 
 module.exports = router;

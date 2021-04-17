@@ -66,7 +66,21 @@ const getBlogByID = async (req, res, next) => {
     next(error);
   }
 };
-
+const getBlogList = async (req, res, next) => {
+  try {
+    const blogList = await Blog.find({ status: "done" })
+      .populate("blog_detail")
+      .populate("owner", ["displayName", "imgUser", "email", "blog", "post"])
+      .sort({ created_on: -1 });
+    return res.status(200).send({
+      data:blogList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getPostById = async (req, res, next) => {
   try {
     const { idPost } = req.params;
@@ -91,11 +105,11 @@ const getPostList = async (req, res, next) => {
     let postList;
     if (category === "" || !category) {
       postList = await Post.find({ status: "done" })
-        .populate("owner", ["displayName", "imgUser", "email","post","blog"])
+        .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
         .sort({ created_on: -1 });
     } else {
       postList = await Post.find({ status: "done", category })
-        .populate("owner", ["displayName", "imgUser", "email","post","blog"])
+        .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
         .sort({ created_on: -1 });
     }
     return res.send({
@@ -132,10 +146,16 @@ const getPostComment = async (req, res, next) => {
     if (postFound) {
       const commentList = await Comment.find({
         idPost: idPost,
-      }).populate("idUser", ["email", "displayName", "imgUser"]);
+      }).populate("idUser", [
+        "email",
+        "displayName",
+        "imgUser",
+        "post",
+        "blog",
+      ]);
 
       return res.send({
-        data: commentList,
+        data: commentList.reverse(),
         status: 200,
         message: "Lấy dữ liệu thành công",
       });
@@ -152,9 +172,15 @@ const getBlogComment = async (req, res, next) => {
     if (blogFound) {
       const commentList = await Comment.find({
         idBlog: idBlog,
-      }).populate("idUser", ["email", "displayName", "imgUser"]);
+      }).populate("idUser", [
+        "email",
+        "displayName",
+        "imgUser",
+        "post",
+        "blog",
+      ]);
       return res.send({
-        data: commentList,
+        data: commentList.reverse(),
         status: 200,
         message: "Lấy dữ liệu thành công",
       });
@@ -164,20 +190,7 @@ const getBlogComment = async (req, res, next) => {
     next(error);
   }
 };
-const getBlogList = async (req, res, next) => {
-  try {
-    const blogList = await Blog.find({ status: "done" })
-      .populate("owner", ["displayName", "imgUser", "email","blog","post"])
-      .sort({ created_on: -1 });
-    return res.status(200).send({
-      data: blogList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+
 
 const getLikeListPost = async (req, res, next) => {
   try {
