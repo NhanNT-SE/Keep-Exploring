@@ -15,7 +15,8 @@ public interface Api_Comment {
 
     @GET("/public/post/comments/{idPost}")
     Call<String> getCommentPost(@Path("idPost") String idPost);
-    @GET("/public/blog/comments/{idPost}")
+
+    @GET("/public/blog/comments/{idBlog}")
     Call<String> getCommentBlog(@Path("idBlog") String idBlog);
     @Multipart
     @POST("/comment/post")
@@ -27,8 +28,9 @@ public interface Api_Comment {
     @POST("/comment/blog")
     Call<String> addCommentBlog(@Header("Authorization") String accessToken,
                                 @Part("content") RequestBody content,
-                                @Part("idPost") RequestBody idBlog,
+                                @Part("idBlog") RequestBody idBlog,
                                 @Part MultipartBody.Part image_blog);
+
     @DELETE("/comment/delete/{idComment}")
     Call<String> deleteComment(@Header("Authorization") String accessToken,
                                @Path("idComment") String idComment);

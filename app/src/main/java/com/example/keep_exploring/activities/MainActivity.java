@@ -33,9 +33,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.ramotion.circlemenu.CircleMenuView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
-    private FirebaseUser currentUser;
     private String password;
     private String email;
     private TextView number;
@@ -50,13 +50,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         initView();
         initVariable();
         handlerEvent();
     }
     private void initView() {
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
         circleMenuView = findViewById(R.id.main_circleMenu);
         fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
@@ -71,9 +70,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.getMenu().getItem(2).setEnabled(false);
-        if (currentUser != null) {
-//            Toast.makeText(this, "Hello " + currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
-        }
         dao_address.getProvinceList(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -102,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         view.setVisibility(View.GONE);
                         replaceFragment(new Fragment_AddPost());
                         break;
-
                 }
             }
             @Override

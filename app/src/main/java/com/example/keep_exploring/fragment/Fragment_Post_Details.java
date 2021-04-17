@@ -15,7 +15,7 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_UserLikeList;
+import com.example.keep_exploring.adapter.Adapter_RV_Like;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
@@ -26,9 +26,7 @@ import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 public class Fragment_Post_Details extends Fragment {
     //    View
@@ -47,7 +45,7 @@ public class Fragment_Post_Details extends Fragment {
     private Helper_SP helper_sp;
     //    Variable
     private Dialog_Fragment_Comment dialog_fragment_comment;
-    private Adapter_UserLikeList adapter_userLikeList;
+    private Adapter_RV_Like adapter_RVLike;
     private List<User> userLikeList = new ArrayList<>();
     private boolean isLike = false;
     private int sizeList = 0;
@@ -69,11 +67,9 @@ public class Fragment_Post_Details extends Fragment {
             post = (Post) bundle.getSerializable("post");
         }
         initView();
-        dialog_fragment_comment = new Dialog_Fragment_Comment();
         showPost();
         return view;
     }
-
     private void initView() {
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
@@ -91,6 +87,7 @@ public class Fragment_Post_Details extends Fragment {
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(post.get_id(),"post");
                 dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
             }
         });
@@ -227,8 +224,8 @@ public class Fragment_Post_Details extends Fragment {
         }
     }
     private void rfLikeList(List<User> likeList) {
-        adapter_userLikeList = new Adapter_UserLikeList(getContext(), likeList);
-        dUserLike_rcUserList.setAdapter(adapter_userLikeList);
+        adapter_RVLike = new Adapter_RV_Like(getContext(), likeList);
+        dUserLike_rcUserList.setAdapter(adapter_RVLike);
         if (likeList.size() > 0) {
             dUserLike_tvNothing.setVisibility(View.GONE);
         } else {

@@ -32,15 +32,17 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
     private Helper_Date helper_date;
     private Helper_SP helper_sp;
     private DAO_Comment dao_comment;
-    public Adapter_RV_Comment(Context context, List<Comment> commentList) {
+    private String type;
+
+    public Adapter_RV_Comment(Context context, List<Comment> commentList, String type) {
         this.context = context;
         this.commentList = commentList;
+        this.type = type;
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
         helper_sp = new Helper_SP(context);
         dao_comment = new DAO_Comment(context);
     }
-
 
     @NonNull
     @Override
@@ -49,7 +51,6 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         View view = inflater.inflate(R.layout.row_comment, parent, false);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMG = helper_common.getBaseUrlImage();
@@ -57,7 +58,12 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         Picasso.get().load(URL_IMG + "user/" + comment.getUser().getImgUser()).into(holder.civUser);
         holder.tvComment.setText(comment.getContent());
         holder.tvUserName.setText(comment.getUser().getDisplayName());
-        holder.tvPubDate.setText(helper_date.formatDateDisplay(comment.getDate()));
+        if (comment.getDate() != null) {
+            holder.tvPubDate.setText(helper_date.formatDateDisplay(comment.getDate()));
+        } else {
+            holder.tvPubDate.setText(helper_date.formatDateDisplay(""));
+        }
+
         if (!helper_sp.getUser().getId().equals(comment.getUser().getId())) {
             holder.imgDelete.setVisibility(View.GONE);
         }
@@ -69,7 +75,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
                 holder.imgComment.setImageURI(comment.getUriImg());
             } else if (comment.getImg() != null) {
                 Picasso.get()
-                        .load(URL_IMG + "comment/post/" + comment.getImg())
+                        .load(URL_IMG + "comment/" + type + "/" + comment.getImg())
                         .into(holder.imgComment);
             }
         }

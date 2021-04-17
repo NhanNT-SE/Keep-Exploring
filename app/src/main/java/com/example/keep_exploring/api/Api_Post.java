@@ -55,7 +55,7 @@ public interface Api_Post {
 
 
     @Multipart
-    @PATCH("/post/{idPost}")
+    @PATCH("/post/update/{idPost}")
     Call<String> updatePost(
             @Header("Authorization") String accessToken,
             @Path("idPost") String idPost,

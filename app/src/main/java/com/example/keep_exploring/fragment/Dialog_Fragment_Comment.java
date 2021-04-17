@@ -40,7 +40,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     private View view;
     private RelativeLayout layoutImage;
     private RecyclerView rvComment;
-    private TextView tvNothing, tvDone;
+    private TextView tvNothing, tvClose;
     private EditText etContent;
     private ImageView imgComment, imgDeleteImage;
     private ImageView imgSend, imgCamera;
@@ -58,7 +58,16 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     private String path;
     private Uri uriImage;
     private User user;
+    private String id, type;
 
+    public static Dialog_Fragment_Comment newInstance(String id, String type) {
+        Dialog_Fragment_Comment dialog = new Dialog_Fragment_Comment();
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        bundle.putString("type", type);
+        dialog.setArguments(bundle);
+        return dialog;
+    }
 
     @Nullable
     @Override
@@ -70,6 +79,17 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            id = bundle.getString("id");
+            type = bundle.getString("type");
+            loadData();
+        }
+    }
+
     private void initView() {
         layoutImage = (RelativeLayout) view.findViewById(R.id.dComment_layoutImage);
         etContent = (EditText) view.findViewById(R.id.dComment_etComment);
@@ -78,12 +98,11 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         imgComment = (ImageView) view.findViewById(R.id.dComment_imgComment);
         imgDeleteImage = (ImageView) view.findViewById(R.id.dComment_imgDeleteImage);
         tvNothing = (TextView) view.findViewById(R.id.dComment_tvNothing);
-        tvDone = (TextView) view.findViewById(R.id.dComment_tvDone);
+        tvClose = (TextView) view.findViewById(R.id.dComment_tvClose);
         rvComment = (RecyclerView) view.findViewById(R.id.dComment_rvComment);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dComment_refreshLayout);
 
     }
-
     private void initVariable() {
         dao_comment = new DAO_Comment(getContext());
         helper_common = new Helper_Common();
@@ -94,7 +113,6 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         path = "";
         user = helper_sp.getUser();
     }
-
     private void handlerEvent() {
         helper_common.configRecycleView(getContext(), rvComment);
         helper_common.showSkeleton(rvComment,adapterComment,R.layout.row_skeleton_comment);
@@ -105,7 +123,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
             }
         });
 
-        tvDone.setOnClickListener(new View.OnClickListener() {
+        tvClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -161,26 +179,20 @@ public class Dialog_Fragment_Comment extends DialogFragment {
 
             }
         });
-
-
-        loadData();
     }
-
-
     private void loadData() {
-        dao_comment.getCommentPost("6045e732ed9eac2464ee2ad8", new Helper_Callback() {
+        dao_comment.getCommentList(id, type, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 commentList = (List<Comment>) response;
                 refreshRV();
                 swipeRefreshLayout.setRefreshing(false);
-
             }
+
             @Override
             public void failedReq(String msg) {
                 log(msg);
                 swipeRefreshLayout.setRefreshing(false);
-
             }
         });
     }
@@ -189,19 +201,16 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setUriImg(uriImage);
-        comment.setDate(helper_date.convertStringToIsoDate(""));
         comment.setUser(user);
         commentList.add(0, comment);
         refreshRV();
-        dao_comment.addCommentPost(content, "6045e732ed9eac2464ee2ad8", path, new Helper_Callback() {
+        layoutImage.setVisibility(View.GONE);
+        etContent.setText("");
+        dao_comment.addComment(id, type, content, path, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                log(response.toString());
-                layoutImage.setVisibility(View.GONE);
                 path = "";
-                etContent.setText("");
                 uriImage = null;
-
             }
 
             @Override
@@ -214,31 +223,15 @@ public class Dialog_Fragment_Comment extends DialogFragment {
             }
         });
     }
-
     private void refreshRV() {
-        adapterComment = new Adapter_RV_Comment(getContext(), commentList);
-
+        adapterComment = new Adapter_RV_Comment(getContext(), commentList, type);
         rvComment.setAdapter(adapterComment);
         if (commentList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
         } else {
             tvNothing.setVisibility(View.VISIBLE);
         }
-
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        log("on Resume");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        log("on stop");
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == PICK_IMAGE_CODE && data.getData() != null) {
@@ -249,12 +242,10 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
     @Override
     public int getTheme() {
         return R.style.DialogCommentTheme;
     }
-
     private void log(String s) {
         Log.d("log", s);
     }
