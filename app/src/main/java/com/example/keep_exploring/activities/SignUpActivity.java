@@ -22,6 +22,8 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
 
@@ -87,8 +89,8 @@ public class SignUpActivity extends AppCompatActivity {
                     public void successReq(Object response) {
                         User user = (User) response;
                         toast("Tạo tài khoản thành công!");
-//                        startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
-                        log(user.toString());
+                        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
+
                     }
 
                     @Override

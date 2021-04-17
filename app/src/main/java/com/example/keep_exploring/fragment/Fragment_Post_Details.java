@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -15,26 +13,29 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Comment;
+import com.example.keep_exploring.adapter.Adapter_UserLikeList;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class Fragment_Post_Details extends Fragment {
@@ -44,8 +45,12 @@ public class Fragment_Post_Details extends Fragment {
     private CircleImageView civUser;
     private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes;
     private ImageView imgLike, imgComment;
+    private ImageSlider isPost;
     private Post post;
     private Helper_Common helper_common = new Helper_Common();
+    private Helper_SP helper_sp;
+    private Boolean isLogIn = false;
+    private Helper_Date helper_date = new Helper_Date();
 
     private TextView dComment_tvDone, dComment_tvNothing;
     private EditText dComment_etComment;
@@ -56,7 +61,11 @@ public class Fragment_Post_Details extends Fragment {
     private List<Comment> commentList = new ArrayList<>();
 
     private RecyclerView dUserLike_rcUserList;
-    private TextView dUserLike_tvCancel;
+    private TextView dUserLike_tvCancel, dUserLike_tvNothing;
+    private Adapter_UserLikeList adapter_userLikeList;
+    private List<User> userLikeList = new ArrayList<>();
+    private boolean isLike = false;
+    private int sizeList = 0;
 
 
     public Fragment_Post_Details() {
@@ -86,6 +95,8 @@ public class Fragment_Post_Details extends Fragment {
         tvUserName = (TextView) view.findViewById(R.id.fDetailPost_tvUserName);
         imgComment = (ImageView) view.findViewById(R.id.fDetailPost_imgComment);
         imgLike = (ImageView) view.findViewById(R.id.fDetailPost_imgLike);
+        isPost = (ImageSlider) view.findViewById(R.id.fDetailPost_imgPost);
+        helper_sp = new Helper_SP(getContext());
 
 
         imgComment.setOnClickListener(new View.OnClickListener() {
@@ -94,18 +105,38 @@ public class Fragment_Post_Details extends Fragment {
                 showDialogComment();
             }
         });
+
+        tvLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogUserLiked();
+            }
+        });
     }
 
     private void showPost() {
         String URL_IMAGE = helper_common.getBaseUrlImage();
+        sizeList = post.getLikes().size();
+
 
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(civUser);
-        String dateFormated = post.getCreated_on().substring(0, 10);
-        tvDate.setText(dateFormated);
+
+        tvDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         tvUserName.setText(post.getOwner().getDisplayName());
         tvTitle.setText(post.getTitle());
         tvDesc.setText(post.getDesc());
-        tvLikes.setText(post.getLikes().size() + " lượt thích");
+        tvLikes.setText(sizeList + " lượt thích");
+        List<SlideModel> slideModels = new ArrayList<>();
+        for (String urlPost : post.getImgs()) {
+            slideModels.add(new SlideModel(URL_IMAGE + "post/" + urlPost));
+        }
+        isPost.setImageList(slideModels, true);
+
+
+        checkUserLiked();
+
+
+        checkLike();
     }
 
     private void showDialogComment() {
@@ -167,20 +198,20 @@ public class Fragment_Post_Details extends Fragment {
         final Dialog dialogUserLike = new Dialog(getActivity());
         dialogUserLike.setContentView(R.layout.dialog_user_like);
         dialogUserLike.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        log("show dialog: " + userLikeList.toString());
 
         //anh xa
         dUserLike_tvCancel = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvCancel);
         dUserLike_rcUserList = (RecyclerView) dialogUserLike.findViewById(R.id.dUserLike_rcUserList);
+        dUserLike_tvNothing = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvNothing);
 
         //recycle
         helper_common.configRecycleView(getContext(), dUserLike_rcUserList);
-
-        //fetch data from server
-        dao_post = new DAO_Post(getContext());
         dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-
+                List<User> likeList = (List<User>) response;
+                rfLikeList(likeList);
             }
 
             @Override
@@ -188,7 +219,6 @@ public class Fragment_Post_Details extends Fragment {
 
             }
         });
-
 
         dUserLike_tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,6 +228,107 @@ public class Fragment_Post_Details extends Fragment {
         });
 
         dialogUserLike.show();
+    }
+
+    private void checkUserLiked() {
+        //fetch data from server
+        dao_post = new DAO_Post(getContext());
+
+        dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                List<User> likeList = (List<User>) response;
+                userLikeList = likeList;
+                isLogIn = checkLogin();
+                if (isLogIn) {
+                    String idUser = helper_sp.getUser().getId();
+                    for (User user : userLikeList) {
+                        if (user.getId().equalsIgnoreCase(idUser)) {
+                            isLike = true;
+                            checkLike();
+                            break;
+                        }
+                    }
+
+                    imgLike.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            likePost();
+                        }
+                    });
+                } else {
+                    isLike = false;
+                    checkLike();
+                    imgLike.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getContext(), "Bạn cần đăng nhập để thực hiện thao tác này", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                log(msg);
+            }
+        });
+    }
+
+    private void likePost() {
+        dao_post.likePost(post.get_id(), new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                if (response.equals("Đã thích bài viết")) {
+                    isLike = true;
+                    sizeList += 1;
+                    tvLikes.setText(sizeList + " lượt thích");
+                    Toast.makeText(getContext(), "Đã thích bài viết", Toast.LENGTH_SHORT).show();
+                } else {
+                    isLike = false;
+                    sizeList -= 1;
+                    tvLikes.setText(sizeList + " lượt thích");
+                    Toast.makeText(getContext(), "Đã bỏ thích bài viết", Toast.LENGTH_SHORT).show();
+
+                }
+                checkLike();
+
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+    }
+
+    private void checkLike() {
+        if (isLike) {
+            imgLike.setImageResource(R.drawable.ic_like_red);
+        } else {
+            imgLike.setImageResource(R.drawable.ic_like_outline);
+        }
+
+    }
+
+    private void rfLikeList(List<User> likeList) {
+        adapter_userLikeList = new Adapter_UserLikeList(getContext(), likeList);
+        dUserLike_rcUserList.setAdapter(adapter_userLikeList);
+        if (likeList.size() > 0) {
+            dUserLike_tvNothing.setVisibility(View.GONE);
+        } else {
+            dUserLike_tvNothing.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean checkLogin() {
+        String accessToken = helper_sp.getAccessToken();
+        log(accessToken);
+        if (accessToken.isEmpty()) {
+            return false;
+        }
+        return true;
+
     }
 
     private void log(String s) {

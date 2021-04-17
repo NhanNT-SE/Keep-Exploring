@@ -47,25 +47,25 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-      btnLogIn.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              String email = etEmail.getText().toString();
-              String pass = etPass.getText().toString();
-              dao_auth.signIn(email,pass,new Helper_Callback(){
-                  @Override
-                  public void failedReq(String message) {
-                      toast(message);
-                  }
+        btnLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = etEmail.getText().toString();
+                String pass = etPass.getText().toString();
+                dao_auth.signIn(email,pass,new Helper_Callback(){
+                    @Override
+                    public void failedReq(String message) {
+                        toast(message);
+                    }
 
-                  @Override
-                  public void successReq(Object response) {
-                      toast("Đăng nhâp thành công");
-                      startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                  }
-              });
-          }
-      });
+                    @Override
+                    public void successReq(Object response) {
+                        toast("Đăng nhâp thành công");
+                        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                    }
+                });
+            }
+        });
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

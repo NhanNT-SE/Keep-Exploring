@@ -21,6 +21,7 @@ import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -158,21 +159,25 @@ public class Fragment_Category extends Fragment {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void setActiveButton(MaterialButton materialButton) {
         @SuppressLint("ResourceType")
         ColorStateList activeColor = ColorStateList
                 .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
 
-        materialButton.setTextColor(activeColor);
-        materialButton.setStrokeColor(activeColor);
+        materialButton.setTextColor(R.color.white);
+//        materialButton.setStrokeColor(activeColor);
+materialButton.setBackgroundColor(R.color.colorPrimary);
     }
 
+    @SuppressLint("ResourceAsColor")
     private void setInactiveButton(MaterialButton materialButton) {
         @SuppressLint("ResourceType")
         ColorStateList inactiveColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
-        materialButton.setTextColor(inactiveColor);
+                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
+        materialButton.setTextColor(R.color.colorPrimary);
         materialButton.setStrokeColor(inactiveColor);
+        materialButton.setBackgroundColor(R.color.white);
     }
 
     private void refreshLV() {

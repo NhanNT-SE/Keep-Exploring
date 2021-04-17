@@ -18,11 +18,13 @@ import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BlogList;
 import com.example.keep_exploring.fragment.Fragment_Category;
 import com.example.keep_exploring.fragment.Fragment_Notification;
+import com.example.keep_exploring.fragment.Fragment_Post_Details;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Places;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         hideCircleMenu();
-        replaceFragment(new Fragment_Tab_UserInfo());
+        replaceFragment(new Fragment_Category());
     }
 
     private void insertPlaces(){

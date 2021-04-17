@@ -6,6 +6,7 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -25,13 +26,19 @@ public interface Api_Post {
     @GET("/public/post/{idPost}")
     Call<String> getPostById(@Path("idPost") String idPost);
 
-    @GET("/public/post/like")
-    Call<String> getLikeByPost(@Part("idPost") String idPost);
 
     @GET("/post/{idUser}")
     Call<String> getPostByUser(
             @Header("Authorization") String accessToken,
             @Path("idUser") String idUser);
+
+
+    @POST("/public/post/like")
+    Call<String> getLikeByPost(@Body HashMap<String, String> map);
+
+
+
+
 
     @Multipart
     @POST("/post")
@@ -40,6 +47,12 @@ public interface Api_Post {
             @PartMap() HashMap<String, RequestBody> partMap,
             @Part List<MultipartBody.Part> imageList
     );
+
+    @PATCH("/post/like")
+    Call<String> likePost(
+            @Header("Authorization") String accessToken,
+            @Body HashMap<String, String> map);
+
 
     @Multipart
     @PATCH("/post/{idPost}")

@@ -164,20 +164,20 @@ public class Helper_Post {
                         dSpProvince.getSelectedItem().toString(),
                         dDistrictList.get(position),
                         new Helper_Callback() {
-                    @Override
-                    public void successReq(Object response) {
-                        Map<String, List<String>> map = (Map<String, List<String>>) response;
-                        dWardList.clear();
-                        dWardList.addAll(map.get("wardList"));
-                        setSpinner(dWardList, dSpWard);
-                        setAddressToDisPLay(
-                                dSpWard.getSelectedItem().toString()
-                                , dSpDistrict.getSelectedItem().toString(),
-                                dSpProvince.getSelectedItem().toString()
-                        );
-                        dEdtAdditional.setText("");
-                        dTvAddress.setText(addressSubmit);
-                    }
+                            @Override
+                            public void successReq(Object response) {
+                                Map<String, List<String>> map = (Map<String, List<String>>) response;
+                                dWardList.clear();
+                                dWardList.addAll(map.get("wardList"));
+                                setSpinner(dWardList, dSpWard);
+                                setAddressToDisPLay(
+                                        dSpWard.getSelectedItem().toString()
+                                        , dSpDistrict.getSelectedItem().toString(),
+                                        dSpProvince.getSelectedItem().toString()
+                                );
+                                dEdtAdditional.setText("");
+                                dTvAddress.setText(addressSubmit);
+                            }
 
                             @Override
                             public void failedReq(String msg) {

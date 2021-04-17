@@ -2,9 +2,13 @@ package com.example.keep_exploring.helpers;
 
 import android.util.Log;
 
+import com.example.keep_exploring.model.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import retrofit2.Response;
 

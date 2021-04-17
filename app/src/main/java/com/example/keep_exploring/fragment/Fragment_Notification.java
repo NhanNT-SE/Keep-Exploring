@@ -20,7 +20,9 @@ import com.example.keep_exploring.adapter.Adapter_RV_Notify;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Notification;
+import com.example.keep_exploring.model.User;
 import com.google.android.material.button.MaterialButton;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +44,11 @@ public class Fragment_Notification extends Fragment {
     private int total, totalSeen, totalNew;
     private Adapter_RV_Notify adapterNotify;
     private String filter;
+
     public Fragment_Notification() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class Fragment_Notification extends Fragment {
         handlerEvent();
         return view;
     }
+
     private void initView() {
         rvNotify = (RecyclerView) view.findViewById(R.id.fNotification_rvNotify);
         tvNothing = (TextView) view.findViewById(R.id.fNotification_tvNothing);
@@ -63,6 +68,7 @@ public class Fragment_Notification extends Fragment {
         mBtnSeen = (MaterialButton) view.findViewById(R.id.fNotification_mBtnSeen);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fNotification_refreshLayout);
     }
+
     private void initVariable() {
         filter = "";
         helper_common = new Helper_Common();
@@ -70,6 +76,7 @@ public class Fragment_Notification extends Fragment {
         defaultList = new ArrayList<>();
         filterList = new ArrayList<>();
     }
+
     private void handlerEvent() {
         helper_common.configRecycleView(getContext(), rvNotify);
         helper_common.configAnimBottomNavigation(getContext(), rvNotify);
@@ -118,6 +125,7 @@ public class Fragment_Notification extends Fragment {
                 setFilterList();
 
             }
+
             @Override
             public void failedReq(String msg) {
                 if (swipeRefreshLayout.isRefreshing()) {
@@ -126,6 +134,7 @@ public class Fragment_Notification extends Fragment {
             }
         });
     }
+
     private void setFilterList() {
         setColorButton();
         filterList.clear();
@@ -139,6 +148,7 @@ public class Fragment_Notification extends Fragment {
         }
         refreshRV(filterList);
     }
+
     private void refreshRV(List<Notification> notificationList) {
         adapterNotify = new Adapter_RV_Notify(getContext(), notificationList);
         rvNotify.setAdapter(adapterNotify);
@@ -148,6 +158,7 @@ public class Fragment_Notification extends Fragment {
             tvNothing.setVisibility(View.VISIBLE);
         }
     }
+
     private void setBadgeMButton() {
         totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
         totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
@@ -156,6 +167,7 @@ public class Fragment_Notification extends Fragment {
         mBtnNew.setText("Thông báo chưa đọc(" + totalNew + ")");
         mBtnSeen.setText("Thông báo đã đọc(" + totalSeen + ")");
     }
+
     private void setColorButton() {
         switch (filter) {
             case "":
@@ -198,7 +210,6 @@ public class Fragment_Notification extends Fragment {
         dao_notification.changeSeenStatusNotify(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-
             }
 
             @Override
@@ -207,6 +218,7 @@ public class Fragment_Notification extends Fragment {
             }
         });
     }
+
     private void log(String msg) {
         Log.d("log", msg);
     }

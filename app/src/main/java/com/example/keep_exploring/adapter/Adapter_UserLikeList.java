@@ -42,10 +42,8 @@ public class Adapter_UserLikeList extends RecyclerView.Adapter<Adapter_UserLikeL
         User user = userList.get(position);
 
         String URL_IMG = helper_common.getBaseUrlImage();
-
-
-        ;
-
+        holder.tvUserName.setText(user.getDisplayName());
+        Picasso.get().load(URL_IMG + "user/" + user.getImgUser()).into(holder.civUser);
     }
 
 
