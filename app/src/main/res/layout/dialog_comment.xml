@@ -7,62 +7,114 @@
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/dComment_tvNothing"
-        android:text="Nothing to show here, add first comment"
-        android:textSize="20sp"
+        android:text="Chưa có bình luận nào, hãy là người đầu tiên bình luận về bài viết"
+        android:textSize="13sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
-        android:text="Comment"
-        android:textSize="20dp"
+        android:text="Danh sách bình luận"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
+        android:fontFamily="@font/nabila"
         android:textStyle="bold"
         android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/dComment_tvDone"
-        android:text="Done"
+        android:text="Đóng"
         android:layout_alignParentEnd="true"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textStyle="bold"
         android:layout_marginEnd="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <LinearLayout
         android:id="@+id/dComment_layoutComment"
-        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/dComment_etComment"
-            android:hint="Nhập bình luận..."
-            android:paddingHorizontal="5dp"
-            android:textSize="18sp"
-            android:gravity="top"
-            android:layout_weight="8"
-            android:layout_width="0dp"
-            android:layout_height="40dp"/>
-        <ImageView
-            android:id="@+id/dComment_imgPost"
-            android:src="@drawable/ic_send_black_24dp"
-            android:layout_weight="2"
-            android:layout_gravity="center_vertical"
-            android:layout_width="0dp"
-            android:layout_height="40dp"/>
+        <RelativeLayout
+            android:id="@+id/dComment_layoutImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/dComment_imgComment"
+                android:layout_width="200dp"
+                android:layout_height="120dp"
+                android:background="@color/light_transparent"
+                android:scaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/dComment_imgDeleteImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/dComment_imgComment"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_close_black" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/dComment_etComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:background="@drawable/border_tv"
+                android:gravity="top"
+                android:hint="Nhập bình luận..."
+                android:maxLines="3"
+                android:minHeight="40dp"
+                android:padding="5dp"
+                android:paddingHorizontal="5dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbars="vertical"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/dComment_imgCamera"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_camera_black_24dp" />
+
+            <ImageView
+                android:id="@+id/dComment_imgSend"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_comment_send" />
+        </LinearLayout>
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dComment_rvComment"
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/dComment_refreshLayout"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/dComment_layoutComment"
         android:layout_below="@+id/dComment_tvDone"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="-1dp"
-        android:dividerHeight="10dp" />
+        android:layout_above="@+id/dComment_layoutComment"
+        android:layout_marginBottom="-1dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dComment_rvComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:dividerHeight="10dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </RelativeLayout>

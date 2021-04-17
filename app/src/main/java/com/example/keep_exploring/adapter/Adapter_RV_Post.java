@@ -63,7 +63,6 @@ public class Adapter_RV_Post extends RecyclerView.Adapter<Adapter_RV_Post.ViewHo
             slideModels.add(new SlideModel(URL_IMAGE + "post/"+ urlPost));
         }
         holder.isPost.setImageList(slideModels, true);
-
         holder.civUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

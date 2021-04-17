@@ -8,7 +8,6 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
@@ -86,9 +85,11 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject jsonData = callback.getJsonObject(response);
-                Post post = new Gson().fromJson(jsonData.toString(), Post.class);
-                callback.successReq(post);
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    Post post = new Gson().fromJson(data.toString(), Post.class);
+                    callback.successReq(post);
+                }
             }
 
             @Override
@@ -107,35 +108,18 @@ public class DAO_Post {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string());
-                        log(err.getString("error"));
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(msg);
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                        } else {
-                            JSONArray data = responseData.getJSONArray("data");
-                            Type listType = new TypeToken<List<User>>() {
-                            }.getType();
-                            List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
-                            callback.successReq(userLikedList);
-                        }
-                    }
-                } catch (Exception e) {
-                    log(e.getMessage());
+                JSONArray data = callback.getJsonArray(response);
+                Type listType = new TypeToken<List<User>>() {
+                }.getType();
+                if (data != null) {
+                    List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(userLikedList);
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -146,10 +130,12 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Post>>() {
-                }.getType();
-                List<Post> postList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(postList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Post>>() {
+                    }.getType();
+                    List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(postList);
+                }
             }
 
             @Override
@@ -166,10 +152,12 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                Type listType = new TypeToken<List<Post>>() {
-                }.getType();
-                List<Post> postList = new Gson().fromJson(data.toString(), listType);
-                callback.successReq(postList);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Post>>() {
+                    }.getType();
+                    List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(postList);
+                }
             }
 
             @Override
@@ -182,37 +170,20 @@ public class DAO_Post {
     public void likePost(String idPost, Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         map.put("idPost", idPost);
-               log(helper_sp.getUser().toString());
+        log(helper_sp.getUser().toString());
         Call<String> call = api_post.likePost(accessToken, map);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    if (response.errorBody() != null) {
-                        JSONObject err = new JSONObject(response.errorBody().string());
-                        log(err.getString("error"));
-                        String msg = err.getString("message");
-                        callback.failedReq(msg);
-                        log(msg);
-                    } else {
-                        JSONObject responseData = new JSONObject(response.body());
-                        if (responseData.has("error")) {
-                            JSONObject err = responseData.getJSONObject("error");
-                            String msg = err.getString("message");
-                            callback.failedReq(msg);
-                        } else {
-                            String result = responseData.getString("message");
-                            callback.successReq(result);
-                        }
-                    }
-                } catch (Exception e) {
-                    log(e.getMessage());
+                JSONObject data = callback.getJsonObject(response);
+                if (data != null) {
+                    callback.successReq(data);
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                log(t.getMessage());
+                callback.failedReq(t.getMessage());
             }
         });
     }
@@ -232,7 +203,6 @@ public class DAO_Post {
                     callback.successReq(data);
                 }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());
@@ -240,10 +210,7 @@ public class DAO_Post {
         });
 
     }
-
     private void log(String s) {
         Log.d("log", s);
     }
-
-
 }

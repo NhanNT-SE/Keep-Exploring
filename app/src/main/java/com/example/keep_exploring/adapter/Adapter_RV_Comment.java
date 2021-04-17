@@ -6,13 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
+import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
 import com.squareup.picasso.Picasso;
 
@@ -21,17 +26,22 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.ViewHolder> {
-
     private Context context;
     private List<Comment> commentList;
     private Helper_Common helper_common;
     private Helper_Date helper_date;
+    private Helper_SP helper_sp;
+    private DAO_Comment dao_comment;
     public Adapter_RV_Comment(Context context, List<Comment> commentList) {
         this.context = context;
         this.commentList = commentList;
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
+        helper_sp = new Helper_SP(context);
+        dao_comment = new DAO_Comment(context);
     }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,38 +49,89 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         View view = inflater.inflate(R.layout.row_comment, parent, false);
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMG = helper_common.getBaseUrlImage();
         Comment comment = commentList.get(position);
-        Picasso.get().load(URL_IMG + "user/" + comment.getIdUser().getImgUser()).into(holder.civUser);
+        Picasso.get().load(URL_IMG + "user/" + comment.getUser().getImgUser()).into(holder.civUser);
         holder.tvComment.setText(comment.getContent());
-        holder.tvUserName.setText(comment.getIdUser().getDisplayName());
+        holder.tvUserName.setText(comment.getUser().getDisplayName());
         holder.tvPubDate.setText(helper_date.formatDateDisplay(comment.getDate()));
-        if (comment.getImg().isEmpty()) {
+        if (!helper_sp.getUser().getId().equals(comment.getUser().getId())) {
+            holder.imgDelete.setVisibility(View.GONE);
+        }
+        if (comment.getUriImg() == null && (comment.getImg() == null || comment.getImg().isEmpty())) {
             holder.imgComment.setVisibility(View.GONE);
         } else {
-            Picasso.get()
-                    .load(URL_IMG + "comment/post/" + comment.getImg())
-                    .into(holder.imgComment);
+            holder.imgComment.setVisibility(View.VISIBLE);
+            if (comment.getUriImg() != null) {
+                holder.imgComment.setImageURI(comment.getUriImg());
+            } else if (comment.getImg() != null) {
+                Picasso.get()
+                        .load(URL_IMG + "comment/post/" + comment.getImg())
+                        .into(holder.imgComment);
+            }
         }
+
+        holder.civUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (comment.getUser().getId().equals(helper_sp.getUser().getId())) {
+                    helper_common.replaceFragment(context, new Fragment_Tab_UserInfo());
+                } else {
+                    helper_common.dialogViewProfile(context, comment.getUser());
+                }
+            }
+        });
+
+        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteComment(comment);
+            }
+        });
+
     }
     @Override
     public int getItemCount() {
         return commentList.size();
     }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView civUser;
         private TextView tvUserName, tvPubDate, tvComment;
-        private ImageView imgMenu, imgComment;
+        private ImageView imgDelete, imgComment;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             civUser = (CircleImageView) itemView.findViewById(R.id.row_comment_imgAvatar);
             tvUserName = (TextView) itemView.findViewById(R.id.row_comment_tvUserName);
             tvPubDate = (TextView) itemView.findViewById(R.id.row_comment_tvPubDate);
             tvComment = (TextView) itemView.findViewById(R.id.row_comment_tvComment);
-            imgMenu = (ImageView) itemView.findViewById(R.id.row_comment_imgMore);
+            imgDelete = (ImageView) itemView.findViewById(R.id.row_comment_imgDelete);
             imgComment = (ImageView) itemView.findViewById(R.id.row_comment_imgComment);
         }
     }
+
+    private void deleteComment(Comment comment) {
+        int index = commentList.indexOf(comment);
+        commentList.remove(comment);
+        notifyDataSetChanged();
+        dao_comment.deleteComment(comment.get_id(), new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                Toast.makeText(context, "Lỗi hệ thống xóa bình luận không thành công, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                commentList.add(index, comment);
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+
 }

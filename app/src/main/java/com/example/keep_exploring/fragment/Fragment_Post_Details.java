@@ -2,71 +2,57 @@ package com.example.keep_exploring.fragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
-import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_RV_Comment;
 import com.example.keep_exploring.adapter.Adapter_UserLikeList;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class Fragment_Post_Details extends Fragment {
-
+    //    View
     private View view;
-    private DAO_Post dao_post;
     private CircleImageView civUser;
     private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes;
+    private TextView dUserLike_tvCancel, dUserLike_tvNothing;
+    private RecyclerView dUserLike_rcUserList;
     private ImageView imgLike, imgComment;
     private ImageSlider isPost;
-    private Post post;
+    //    DAO & Helper
+    private DAO_Post dao_post;
+    private Helper_Image helper_image;
     private Helper_Common helper_common = new Helper_Common();
-    private Helper_SP helper_sp;
-    private Boolean isLogIn = false;
     private Helper_Date helper_date = new Helper_Date();
-
-    private TextView dComment_tvDone, dComment_tvNothing;
-    private EditText dComment_etComment;
-    private ImageView dComment_imgSend;
-    private RecyclerView dComment_rvCommentList;
-    private Adapter_RV_Comment adapter_rv_comment;
-    private DAO_Comment dao_comment;
-    private List<Comment> commentList = new ArrayList<>();
-
-    private RecyclerView dUserLike_rcUserList;
-    private TextView dUserLike_tvCancel, dUserLike_tvNothing;
+    private Helper_SP helper_sp;
+    //    Variable
+    private Dialog_Fragment_Comment dialog_fragment_comment;
     private Adapter_UserLikeList adapter_userLikeList;
     private List<User> userLikeList = new ArrayList<>();
     private boolean isLike = false;
     private int sizeList = 0;
-
+    private Post post;
+    private Boolean isLogIn = false;
 
     public Fragment_Post_Details() {
         // Required empty public constructor
@@ -77,16 +63,21 @@ public class Fragment_Post_Details extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_post_details, container, false);
-
+        post = new Post();
         Bundle bundle = getArguments();
-        post = (Post) bundle.getSerializable("post");
-
+        if (bundle != null) {
+            post = (Post) bundle.getSerializable("post");
+        }
         initView();
+        dialog_fragment_comment = new Dialog_Fragment_Comment();
         showPost();
         return view;
     }
 
     private void initView() {
+        helper_common = new Helper_Common();
+        helper_date = new Helper_Date();
+        helper_image = new Helper_Image(getContext());
         civUser = (CircleImageView) view.findViewById(R.id.fDetailPost_civAvatarAdmin);
         tvDate = (TextView) view.findViewById(R.id.fDetailPost_tvPubDate);
         tvDesc = (TextView) view.findViewById(R.id.fDetailPost_tvDescription);
@@ -97,15 +88,12 @@ public class Fragment_Post_Details extends Fragment {
         imgLike = (ImageView) view.findViewById(R.id.fDetailPost_imgLike);
         isPost = (ImageSlider) view.findViewById(R.id.fDetailPost_imgPost);
         helper_sp = new Helper_SP(getContext());
-
-
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogComment();
+                dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
             }
         });
-
         tvLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,14 +101,10 @@ public class Fragment_Post_Details extends Fragment {
             }
         });
     }
-
     private void showPost() {
         String URL_IMAGE = helper_common.getBaseUrlImage();
         sizeList = post.getLikes().size();
-
-
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(civUser);
-
         tvDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         tvUserName.setText(post.getOwner().getDisplayName());
         tvTitle.setText(post.getTitle());
@@ -131,67 +115,8 @@ public class Fragment_Post_Details extends Fragment {
             slideModels.add(new SlideModel(URL_IMAGE + "post/" + urlPost));
         }
         isPost.setImageList(slideModels, true);
-
-
         checkUserLiked();
-
-
         checkLike();
-    }
-
-    private void showDialogComment() {
-        final Dialog dialogComment = new Dialog(getContext());
-        dialogComment.setContentView(R.layout.dialog_comment);
-        dialogComment.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        dComment_etComment = (EditText) dialogComment.findViewById(R.id.dComment_etComment);
-        dComment_imgSend = (ImageView) dialogComment.findViewById(R.id.dComment_imgPost);
-        dComment_tvNothing = (TextView) dialogComment.findViewById(R.id.dComment_tvNothing);
-        dComment_tvDone = (TextView) dialogComment.findViewById(R.id.dComment_tvDone);
-        dComment_rvCommentList = (RecyclerView) dialogComment.findViewById(R.id.dComment_rvComment);
-
-        //recycle
-        helper_common.configRecycleView(getContext(), dComment_rvCommentList);
-        showCommentList();
-
-        dComment_tvDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogComment.dismiss();
-            }
-        });
-
-        dialogComment.show();
-
-    }
-
-    private void showCommentList() {
-        dao_comment = new DAO_Comment(getContext());
-        dao_comment.getCommentPost(post.get_id(), new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                List<Comment> list = (List<Comment>) response;
-                rfCommentList(list);
-            }
-
-            @Override
-            public void failedReq(String msg) {
-                log(msg);
-            }
-        });
-    }
-
-    private void rfCommentList(List<Comment> comment) {
-        commentList = comment;
-        adapter_rv_comment = new Adapter_RV_Comment(getContext(), commentList);
-        dComment_rvCommentList.setAdapter(adapter_rv_comment);
-
-        if (commentList.size() > 0) {
-            dComment_tvNothing.setVisibility(View.GONE);
-        } else {
-            dComment_tvNothing.setVisibility(View.VISIBLE);
-        }
-
     }
 
     private void dialogUserLiked() {
@@ -199,12 +124,10 @@ public class Fragment_Post_Details extends Fragment {
         dialogUserLike.setContentView(R.layout.dialog_user_like);
         dialogUserLike.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         log("show dialog: " + userLikeList.toString());
-
         //anh xa
         dUserLike_tvCancel = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvCancel);
         dUserLike_rcUserList = (RecyclerView) dialogUserLike.findViewById(R.id.dUserLike_rcUserList);
         dUserLike_tvNothing = (TextView) dialogUserLike.findViewById(R.id.dUserLike_tvNothing);
-
         //recycle
         helper_common.configRecycleView(getContext(), dUserLike_rcUserList);
         dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
@@ -219,7 +142,6 @@ public class Fragment_Post_Details extends Fragment {
 
             }
         });
-
         dUserLike_tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,7 +155,6 @@ public class Fragment_Post_Details extends Fragment {
     private void checkUserLiked() {
         //fetch data from server
         dao_post = new DAO_Post(getContext());
-
         dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -249,7 +170,6 @@ public class Fragment_Post_Details extends Fragment {
                             break;
                         }
                     }
-
                     imgLike.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -267,14 +187,12 @@ public class Fragment_Post_Details extends Fragment {
                     });
                 }
             }
-
             @Override
             public void failedReq(String msg) {
                 log(msg);
             }
         });
     }
-
     private void likePost() {
         dao_post.likePost(post.get_id(), new Helper_Callback() {
             @Override
@@ -301,16 +219,13 @@ public class Fragment_Post_Details extends Fragment {
             }
         });
     }
-
     private void checkLike() {
         if (isLike) {
             imgLike.setImageResource(R.drawable.ic_like_red);
         } else {
             imgLike.setImageResource(R.drawable.ic_like_outline);
         }
-
     }
-
     private void rfLikeList(List<User> likeList) {
         adapter_userLikeList = new Adapter_UserLikeList(getContext(), likeList);
         dUserLike_rcUserList.setAdapter(adapter_userLikeList);
@@ -320,17 +235,10 @@ public class Fragment_Post_Details extends Fragment {
             dUserLike_tvNothing.setVisibility(View.VISIBLE);
         }
     }
-
     private boolean checkLogin() {
         String accessToken = helper_sp.getAccessToken();
-        log(accessToken);
-        if (accessToken.isEmpty()) {
-            return false;
-        }
-        return true;
-
+        return !accessToken.isEmpty();
     }
-
     private void log(String s) {
         Log.d("log", s);
     }

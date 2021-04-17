@@ -120,7 +120,6 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
     private void menuNotify(View view, Notification notification) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_notify, popupMenu.getMenu());
-        String idNotify = notification.getId();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @SuppressLint("NonConstantResourceId")
             @Override
@@ -139,8 +138,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         popupMenu.show();
     }
     private void deleteNotify(Notification notification) {
-        List<Notification> defaultList = new ArrayList<>();
-        defaultList.addAll(notificationList);
+        int index = notificationList.indexOf(notification);
         notificationList.remove(notification);
         notifyDataSetChanged();
 
@@ -150,8 +148,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
             }
             @Override
             public void failedReq(String msg) {
-                notificationList.clear();
-                notificationList.addAll(defaultList);
+                notificationList.set(index,notification);
                 notifyDataSetChanged();
                 Toast.makeText(context,
                         "Lỗi hệ thống, xóa thông báo không thành công. Vui lòng thử lại",

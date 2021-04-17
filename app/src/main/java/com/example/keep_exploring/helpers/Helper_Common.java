@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,13 +50,13 @@ public class Helper_Common {
 
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
 
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
 
     public Helper_Common() {
@@ -138,6 +139,29 @@ public class Helper_Common {
 
                     }
                 }).check();
+    }
+
+    public String displayNumber(int number) {
+        return "(" + number + ")";
+    }
+
+    public void displayStatus(String status, TextView tvStatus) {
+        String statusConvert = (status.substring(0, 1).toUpperCase()
+                + status.substring(1).toLowerCase())
+                .replace("_", " ");
+        Log.d("TAG", "displayStatus: "+ statusConvert);
+        tvStatus.setText(statusConvert);
+        switch (status) {
+            case "done":
+                tvStatus.setTextColor(Color.parseColor("#21dcfc"));
+                break;
+            case "need_update":
+                tvStatus.setTextColor(Color.parseColor("#fc0f46"));
+                break;
+            case "pending":
+                tvStatus.setTextColor(Color.parseColor("#fcba03"));
+                break;
+        }
     }
 
     public void alertDialog(Context context, String message, Helper_Event event) {

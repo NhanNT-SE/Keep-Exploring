@@ -75,9 +75,7 @@ public class Fragment_Profile_BlogList extends Fragment {
         } else {
             idUser = helper_sp.getUser().getId();
         }
-        if (!idUser.equals(helper_sp.getUser().getId())) {
-            type = "visit";
-        }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -110,7 +108,7 @@ public class Fragment_Profile_BlogList extends Fragment {
 
 
     private void refreshRV() {
-        adapterBlog = new Adapter_RV_ProfileBlog(getContext(),blogList,type);
+        adapterBlog = new Adapter_RV_ProfileBlog(getContext(),blogList);
         rvBlog.setAdapter(adapterBlog);
     }
 

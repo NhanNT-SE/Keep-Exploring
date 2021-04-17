@@ -38,7 +38,6 @@ public class Fragment_Profile_PostList extends Fragment {
     private Adapter_RV_ProfilePost adapterPost;
     private List<Post> listPost;
     private String idUser;
-    private String type;
     private Bundle bundle;
     public Fragment_Profile_PostList() {
         // Required empty public constructor
@@ -60,7 +59,6 @@ public class Fragment_Profile_PostList extends Fragment {
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
         listPost = new ArrayList<>();
-        type = "owner";
         bundle = getParentFragment().getArguments();
     }
     private void handlerEvent(){
@@ -72,9 +70,7 @@ public class Fragment_Profile_PostList extends Fragment {
         } else {
             idUser = helper_sp.getUser().getId();
         }
-        if (!idUser.equals(helper_sp.getUser().getId())) {
-            type = "visit";
-        }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -89,21 +85,17 @@ public class Fragment_Profile_PostList extends Fragment {
             public void successReq(Object response) {
                 listPost = (List<Post>) response;
                 refreshRV();
-                if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
-                }
             }
 
             @Override
             public void failedReq(String msg) {
-                if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
-                }
             }
         });
     }
     private void refreshRV() {
-        adapterPost = new Adapter_RV_ProfilePost(getContext(), listPost, type);
+        adapterPost = new Adapter_RV_ProfilePost(getContext(), listPost);
         rvPost.setAdapter(adapterPost);
     }
     private void toast(String s) {

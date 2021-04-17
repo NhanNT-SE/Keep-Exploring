@@ -16,6 +16,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BlogList;
+import com.example.keep_exploring.fragment.Fragment_Blog_Detail;
 import com.example.keep_exploring.fragment.Fragment_Category;
 import com.example.keep_exploring.fragment.Fragment_Notification;
 import com.example.keep_exploring.fragment.Fragment_Post_Details;
