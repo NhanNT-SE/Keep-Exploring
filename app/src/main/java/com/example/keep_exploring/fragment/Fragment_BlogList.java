@@ -3,28 +3,31 @@ package com.example.keep_exploring.fragment;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_RV_Post;
-
-import com.example.keep_exploring.model.Post;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.keep_exploring.adapter.Adapter_RV_Blog;
+import com.example.keep_exploring.adapter.Adapter_RV_ProfileBlog;
+import com.example.keep_exploring.helpers.Helper_Callback;
+import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.model.Blog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,72 +36,79 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_BlogList extends Fragment {
+    //    View
     private View view;
-
-    private List<String> placeNames;
-    private TextView tvTitle, tvNothing;
-    private ListView listView;
-    private Adapter_RV_Post adapterPost;
-    private FirebaseUser user;
-    private FloatingActionButton fbaAdd;
-    private List<Post> listPost;
-    private String categoryNode;
-
+    private RecyclerView rvBlog;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvNothing;
+    //    DAO & Helper
+    private DAO_Blog dao_blog;
+    private Helper_Common helper_common;
+    //    Variable
+    private Adapter_RV_Blog adapterBlog;
+    private List<Blog> blogList;
     public Fragment_BlogList() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_blog_list, container, false);
-        initView();
+        rvBlog = (RecyclerView) view.findViewById(R.id.fBlogList_rvBlog);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fBlogList_refreshLayout);
+        tvNothing = (TextView) view.findViewById(R.id.fBlogList_tvNothing);
+
+        initVariable();
+        handlerEvent();
         return view;
     }
+    private void initVariable() {
+        dao_blog = new DAO_Blog(getContext());
+        helper_common = new Helper_Common();
+        blogList = new ArrayList<>();
+    }
+    private void handlerEvent() {
+        helper_common.configRecycleView(getContext(), rvBlog);
+        helper_common.configAnimBottomNavigation(getContext(), rvBlog);
+        helper_common.showSkeleton(rvBlog, adapterBlog, R.layout.row_skeleton_blog);
 
-    private void initView() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        tvTitle = (TextView) view.findViewById(R.id.fJDiary_tvTitle);
-        tvNothing = (TextView) view.findViewById(R.id.fJDiary_tvNothing);
-        fbaAdd = (FloatingActionButton) view.findViewById(R.id.fJDiary_fabAddPost);
-        listView = (ListView) view.findViewById(R.id.fJDiary_lvPost);
-        categoryNode = "Journey Diary";
-
-
-
-
-
-        if (user == null) {
-            fbaAdd.setVisibility(View.GONE);
-        }
-
-        fbaAdd.setOnClickListener(new View.OnClickListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
-                Fragment_AddPost addPost = new Fragment_AddPost();
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_FrameLayout, addPost)
-                        .addToBackStack(null)
-                        .commit();
+            public void onRefresh() {
+                loadData();
             }
         });
-
-        placeNames = new ArrayList<>();
+        loadData();
     }
 
-    private void refreshLV(List<Post> postList){
-        listPost = new ArrayList<>(postList);
-        adapterPost = new Adapter_RV_Post(getActivity(),listPost);
-//        listView.setAdapter(adapterPost);
-        if (postList.size()>0){
+    private void loadData() {
+        dao_blog.getBlogList(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                blogList = (List<Blog>) response;
+                refreshRV();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+
+    private void refreshRV() {
+        adapterBlog = new Adapter_RV_Blog(getContext(), blogList);
+        rvBlog.setAdapter(adapterBlog);
+        if (blogList.size() > 0) {
             tvNothing.setVisibility(View.GONE);
-        }else {
+        } else {
             tvNothing.setVisibility(View.VISIBLE);
         }
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -116,7 +126,6 @@ public class Fragment_BlogList extends Fragment {
         autoComplete.setTextColor(Color.WHITE);
         autoComplete.setDropDownBackgroundResource(android.R.color.white);
         autoComplete.setThreshold(1);
-
         MenuItem refresh = menu.findItem(R.id.menu_search_refresh);
         refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -126,7 +135,13 @@ public class Fragment_BlogList extends Fragment {
             }
         });
 
-
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void toast(String s) {
+        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+    }
+    private void log(String s) {
+        Log.d("log", s);
     }
 }

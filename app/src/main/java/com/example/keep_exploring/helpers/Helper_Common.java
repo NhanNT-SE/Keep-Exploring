@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -138,6 +139,29 @@ public class Helper_Common {
 
                     }
                 }).check();
+    }
+
+    public String displayNumber(int number) {
+        return "(" + number + ")";
+    }
+
+    public void displayStatus(String status, TextView tvStatus) {
+        String statusConvert = (status.substring(0, 1).toUpperCase()
+                + status.substring(1).toLowerCase())
+                .replace("_", " ");
+        Log.d("TAG", "displayStatus: "+ statusConvert);
+        tvStatus.setText(statusConvert);
+        switch (status) {
+            case "done":
+                tvStatus.setTextColor(Color.parseColor("#21dcfc"));
+                break;
+            case "need_update":
+                tvStatus.setTextColor(Color.parseColor("#fc0f46"));
+                break;
+            case "pending":
+                tvStatus.setTextColor(Color.parseColor("#fcba03"));
+                break;
+        }
     }
 
     public void alertDialog(Context context, String message, Helper_Event event) {

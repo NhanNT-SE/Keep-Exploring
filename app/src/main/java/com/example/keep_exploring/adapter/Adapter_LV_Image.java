@@ -1,13 +1,12 @@
 package com.example.keep_exploring.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.model.Blog_Details;
@@ -15,20 +14,21 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class Adapter_LV_Content extends BaseAdapter {
+public class Adapter_LV_Image extends BaseAdapter {
     private Context context;
-    private List<Blog_Details> blogDetailsList;
+    private List<Blog_Details> blog_detailsList;
     private LayoutInflater layoutInflater;
 
-    public Adapter_LV_Content(Context context, List<Blog_Details> blogDetailsList) {
+    public Adapter_LV_Image(Context context, List<Blog_Details> blog_detailsList) {
         this.context = context;
-        this.blogDetailsList = blogDetailsList;
+        this.blog_detailsList = blog_detailsList;
         layoutInflater = LayoutInflater.from(context);
+
     }
 
     @Override
     public int getCount() {
-        return blogDetailsList.size();
+        return blog_detailsList.size();
     }
 
     @Override
@@ -42,30 +42,29 @@ public class Adapter_LV_Content extends BaseAdapter {
     }
 
     static class ViewHolder {
-        ImageView imgContent;
-        TextView tvDescription;
+        ImageView imageView;
+
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.row_content, null);
+            convertView = layoutInflater.inflate(R.layout.row_image_grid_view, null);
+
             holder = new ViewHolder();
-            holder.tvDescription = (TextView) convertView.findViewById(R.id.row_content_tvDescription);
-            holder.imgContent = (ImageView) convertView.findViewById(R.id.row_content_imgContent);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.row_image_gird_view_img);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Blog_Details blogDetails = blogDetailsList.get(position);
-        holder.tvDescription.setText(blogDetails.getContent());
-        if (blogDetails.getUriImage() != null) {
-            holder.imgContent.setImageURI(blogDetails.getUriImage());
-        } else if (blogDetails.getImg() != null) {
-            Picasso.get().load(Uri.parse(blogDetails.getImg())).into(holder.imgContent);
 
-        }
+        Blog_Details blog_details = blog_detailsList.get(position);
+        holder.imageView.getLayoutParams().height =300;
+
+        Picasso.get().load(blog_details.getImg()).into(holder.imageView);
+
+
         return convertView;
     }
 }

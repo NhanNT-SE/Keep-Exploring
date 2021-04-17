@@ -62,6 +62,46 @@ public class DAO_Blog {
                 .getReference("Images/" + helper_sp.getUser().getId());
         signInAnonymously();
     }
+
+    public void getBlogList(Helper_Callback callback) {
+        Call<String> call = api_blog.getBlogList();
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    JSONArray data = callback.getJsonArray(response);
+                    if (data != null) {
+                        List<Blog> blogList = new ArrayList<>();
+                        int sizeList = data.length();
+                        Type listType = new TypeToken<List<Blog_Details>>() {
+                        }.getType();
+                        for (int i = 0; i < sizeList; i++) {
+                            JSONObject jsonBlog = data.getJSONObject(i);
+                            Blog blog = new Gson().fromJson(jsonBlog.toString(), Blog.class);
+                            JSONArray jsonArrayBlogDetail = jsonBlog
+                                    .getJSONObject("blog_detail")
+                                    .getJSONArray("detail_list");
+                            List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
+                            blog.setBlogDetails(blogDetailsList);
+                            blogList.add(blog);
+                        }
+                        callback.successReq(blogList);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+
+    }
+
     public void createBlog(
             List<Blog_Details> blogDetailsList,
             String titleBlog,
@@ -123,19 +163,18 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
-                    JSONObject jsonData = callback.getJsonObject(response);
-                    JSONArray jsonArrayBlogDetail = jsonData
-                            .getJSONObject("blog_detail")
-                            .getJSONArray("detail_list");
-                    Blog blog = new Gson().fromJson(jsonData.toString(), Blog.class);
-                    List<Blog_Details> blogDetailsList = new ArrayList<>();
-                    for (int i = 0; i < jsonArrayBlogDetail.length(); i++) {
-                        JSONObject jsonBlogDetail = jsonArrayBlogDetail.getJSONObject(i);
-                        Blog_Details blogDetails = new Gson().fromJson(jsonBlogDetail.toString(), Blog_Details.class);
-                        blogDetailsList.add(blogDetails);
+                    JSONObject data = callback.getJsonObject(response);
+                    if (data != null) {
+                        JSONArray jsonArrayBlogDetail = data
+                                .getJSONObject("blog_detail")
+                                .getJSONArray("detail_list");
+                        Blog blog = new Gson().fromJson(data.toString(), Blog.class);
+                        Type listType = new TypeToken<List<Blog_Details>>() {
+                        }.getType();
+                        List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
+                        blog.setBlogDetails(blogDetailsList);
+                        callback.successReq(blog);
                     }
-                    blog.setBlogDetails(blogDetailsList);
-                    callback.successReq(blog);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

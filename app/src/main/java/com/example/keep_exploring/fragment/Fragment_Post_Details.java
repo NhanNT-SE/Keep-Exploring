@@ -1,37 +1,26 @@
 package com.example.keep_exploring.fragment;
 
 import android.app.Dialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.adapter.Adapter_RV_Comment;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Image;
-import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,6 +42,7 @@ public class Fragment_Post_Details extends Fragment {
     //    Variable
     private TextView dUserLike_tvCancel;
     private Post post;
+    private Dialog_Fragment_Comment dialog_fragment_comment;
 
 
     public Fragment_Post_Details() {
@@ -71,8 +61,7 @@ public class Fragment_Post_Details extends Fragment {
             post = (Post) bundle.getSerializable("post");
         }
         initView();
-        Dialog_Fragment_Comment dialog_fragment_comment = new Dialog_Fragment_Comment();
-        dialog_fragment_comment.show(getChildFragmentManager(),dialog_fragment_comment.getTag());
+        dialog_fragment_comment = new Dialog_Fragment_Comment();
  //        showPost();
         return view;
     }
@@ -94,7 +83,7 @@ public class Fragment_Post_Details extends Fragment {
             @Override
             public void onClick(View v) {
 //                showDialogComment();
-                Dialog_Fragment_Comment dialog_fragment_comment = new Dialog_Fragment_Comment();
+
                 dialog_fragment_comment.show(getChildFragmentManager(),dialog_fragment_comment.getTag());
             }
         });

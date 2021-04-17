@@ -21,7 +21,9 @@ import com.example.keep_exploring.fragment.Fragment_Post_Details;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -31,14 +33,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_ProfilePost.ViewHolder> {
     private Context context;
     private List<Post> postList;
-    private Helper_Common helper_common = new Helper_Common();
-    private Helper_Date helper_date = new Helper_Date();
-    private String type;
+    private Helper_Common helper_common;
+    private Helper_Date helper_date;
+    private Helper_SP helper_sp;
+    private User user;
 
-    public Adapter_RV_ProfilePost(Context context, List<Post> postList, String type) {
+    public Adapter_RV_ProfilePost(Context context, List<Post> postList) {
         this.context = context;
         this.postList = postList;
-        this.type = type;
+        helper_common = new Helper_Common();
+        helper_date = new Helper_Date();
+        helper_sp = new Helper_SP(context);
+        user = helper_sp.getUser();
     }
 
     @NonNull
@@ -52,25 +58,16 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
-        holder.toggleView();
         Post post = postList.get(position);
+        holder.toggleView(post);
         holder.tvUserName.setText(post.getOwner().getDisplayName());
         holder.tvTitle.setText(post.getTitle());
         holder.tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         holder.ratingBar.setRating(post.getRating());
-        holder.tvComment.setText(displayNumber(post.getComments().size()));
-        holder.tvLike.setText(displayNumber(post.getLikes().size()));
-        holder.tvStatus.setText(displayStatus(post.getStatus()));
+        holder.tvComment.setText(helper_common.displayNumber(post.getComments().size()));
+        holder.tvLike.setText(helper_common.displayNumber(post.getLikes().size()));
         holder.tvAddress.setText(post.getAddress());
-        if (post.getStatus().equals("done")) {
-            holder.tvStatus.setTextColor(Color.parseColor("#21dcfc"));
-        }
-        if (post.getStatus().equals("need_update")) {
-            holder.tvStatus.setTextColor(Color.parseColor("#fc0f46"));
-        }
-        if (post.getStatus().equals("pending")) {
-            holder.tvStatus.setTextColor(Color.parseColor("#fcba03"));
-        }
+        helper_common.displayStatus(post.getStatus(),holder.tvStatus);
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(holder.civUser);
         Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
 
@@ -124,26 +121,15 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
             ratingBar = (RatingBar) itemView.findViewById(R.id.row_postProfile_ratingBar);
         }
 
-        public void toggleView() {
-            if (type.equals("visit")) {
-                imgEdit.setVisibility(View.GONE);
-                tvStatus.setVisibility(View.GONE);
-            } else {
+        public void toggleView(Post post) {
+            if (post.getOwner().getId().equals(user.getId())) {
                 imgEdit.setVisibility(View.VISIBLE);
                 tvStatus.setVisibility(View.VISIBLE);
+            } else {
+                imgEdit.setVisibility(View.GONE);
+                tvStatus.setVisibility(View.GONE);
             }
         }
     }
 
-
-    private String displayNumber(int number) {
-        return "(" + number + ")";
-    }
-
-    private String displayStatus(String status) {
-        status = (status.substring(0, 1).toUpperCase()
-                + status.substring(1).toLowerCase())
-                .replace("_", " ");
-        return status;
-    }
 }

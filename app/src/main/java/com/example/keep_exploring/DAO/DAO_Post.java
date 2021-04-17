@@ -8,7 +8,6 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
 import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
@@ -96,8 +95,8 @@ public class DAO_Post {
     }
 
     public void getLikeByPost(String idPost, Helper_Callback callback){
-Call<String> call = api_post.getLikeByPost(idPost);
-call.enqueue(new Callback<String>() {
+    Call<String> call = api_post.getLikeByPost(idPost);
+    call.enqueue(new Callback<String>() {
     @Override
     public void onResponse(Call<String> call, Response<String> response) {
         try {
