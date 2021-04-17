@@ -156,6 +156,8 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
             }
         });
     }
+
+
     private void changeStatusNotify(Notification notification) {
         notification.setStatus("new");
         notifyDataSetChanged();

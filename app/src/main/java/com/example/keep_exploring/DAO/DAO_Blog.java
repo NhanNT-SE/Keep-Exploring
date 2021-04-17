@@ -15,6 +15,7 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
+import com.example.keep_exploring.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -236,6 +237,7 @@ public class DAO_Blog {
                         callback.failedReq(t.getMessage());
                     }
                 });
+
             }
 
             @Override

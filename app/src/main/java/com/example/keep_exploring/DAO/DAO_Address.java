@@ -56,6 +56,7 @@ public class DAO_Address {
         map.put("province", province);
         map.put("district", district);
         Call<String> call = api_address.getAddressList(map);
+
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
