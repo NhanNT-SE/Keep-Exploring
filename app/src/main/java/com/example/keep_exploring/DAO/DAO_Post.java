@@ -182,11 +182,11 @@ public class DAO_Post {
     public void likePost(String idPost, Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         map.put("idPost", idPost);
+               log(helper_sp.getUser().toString());
         Call<String> call = api_post.likePost(accessToken, map);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-
                 try {
                     if (response.errorBody() != null) {
                         JSONObject err = new JSONObject(response.errorBody().string());

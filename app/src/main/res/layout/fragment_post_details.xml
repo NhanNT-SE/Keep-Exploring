@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingHorizontal="5dp"
     android:scrollbars="none"
     tools:context=".fragment.Fragment_Post_Details">
@@ -44,13 +45,16 @@
 
          />
 
-    <ImageView
-        android:id="@+id/fDetailPost_imgPost"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@+id/fDetailPost_civAvatarAdmin"
-        android:layout_marginTop="5dp"
-        android:scaleType="fitXY" />
+
+        <com.denzcoskun.imageslider.ImageSlider
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            app:placeholder="@drawable/background_grey"
+            android:layout_below="@+id/fDetailPost_civAvatarAdmin"
+            android:id="@+id/fDetailPost_imgPost"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10sp"
+            />
 
     <TextView
         android:id="@+id/fDetailPost_tvTitle"
@@ -78,7 +82,7 @@
         android:layout_below="@id/fDetailPost_tvDescription"
         android:layout_marginTop="8dp"
         android:background="@color/white"
-        android:src="@drawable/heart_outline_90px"
+        android:src="@drawable/ic_like_outline"
 
         />
 

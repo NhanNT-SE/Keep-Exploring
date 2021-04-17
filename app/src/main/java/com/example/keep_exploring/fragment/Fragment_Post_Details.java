@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
@@ -22,6 +24,7 @@ import com.example.keep_exploring.adapter.Adapter_RV_Comment;
 import com.example.keep_exploring.adapter.Adapter_UserLikeList;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
 import com.example.keep_exploring.model.Post;
@@ -42,10 +45,12 @@ public class Fragment_Post_Details extends Fragment {
     private CircleImageView civUser;
     private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes;
     private ImageView imgLike, imgComment;
+    private ImageSlider isPost;
     private Post post;
     private Helper_Common helper_common = new Helper_Common();
     private Helper_SP helper_sp;
     private Boolean isLogIn = false;
+    private Helper_Date helper_date = new Helper_Date();
 
     private TextView dComment_tvDone, dComment_tvNothing;
     private EditText dComment_etComment;
@@ -90,6 +95,7 @@ public class Fragment_Post_Details extends Fragment {
         tvUserName = (TextView) view.findViewById(R.id.fDetailPost_tvUserName);
         imgComment = (ImageView) view.findViewById(R.id.fDetailPost_imgComment);
         imgLike = (ImageView) view.findViewById(R.id.fDetailPost_imgLike);
+        isPost = (ImageSlider) view.findViewById(R.id.fDetailPost_imgPost);
         helper_sp = new Helper_SP(getContext());
 
 
@@ -114,43 +120,20 @@ public class Fragment_Post_Details extends Fragment {
 
 
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(civUser);
-        String dateFormated = post.getCreated_on().substring(0, 10);
-        tvDate.setText(dateFormated);
+
+        tvDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         tvUserName.setText(post.getOwner().getDisplayName());
         tvTitle.setText(post.getTitle());
         tvDesc.setText(post.getDesc());
         tvLikes.setText(sizeList + " lượt thích");
-
-        getLikeList();
-
-//        log("user like list: " + userLikeList.toString());
-        isLogIn = checkLogin();
-        if (isLogIn) {
-            String idUser = helper_sp.getUser().getId();
-            for (User user : userLikeList) {
-                if (user.getId().equalsIgnoreCase(idUser)) {
-                    isLike = true;
-                    checkLike();
-                    break;
-                }
-            }
-
-            imgLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    likePost();
-                }
-            });
-        } else {
-            isLike = false;
-            checkLike();
-            imgLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(), "Bạn cần đăng nhập để thực hiện thao tác này", Toast.LENGTH_SHORT).show();
-                }
-            });
+        List<SlideModel> slideModels = new ArrayList<>();
+        for (String urlPost : post.getImgs()) {
+            slideModels.add(new SlideModel(URL_IMAGE + "post/" + urlPost));
         }
+        isPost.setImageList(slideModels, true);
+
+
+        checkUserLiked();
 
 
         checkLike();
@@ -224,7 +207,18 @@ public class Fragment_Post_Details extends Fragment {
 
         //recycle
         helper_common.configRecycleView(getContext(), dUserLike_rcUserList);
-        refreshRLike();
+        dao_post.getLikeByPost(post.get_id(), new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                List<User> likeList = (List<User>) response;
+                rfLikeList(likeList);
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
 
         dUserLike_tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,7 +230,7 @@ public class Fragment_Post_Details extends Fragment {
         dialogUserLike.show();
     }
 
-    private void getLikeList() {
+    private void checkUserLiked() {
         //fetch data from server
         dao_post = new DAO_Post(getContext());
 
@@ -245,15 +239,32 @@ public class Fragment_Post_Details extends Fragment {
             public void successReq(Object response) {
                 List<User> likeList = (List<User>) response;
                 userLikeList = likeList;
-                String idUSer = helper_sp.getUser().getId();
-                List<User> checkList = userLikeList.stream()
-                        .filter(item -> item.getId().equalsIgnoreCase(idUSer))
-                        .collect(Collectors.toList());
-                if (checkList.size() > 0) {
-                    Log.d("TAG", "da like");
-                } else {
-                    Log.d("TAG", "chua like");
+                isLogIn = checkLogin();
+                if (isLogIn) {
+                    String idUser = helper_sp.getUser().getId();
+                    for (User user : userLikeList) {
+                        if (user.getId().equalsIgnoreCase(idUser)) {
+                            isLike = true;
+                            checkLike();
+                            break;
+                        }
+                    }
 
+                    imgLike.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            likePost();
+                        }
+                    });
+                } else {
+                    isLike = false;
+                    checkLike();
+                    imgLike.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getContext(), "Bạn cần đăng nhập để thực hiện thao tác này", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
 
@@ -292,18 +303,18 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void checkLike() {
-        if (isLike == true) {
-            imgLike.setImageResource(R.drawable.heart_liked);
+        if (isLike) {
+            imgLike.setImageResource(R.drawable.ic_like_red);
         } else {
-            imgLike.setImageResource(R.drawable.heart_outline_90px);
+            imgLike.setImageResource(R.drawable.ic_like_outline);
         }
 
     }
 
-    private void refreshRLike() {
-        adapter_userLikeList = new Adapter_UserLikeList(getContext(), userLikeList);
+    private void rfLikeList(List<User> likeList) {
+        adapter_userLikeList = new Adapter_UserLikeList(getContext(), likeList);
         dUserLike_rcUserList.setAdapter(adapter_userLikeList);
-        if (userLikeList.size() > 0) {
+        if (likeList.size() > 0) {
             dUserLike_tvNothing.setVisibility(View.GONE);
         } else {
             dUserLike_tvNothing.setVisibility(View.VISIBLE);

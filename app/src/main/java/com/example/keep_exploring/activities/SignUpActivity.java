@@ -89,8 +89,8 @@ public class SignUpActivity extends AppCompatActivity {
                     public void successReq(Object response) {
                         User user = (User) response;
                         toast("Tạo tài khoản thành công!");
-//                        startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
-                        log(user.toString());
+                        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
+
                     }
 
                     @Override

@@ -165,18 +165,19 @@ public class Fragment_Category extends Fragment {
         ColorStateList activeColor = ColorStateList
                 .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
 
-        materialButton.setTextColor(activeColor);
-        materialButton.setBackgroundColor(R.color.colorPrimary);
-
+        materialButton.setTextColor(R.color.white);
+//        materialButton.setStrokeColor(activeColor);
+materialButton.setBackgroundColor(R.color.colorPrimary);
     }
 
     @SuppressLint("ResourceAsColor")
     private void setInactiveButton(MaterialButton materialButton) {
         @SuppressLint("ResourceType")
         ColorStateList inactiveColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
-        materialButton.setTextColor(inactiveColor);
-        materialButton.setBackgroundColor(R.color.inactive_button);
+                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
+        materialButton.setTextColor(R.color.colorPrimary);
+        materialButton.setStrokeColor(inactiveColor);
+        materialButton.setBackgroundColor(R.color.white);
     }
 
     private void refreshLV() {

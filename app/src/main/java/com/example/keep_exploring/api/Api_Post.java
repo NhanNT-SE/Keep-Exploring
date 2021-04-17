@@ -36,10 +36,8 @@ public interface Api_Post {
     @POST("/public/post/like")
     Call<String> getLikeByPost(@Body HashMap<String, String> map);
 
-    @POST("/post/like")
-    Call<String> likePost(
-            @Header("Authorization") String accessToken,
-            @Body HashMap<String, String> map);
+
+
 
 
     @Multipart
@@ -50,6 +48,10 @@ public interface Api_Post {
             @Part List<MultipartBody.Part> imageList
     );
 
+    @PATCH("/post/like")
+    Call<String> likePost(
+            @Header("Authorization") String accessToken,
+            @Body HashMap<String, String> map);
 
 
     @Multipart
