@@ -67,6 +67,15 @@ app.use((req, res, next) => {
 });
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
+  if (error.payload) {
+    return res.send({
+      error: {
+        status: error.status || 500,
+        message: error.message,
+        payload: error.payload ? error.payload : "",
+      },
+    });
+  }
   res.send({
     error: {
       status: error.status || 500,
