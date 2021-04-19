@@ -130,23 +130,34 @@ function* handleLogout(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-function* handlerRefreshToken() {
+function* handlerRefreshToken(action) {
   try {
-    yield put(actionLoading("Loading refresh token ...!"));
-    const userState = rootStore.getState();
-    const { user } = userState.user;
-    const refreshToken = localStorageService.getRefreshToken();
-    const latestAction = localStorageService.getLatestAction();
-    const response = yield call(() =>
-      userApi.refreshToken({ userId: user._id, refreshToken })
-    );
-    const { data } = response;
-    localStorageService.setAccessToken(data);
-    axiosClient.defaults.headers.common[
-      "Authorization"
-    ] = localStorageService.getAccessToken();
-    yield put({ type: latestAction });
-    yield call(() => actionSuccess("Refresh token successfully!"));
+    if (action.payload < 8) {
+      yield put(actionLoading("Loading refresh token ...!"));
+      const userState = rootStore.getState();
+      const { user } = userState.user;
+      const refreshToken = localStorageService.getRefreshToken();
+      const latestAction = localStorageService.getLatestAction();
+      const response = yield call(() =>
+        userApi.refreshToken({ userId: user._id, refreshToken })
+      );
+      const { data } = response;
+      localStorageService.setAccessToken(data);
+      axiosClient.defaults.headers.common[
+        "Authorization"
+      ] = localStorageService.getAccessToken();
+      yield put({ type: latestAction });
+      yield call(() => actionSuccess("Refresh token successfully!"));
+    } else {
+      const userStorage = JSON.parse(localStorageService.getUser());
+      yield put(actionLoading("Loading logout user ...!"));
+      yield call(() => {
+        userApi.logout({ userId: userStorage._id });
+      });
+      localStorageService.clearStorage();
+      localStorageService.clearUser();
+      yield put(actionSetUser(null));
+    }
   } catch (error) {
     console.log("user saga: ", error);
     yield call(() => actionFailed(error));

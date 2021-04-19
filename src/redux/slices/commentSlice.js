@@ -1,6 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import localStorageService from "utils/localStorageService";
-import GLOBAL_VARIABLE from "utils/global_variable";
 
 const commonSlice = createSlice({
   name: "comment",

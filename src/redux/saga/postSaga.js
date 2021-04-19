@@ -81,9 +81,12 @@ function* handlerGetStatistics() {
 function* handlerUpdatePost(action) {
   try {
     localStorageService.setLatestAction(actionUpdatePost.type);
+    const { contentAdmin } = action.payload;
     yield put(actionLoading("Loading updating status post...!"));
     yield call(() => postApi.updatePost(action.payload));
-    yield call(() => notifyApi.sendNotify(action.payload));
+    if (contentAdmin) {
+      yield call(() => notifyApi.sendNotify(action.payload));
+    }
     yield call(() => handlerSuccessSaga("Update post successfully!"));
     yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
   } catch (error) {

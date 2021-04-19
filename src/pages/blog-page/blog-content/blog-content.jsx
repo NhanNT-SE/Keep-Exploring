@@ -4,7 +4,6 @@ import "./blog-content.scss";
 function BlogContent(props) {
   const { blog } = props;
   const { blog_detail } = blog;
-console.log(`url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/blog/${blog.img})`);
   return (
     <div>
       <div className="blog-content-container">

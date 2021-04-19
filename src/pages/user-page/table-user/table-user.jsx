@@ -85,7 +85,13 @@ function TableUser() {
       <Column
         key={col.field}
         field={col.field}
-        filter={col.field === "post.length" || col.field === "blog.length" || col.field === "imgUser" ? false : true}
+        filter={
+          col.field === "post.length" ||
+          col.field === "blog.length" ||
+          col.field === "imgUser"
+            ? false
+            : true
+        }
         filterMatchMode="contains"
         sortable={col.field === "imgUser" ? false : true}
         header={col.header}
@@ -110,9 +116,6 @@ function TableUser() {
   useEffect(() => {
     dispatch(actionGetListUser());
   }, []);
-  useEffect(() => {
-    console.log("user list:", userList);
-  }, [userList]);
   return (
     <div className="table-user-container">
       <TableComponent
