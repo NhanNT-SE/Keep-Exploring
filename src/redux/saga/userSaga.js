@@ -2,7 +2,7 @@ import axiosClient from "api/axiosClient";
 import localStorageService from "utils/localStorageService";
 import userApi from "api/userApi";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/commonSaga";
 import {
   actionFailed,
@@ -132,7 +132,17 @@ function* handleLogout(action) {
 }
 function* handlerRefreshToken(action) {
   try {
-    if (action.payload < 8) {
+    if (action.payload > 7) {
+      const userStorage = JSON.parse(localStorageService.getUser());
+      yield put(actionLoading("Loading logout user ...!"));
+      yield call(() => {
+        userApi.logout({ userId: userStorage._id });
+      });
+      localStorageService.clearStorage();
+      localStorageService.clearUser();
+      yield call(() => handlerFailSaga("Vui lòng đăng nhập lại để tiếp tục"));
+      yield put(actionSetUser(null));
+    } else {
       yield put(actionLoading("Loading refresh token ...!"));
       const userState = rootStore.getState();
       const { user } = userState.user;
@@ -148,15 +158,6 @@ function* handlerRefreshToken(action) {
       ] = localStorageService.getAccessToken();
       yield put({ type: latestAction });
       yield call(() => actionSuccess("Refresh token successfully!"));
-    } else {
-      const userStorage = JSON.parse(localStorageService.getUser());
-      yield put(actionLoading("Loading logout user ...!"));
-      yield call(() => {
-        userApi.logout({ userId: userStorage._id });
-      });
-      localStorageService.clearStorage();
-      localStorageService.clearUser();
-      yield put(actionSetUser(null));
     }
   } catch (error) {
     console.log("user saga: ", error);

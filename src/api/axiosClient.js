@@ -40,6 +40,9 @@ axiosClient.interceptors.response.use(
   (error) => {
     const err = error.response.data.error || error;
     if (err.message === "jwt expired") {
+      if (+err.payload > 7) {
+        err.message = "Vui lòng đăng nhập lại để tiếp tục";
+      }
       rootStore.dispatch(actionRefreshToken(+err.payload));
     }
     console.log("error axios", err);
