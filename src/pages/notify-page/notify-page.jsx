@@ -9,7 +9,7 @@ import { Chip } from "primereact/chip";
 import "./notify-page.scss";
 import { Button } from "primereact/button";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
-import { actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
 import { Dropdown } from "primereact/dropdown";
 import { GenderItemTemplate } from "common-components/template/gender-template/gender-template";
 import { SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
@@ -67,6 +67,9 @@ function NotifyPage() {
   });
   useEffect(() => {
     dispatch(actionGetListUser());
+    return () => {
+      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+    };
   }, []);
   useEffect(() => {
     if (selectedData && setSelectedData.length > 0) {

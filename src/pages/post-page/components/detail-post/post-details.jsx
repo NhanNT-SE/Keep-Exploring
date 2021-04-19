@@ -11,7 +11,7 @@ import { Tag } from "primereact/tag";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
 import "./post-details.scss";
 import { actionGetPost } from "redux/slices/postSlice";
 import {
@@ -48,6 +48,9 @@ function PostDetailsPage() {
       })
     );
     dispatch(actionGetLikeList({ type: "post", body: { idPost: postId } }));
+    return () => {
+      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    };
   }, []);
 
   return (

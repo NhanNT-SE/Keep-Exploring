@@ -7,7 +7,7 @@ import { actionGetUser } from "redux/slices/userSlice";
 import { InputText } from "primereact/inputtext";
 import "./user-details.scss";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
 import { convertDate } from "utils/helper";
@@ -22,6 +22,10 @@ function UserDetailsPage() {
 
   useEffect(() => {
     dispatch(actionGetUser(userId));
+    return () => {
+      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    };
   }, []);
   useEffect(() => {
     if (user) {

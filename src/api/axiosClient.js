@@ -1,9 +1,7 @@
 import axios from "axios";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import queryString from "query-string";
-import {
-  actionRefreshToken,
-} from "redux/slices/userSlice";
+import { actionRefreshToken } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 import localStorageService from "../utils/localStorageService";
 
@@ -42,7 +40,7 @@ axiosClient.interceptors.response.use(
   (error) => {
     const err = error.response.data.error || error;
     if (err.message === "jwt expired") {
-      rootStore.dispatch(actionRefreshToken());
+      rootStore.dispatch(actionRefreshToken(+err.payload));
     }
     console.log("error axios", err);
     throw err;

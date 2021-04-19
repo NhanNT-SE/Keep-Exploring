@@ -12,7 +12,7 @@ import {
   actionGetCommentList,
   actionGetLikeList,
 } from "redux/slices/commentSlice";
-import { actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
 import "./blog-details.scss";
@@ -33,6 +33,9 @@ function BlogDetailsPage() {
     dispatch(actionGetBlog({ blogId, history }));
     dispatch(actionGetCommentList({ type: "blog", id: blogId }));
     dispatch(actionGetLikeList({ type: "blog", body: { idBlog: blogId } }));
+    return () => {
+      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    };
   }, []);
   return (
     blog && (

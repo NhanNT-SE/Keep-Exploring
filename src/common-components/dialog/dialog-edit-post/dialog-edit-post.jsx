@@ -75,7 +75,7 @@ function DialogEditPost(props) {
         <Button
           label="Submit"
           icon="pi pi-check"
-          disabled={notify && selectedStatus ? false : true}
+          disabled={selectedStatus ? false : true}
           className="p-button-success"
           onClick={updatePost}
         />
@@ -84,7 +84,7 @@ function DialogEditPost(props) {
   };
   return (
     <Dialog
-      header="Edit Post"
+      header={`Edit ${type}`}
       visible={isShowDialog}
       style={{ width: "50vw" }}
       footer={renderFooter()}

@@ -16,7 +16,6 @@ import DisplayNameBodyTemplate from "common-components/template/display-name-tem
 import TableComponent from "common-components/table/table";
 function TableBlogComponent() {
   const columns = GLOBAL_VARIABLE.COLUMNS_BLOG;
-  const toast = useRef(null);
   const dt = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch();
