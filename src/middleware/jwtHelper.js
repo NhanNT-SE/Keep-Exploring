@@ -23,7 +23,12 @@ const verifyToken = async (token, secretKey) => {
     const verify = await jwt.verify(token, secretKey);
     return verify;
   } catch (error) {
-    handlerCustomError(401, error.message);
+    const message = error.message;
+    if (message === "jwt expired") {
+      const dateExpired = getNumberDateExpired(error.expiredAt);
+      handlerCustomError(401, message,dateExpired);
+    }
+    handlerCustomError(401, message);
   }
 };
 
@@ -59,6 +64,12 @@ const isAdmin = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+const getNumberDateExpired = (dateExpired) => {
+  const date = new Date();
+  const diffTime = Math.abs(date - dateExpired);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 };
 module.exports = {
   isAdmin,
