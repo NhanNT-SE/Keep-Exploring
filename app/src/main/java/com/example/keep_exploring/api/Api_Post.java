@@ -25,6 +25,9 @@ public interface Api_Post {
     @GET("/public/post/{idPost}")
     Call<String> getPostById(@Path("idPost") String idPost);
 
+    @GET("/public/post/filter")
+    Call<String> getPostByQuery(@Query("query") String query);
+
     @GET("/post/{idUser}")
     Call<String> getPostByUser(
             @Header("Authorization") String accessToken,

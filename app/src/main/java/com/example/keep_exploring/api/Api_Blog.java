@@ -28,6 +28,9 @@ public interface Api_Blog {
     @GET("/public/blog/{idBlog}")
     Call<String> getBlogById(@Path("idBlog") String idBlog);
 
+    @GET("/public/blog/filter")
+    Call<String> getBlogByQuery(@Query("query") String query);
+
     @GET("/blog/{idUser}")
     Call<String> getBlogByUser(
             @Header("Authorization") String accessToken,

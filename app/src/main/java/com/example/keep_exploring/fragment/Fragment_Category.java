@@ -1,6 +1,7 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,16 +21,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
+import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.RxSearch;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import dmax.dialog.SpotsDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 public class Fragment_Category extends Fragment {
@@ -39,8 +47,11 @@ public class Fragment_Category extends Fragment {
     private MaterialButton btnAll, btnFood, btnCheck_in, btnHotel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView rv_PostList;
+    private SpotsDialog spotsDialog;
+    private SearchView searchView;
     //    DAO & Helper
     private DAO_Post dao_post;
+    private DAO_Auth dao_auth;
     private Helper_Common helper_common;
     //    Variable
     private String category;
@@ -59,6 +70,7 @@ public class Fragment_Category extends Fragment {
     }
 
     private void initView() {
+        spotsDialog = new SpotsDialog(getContext());
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
         btnAll = (MaterialButton) view.findViewById(R.id.fCategory_btnAll);
@@ -69,12 +81,13 @@ public class Fragment_Category extends Fragment {
     }
 
     private void initVariable() {
-        helper_common = new Helper_Common();
         dao_post = new DAO_Post(getContext());
-        helper_common.toggleBottomNavigation(getContext(), true);
-        postList = new ArrayList<>();
+        dao_auth = new DAO_Auth(getContext());
+        helper_common = new Helper_Common();
         helper_common.configRecycleView(getContext(), rv_PostList);
         helper_common.configAnimBottomNavigation(getContext(), rv_PostList);
+        helper_common.toggleBottomNavigation(getContext(), true);
+        postList = new ArrayList<>();
         category = "";
 
     }
@@ -116,6 +129,8 @@ public class Fragment_Category extends Fragment {
                 showPost();
             }
         });
+
+
         showPost();
     }
 
@@ -125,10 +140,31 @@ public class Fragment_Category extends Fragment {
         dao_post.getPostByCategory(category, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
+                postList.clear();
                 postList = (List<Post>) response;
                 refreshLV();
                 swipeRefreshLayout.setRefreshing(false);
             }
+
+            @Override
+            public void failedReq(String msg) {
+                refreshLV();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private void getPostByQuery(String query) {
+        helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
+        dao_post.getPostByQuery(query, new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                postList.clear();
+                postList = (List<Post>) response;
+                refreshLV();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
             @Override
             public void failedReq(String msg) {
                 refreshLV();
@@ -200,35 +236,39 @@ public class Fragment_Category extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint({"RestrictedApi", "CheckResult"})
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search_places, menu);
-        MenuItem search = menu.findItem(R.id.menu_search_places);
-        final SearchView searchView = (SearchView) search.getActionView();
-        searchView.setQueryHint("Please, enter a location");
-        final SearchView.SearchAutoComplete autoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        autoComplete.setTextColor(Color.WHITE);
-        autoComplete.setDropDownBackgroundResource(android.R.color.white);
-        autoComplete.setThreshold(1);
-        MenuItem refresh = menu.findItem(R.id.menu_search_refresh);
-        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem itemSearch = menu.findItem(R.id.menu_search_places);
+        searchView = (SearchView) itemSearch.getActionView();
+        searchView.setQueryHint("Điền từ khóa đề tìm kiếm");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
+            public boolean onQueryTextSubmit(String query) {
                 return false;
             }
-        });
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                RxSearch.fromSearchView(searchView)
+                        .debounce(500, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(query -> getPostByQuery(query));
+                return false;
+            }
+
+
+        });
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_search_refresh) {
-            category = "";
-            showPost();
+    public void onPause() {
+        super.onPause();
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void log(String s) {

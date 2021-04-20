@@ -52,12 +52,16 @@ public class Helper_SP {
 
     public User getUser() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
-        User user = new User();
-        user.setId(sharedPreferences.getString("_id", null));
-        user.setEmail(sharedPreferences.getString("email", null));
-        user.setDisplayName(sharedPreferences.getString("displayName", null));
-        user.setImgUser(sharedPreferences.getString("imgUser", null));
-        return user;
+        if (sharedPreferences.getString("_id", null) != null) {
+            User user = new User();
+            user.setId(sharedPreferences.getString("_id", null));
+            user.setEmail(sharedPreferences.getString("email", null));
+            user.setDisplayName(sharedPreferences.getString("displayName", null));
+            user.setImgUser(sharedPreferences.getString("imgUser", null));
+            return user;
+        }
+
+        return null;
     }
 
     public void clearSP() {

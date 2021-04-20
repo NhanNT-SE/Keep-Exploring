@@ -27,6 +27,7 @@ public class DAO_Auth {
     private Helper_Image helper_image;
     private Helper_Common helper_common;
     private Context context;
+    private User user;
 
     public DAO_Auth(Context context) {
         this.context = context;
@@ -34,6 +35,7 @@ public class DAO_Auth {
         helper_sp = new Helper_SP(context);
         helper_image = new Helper_Image();
         helper_common = new Helper_Common();
+        user = helper_sp.getUser();
     }
     public void signIn(String email, String pass,Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
@@ -65,23 +67,29 @@ public class DAO_Auth {
 
     }
 
-    private void signOut(Helper_Callback callback) {
-        String userId = helper_sp.getUser().getId();
-        HashMap<String, String> map = new HashMap<>();
-        map.put("userId", userId);
-        Call<String> call = api_auth.signOut(map);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject data = callback.getJsonObject(response);
-                helper_sp.clearSP();
-                callback.successReq(data);
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                callback.failedReq(t.getMessage());
-            }
-        });
+    public void signOut(Helper_Callback callback) {
+        if (user != null){
+            HashMap<String, String> map = new HashMap<>();
+            map.put("userId", user.getId());
+            Call<String> call = api_auth.signOut(map);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    JSONObject data = callback.getJsonObject(response);
+                    if (data != null) {
+                        helper_sp.clearSP();
+                        callback.successReq(data);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.failedReq(t.getMessage());
+                }
+            });
+        }else {
+            callback.successReq("");
+        }
+
     }
     public void signUp(String realPath, String email, String password, String displayName,Helper_Callback callback) {
         RequestBody r_email = helper_common.createPartFromString(email);

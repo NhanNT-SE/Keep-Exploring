@@ -14,10 +14,11 @@ import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.google.android.material.button.MaterialButton;
 
 public class SignInActivity extends AppCompatActivity {
     private EditText etEmail, etPass;
-    private Button btnLogIn, btnJustGo;
+    private MaterialButton btnLogIn, btnJustGo;
     private TextView tvSignUp, tvForgot;
     private DAO_Auth dao_auth;
     private Helper_Common helper_common;
@@ -36,8 +37,8 @@ public class SignInActivity extends AppCompatActivity {
         etEmail = (EditText) findViewById(R.id.signIn_etEmail);
         etPass = (EditText) findViewById(R.id.signIn_etPass);
         etPass = (EditText) findViewById(R.id.signIn_etPass);
-        btnLogIn = (Button) findViewById(R.id.signIn_btnSignIn);
-        btnJustGo = (Button) findViewById(R.id.signIn_btnJustGo);
+        btnLogIn = (MaterialButton) findViewById(R.id.signIn_btnSignIn);
+        btnJustGo = (MaterialButton) findViewById(R.id.signIn_btnJustGo);
         tvSignUp = (TextView) findViewById(R.id.signIn_tvSignUp);
         tvForgot = (TextView) findViewById(R.id.signIn_tvForgot);
         btnJustGo.setOnClickListener(new View.OnClickListener() {

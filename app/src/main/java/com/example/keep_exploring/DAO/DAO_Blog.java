@@ -15,7 +15,6 @@ import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
-import com.example.keep_exploring.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -58,15 +57,55 @@ public class DAO_Blog {
         helper_image = new Helper_Image();
         api_blog = Retrofit_config.retrofit.create(Api_Blog.class);
         accessToken = helper_sp.getAccessToken();
-        storageRef = FirebaseStorage
-                .getInstance()
-                .getReference("Images/" + helper_sp.getUser().getId());
-        signInAnonymously();
+        if (helper_sp.getUser() != null) {
+            storageRef = FirebaseStorage
+                    .getInstance()
+                    .getReference("Images/" + helper_sp.getUser().getId());
+            signInAnonymously();
+        }
+
     }
 
     public void getBlogList(Helper_Callback callback) {
         Call<String> call = api_blog.getBlogList();
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    JSONArray data = callback.getJsonArray(response);
+                    if (data != null) {
+                        List<Blog> blogList = new ArrayList<>();
+                        int sizeList = data.length();
+                        Type listType = new TypeToken<List<Blog_Details>>() {
+                        }.getType();
+                        for (int i = 0; i < sizeList; i++) {
+                            JSONObject jsonBlog = data.getJSONObject(i);
+                            Blog blog = new Gson().fromJson(jsonBlog.toString(), Blog.class);
+                            JSONArray jsonArrayBlogDetail = jsonBlog
+                                    .getJSONObject("blog_detail")
+                                    .getJSONArray("detail_list");
+                            List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
+                            blog.setBlogDetails(blogDetailsList);
+                            blogList.add(blog);
+                        }
+                        callback.successReq(blogList);
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+
+    }
+
+    public void getBlogByQuery(String query, Helper_Callback callback) {
+        Call<String> call = api_blog.getBlogByQuery(query);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

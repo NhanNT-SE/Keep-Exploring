@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
+import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,6 +33,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
     private Helper_SP helper_sp;
     private DAO_Comment dao_comment;
     private String type;
+    private User user;
 
     public Adapter_RV_Comment(Context context, List<Comment> commentList, String type) {
         this.context = context;
@@ -42,6 +43,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         helper_date = new Helper_Date();
         helper_sp = new Helper_SP(context);
         dao_comment = new DAO_Comment(context);
+        user = helper_sp.getUser();
     }
 
     @NonNull
@@ -64,8 +66,8 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
             holder.tvPubDate.setText(helper_date.formatDateDisplay(""));
         }
 
-        if (!helper_sp.getUser().getId().equals(comment.getUser().getId())) {
-            holder.imgDelete.setVisibility(View.GONE);
+        if (user != null && user.getId().equals(comment.getUser().getId())) {
+            holder.imgDelete.setVisibility(View.VISIBLE);
         }
         if (comment.getUriImg() == null && (comment.getImg() == null || comment.getImg().isEmpty())) {
             holder.imgComment.setVisibility(View.GONE);
@@ -83,11 +85,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         holder.civUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (comment.getUser().getId().equals(helper_sp.getUser().getId())) {
-                    helper_common.replaceFragment(context, new Fragment_Tab_UserInfo());
-                } else {
-                    helper_common.dialogViewProfile(context, comment.getUser());
-                }
+                helper_common.dialogViewProfile(context, comment.getUser());
             }
         });
 
