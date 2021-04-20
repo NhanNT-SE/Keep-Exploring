@@ -81,6 +81,32 @@ const getBlogList = async (req, res, next) => {
     next(error);
   }
 };
+
+const getBlogByQuery = async (req, res, next) => {
+  try {
+    const query = req.query.query || "";
+    const blogList = await Blog.find({ status: "done" })
+      .populate("blog_detail")
+      .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
+      .sort({ created_on: -1 });
+    let resultList = blogList.filter((e) =>
+      e.title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (resultList.length === 0) {
+      resultList = blogList.filter((e) =>
+        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    return res.send({
+      data: resultList,
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const getPostById = async (req, res, next) => {
   try {
     const { idPost } = req.params;
@@ -121,17 +147,27 @@ const getPostList = async (req, res, next) => {
     next(error);
   }
 };
-const getPostByAddress = async (req, res, next) => {
+const getPostByQuery = async (req, res, next) => {
   try {
-    const { address } = req.body;
-    const postList = await Post.find({
-      address: {
-        $regex: new RegExp(address),
-        $options: "i",
-      },
-    });
+    const query = req.query.query || "";
+    const postList = await Post.find({ status: "done" })
+      .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
+      .sort({ created_on: -1 });
+    let resultList = postList.filter((e) =>
+      e.address.toLowerCase().includes(query.toLowerCase())
+    );
+    if (resultList.length === 0) {
+      resultList = postList.filter((e) =>
+        e.title.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    if (resultList.length === 0) {
+      resultList = postList.filter((e) =>
+        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+      );
+    }
     return res.send({
-      data: postList,
+      data: resultList,
       status: 200,
       message: "Lấy dữ liệu thành công",
     });
@@ -245,7 +281,8 @@ module.exports = {
   getBlogComment,
   getBlogList,
   getBlogByID,
-  getPostByAddress,
+  getBlogByQuery,
+  getPostByQuery,
   getPostComment,
   getPostById,
   getPostList,
