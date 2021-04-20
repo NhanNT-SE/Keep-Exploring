@@ -8,15 +8,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TestUI">
-    <com.ramotion.circlemenu.CircleMenuView
-        android:id="@+id/testUI_cMenu"
-        app:distance="60dp"
-        android:layout_centerInParent="true"
-        app:button_icons="@array/icons"
-        app:button_colors="@array/colors"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/testUI_fabPost"
+        app:fabSize="mini"
+        android:layout_above="@+id/testUI_fabBlog"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_post_black"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/testUI_fabBlog"
+        app:fabSize="mini"
+        android:layout_above="@+id/testUI_coordinatorLayout"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_blog_black"
+        android:visibility="invisible"
+        android:layout_marginBottom="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/testUI_coordinatorLayout"

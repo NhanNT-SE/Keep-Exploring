@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
@@ -27,7 +30,6 @@ import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ramotion.circlemenu.CircleMenuView;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,15 +40,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     //    View
     private BottomNavigationView bottomNavigationView;
     private Helper_Common helper_common;
-    private CircleMenuView circleMenuView;
-    private FloatingActionButton fab;
+    private FloatingActionButton fabAdd, fabAddPost, fabAddBlog;
     private SpotsDialog spotsDialog;
     //    DAO & Helper
     private Helper_SP helper_sp;
     private DAO_Auth dao_auth;
     private DAO_Address dao_address;
     private User user;
-
+    private Animation animOpen, animClose, animFromBottom, animToBottom;
+    private boolean clicked = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,18 +59,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         initVariable();
         handlerEvent();
     }
-
     private void initView() {
         spotsDialog = new SpotsDialog(this);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.main_bottomNavigation);
-        circleMenuView = findViewById(R.id.main_circleMenu);
-        fab = (FloatingActionButton) findViewById(R.id.main_fabAdd);
+        fabAdd = (FloatingActionButton) findViewById(R.id.main_fabAdd);
+        fabAddPost = (FloatingActionButton) findViewById(R.id.main_fabAddPost);
+        fabAddBlog = (FloatingActionButton) findViewById(R.id.main_fabAddBlog);
     }
     private void initVariable() {
         dao_address = new DAO_Address(this);
         dao_auth = new DAO_Auth(this);
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
+        animOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open_anim);
+        animClose = AnimationUtils.loadAnimation(this, R.anim.fab_close_anim);
+        animFromBottom = AnimationUtils.loadAnimation(this, R.anim.fab_from_bottom_anim);
+        animToBottom = AnimationUtils.loadAnimation(this, R.anim.fab_to_bottom_anim);
         user = helper_sp.getUser();
     }
     private void handlerEvent() {
@@ -87,42 +93,32 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             }
         });
-        circleMenuView.setEventListener(new CircleMenuView.EventListener() {
-            @Override
-            public void onMenuOpenAnimationStart(@NonNull CircleMenuView view) {
-                super.onMenuOpenAnimationStart(view);
-            }
-            @Override
-            public void onButtonClickAnimationEnd(@NonNull CircleMenuView view, int buttonIndex) {
-                super.onButtonClickAnimationStart(view, buttonIndex);
-                switch (buttonIndex) {
-                    case 0:
-                        view.setVisibility(View.GONE);
-                        replaceFragment(new Fragment_AddBlog());
-                        break;
-                    case 1:
-                        view.setVisibility(View.GONE);
-                        replaceFragment(new Fragment_AddPost());
-                        break;
-                }
-            }
-            @Override
-            public void onMenuCloseAnimationStart(@NonNull CircleMenuView view) {
-                super.onMenuCloseAnimationStart(view);
-                view.setVisibility(View.GONE);
-            }
-        });
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (user == null) {
                     helper_common.dialogRequireLogin(MainActivity.this);
                 } else {
-                    showCircleMenu();
+                    toggleAnim();
                 }
             }
         });
-        hideCircleMenu();
+
+        fabAddPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleAnim();
+                replaceFragment(new Fragment_AddPost());
+            }
+        });
+
+        fabAddBlog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleAnim();
+                replaceFragment(new Fragment_AddBlog());
+            }
+        });
         replaceFragment(new Fragment_Category());
     }
 
@@ -155,19 +151,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void replaceFragment(Fragment fragment) {
-        hideCircleMenu();
         helper_common.replaceFragment(this, fragment);
     }
-    private void showCircleMenu() {
-        circleMenuView.setVisibility(View.VISIBLE);
-        circleMenuView.open(true);
-    }
-
-    private void hideCircleMenu() {
-        circleMenuView.close(false);
-        circleMenuView.setVisibility(View.INVISIBLE);
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -201,6 +186,46 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private void toggleAnim() {
+        setVisibility(clicked);
+        setClickable(clicked);
+        setAnimation(clicked);
+        clicked = !clicked;
+
+    }
+    private void setVisibility(boolean clicked) {
+        if (!clicked) {
+            fabAddPost.setVisibility(View.VISIBLE);
+            fabAddBlog.setVisibility(View.VISIBLE);
+        } else {
+            fabAddPost.setVisibility(View.GONE);
+            fabAddBlog.setVisibility(View.GONE);
+
+        }
+
+    }
+    private void setAnimation(boolean clicked) {
+        if (!clicked) {
+            fabAddPost.startAnimation(animFromBottom);
+            fabAddBlog.startAnimation(animFromBottom);
+            fabAdd.startAnimation(animOpen);
+
+        } else {
+            fabAddPost.startAnimation(animToBottom);
+            fabAddBlog.startAnimation(animToBottom);
+            fabAdd.startAnimation(animClose);
+        }
+    }
+    private void setClickable(boolean clicked) {
+        if (!clicked) {
+            fabAddPost.setClickable(true);
+            fabAddBlog.setClickable(true);
+        } else {
+            fabAddPost.setClickable(false);
+            fabAddBlog.setClickable(false);
+        }
     }
 
     private void toast(String msg) {

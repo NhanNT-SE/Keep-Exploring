@@ -49,12 +49,12 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
 
     public Helper_Common() {
@@ -179,6 +179,23 @@ public class Helper_Common {
             }
         });
         dialog.show();
+    }
+
+    public String convertCategorySubmit(String category) {
+        if (category.equalsIgnoreCase("Ăn uống")) {
+            return "food";
+        } else if (category.equalsIgnoreCase("Địa điểm")) {
+            return "check_in";
+        }
+        return "hotel";
+    }
+    public String convertCategoryDisplay(String category) {
+        if (category.equalsIgnoreCase("food")) {
+            return "Ăn uống";
+        } else if (category.equalsIgnoreCase("hotel")) {
+            return "Khách sạn";
+        }
+        return "Địa điểm";
     }
 
     public void dialogViewProfile(Context context, User owner) {

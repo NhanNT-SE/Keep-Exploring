@@ -20,23 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 public class Helper_Post {
     private Context context;
     private Helper_SP helper_sp;
-    private String additionalAddress, addressSubmit, categorySubmit;
+    private String additionalAddress, addressSubmit;
     private DAO_Address dao_address;
 
-    public Helper_Post(Context context, String additionalAddress, String addressSubmit, String categorySubmit) {
+    public Helper_Post(Context context) {
         this.context = context;
-        this.additionalAddress = additionalAddress;
-        this.addressSubmit = addressSubmit;
-        this.categorySubmit = categorySubmit;
         dao_address = new DAO_Address(context);
         helper_sp = new Helper_SP(context);
     }
-
-
-    public void dialogAddAddress(TextView tvAddress, TextView tvCategory) {
+    public void dialogAddAddress(TextView tvAddress) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_address);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -49,16 +46,11 @@ public class Helper_Post {
         dCategoryList.add("check_in");
         dProvinceList.addAll(helper_sp.getProvinceList());
         TextView dTvAddress = (TextView) dialog.findViewById(R.id.dAddress_tvAddress);
-        TextView dTvCategory = (TextView) dialog.findViewById(R.id.dAddress_tvCategory);
-
-        Spinner dSpCategory = (Spinner) dialog.findViewById(R.id.dAddress_spCategory);
         Spinner dSpProvince = (Spinner) dialog.findViewById(R.id.dAddress_spProvince);
         Spinner dSpDistrict = (Spinner) dialog.findViewById(R.id.dAddress_spDistrict);
         Spinner dSpWard = (Spinner) dialog.findViewById(R.id.dAddress_spWard);
-
         Button dBtnSubmit = (Button) dialog.findViewById(R.id.dAddress_btnSubmit);
         Button dBtnCancel = (Button) dialog.findViewById(R.id.dAddress_btnCancel);
-
         EditText dEdtAdditional = (EditText) dialog.findViewById(R.id.dAddress_edtAdditional);
 
         dEdtAdditional.addTextChangedListener(new TextWatcher() {
@@ -84,7 +76,6 @@ public class Helper_Post {
             }
         });
 
-        setSpinner(dCategoryList, dSpCategory);
         setSpinner(dProvinceList, dSpProvince);
 
         dSpProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -111,7 +102,6 @@ public class Helper_Post {
 
                     @Override
                     public void failedReq(String msg) {
-
                     }
                 });
             }
@@ -145,7 +135,6 @@ public class Helper_Post {
 
                             @Override
                             public void failedReq(String msg) {
-
                             }
                         });
             }
@@ -171,17 +160,6 @@ public class Helper_Post {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        dSpCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                categorySubmit = dCategoryList.get(position);
-                dTvCategory.setText(categorySubmit);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         dBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +172,6 @@ public class Helper_Post {
             public void onClick(View v) {
                 addressSubmit = dTvAddress.getText().toString();
                 tvAddress.setText(addressSubmit);
-                tvCategory.setText(categorySubmit);
                 dialog.dismiss();
             }
         });
