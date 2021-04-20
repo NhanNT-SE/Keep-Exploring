@@ -6,6 +6,8 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,13 +32,13 @@ import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
-import com.example.keep_exploring.helpers.Helper_Event;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_Post;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.ImageDisplay;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ramotion.circlemenu.CircleMenuView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ public class Fragment_AddPost extends Fragment {
     private CircleImageView imgAvatarUser;
     private RatingBar ratingBar;
     private Dialog spotDialog;
+    private CircleMenuView circleMenuView;
     //    Helper & DAO
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
@@ -70,9 +73,6 @@ public class Fragment_AddPost extends Fragment {
     private DAO_Post dao_post;
     //    Variable
     public static final int CHOOSE_IMAGE_POST = 1;
-    private String categorySubmit;
-    private String addressSubmit;
-    private String additionalAddress;
     private List<String> imagesSubmitList;
     private List<ImageDisplay> imageDisplayList;
     private User user;
@@ -105,6 +105,8 @@ public class Fragment_AddPost extends Fragment {
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fAddPost_imgAvatarUser);
         viewPager = (ViewPager2) view.findViewById(R.id.fAddPost_viewPager);
         ratingBar = (RatingBar) view.findViewById(R.id.fAddPost_ratingBar);
+        circleMenuView = (CircleMenuView) view.findViewById(R.id.fAddPost_circleMenu);
+
     }
 
     private void initVariable() {
@@ -114,14 +116,14 @@ public class Fragment_AddPost extends Fragment {
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
         helper_date = new Helper_Date();
-        helper_post = new Helper_Post(getContext(), additionalAddress, addressSubmit, categorySubmit);
+        helper_post = new Helper_Post(getContext());
         imagesSubmitList = new ArrayList<>();
         imageDisplayList = new ArrayList<>();
         user = helper_sp.getUser();
     }
 
     private void handlerEvent() {
-        helper_common.toggleBottomNavigation(getContext(),false);
+        helper_common.toggleBottomNavigation(getContext(), false);
         tvPubDate.setText(helper_date.formatDateDisplay(""));
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
@@ -129,6 +131,7 @@ public class Fragment_AddPost extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideCircleMenu();
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -142,15 +145,70 @@ public class Fragment_AddPost extends Fragment {
         tvAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogAddAddress(tvAddress,tvCategory);
+                hideCircleMenu();
+                helper_post.dialogAddAddress(tvAddress);
             }
         });
         tvCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper_post.dialogAddAddress(tvAddress,tvCategory);
+               showCircleMenu();
             }
         });
+        circleMenuView.setEventListener(new CircleMenuView.EventListener() {
+            @Override
+            public void onMenuOpenAnimationStart(@NonNull CircleMenuView view) {
+                super.onMenuOpenAnimationStart(view);
+            }
+
+            @Override
+            public void onButtonClickAnimationEnd(@NonNull CircleMenuView view, int buttonIndex) {
+                super.onButtonClickAnimationStart(view, buttonIndex);
+                switch (buttonIndex) {
+                    case 0:
+                        tvCategory.setText("Ăn uống");
+                        view.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        tvCategory.setText("Khách sạn");
+                        view.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        tvCategory.setText("Địa điểm");
+                        view.setVisibility(View.GONE);
+                        break;
+                }
+            }
+            @Override
+            public void onMenuCloseAnimationStart(@NonNull CircleMenuView view) {
+                super.onMenuCloseAnimationStart(view);
+                view.setVisibility(View.GONE);
+            }
+
+        });
+        etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    hideCircleMenu();
+                }
+            }
+        });
+        etDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    hideCircleMenu();
+                }
+            }
+        });
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                hideCircleMenu();
+            }
+        });
+        hideCircleMenu();
     }
 
     @Override
@@ -182,6 +240,15 @@ public class Fragment_AddPost extends Fragment {
     }
 
 
+    private void showCircleMenu() {
+        circleMenuView.setVisibility(View.VISIBLE);
+        circleMenuView.open(true);
+    }
+
+    private void hideCircleMenu() {
+        circleMenuView.close(false);
+        circleMenuView.setVisibility(View.INVISIBLE);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -215,7 +282,7 @@ public class Fragment_AddPost extends Fragment {
             imagesSubmitList.add(item.getImageString());
         }
         String addressSubmit = tvAddress.getText().toString();
-        String categorySubmit = tvCategory.getText().toString();
+        String categorySubmit = helper_common.convertCategorySubmit(tvCategory.getText().toString());
         String titleSubmit = etTitle.getText().toString();
         String descriptionSubmit = etDescription.getText().toString();
         int ratingSubmit = Math.round(ratingBar.getRating());

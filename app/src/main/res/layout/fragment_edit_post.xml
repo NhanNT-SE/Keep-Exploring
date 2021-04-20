@@ -74,7 +74,7 @@
                 android:background="@drawable/border_tv"
                 android:maxLines="5"
                 android:padding="5dp"
-                android:hint="Bấm vào để thêm danh mục và  địa chỉ"
+                android:hint="Bấm vào để thêm danh mục"
                 android:textSize="13sp"
                 android:textStyle="bold" />
             <TextView
@@ -100,7 +100,7 @@
                 android:maxLines="5"
                 android:padding="5dp"
                 android:background="@drawable/border_tv"
-                android:hint="Bấm vào để thêm danh mục và địa chỉ"
+                android:hint="Bấm vào để thêm địa chỉ"
                 android:textSize="13sp"
                 android:textStyle="bold" />
             <TextView
@@ -154,6 +154,19 @@
                 android:textSize="15sp" />
         </RelativeLayout>
     </ScrollView>
+
+    <com.ramotion.circlemenu.CircleMenuView
+        android:id="@+id/fEditPost_circleMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:scaleX=".7"
+        android:scaleY=".7"
+        app:button_colors="@array/colors"
+        app:button_icons="@array/icons"
+        app:distance="80dp"
+        app:icon_menu="@drawable/check" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fEditPost_fabAddContent"
         android:layout_width="wrap_content"

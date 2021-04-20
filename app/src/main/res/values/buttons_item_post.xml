@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="icons">
-        <item>@drawable/ic_blog_black</item>
-        <item>@drawable/ic_post_black</item>
+        <item>@drawable/ic_food_black</item>
+        <item>@drawable/ic_hotel_black</item>
+        <item>@drawable/ic_check_in_black</item>
     </array>
     <array name="colors">
         <item>@android:color/holo_blue_light</item>
         <item>@android:color/holo_green_light</item>
+        <item>@android:color/holo_orange_light</item>
+
     </array>
 </resources>

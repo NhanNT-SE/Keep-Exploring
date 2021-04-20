@@ -1,28 +1,22 @@
 package com.example.keep_exploring;
 
-import android.annotation.SuppressLint;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.PopupMenu;
-import android.widget.PopupWindow;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ramotion.circlemenu.CircleMenuView;
 
-public class TestUI extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class TestUI extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
-    private CircleMenuView circleMenuView;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab, fabPost, fabBlog;
+    private Animation animOpen, animClose, animFromBottom, animToBottom;
+    private boolean clicked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,104 +24,79 @@ public class TestUI extends AppCompatActivity implements BottomNavigationView.On
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.testUI_bottomNavigation);
         bottomNavigationView.setBackground(null);
         bottomNavigationView.getMenu().getItem(2).setEnabled(false);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
-        circleMenuView = findViewById(R.id.testUI_cMenu);
-        circleMenuView.setEventListener(new CircleMenuView.EventListener() {
-            @Override
-            public void onMenuOpenAnimationStart(@NonNull CircleMenuView view) {
-                super.onMenuOpenAnimationStart(view);
-            }
-
-            @Override
-            public void onButtonClickAnimationEnd(@NonNull CircleMenuView view, int buttonIndex) {
-                super.onButtonClickAnimationStart(view, buttonIndex);
-                switch (buttonIndex) {
-                    case 0:
-                        view.setVisibility(View.GONE);
-                        Toast.makeText(TestUI.this, "Food", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        view.setVisibility(View.GONE);
-                        Toast.makeText(TestUI.this, "Hotel", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        view.setVisibility(View.GONE);
-                        Toast.makeText(TestUI.this, "Check in", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-
-            @Override
-            public void onMenuCloseAnimationStart(@NonNull CircleMenuView view) {
-                super.onMenuCloseAnimationStart(view);
-                view.setVisibility(View.GONE);
-            }
-        });
-        hideCircleMenu();
-         fab = (FloatingActionButton) findViewById(R.id.testUI_fabAdd);
+        animOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open_anim);
+        animClose = AnimationUtils.loadAnimation(this, R.anim.fab_close_anim);
+        animFromBottom = AnimationUtils.loadAnimation(this, R.anim.fab_from_bottom_anim);
+        animToBottom = AnimationUtils.loadAnimation(this, R.anim.fab_to_bottom_anim);
+        fab = (FloatingActionButton) findViewById(R.id.testUI_fabAdd);
+        fabPost = (FloatingActionButton) findViewById(R.id.testUI_fabPost);
+        fabBlog = (FloatingActionButton) findViewById(R.id.testUI_fabBlog);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                hideCircleMenu();
-//                popupMenu();
-                showCircleMenu();
+                onAddClick();
+            }
+        });
+
+        fabBlog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddClick();
+                Toast.makeText(TestUI.this, "Add blog", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        fabPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddClick();
+                Toast.makeText(TestUI.this, "Add post", Toast.LENGTH_SHORT).show();
+
             }
         });
 
     }
 
-    private void popupMenu(){
-        PopupMenu popup = new PopupMenu(TestUI.this, fab);
-        popup.getMenuInflater().inflate(R.menu.menu_popup_fab, popup.getMenu());
-
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.menu_popup_fab_post){
-                    Toast.makeText(TestUI.this, "Add Post", Toast.LENGTH_SHORT).show();
-                }if (item.getItemId() == R.id.menu_popup_fab_blog){
-                    Toast.makeText(TestUI.this, "Add Blog", Toast.LENGTH_SHORT).show();
-
-                }
-                return true;
-            }
-        });
-
-        popup.show();
+    private void onAddClick() {
+        setVisibility(clicked);
+        setClickable(clicked);
+        setAnimation(clicked);
+        clicked = !clicked;
 
     }
 
+    private void setVisibility(boolean clicked) {
+        if (!clicked) {
+            fabPost.setVisibility(View.VISIBLE);
+            fabBlog.setVisibility(View.VISIBLE);
+        } else {
+            fabPost.setVisibility(View.GONE);
+            fabBlog.setVisibility(View.GONE);
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-//            case R.id.menu_bottom_home:
-//                hideCircleMenu();
-//                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
-//                break;
-            case R.id.menu_bottom_post:
-                hideCircleMenu();
-                break;
-            case R.id.menu_bottom_blog:
-                hideCircleMenu();
-                Toast.makeText(this, "Blog", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.menu_bottom_notify:
-                hideCircleMenu();
-                Toast.makeText(this, "Notification", Toast.LENGTH_SHORT).show();
-                break;
         }
-        return true;
+
     }
 
-    private void showCircleMenu() {
-        circleMenuView.setVisibility(View.VISIBLE);
-        circleMenuView.open(true);
+    private void setAnimation(boolean clicked) {
+        if (!clicked) {
+            fabPost.startAnimation(animFromBottom);
+            fabBlog.startAnimation(animFromBottom);
+            fab.startAnimation(animOpen);
+
+        } else {
+            fabPost.startAnimation(animToBottom);
+            fabBlog.startAnimation(animToBottom);
+            fab.startAnimation(animClose);
+        }
     }
-    private void hideCircleMenu(){
-        circleMenuView.close(false);
-        circleMenuView.setVisibility(View.INVISIBLE);
+
+    private void setClickable(boolean clicked) {
+        if (!clicked) {
+            fabPost.setClickable(true);
+            fabBlog.setClickable(true);
+        } else {
+            fabPost.setClickable(false);
+            fabBlog.setClickable(false);
+        }
     }
 }

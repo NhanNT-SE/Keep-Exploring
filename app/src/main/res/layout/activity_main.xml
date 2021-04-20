@@ -14,13 +14,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
-    <com.ramotion.circlemenu.CircleMenuView
-        android:id="@+id/main_circleMenu"
-        app:distance="60dp"
-        android:layout_centerInParent="true"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_fabAddPost"
+        app:fabSize="mini"
+        android:layout_above="@+id/main_fabAddBlog"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_post_black"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_fabAddBlog"
+        app:fabSize="mini"
         android:layout_above="@+id/main_coordinatorLayout"
-        app:button_icons="@array/icons"
-        app:button_colors="@array/colors"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_blog_black"
+        android:visibility="invisible"
+        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
