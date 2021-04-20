@@ -47,12 +47,10 @@ import okhttp3.RequestBody;
 
 public class Helper_Common {
     public String getBaseUrl() {
-
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
         return URL_LOCAL;
     }
-
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
@@ -226,6 +224,7 @@ public class Helper_Common {
                     fragment.setArguments(bundle);
                     replaceFragment(context, fragment);
                 }
+                dialog.dismiss();
             }
         });
         dialog.show();
@@ -234,13 +233,13 @@ public class Helper_Common {
     public void dialogRequireLogin(Context context) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage("Vui lòng đăng nhập để thực hiện chức năng này");
-        dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Đăng nhập", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 context.startActivity(new Intent(context, SignInActivity.class));
             }
         });
-        dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("Đóng", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

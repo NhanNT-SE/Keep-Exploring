@@ -121,9 +121,14 @@ public class Fragment_Post_Details extends Fragment {
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isLike = !isLike;
-                toggleLike();
-                setLike();
+                if (user == null) {
+                    helper_common.dialogRequireLogin(getContext());
+                } else {
+                    isLike = !isLike;
+                    toggleLike();
+                    setLike();
+                }
+
             }
         });
 

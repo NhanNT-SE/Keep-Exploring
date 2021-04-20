@@ -9,7 +9,6 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
-import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -116,6 +115,27 @@ public class DAO_Post {
                 }
             }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+
+            }
+        });
+    }
+
+    public void getPostByQuery(String query, Helper_Callback callback) {
+        Call<String> call = api_post.getPostByQuery(query);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                JSONArray data = callback.getJsonArray(response);
+                if (data != null) {
+                    Type listType = new TypeToken<List<Post>>() {
+                    }.getType();
+                    List<Post> postList = new Gson().fromJson(data.toString(), listType);
+                    callback.successReq(postList);
+                }
+            }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());

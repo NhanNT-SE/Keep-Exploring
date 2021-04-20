@@ -111,7 +111,6 @@ public class Fragment_Blog_Detail extends Fragment {
 
     private void handlerEvent() {
 
-
         layoutComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,9 +135,13 @@ public class Fragment_Blog_Detail extends Fragment {
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isLike = !isLike;
-                toggleLike();
-                setLike();
+                if (user == null) {
+                    helper_common.dialogRequireLogin(getContext());
+                } else {
+                    isLike = !isLike;
+                    toggleLike();
+                    setLike();
+                }
             }
         });
         loadData();

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     //    View
     private View view;
     private RelativeLayout layoutImage;
+    private LinearLayout layoutAddComment;
     private RecyclerView rvComment;
     private TextView tvNothing, tvClose;
     private EditText etContent;
@@ -91,6 +93,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     }
 
     private void initView() {
+        layoutAddComment = (LinearLayout) view.findViewById(R.id.dComment_layoutComment);
         layoutImage = (RelativeLayout) view.findViewById(R.id.dComment_layoutImage);
         etContent = (EditText) view.findViewById(R.id.dComment_etComment);
         imgSend = (ImageView) view.findViewById(R.id.dComment_imgSend);
@@ -112,6 +115,9 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         commentList = new ArrayList<>();
         path = "";
         user = helper_sp.getUser();
+        if (user == null) {
+            layoutAddComment.setVisibility(View.GONE);
+        }
     }
     private void handlerEvent() {
         helper_common.configRecycleView(getContext(), rvComment);
