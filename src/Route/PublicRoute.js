@@ -4,7 +4,8 @@ const router = express.Router();
 
 router.get("/blog", publicController.getBlogList);
 router.get("/post", publicController.getPostList);
-router.get("/post/address", publicController.getPostByAddress);
+router.get("/blog/filter", publicController.getBlogByQuery);
+router.get("/post/filter", publicController.getPostByQuery);
 router.get("/post/:idPost", publicController.getPostById);
 router.get("/blog/:idBlog", publicController.getBlogByID);
 router.get("/post/comments/:idPost", publicController.getPostComment);

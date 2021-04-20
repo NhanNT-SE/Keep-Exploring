@@ -26,7 +26,7 @@ const verifyToken = async (token, secretKey) => {
     const message = error.message;
     if (message === "jwt expired") {
       const dateExpired = getNumberDateExpired(error.expiredAt);
-      handlerCustomError(401, message,dateExpired);
+      handlerCustomError(401, message, dateExpired);
     }
     handlerCustomError(401, message);
   }
@@ -66,6 +66,7 @@ const isAdmin = async (req, res, next) => {
   }
 };
 const getNumberDateExpired = (dateExpired) => {
+  // const date = new Date("04/17/2021");
   const date = new Date();
   const diffTime = Math.abs(date - dateExpired);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
