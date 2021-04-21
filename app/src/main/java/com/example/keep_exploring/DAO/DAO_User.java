@@ -41,9 +41,9 @@ public class DAO_User {
         callProfile.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject data = callback.getJsonObject(response);
                 String err = callback.getResponseError(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty() ) {
+                    JSONObject data = callback.getJsonObject(response);
                     User user = new Gson().fromJson(data.toString(), User.class);
                     callback.successReq(user);
                 }
@@ -61,9 +61,9 @@ public class DAO_User {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject data = callback.getJsonObject(response);
                 String err = callback.getResponseError(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty()) {
+                    JSONObject data = callback.getJsonObject(response);
                     User user = new Gson().fromJson(data.toString(), User.class);
                     callback.successReq(user);
                 }
@@ -82,9 +82,9 @@ public class DAO_User {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                JSONObject data = callback.getJsonObject(response);
                 String err = callback.getResponseError(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty() ) {
+                    JSONObject data = callback.getJsonObject(response);
                     callback.successReq(data);
                 }
             }

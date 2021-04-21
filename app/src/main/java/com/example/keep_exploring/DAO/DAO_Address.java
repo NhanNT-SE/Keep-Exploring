@@ -8,10 +8,12 @@ import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,9 +40,10 @@ public class DAO_Address {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONArray data = callback.getJsonArray(response);
-                if (err.isEmpty() && data != null) {
-                    List provinceList = new Gson().fromJson(data.toString(), List.class);
+                Type listType = new TypeToken<List<String>>() {}.getType();
+                if (err.isEmpty()) {
+                    JSONArray data = callback.getJsonArray(response);
+                    List<String> provinceList = new Gson().fromJson(data.toString(), listType);
                     helper_sp.setProvinceList(provinceList);
                     callback.successReq(provinceList);
                 }
@@ -63,8 +66,8 @@ public class DAO_Address {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     String err = callback.getResponseError(response);
-                    JSONObject data = callback.getJsonObject(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         JSONArray jsonDistrictList = data.getJSONArray("districtList");
                         JSONArray jsonWardList = data.getJSONArray("wardList");
                         List<String> districtList = new ArrayList<>();

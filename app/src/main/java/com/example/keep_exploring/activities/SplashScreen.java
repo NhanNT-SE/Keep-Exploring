@@ -23,7 +23,6 @@ public class SplashScreen extends AppCompatActivity {
     private Helper_SP helper_sp;
     private boolean isRemember;
     private User user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +33,6 @@ public class SplashScreen extends AppCompatActivity {
         tvAppName = (TextView) findViewById(R.id.splash_screen_tvAppName);
         animTop = AnimationUtils.loadAnimation(this, R.anim.splash_top_anim);
         animBottom = AnimationUtils.loadAnimation(this, R.anim.splash_bottom_anim);
-
         imgLogo.setAnimation(animTop);
         tvAppName.setAnimation(animBottom);
         tvSlogan.setAnimation(animBottom);
@@ -46,9 +44,7 @@ public class SplashScreen extends AppCompatActivity {
         } else {
             moveToSinIn();
         }
-
     }
-
     private void moveToMain() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -61,7 +57,6 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 3000);
     }
-
     private void moveToSinIn() {
         new Handler().postDelayed(new Runnable() {
             @Override

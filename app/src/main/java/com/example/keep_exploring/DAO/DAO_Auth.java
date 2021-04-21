@@ -47,12 +47,11 @@ public class DAO_Auth {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     String err = callback.getResponseError(response);
-                    JSONObject data = callback.getJsonObject(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         String accessToken = data.getString("accessToken");
                         String refreshToken = data.getString("refreshToken");
                         User user = new Gson().fromJson(data.toString(), User.class);
-                        callback.successReq(user);
                         helper_sp.setUser(user);
                         helper_sp.setAccessToken(accessToken);
                         helper_sp.setRefreshToken(refreshToken);
@@ -81,8 +80,8 @@ public class DAO_Auth {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     String err = callback.getResponseError(response);
-                    JSONObject data = callback.getJsonObject(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         helper_sp.clearSP();
                         callback.successReq(data);
                     }
@@ -111,8 +110,8 @@ public class DAO_Auth {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONObject data = callback.getJsonObject(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty()) {
+                    JSONObject data = callback.getJsonObject(response);
                     callback.successReq(data);
                 }
 
@@ -135,8 +134,8 @@ public class DAO_Auth {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONObject data = callback.getJsonObject(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty()) {
+                    JSONObject data = callback.getJsonObject(response);
                     String newAccessToken = data.toString();
                     helper_sp.setAccessToken(newAccessToken);
                     callback.successReq(newAccessToken);

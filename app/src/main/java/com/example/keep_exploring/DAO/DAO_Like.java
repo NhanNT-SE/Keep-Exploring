@@ -42,12 +42,11 @@ public class DAO_Like {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONArray data = callback.getJsonArray(response);
                     String err = callback.getResponseError(response);
-
                     Type listType = new TypeToken<List<User>>() {
                     }.getType();
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty() ) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(userLikedList);
                     }
@@ -64,11 +63,11 @@ public class DAO_Like {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONArray data = callback.getJsonArray(response);
                     String err = callback.getResponseError(response);
                     Type listType = new TypeToken<List<User>>() {
                     }.getType();
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty() ) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(userLikedList);
                     }
@@ -90,9 +89,9 @@ public class DAO_Like {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONObject data = callback.getJsonObject(response);
                     String err = callback.getResponseError(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty() ) {
+                        JSONObject data = callback.getJsonObject(response);
                         callback.successReq(data);
                     }
                 }
@@ -107,9 +106,9 @@ public class DAO_Like {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONObject data = callback.getJsonObject(response);
                     String err = callback.getResponseError(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty() ) {
+                        JSONObject data = callback.getJsonObject(response);
                         callback.successReq(data);
                     }
                 }

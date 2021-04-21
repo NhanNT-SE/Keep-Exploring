@@ -73,8 +73,8 @@ public class DAO_Blog {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     String err = callback.getResponseError(response);
-                    JSONArray data = callback.getJsonArray(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<Blog> blogList = new ArrayList<>();
                         int sizeList = data.length();
                         Type listType = new TypeToken<List<Blog_Details>>() {
@@ -111,8 +111,8 @@ public class DAO_Blog {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     String err = callback.getResponseError(response);
-                    JSONArray data = callback.getJsonArray(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<Blog> blogList = new ArrayList<>();
                         int sizeList = data.length();
                         Type listType = new TypeToken<List<Blog_Details>>() {
@@ -161,9 +161,8 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String err = callback.getResponseError(response);
-                        JSONObject data = callback.getJsonObject(response);
-
-                        if (err.isEmpty() && data != null) {
+                        if (err.isEmpty()) {
+                            JSONObject data = callback.getJsonObject(response);
                             callback.successReq(data);
                         }
 
@@ -188,8 +187,8 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONObject data = callback.getJsonObject(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty()) {
+                    JSONObject data = callback.getJsonObject(response);
                     callback.successReq(data);
                 }
 
@@ -208,14 +207,14 @@ public class DAO_Blog {
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
                     String err = callback.getResponseError(response);
-                    JSONObject data = callback.getJsonObject(response);
-                    if (err.isEmpty() && data != null) {
+                    Type listType = new TypeToken<List<Blog_Details>>() {
+                    }.getType();
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         JSONArray jsonArrayBlogDetail = data
                                 .getJSONObject("blog_detail")
                                 .getJSONArray("detail_list");
                         Blog blog = new Gson().fromJson(data.toString(), Blog.class);
-                        Type listType = new TypeToken<List<Blog_Details>>() {
-                        }.getType();
                         List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
                         blog.setBlogDetails(blogDetailsList);
                         callback.successReq(blog);
@@ -239,10 +238,10 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONArray data = callback.getJsonArray(response);
-                if (err.isEmpty() && data != null) {
-                    Type listType = new TypeToken<List<Blog>>() {
-                    }.getType();
+                Type listType = new TypeToken<List<Blog>>() {
+                }.getType();
+                if (err.isEmpty()) {
+                    JSONArray data = callback.getJsonArray(response);
                     List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(blogList);
                 }
@@ -274,8 +273,8 @@ public class DAO_Blog {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String err = callback.getResponseError(response);
-                        JSONObject data = callback.getJsonObject(response);
-                        if (err.isEmpty() && data != null) {
+                        if (err.isEmpty()) {
+                            JSONObject data = callback.getJsonObject(response);
                             callback.successReq(data);
                         }
                     }
