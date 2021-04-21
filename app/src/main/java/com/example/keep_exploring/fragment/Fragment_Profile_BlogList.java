@@ -86,6 +86,7 @@ public class Fragment_Profile_BlogList extends Fragment {
     }
 
     private void loadData() {
+        helper_common.setBadgeNotify(getContext());
         dao_blog.getBlogByUser(idUser, new Helper_Callback() {
             @Override
             public void successReq(Object response) {

@@ -135,6 +135,7 @@ public class Fragment_Category extends Fragment {
     }
 
     private void showPost() {
+        helper_common.setBadgeNotify(getContext());
         setColorButton();
         helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
         dao_post.getPostByCategory(category, new Helper_Callback() {
@@ -155,6 +156,7 @@ public class Fragment_Category extends Fragment {
     }
 
     private void getPostByQuery(String query) {
+        helper_common.setBadgeNotify(getContext());
         helper_common.showSkeleton(rv_PostList, adapter_rv_post, R.layout.row_skeleton_post);
         dao_post.getPostByQuery(query, new Helper_Callback() {
             @Override

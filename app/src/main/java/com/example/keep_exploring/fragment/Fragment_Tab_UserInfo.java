@@ -146,6 +146,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 }
             }
         });
+        helper_common.setBadgeNotify(getContext());
         loadData();
     }
 

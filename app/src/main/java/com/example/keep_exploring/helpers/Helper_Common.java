@@ -27,11 +27,15 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.ethanhua.skeleton.Skeleton;
+import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.animations.Anim_Bottom_Navigation;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
+import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.User;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -49,12 +53,12 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
 
     public Helper_Common() {
@@ -106,6 +110,26 @@ public class Helper_Common {
                 ((Activity) context).findViewById(R.id.main_coordinatorLayout)));
     }
 
+    public void setBadgeNotify(Context context) {
+        DAO_Notification dao_notification = new DAO_Notification(context);
+        BottomNavigationView bottomNavigationView = ((Activity) context).findViewById(R.id.main_bottomNavigation);
+        BadgeDrawable badgeNotify = bottomNavigationView.getOrCreateBadge(R.id.menu_bottom_notify);
+        badgeNotify.setMaxCharacterCount(3);
+        badgeNotify.setBadgeTextColor(Color.WHITE);
+        dao_notification.getAll(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                List<Notification> notificationList = (List<Notification>) response;
+                int numberBadge = (int) notificationList.stream().filter(item -> item.getStatus().equals("new")).count();
+                badgeNotify.setNumber(numberBadge);
+            }
+
+            @Override
+            public void failedReq(String msg) {
+
+            }
+        });
+    }
 
 
     public void showSkeleton(RecyclerView recyclerView, RecyclerView.Adapter adapter, int layout) {
