@@ -46,8 +46,7 @@ public class DAO_Comment {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
-                JSONObject data = callback.getJsonObject(response);
-                if (err.isEmpty() && data != null) {
+                if (err.isEmpty()) {
                     callback.successReq(response);
                 }
             }
@@ -68,8 +67,8 @@ public class DAO_Comment {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     String err = callback.getResponseError(response);
-                    JSONObject data = callback.getJsonObject(response);
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         callback.successReq(data);
                     }
                 }
@@ -86,10 +85,9 @@ public class DAO_Comment {
             call_blog.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONObject data = callback.getJsonObject(response);
                     String err = callback.getResponseError(response);
-
-                    if (err.isEmpty() && data != null) {
+                    if (err.isEmpty()) {
+                        JSONObject data = callback.getJsonObject(response);
                         callback.successReq(data);
                     }
                 }
@@ -103,19 +101,16 @@ public class DAO_Comment {
     }
 
     public void getCommentList(String id, String type, Helper_Callback callback) {
-
-
+        Type listType = new TypeToken<List<Comment>>() {
+        }.getType();
         if (type.equals("post")) {
             Call<String> call_post = api_comment.getCommentPost(id);
             call_post.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONArray data = callback.getJsonArray(response);
                     String err = callback.getResponseError(response);
-
-                    if (err.isEmpty() && data != null) {
-                        Type listType = new TypeToken<List<Comment>>() {
-                        }.getType();
+                    if (err.isEmpty()) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<Comment> commentList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(commentList);
                     }
@@ -128,20 +123,16 @@ public class DAO_Comment {
             });
         } else {
             Call<String> call_blog = api_comment.getCommentBlog(id);
-
             call_blog.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    JSONArray data = callback.getJsonArray(response);
                     String err = callback.getResponseError(response);
-                    if (err.isEmpty() && data != null) {
-                        Type listType = new TypeToken<List<Comment>>() {
-                        }.getType();
+                    if (err.isEmpty()) {
+                        JSONArray data = callback.getJsonArray(response);
                         List<Comment> commentList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(commentList);
                     }
                 }
-
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     callback.failedReq(t.getMessage());
