@@ -13,6 +13,7 @@
         </item><!-- menu item height- vary as u need -->
     </style>
 
+    <!--Fragment dialog style-->
     <style name="DialogCommentTheme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>

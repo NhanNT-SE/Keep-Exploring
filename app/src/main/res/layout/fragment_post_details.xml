@@ -23,7 +23,16 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="5dp"
             android:layout_toStartOf="@+id/fDetailPost_imgRefresh"
-            android:text="01/01/2020"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="italic|bold" />
+        <TextView
+            android:id="@+id/fDetailPost_tvCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_tvPubDate"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
             android:textColor="@color/black"
             android:textSize="12sp"
             android:textStyle="italic|bold" />
@@ -43,7 +52,6 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/fDetailPost_civAvatarAdmin"
-            android:text="Kim Ngan"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="italic" />
@@ -112,7 +120,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/fDetailPost_layoutInfo"
-            android:text="Title"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -121,7 +128,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/fDetailPost_tvTitle"
-            android:text="Description"
             android:textColor="@color/black"
             android:textSize="14sp" />
     </RelativeLayout>

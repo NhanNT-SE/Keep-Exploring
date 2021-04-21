@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -44,6 +45,7 @@ public class Fragment_Notification extends Fragment {
     private int total, totalSeen, totalNew;
     private Adapter_RV_Notify adapterNotify;
     private String filter;
+    private ColorStateList colorStateList;
 
     public Fragment_Notification() {
 
@@ -75,6 +77,8 @@ public class Fragment_Notification extends Fragment {
         dao_notification = new DAO_Notification(getContext());
         defaultList = new ArrayList<>();
         filterList = new ArrayList<>();
+        colorStateList = ColorStateList
+                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
     }
 
     private void handlerEvent() {
@@ -191,20 +195,15 @@ public class Fragment_Notification extends Fragment {
     }
 
     private void setActiveButton(MaterialButton materialButton) {
-        @SuppressLint("ResourceType")
-        ColorStateList activeColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
-
-        materialButton.setTextColor(activeColor);
-        materialButton.setStrokeColor(activeColor);
+        materialButton.setTextColor(Color.parseColor("#FFFFFF"));
+        materialButton.setStrokeColor(colorStateList);
+        materialButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPrimary));
     }
 
     private void setInactiveButton(MaterialButton materialButton) {
-        @SuppressLint("ResourceType")
-        ColorStateList inactiveColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
-        materialButton.setTextColor(inactiveColor);
-        materialButton.setStrokeColor(inactiveColor);
+        materialButton.setTextColor(Color.parseColor("#F3BA00"));
+        materialButton.setStrokeColor(colorStateList);
+        materialButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
     }
 
     private void changeSeenStatusNotify() {

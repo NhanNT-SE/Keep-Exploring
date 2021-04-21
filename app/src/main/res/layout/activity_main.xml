@@ -22,6 +22,9 @@
         android:src="@drawable/ic_post_black"
         android:layout_marginBottom="10dp"
         android:visibility="invisible"
+        android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
+        app:tint="@android:color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -31,6 +34,9 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/ic_blog_black"
         android:visibility="invisible"
+        android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
+        app:tint="@android:color/white"
         android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -42,6 +48,7 @@
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/main_bottomAppBar"
+            app:fabCradleMargin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom">
@@ -61,6 +68,9 @@
             android:src="@drawable/ic_add_black_24dp"
             android:layout_marginBottom="30dp"
             app:layout_anchor="@+id/main_bottomAppBar"
+            android:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -45,7 +45,8 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }
@@ -65,7 +66,8 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }
@@ -85,7 +87,8 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     Post post = new Gson().fromJson(data.toString(), Post.class);
                     callback.successReq(post);
                 }
@@ -107,9 +110,10 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
-                    Type listType = new TypeToken<List<Post>>() {
-                    }.getType();
+                String err = callback.getResponseError(response);
+                Type listType = new TypeToken<List<Post>>() {
+                }.getType();
+                if (err.isEmpty() && data != null) {
                     List<Post> postList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(postList);
                 }
@@ -129,9 +133,10 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
-                    Type listType = new TypeToken<List<Post>>() {
-                    }.getType();
+                String err = callback.getResponseError(response);
+                Type listType = new TypeToken<List<Post>>() {
+                }.getType();
+                if (err.isEmpty() && data != null) {
                     List<Post> postList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(postList);
                 }
@@ -150,9 +155,10 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
-                    Type listType = new TypeToken<List<Post>>() {
-                    }.getType();
+                String err = callback.getResponseError(response);
+                Type listType = new TypeToken<List<Post>>() {
+                }.getType();
+                if (err.isEmpty() && data != null) {
                     List<Post> postList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(postList);
                 }
@@ -177,7 +183,8 @@ public class DAO_Post {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null){
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null){
                     callback.successReq(data);
                 }
             }

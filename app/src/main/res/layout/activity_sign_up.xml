@@ -1,96 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SignUpActivity">
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo_app"
+        />
     <TextView
         android:id="@+id/signUp_tvTitle"
-        android:textSize="25sp"
-        android:fontFamily="@font/nabila"
-        android:text="Sign up"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="3dp"
-        android:textColor="@color/colorPrimary"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/signUp_imgAvatar"
-        android:src="@drawable/avatar_facebook"
-        android:layout_below="@+id/signUp_tvTitle"
-        app:civ_border_width="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signUp_etDisplayName"
-        android:layout_below="@+id/signUp_imgAvatar"
-        app:errorEnabled="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
-            android:hint="Display Name"
-            android:background="#FFFFFF"
-            android:text="test"
-            android:inputType="text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signUp_etEmail"
-        android:layout_below="@+id/signUp_etDisplayName"
-        app:errorEnabled="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
-            android:hint="Email"
-            android:background="#FFFFFF"
-            android:inputType="textEmailAddress"
-            android:layout_width="match_parent"
-            android:text="ngan2k@gmail.com"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signUp_etPassword"
-        android:layout_below="@+id/signUp_etEmail"
-        app:errorEnabled="true"
-        app:passwordToggleEnabled="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
-            android:hint="Pass"
-            android:background="#FFFFFF"
-            android:inputType="textPassword"
-            android:layout_width="match_parent"
-            android:text="123456"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/signUp_btnRegister"
-        android:layout_width="200dp"
-        app:cornerRadius="10dp"
-        android:layout_height="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/signUp_etPassword"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Sign Up"/>
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bungee"
+        android:textColor="@color/black"
+        android:text="Chào mừng bạn đến với hệ thống!"
+        android:textSize="18sp" />
     <TextView
-        android:id="@+id/signUp_tvSignIn"
-        android:textSize="18sp"
-        android:layout_below="@+id/signUp_btnRegister"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/colorPrimary"
-        android:text="Already have an account. Sign in here"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/antic"
+        android:text="Đăng ký để bắt đầu khám phá"
+        android:textSize="14sp" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        app:cardCornerRadius="40dp">
+        <ImageView
+            android:id="@+id/signUp_imgAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_camera_avatar_black"
+            android:scaleType="centerInside" />
+    </androidx.cardview.widget.CardView>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signUp_tilDisplayName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:counterEnabled="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Tên đầy đủ">
+        <com.google.android.material.textfield.TextInputEditText
+            android:text="nhan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signUp_tilEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:suffixText="\@keep-exploring.com"
+        app:counterEnabled="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Email">
+        <com.google.android.material.textfield.TextInputEditText
+            android:text="nhan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signUp_tilPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:counterEnabled="true"
+        android:hint="Mật khẩu"
+        app:passwordToggleEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:text="123456"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/signUp_btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:backgroundTint="@color/black"
+        android:elevation="0dp"
+        android:text="Đăng ký"
+        android:textColor="@color/white" />
+    <Button
+        android:id="@+id/signUp_btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:text="Đã có tài khoản? Đăng nhập"
+        android:fontFamily="@font/antic"
+        android:textColor="@color/black" />
+<!--    <TextView-->
+<!--        android:id="@+id/signUp_tvTitle"-->
+<!--        android:textSize="25sp"-->
+<!--        android:fontFamily="@font/nabila"-->
+<!--        android:text="Sign up"-->
+<!--        android:textStyle="bold"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="3dp"-->
+<!--        android:textColor="@color/colorPrimary"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
+<!--    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--        android:id="@+id/signUp_imgAvatar"-->
+<!--        android:src="@drawable/avatar_facebook"-->
+<!--        android:layout_below="@+id/signUp_tvTitle"-->
+<!--        app:civ_border_width="1dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"/>-->
+
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/signUp_etDisplayName"-->
+<!--        android:layout_below="@+id/signUp_imgAvatar"-->
+<!--        app:errorEnabled="true"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:hint="Display Name"-->
+<!--            android:background="#FFFFFF"-->
+<!--            android:text="test"-->
+<!--            android:inputType="text"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/signUp_etEmail"-->
+<!--        android:layout_below="@+id/signUp_etDisplayName"-->
+<!--        app:errorEnabled="true"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:hint="Email"-->
+<!--            android:background="#FFFFFF"-->
+<!--            android:inputType="textEmailAddress"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:text="ngan2k@gmail.com"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/signUp_etPassword"-->
+<!--        android:layout_below="@+id/signUp_etEmail"-->
+<!--        app:errorEnabled="true"-->
+<!--        app:passwordToggleEnabled="true"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:hint="Pass"-->
+<!--            android:background="#FFFFFF"-->
+<!--            android:inputType="textPassword"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:text="123456"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/signUp_btnRegister"-->
+<!--        android:layout_width="200dp"-->
+<!--        app:cornerRadius="10dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_below="@+id/signUp_etPassword"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:backgroundTint="@color/colorPrimary"-->
+<!--        android:text="Sign Up"/>-->
+<!--    <TextView-->
+<!--        android:id="@+id/signUp_tvSignIn"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_below="@+id/signUp_btnRegister"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:textColor="@color/colorPrimary"-->
+<!--        android:text="Already have an account. Sign in here"-->
+<!--        android:textStyle="bold"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
 
 
-</RelativeLayout>
+</LinearLayout>

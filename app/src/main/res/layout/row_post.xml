@@ -4,16 +4,13 @@
     android:layout_height="wrap_content"
     android:paddingHorizontal="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <com.google.android.material.card.MaterialCardView
         app:strokeWidth="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <RelativeLayout
                 android:id="@+id/row_post_layoutHeader"
                 android:layout_width="match_parent"
@@ -27,32 +24,35 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="5dp" />
-
                 <TextView
                     android:id="@+id/row_post_tvUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="3dp"
                     android:layout_marginTop="15dp"
-                    android:layout_toRightOf="@+id/row_post_imgAvatarUser"
-                    android:text="Nguyễn Trọng Nhân"
+                    android:layout_toEndOf="@+id/row_post_imgAvatarUser"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/row_post_tvPubDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginTop="15dp"
-                    android:text="28/03/2020"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/row_post_tvCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/row_post_tvPubDate"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
                     android:textStyle="italic|bold" />
             </RelativeLayout>
-
-
             <RelativeLayout
                 android:id="@+id/row_post_layoutContainer"
                 android:padding="5dp"
@@ -68,10 +68,8 @@
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
-                    android:text="@string/title"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/row_post_tvAddress"
                     android:textColor="@color/black"
@@ -79,18 +77,15 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/row_post_tvTitle"
                     android:layout_marginBottom="3dp"
-                    android:text="@string/address"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </RelativeLayout>
-
-
             <com.denzcoskun.imageslider.ImageSlider
                 android:layout_width="wrap_content"
                 android:layout_height="220dp"
                 app:placeholder="@drawable/background_grey"
                 android:layout_below="@+id/row_post_layoutContainer"
-                android:id="@+id/row_post_imgPost"
+                android:id="@+id/row_post_sliderPost"
                 android:layout_marginBottom="5dp"
             />
         </RelativeLayout>

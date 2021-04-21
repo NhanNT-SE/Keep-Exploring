@@ -16,19 +16,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnAll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10sp"
-                android:backgroundTint="@color/white"
                 android:text="Tất cả"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/inactive_button"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/inactive_button"
+                app:strokeColor="@color/colorPrimary"
                 app:strokeWidth="1dp" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnFood"
@@ -38,9 +37,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Ăn uống"
                 android:textAllCaps="false"
-                android:textColor="@color/inactive_button"
+                android:textColor="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnCheckin"
@@ -50,9 +49,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Địa điểm"
                 android:textAllCaps="false"
-                android:textColor="@color/inactive_button"
+                android:textColor="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fCategory_btnHotel"
@@ -63,9 +62,9 @@
                 android:backgroundTint="@color/white"
                 android:text="Khách sạn"
                 android:textAllCaps="false"
-                android:textColor="@color/inactive_button"
+                android:textColor="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/inactive_button"
                 app:strokeWidth="1dp" />
         </LinearLayout>
     </HorizontalScrollView>

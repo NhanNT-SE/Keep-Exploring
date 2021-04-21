@@ -43,9 +43,11 @@ public class DAO_Like {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONArray data = callback.getJsonArray(response);
+                    String err = callback.getResponseError(response);
+
                     Type listType = new TypeToken<List<User>>() {
                     }.getType();
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(userLikedList);
                     }
@@ -63,9 +65,10 @@ public class DAO_Like {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONArray data = callback.getJsonArray(response);
+                    String err = callback.getResponseError(response);
                     Type listType = new TypeToken<List<User>>() {
                     }.getType();
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         List<User> userLikedList = new Gson().fromJson(data.toString(), listType);
                         callback.successReq(userLikedList);
                     }
@@ -88,11 +91,11 @@ public class DAO_Like {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    String err = callback.getResponseError(response);
+                    if (err.isEmpty() && data != null) {
                         callback.successReq(data);
                     }
                 }
-
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     callback.failedReq(t.getMessage());
@@ -105,18 +108,16 @@ public class DAO_Like {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    String err = callback.getResponseError(response);
+                    if (err.isEmpty() && data != null) {
                         callback.successReq(data);
                     }
                 }
-
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     callback.failedReq(t.getMessage());
                 }
             });
         }
-
-
     }
 }

@@ -1,129 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="5dp"
     tools:context=".activities.SignInActivity">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo_app" />
 
     <TextView
         android:id="@+id/signIn_tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/nabila"
-        android:text="Sign in"
-        android:textColor="@color/colorPrimary"
-        android:textSize="35sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_alignParentBottom="true"
-        android:alpha="0.6"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg_main" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/signIn_cvContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signIn_tvTitle"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="40dp"
-        app:contentPadding="15dp"
-        app:strokeColor="#000000"
-        app:strokeWidth="1dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nabila"
-                android:paddingLeft="20dp"
-                android:text="Email:"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/signIn_etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="user2"
-                android:hint="Enter Your Email" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nabila"
-                android:paddingLeft="18dp"
-                android:text="Password:"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/signIn_etPass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="123456"
-                android:hint="Enter Your Password"
-                android:inputType="textPassword" />
-
-            <TextView
-                android:id="@+id/signIn_tvForgot"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingBottom="5dp"
-                android:text="Forgot your password?"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/signIn_btnSignIn"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:layout_below="@+id/signIn_cvContainer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Sign in"
-        android:textSize="20sp"
-        app:cornerRadius="10dp" />
+        android:fontFamily="@font/bungee"
+        android:text="Xin Chào, Chào mừng bạn đã quay lại hệ thống!"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/signIn_tvSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/antic"
+        android:text="Đăng nhập để tiếp tục"
+        android:textSize="15sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signIn_tilEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Email"
+        app:suffixText="\@keep-exploring.com"
+        app:counterEnabled="true"
+        app:boxStrokeColor="@color/black"
+        android:layout_width="match_parent"
+        app:hintTextColor="@color/black">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="user-test" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signIn_tilPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/signIn_btnSignIn"
-        android:gravity="center"
-        android:text="New here. Create account"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:hint="Password"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:passwordToggleEnabled="true">
 
-    <com.google.android.material.button.MaterialButton
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:text="123456" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <CheckBox
+            android:id="@+id/singIn_chkRemember"
+            android:buttonTint="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/singIn_tvRemember"
+            android:text="Lưu thông tin?"
+            android:layout_toEndOf="@+id/singIn_chkRemember"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/signIn_btnForget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:elevation="0dp"
+            android:layout_alignParentEnd="true"
+            android:padding="0dp"
+            android:text="Quên mật khẩu?"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/signIn_btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:backgroundTint="@color/black"
+        android:elevation="0dp"
+        android:text="Đăng nhập"
+        android:textColor="@color/white" />
+
+    <Button
         android:id="@+id/signIn_btnJustGo"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:layout_below="@+id/signIn_tvSignUp"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Just Go"
-        android:textSize="20sp"
-        app:cornerRadius="10dp" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:backgroundTint="@color/black"
+        android:elevation="0dp"
+        android:text="Bỏ qua"
+        android:textColor="@color/white" />
 
-
-</RelativeLayout>
+    <Button
+        android:id="@+id/signIn_btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:fontFamily="@font/antic"
+        android:text="Chưa có tài khoản? Tạo tài khoản"
+        android:textColor="@color/black" />
+</LinearLayout>

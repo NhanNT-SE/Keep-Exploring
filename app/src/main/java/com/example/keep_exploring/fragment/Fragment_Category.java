@@ -1,7 +1,6 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,7 +24,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.adapter.Adapter_RV_Post;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
@@ -57,6 +56,7 @@ public class Fragment_Category extends Fragment {
     private String category;
     private List<Post> postList;
     private Adapter_RV_Post adapter_rv_post;
+    private ColorStateList colorStateList;
 
 
     @Override
@@ -80,6 +80,7 @@ public class Fragment_Category extends Fragment {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fCategory_refreshLayout);
     }
 
+    @SuppressLint("ResourceType")
     private void initVariable() {
         dao_post = new DAO_Post(getContext());
         dao_auth = new DAO_Auth(getContext());
@@ -87,6 +88,8 @@ public class Fragment_Category extends Fragment {
         helper_common.configRecycleView(getContext(), rv_PostList);
         helper_common.configAnimBottomNavigation(getContext(), rv_PostList);
         helper_common.toggleBottomNavigation(getContext(), true);
+        colorStateList = ColorStateList
+                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
         postList = new ArrayList<>();
         category = "";
 
@@ -206,20 +209,15 @@ public class Fragment_Category extends Fragment {
     }
 
     private void setActiveButton(MaterialButton materialButton) {
-        @SuppressLint("ResourceType")
-        ColorStateList activeColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
-
-        materialButton.setTextColor(activeColor);
-        materialButton.setStrokeColor(activeColor);
+        materialButton.setTextColor(Color.parseColor("#FFFFFF"));
+        materialButton.setStrokeColor(colorStateList);
+        materialButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPrimary));
     }
 
     private void setInactiveButton(MaterialButton materialButton) {
-        @SuppressLint("ResourceType")
-        ColorStateList inactiveColor = ColorStateList
-                .valueOf(Color.parseColor(getResources().getString(R.color.inactive_button)));
-        materialButton.setTextColor(inactiveColor);
-        materialButton.setStrokeColor(inactiveColor);
+        materialButton.setTextColor(Color.parseColor("#F3BA00"));
+        materialButton.setStrokeColor(colorStateList);
+        materialButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
     }
 
     private void refreshLV() {
