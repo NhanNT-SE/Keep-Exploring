@@ -42,7 +42,8 @@ public class DAO_User {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     User user = new Gson().fromJson(data.toString(), User.class);
                     callback.successReq(user);
                 }
@@ -61,7 +62,8 @@ public class DAO_User {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     User user = new Gson().fromJson(data.toString(), User.class);
                     callback.successReq(user);
                 }
@@ -81,7 +83,8 @@ public class DAO_User {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }

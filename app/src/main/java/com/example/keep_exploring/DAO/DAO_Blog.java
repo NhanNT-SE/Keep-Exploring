@@ -72,8 +72,9 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
+                    String err = callback.getResponseError(response);
                     JSONArray data = callback.getJsonArray(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         List<Blog> blogList = new ArrayList<>();
                         int sizeList = data.length();
                         Type listType = new TypeToken<List<Blog_Details>>() {
@@ -89,7 +90,6 @@ public class DAO_Blog {
                             blogList.add(blog);
                         }
                         callback.successReq(blogList);
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -110,8 +110,9 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
+                    String err = callback.getResponseError(response);
                     JSONArray data = callback.getJsonArray(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         List<Blog> blogList = new ArrayList<>();
                         int sizeList = data.length();
                         Type listType = new TypeToken<List<Blog_Details>>() {
@@ -125,9 +126,8 @@ public class DAO_Blog {
                             List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
                             blog.setBlogDetails(blogDetailsList);
                             blogList.add(blog);
+                            callback.successReq(blogList);
                         }
-                        callback.successReq(blogList);
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -160,11 +160,13 @@ public class DAO_Blog {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        String err = callback.getResponseError(response);
                         JSONObject data = callback.getJsonObject(response);
-                        if (data != null) {
-                            callback.successReq(data);
 
+                        if (err.isEmpty() && data != null) {
+                            callback.successReq(data);
                         }
+
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
@@ -185,10 +187,12 @@ public class DAO_Blog {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
+
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -203,8 +207,9 @@ public class DAO_Blog {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
+                    String err = callback.getResponseError(response);
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         JSONArray jsonArrayBlogDetail = data
                                 .getJSONObject("blog_detail")
                                 .getJSONArray("detail_list");
@@ -214,6 +219,7 @@ public class DAO_Blog {
                         List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
                         blog.setBlogDetails(blogDetailsList);
                         callback.successReq(blog);
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -232,13 +238,15 @@ public class DAO_Blog {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
+                if (err.isEmpty() && data != null) {
                     Type listType = new TypeToken<List<Blog>>() {
                     }.getType();
                     List<Blog> blogList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(blogList);
                 }
+
             }
 
             @Override
@@ -265,11 +273,11 @@ public class DAO_Blog {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        String err = callback.getResponseError(response);
                         JSONObject data = callback.getJsonObject(response);
-                        if (data != null) {
+                        if (err.isEmpty() && data != null) {
                             callback.successReq(data);
                         }
-
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
@@ -288,8 +296,6 @@ public class DAO_Blog {
     public void deleteFolderImage(String folder_storage, List<Blog_Details> deleteList) {
         helper_image.deleteFolderImage(storageRef, folder_storage, deleteList);
     }
-
-
     private void signInAnonymously() {
         mAuth.signInAnonymously().addOnSuccessListener((Activity) context, new OnSuccessListener<AuthResult>() {
             @Override

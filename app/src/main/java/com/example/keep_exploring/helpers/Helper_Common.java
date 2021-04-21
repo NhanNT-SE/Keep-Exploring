@@ -26,6 +26,7 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.ethanhua.skeleton.Skeleton;
 import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
@@ -53,12 +54,12 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_LOCAL;
+        return URL_GLOBAL;
     }
 
     public Helper_Common() {
@@ -109,29 +110,33 @@ public class Helper_Common {
         recyclerView.setOnTouchListener(new Anim_Bottom_Navigation(context,
                 ((Activity) context).findViewById(R.id.main_coordinatorLayout)));
     }
-
     public void setBadgeNotify(Context context) {
         DAO_Notification dao_notification = new DAO_Notification(context);
+        Helper_SP helper_sp = new Helper_SP(context);
+        User user = helper_sp.getUser();
         BottomNavigationView bottomNavigationView = ((Activity) context).findViewById(R.id.main_bottomNavigation);
         BadgeDrawable badgeNotify = bottomNavigationView.getOrCreateBadge(R.id.menu_bottom_notify);
         badgeNotify.setMaxCharacterCount(3);
         badgeNotify.setBadgeTextColor(Color.WHITE);
-        dao_notification.getAll(new Helper_Callback() {
-            @Override
-            public void successReq(Object response) {
-                List<Notification> notificationList = (List<Notification>) response;
-                int numberBadge = (int) notificationList.stream().filter(item -> item.getStatus().equals("new")).count();
-                badgeNotify.setNumber(numberBadge);
-            }
+        badgeNotify.setBackgroundColor(Color.parseColor("#F3BA00"));
+        if (user != null) {
+            dao_notification.getAll(new Helper_Callback() {
+                @Override
+                public void successReq(Object response) {
+                    List<Notification> notificationList = (List<Notification>) response;
+                    int numberBadge = (int) notificationList.stream().filter(item -> item.getStatus().equals("new")).count();
+                    badgeNotify.setNumber(numberBadge);
+                }
 
-            @Override
-            public void failedReq(String msg) {
+                @Override
+                public void failedReq(String msg) {
 
-            }
-        });
+                }
+            });
+        } else {
+            badgeNotify.setNumber(0);
+        }
     }
-
-
     public void showSkeleton(RecyclerView recyclerView, RecyclerView.Adapter adapter, int layout) {
         Skeleton.bind(recyclerView)
                 .adapter(adapter)
@@ -139,8 +144,6 @@ public class Helper_Common {
                 .shimmer(false)
                 .show();
     }
-
-
     public void runtimePermission(Context context) {
         Dexter.withContext(context)
                 .withPermissions(
@@ -213,6 +216,7 @@ public class Helper_Common {
         }
         return "hotel";
     }
+
     public String convertCategoryDisplay(String category) {
         if (category.equalsIgnoreCase("food")) {
             return "Ăn uống";
@@ -222,6 +226,19 @@ public class Helper_Common {
         return "Địa điểm";
     }
 
+    public void displayTextViewCategory(String category, TextView textView) {
+        if (category.equalsIgnoreCase("food")) {
+            textView.setText("Ăn uống");
+            textView.setTextColor(Color.parseColor("#FF33B5E5"));
+        } else if (category.equalsIgnoreCase("hotel")) {
+            textView.setText("Khách sạn");
+            textView.setTextColor(Color.parseColor("#FF99CC00"));
+        } else {
+            textView.setText("Địa điểm");
+            textView.setTextColor(Color.parseColor("#FFFFBB33"));
+        }
+
+    }
     public void dialogViewProfile(Context context, User owner) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_view_profile);
@@ -270,14 +287,15 @@ public class Helper_Common {
         });
         dialog.show();
     }
-
     public void dialogRequireLogin(Context context) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage("Vui lòng đăng nhập để thực hiện chức năng này");
         dialog.setNegativeButton("Đăng nhập", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                ((Activity)context).finish();
                 context.startActivity(new Intent(context, SignInActivity.class));
+                Animatoo.animateSlideDown(context);
             }
         });
         dialog.setPositiveButton("Đóng", new DialogInterface.OnClickListener() {
@@ -288,7 +306,6 @@ public class Helper_Common {
         });
         dialog.show();
     }
-
     public void replaceFragment(Context context, Fragment fragment) {
         ((FragmentActivity) context).getSupportFragmentManager()
                 .beginTransaction()

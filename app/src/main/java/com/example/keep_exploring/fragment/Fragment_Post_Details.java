@@ -37,7 +37,7 @@ public class Fragment_Post_Details extends Fragment {
     //    View
     private View view;
     private CircleImageView civUser;
-    private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes, tvComments;
+    private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes, tvComments, tvCategory;
     private ImageView imgLike, imgComment, imgRefresh;
     private ImageSlider sliderPost;
     private SpotsDialog spotsDialog;
@@ -80,6 +80,7 @@ public class Fragment_Post_Details extends Fragment {
         tvComments = (TextView) view.findViewById(R.id.fDetailPost_tvComments);
         tvTitle = (TextView) view.findViewById(R.id.fDetailPost_tvTitle);
         tvUserName = (TextView) view.findViewById(R.id.fDetailPost_tvUserName);
+        tvCategory = (TextView) view.findViewById(R.id.fDetailPost_tvCategory);
         imgComment = (ImageView) view.findViewById(R.id.fDetailPost_imgComment);
         imgLike = (ImageView) view.findViewById(R.id.fDetailPost_imgLike);
         imgRefresh = (ImageView) view.findViewById(R.id.fDetailPost_imgRefresh);
@@ -181,6 +182,7 @@ public class Fragment_Post_Details extends Fragment {
         tvUserName.setText(post.getOwner().getDisplayName());
         tvTitle.setText(post.getTitle());
         tvDesc.setText(post.getDesc());
+        helper_common.displayTextViewCategory(post.getCategory(),tvCategory);
         tvLikes.setText(post.getLikes().size() + " lượt thích");
         tvComments.setText(post.getComments().size() + " lượt bình luận");
         ratingBar.setRating(post.getRating());

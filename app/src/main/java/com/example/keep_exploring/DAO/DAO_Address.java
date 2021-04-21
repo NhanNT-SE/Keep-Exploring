@@ -37,8 +37,9 @@ public class DAO_Address {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
+                if (err.isEmpty() && data != null) {
                     List provinceList = new Gson().fromJson(data.toString(), List.class);
                     helper_sp.setProvinceList(provinceList);
                     callback.successReq(provinceList);
@@ -61,8 +62,9 @@ public class DAO_Address {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
+                    String err = callback.getResponseError(response);
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         JSONArray jsonDistrictList = data.getJSONArray("districtList");
                         JSONArray jsonWardList = data.getJSONArray("wardList");
                         List<String> districtList = new ArrayList<>();

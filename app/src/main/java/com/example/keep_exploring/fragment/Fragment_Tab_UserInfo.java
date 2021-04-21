@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -176,8 +178,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
         mBtn_submit = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnSubmit);
         MaterialButton mBtn_cancel = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnCancel);
         toggleEnableButton();
-        validateRequiredAndLength(tIL_currentPassword, mBtn_submit);
-        validateRequiredAndLength(tIL_newPassword, mBtn_submit);
+        validateRequiredAndLength(tIL_currentPassword);
+        validateRequiredAndLength(tIL_newPassword);
         validateMatchPassword(tIL_confirmPassword, tIL_newPassword);
         mBtn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -401,7 +403,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
         });
     }
 
-    private void validateRequiredAndLength(TextInputLayout textInputLayout, MaterialButton mBtn_submit) {
+    private void validateRequiredAndLength(TextInputLayout textInputLayout) {
         String length = textInputLayout.getEditText().getText().toString();
         if (length.isEmpty()) {
             textInputLayout.setError("Đây là trường bắt buộc");

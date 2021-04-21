@@ -177,6 +177,7 @@
         android:layout_marginEnd="3dp"
         android:layout_marginBottom="3dp"
         android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_camera_black_24dp"
         app:fabSize="mini"
         app:maxImageSize="30dp"

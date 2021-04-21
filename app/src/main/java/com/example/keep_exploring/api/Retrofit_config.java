@@ -18,9 +18,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class Retrofit_config {
     private static final Helper_Common helper_common = new Helper_Common();
     static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {

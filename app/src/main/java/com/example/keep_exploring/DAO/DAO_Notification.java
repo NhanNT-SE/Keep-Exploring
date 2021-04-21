@@ -39,9 +39,10 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONArray data = callback.getJsonArray(response);
-                if (data != null) {
-                    Type listType = new TypeToken<List<Notification>>() {
-                    }.getType();
+                String err = callback.getResponseError(response);
+                Type listType = new TypeToken<List<Notification>>() {
+                }.getType();
+                if (err.isEmpty() && data != null) {
                     List<Notification> notificationList = new Gson().fromJson(data.toString(), listType);
                     callback.successReq(notificationList);
                 }
@@ -61,7 +62,8 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }
@@ -79,7 +81,8 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }
@@ -97,7 +100,8 @@ public class DAO_Notification {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty() && data != null) {
                     callback.successReq(data);
                 }
             }

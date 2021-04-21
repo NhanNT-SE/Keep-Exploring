@@ -45,8 +45,9 @@ public class DAO_Comment {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                if (err.isEmpty() && data != null) {
                     callback.successReq(response);
                 }
             }
@@ -66,8 +67,9 @@ public class DAO_Comment {
             call_post.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
+                    String err = callback.getResponseError(response);
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         callback.successReq(data);
                     }
                 }
@@ -85,7 +87,9 @@ public class DAO_Comment {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    String err = callback.getResponseError(response);
+
+                    if (err.isEmpty() && data != null) {
                         callback.successReq(data);
                     }
                 }
@@ -107,7 +111,9 @@ public class DAO_Comment {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONArray data = callback.getJsonArray(response);
-                    if (data != null) {
+                    String err = callback.getResponseError(response);
+
+                    if (err.isEmpty() && data != null) {
                         Type listType = new TypeToken<List<Comment>>() {
                         }.getType();
                         List<Comment> commentList = new Gson().fromJson(data.toString(), listType);
@@ -127,7 +133,8 @@ public class DAO_Comment {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     JSONArray data = callback.getJsonArray(response);
-                    if (data != null) {
+                    String err = callback.getResponseError(response);
+                    if (err.isEmpty() && data != null) {
                         Type listType = new TypeToken<List<Comment>>() {
                         }.getType();
                         List<Comment> commentList = new Gson().fromJson(data.toString(), listType);

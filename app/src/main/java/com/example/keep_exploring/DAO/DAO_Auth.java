@@ -46,14 +46,19 @@ public class DAO_Auth {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 try {
+                    String err = callback.getResponseError(response);
                     JSONObject data = callback.getJsonObject(response);
-                    String accessToken = data.getString("accessToken");
-                    String refreshToken = data.getString("refreshToken");
-                    User user = new Gson().fromJson(data.toString(), User.class);
-                    callback.successReq(user);
-                    helper_sp.setUser(user);
-                    helper_sp.setAccessToken(accessToken);
-                    helper_sp.setRefreshToken(refreshToken);
+                    if (err.isEmpty() && data != null) {
+                        String accessToken = data.getString("accessToken");
+                        String refreshToken = data.getString("refreshToken");
+                        User user = new Gson().fromJson(data.toString(), User.class);
+                        callback.successReq(user);
+                        helper_sp.setUser(user);
+                        helper_sp.setAccessToken(accessToken);
+                        helper_sp.setRefreshToken(refreshToken);
+                        callback.successReq(user);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -75,8 +80,9 @@ public class DAO_Auth {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
+                    String err = callback.getResponseError(response);
                     JSONObject data = callback.getJsonObject(response);
-                    if (data != null) {
+                    if (err.isEmpty() && data != null) {
                         helper_sp.clearSP();
                         callback.successReq(data);
                     }
@@ -87,6 +93,7 @@ public class DAO_Auth {
                 }
             });
         }else {
+            helper_sp.clearSP();
             callback.successReq("");
         }
 
@@ -103,9 +110,12 @@ public class DAO_Auth {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
                 JSONObject data = callback.getJsonObject(response);
-                User user = new Gson().fromJson(data.toString(), User.class);
-                callback.successReq(user);
+                if (err.isEmpty() && data != null) {
+                    callback.successReq(data);
+                }
+
             }
 
             @Override
@@ -114,7 +124,6 @@ public class DAO_Auth {
             }
         });
     }
-
     public void refreshToken(Helper_Callback callback) {
         String refreshToken = helper_sp.getRefreshToken();
         String userId = helper_sp.getUser().getId();
@@ -125,9 +134,9 @@ public class DAO_Auth {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-
+                String err = callback.getResponseError(response);
                 JSONObject data = callback.getJsonObject(response);
-                if (data != null) {
+                if (err.isEmpty() && data != null) {
                     String newAccessToken = data.toString();
                     helper_sp.setAccessToken(newAccessToken);
                     callback.successReq(newAccessToken);

@@ -81,17 +81,14 @@ public class Helper_SP {
         String provincesString = sharedPreferences.getString("province_list", null);
         return new ArrayList<String>(Arrays.asList(provincesString.split(",")));
     }
-
-    public void setCurrentCategory(String category) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_category", Context.MODE_PRIVATE);
+    public void setIsRemember(boolean isRemember) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("category", category);
+        editor.putBoolean("isRemember", isRemember);
         editor.apply();
     }
-
-    public String getCurrentCategory() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_category", Context.MODE_PRIVATE);
-        String category = sharedPreferences.getString("category", null);
-        return category;
+    public boolean getIsRemember() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isRemember", false);
     }
 }
