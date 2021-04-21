@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Address;
 import com.example.keep_exploring.DAO.DAO_Auth;
+import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
@@ -27,6 +27,7 @@ import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,10 +44,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private FloatingActionButton fabAdd, fabAddPost, fabAddBlog;
     private SpotsDialog spotsDialog;
     //    DAO & Helper
-    private Helper_SP helper_sp;
     private DAO_Auth dao_auth;
     private DAO_Address dao_address;
+    private DAO_Notification dao_notification;
     private User user;
+    private Helper_SP helper_sp;
     private Animation animOpen, animClose, animFromBottom, animToBottom;
     private boolean clicked = false;
     @Override
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void initVariable() {
         dao_address = new DAO_Address(this);
         dao_auth = new DAO_Auth(this);
+        dao_notification = new DAO_Notification(this);
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
         animOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open_anim);
@@ -103,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
         });
-
         fabAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 replaceFragment(new Fragment_AddPost());
             }
         });
-
         fabAddBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 replaceFragment(new Fragment_AddBlog());
             }
         });
+        helper_common.setBadgeNotify(this);
         replaceFragment(new Fragment_Category());
     }
 
@@ -188,44 +190,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onBackPressed();
     }
 
-    private void toggleAnim() {
-        setVisibility(clicked);
-        setClickable(clicked);
-        setAnimation(clicked);
-        clicked = !clicked;
 
-    }
-    private void setVisibility(boolean clicked) {
+
+    private void toggleAnim() {
         if (!clicked) {
             fabAddPost.setVisibility(View.VISIBLE);
             fabAddBlog.setVisibility(View.VISIBLE);
-        } else {
-            fabAddPost.setVisibility(View.GONE);
-            fabAddBlog.setVisibility(View.GONE);
-
-        }
-
-    }
-    private void setAnimation(boolean clicked) {
-        if (!clicked) {
             fabAddPost.startAnimation(animFromBottom);
             fabAddBlog.startAnimation(animFromBottom);
             fabAdd.startAnimation(animOpen);
-
-        } else {
-            fabAddPost.startAnimation(animToBottom);
-            fabAddBlog.startAnimation(animToBottom);
-            fabAdd.startAnimation(animClose);
-        }
-    }
-    private void setClickable(boolean clicked) {
-        if (!clicked) {
             fabAddPost.setClickable(true);
             fabAddBlog.setClickable(true);
         } else {
+            fabAddPost.setVisibility(View.INVISIBLE);
+            fabAddBlog.setVisibility(View.INVISIBLE);
+            fabAddPost.startAnimation(animToBottom);
+            fabAddBlog.startAnimation(animToBottom);
+            fabAdd.startAnimation(animClose);
             fabAddPost.setClickable(false);
             fabAddBlog.setClickable(false);
         }
+        clicked = !clicked;
+
     }
 
     private void toast(String msg) {

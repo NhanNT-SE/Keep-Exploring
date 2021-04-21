@@ -113,6 +113,7 @@ public class Fragment_Notification extends Fragment {
 
     private void loadData() {
         helper_common.showSkeleton(rvNotify, adapterNotify, R.layout.row_skeleton_notify);
+        helper_common.setBadgeNotify(getContext());
         dao_notification.getAll(new Helper_Callback() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -210,6 +211,7 @@ public class Fragment_Notification extends Fragment {
         dao_notification.changeSeenStatusNotify(new Helper_Callback() {
             @Override
             public void successReq(Object response) {
+                helper_common.setBadgeNotify(getContext());
             }
 
             @Override
