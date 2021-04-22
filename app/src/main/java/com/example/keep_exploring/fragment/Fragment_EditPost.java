@@ -23,7 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.keep_exploring.DAO.DAO_Address;
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
@@ -63,13 +63,13 @@ public class Fragment_EditPost extends Fragment {
     private CircleMenuView circleMenuView;
 
     //  Helper & DAO
+    private DAO_Auth dao_auth;
     private Helper_Common helper_common;
     private Helper_SP helper_sp;
     private Helper_Image helper_image;
     private Helper_Post helper_post;
     private Helper_Date helper_date;
     private DAO_Post dao_post;
-    private DAO_Address dao_address;
     //  VARIABLE
     public static final int CHOOSE_IMAGE_POST = 1;
     private String idPost;
@@ -106,7 +106,7 @@ public class Fragment_EditPost extends Fragment {
         circleMenuView = (CircleMenuView) view.findViewById(R.id.fEditPost_circleMenu);
     }
     private void initVariable() {
-        dao_address = new DAO_Address(getContext());
+        dao_auth = new DAO_Auth(getContext());
         dao_post = new DAO_Post(getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
@@ -266,46 +266,71 @@ public class Fragment_EditPost extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                submit();
+                spotDialog.show();
+                updatePost();
                 break;
             case R.id.menu_post_clear:
                 loadData();
                 break;
             case R.id.menu_post_delete:
-               String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
-               helper_common.alertDialog(getContext(),message,new Helper_Event(){
-                   @Override
-                   public void onSubmitAlertDialog() {
-                       spotDialog.show();
-                       dao_post.deletePost(idPost,new Helper_Callback(){
-                           @Override
-                           public void successReq(Object data) {
-                               toast("Đã xóa bài viết");
-                               spotDialog.dismiss();
-                               helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
-                           }
-
-                           @Override
-                           public void failedReq(String msg) {
-                               spotDialog.dismiss();
-                               toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
-                           }
-                       });
-                   }
-               });
+                String message = "Bạn muốn xóa bài viết cùng toàn bộ nội dung liên quan?";
+                helper_common.alertDialog(getContext(), message, new Helper_Event() {
+                    @Override
+                    public void onSubmitAlertDialog() {
+                        spotDialog.show();
+                        deletePost();
+                    }
+                });
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void submit() {
+    private void deletePost() {
+        dao_post.deletePost(helper_sp.getAccessToken(), idPost, new Helper_Callback() {
+            @Override
+            public void successReq(Object data) {
+                toast("Đã xóa bài viết");
+                spotDialog.dismiss();
+                helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            deletePost();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
+                } else {
+                    spotDialog.dismiss();
+                    toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
+                }
+
+            }
+        });
+
+    }
+
+    private void updatePost() {
         imagesSubmitList.clear();
         for (ImageDisplay item : imageDisplayList) {
             imagesSubmitList.add(item.getImageString());
         }
         imageDefaultList.forEach(item -> imagesSubmitList.remove(item));
         String addressSubmit = tvAddress.getText().toString();
-        String categorySubmit =helper_common.convertCategorySubmit(tvCategory.getText().toString());
+        String categorySubmit = helper_common.convertCategorySubmit(tvCategory.getText().toString());
         String titleSubmit = etTitle.getText().toString();
         String descriptionSubmit = etDescription.getText().toString();
         int ratingSubmit = Math.round(ratingBar.getRating());
@@ -334,19 +359,38 @@ public class Fragment_EditPost extends Fragment {
                 map.put("rating", bRating);
                 map.put("imgs_deleted",bImageDelete);
                 map.put("created_on",bCreated_on);
-                spotDialog.show();
-                dao_post.updatePost(map, idPost, imagesSubmitList, new Helper_Callback() {
+                dao_post.updatePost(helper_sp.getAccessToken(), map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {
-                            toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
-                            spotDialog.dismiss();
+                        toast("Đã cập nhật bài viết, bài viết hiện đang trong quá trình kiểm duyệt");
+                        spotDialog.dismiss();
+                        helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
 
                     }
 
                     @Override
                     public void failedReq(String msg) {
-                        spotDialog.dismiss();
-                        toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
+                        if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                            refreshToken(new Helper_Callback() {
+                                @Override
+                                public void successReq(Object response) {
+                                    updatePost();
+                                }
+
+                                @Override
+                                public void failedReq(String msg) {
+                                    spotDialog.dismiss();
+                                    helper_common.logOut(getContext());
+                                }
+                            });
+                        } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        } else {
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
+                        }
+
                     }
                 });
             }
@@ -395,9 +439,15 @@ public class Fragment_EditPost extends Fragment {
         Adapter_RV_Images_Post adapter_rv_images_post = new Adapter_RV_Images_Post(imageDisplayList, imageDeleteList);
         viewPager.setAdapter(adapter_rv_images_post);
     }
+
+    private void refreshToken(Helper_Callback callback) {
+        dao_auth.refreshToken(callback);
+    }
+
     private void log(String s) {
         Log.d("log", s);
     }
+
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }

@@ -27,20 +27,16 @@ import retrofit2.Response;
 
 public class DAO_Comment {
     private final Api_Comment api_comment;
-    private final Helper_SP helper_sp;
     private Context context;
-    private String accessToken;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
     public DAO_Comment(Context context) {
         this.context = context;
         api_comment = Retrofit_config.retrofit.create(Api_Comment.class);
-        helper_sp = new Helper_SP(context);
         helper_common = new Helper_Common();
         helper_image = new Helper_Image();
-        accessToken = helper_sp.getAccessToken();
     }
-    public void deleteComment(String idComment, Helper_Callback callback) {
+    public void deleteComment(String accessToken, String idComment, Helper_Callback callback) {
         Call<String> call = api_comment.deleteComment(accessToken, idComment);
         call.enqueue(new Callback<String>() {
             @Override
@@ -56,7 +52,7 @@ public class DAO_Comment {
             }
         });
     }
-    public void addComment(String id, String type, String sContent, String path, Helper_Callback callback) {
+    public void addComment(String accessToken,String id, String type, String sContent, String path, Helper_Callback callback) {
         RequestBody content = helper_common.createPartFromString(sContent);
         RequestBody rId = helper_common.createPartFromString(id);
         if (type.equals("post")) {

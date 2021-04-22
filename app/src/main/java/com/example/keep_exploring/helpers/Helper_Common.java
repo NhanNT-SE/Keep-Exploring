@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -61,8 +62,11 @@ public class Helper_Common {
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
         return URL_GLOBAL;
     }
-
-    public Helper_Common() {
+    public String REFRESH_TOKEN() {
+        return "REFRESH TOKEN";
+    }
+    public String LOG_OUT() {
+        return "LOG OUT";
     }
 
     @NonNull
@@ -120,7 +124,7 @@ public class Helper_Common {
         badgeNotify.setBadgeTextColor(Color.WHITE);
         badgeNotify.setBackgroundColor(Color.parseColor("#F3BA00"));
         if (user != null) {
-            dao_notification.getAll(new Helper_Callback() {
+            dao_notification.getAll(helper_sp.getAccessToken(), new Helper_Callback() {
                 @Override
                 public void successReq(Object response) {
                     List<Notification> notificationList = (List<Notification>) response;
@@ -306,11 +310,20 @@ public class Helper_Common {
         });
         dialog.show();
     }
+
     public void replaceFragment(Context context, Fragment fragment) {
         ((FragmentActivity) context).getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.main_FrameLayout, fragment)
                 .commit();
+    }
+
+    public void logOut(Context context) {
+        Helper_SP helper_sp = new Helper_SP(context);
+        helper_sp.clearSP();
+        Toast.makeText(context, "Vui lòng đăng nhập lại để tiếp tục", Toast.LENGTH_SHORT).show();
+        context.startActivity(new Intent(context, SignInActivity.class));
+        Animatoo.animateSlideUp(context);
     }
 }

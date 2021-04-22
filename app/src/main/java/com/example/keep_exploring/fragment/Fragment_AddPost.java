@@ -6,8 +6,6 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.keep_exploring.DAO.DAO_Address;
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Images_Post;
@@ -64,12 +62,12 @@ public class Fragment_AddPost extends Fragment {
     private Dialog spotDialog;
     private CircleMenuView circleMenuView;
     //    Helper & DAO
+    private DAO_Auth dao_auth;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
     private Helper_Date helper_date;
     private Helper_Post helper_post;
-    private DAO_Address dao_address;
     private DAO_Post dao_post;
     //    Variable
     public static final int CHOOSE_IMAGE_POST = 1;
@@ -110,7 +108,7 @@ public class Fragment_AddPost extends Fragment {
     }
 
     private void initVariable() {
-        dao_address = new DAO_Address(getContext());
+        dao_auth = new DAO_Auth(getContext());
         dao_post = new DAO_Post(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
@@ -268,7 +266,8 @@ public class Fragment_AddPost extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                submit();
+                spotDialog.show();
+                createPost();
                 break;
             case R.id.menu_post_clear:
                 toast("Quay về fragment trước đó");
@@ -276,7 +275,7 @@ public class Fragment_AddPost extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-    private void submit() {
+    private void createPost() {
         imagesSubmitList.clear();
         for (ImageDisplay item : imageDisplayList) {
             imagesSubmitList.add(item.getImageString());
@@ -307,39 +306,53 @@ public class Fragment_AddPost extends Fragment {
                 map.put("title", bTitle);
                 map.put("desc", bDescription);
                 map.put("rating", bRating);
-                spotDialog.show();
-                dao_post.createPost(map, imagesSubmitList, new Helper_Callback() {
+                dao_post.createPost(helper_sp.getAccessToken(), map, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {
                         toast("Tạo bài viết thành công");
-                        clearPost();
                         refreshViewPager();
                         spotDialog.dismiss();
+                        helper_common.replaceFragment(getContext(), new Fragment_Category());
                     }
 
                     @Override
                     public void failedReq(String msg) {
-                        spotDialog.dismiss();
-                        toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
+                        if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                            refreshToken();
+                        } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        } else {
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
+
+                        }
                     }
                 });
             }
         }
     }
 
-    private void clearPost() {
-        imagesSubmitList.clear();
-        imageDisplayList.clear();
-        tvAddress.setText("");
-        tvCategory.setText("");
-        etTitle.setText("");
-        etDescription.setText("");
-        ratingBar.setRating(0f);
-    }
 
     private void refreshViewPager() {
         Adapter_RV_Images_Post adapter_rv_images_post = new Adapter_RV_Images_Post(imageDisplayList);
         viewPager.setAdapter(adapter_rv_images_post);
+    }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                createPost();
+
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                spotDialog.dismiss();
+                helper_common.logOut(getContext());
+            }
+        });
     }
 
     private void log(String s) {

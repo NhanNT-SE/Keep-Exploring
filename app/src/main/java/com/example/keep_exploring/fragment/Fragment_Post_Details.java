@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Like;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
@@ -43,6 +44,7 @@ public class Fragment_Post_Details extends Fragment {
     private SpotsDialog spotsDialog;
     private RatingBar ratingBar;
     //    DAO & Helper
+    private DAO_Auth dao_auth;
     private DAO_Post dao_post;
     private DAO_Like dao_like;
     private Helper_Image helper_image;
@@ -89,6 +91,7 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_post = new DAO_Post(getContext());
         dao_like = new DAO_Like(getContext());
         helper_common = new Helper_Common();
@@ -125,7 +128,6 @@ public class Fragment_Post_Details extends Fragment {
                 if (user == null) {
                     helper_common.dialogRequireLogin(getContext());
                 } else {
-                    isLike = !isLike;
                     toggleLike();
                     setLike();
                 }
@@ -150,7 +152,6 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void loadData() {
-        spotsDialog.show();
         dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
@@ -166,7 +167,6 @@ public class Fragment_Post_Details extends Fragment {
                 spotsDialog.dismiss();
 
             }
-
             @Override
             public void failedReq(String msg) {
                 spotsDialog.dismiss();
@@ -194,24 +194,23 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void toggleLike() {
+        spotsDialog.show();
+        isLike = !isLike;
         if (isLike) {
             imgLike.setImageResource(R.drawable.ic_like_red);
+            numLike += 1;
+
         } else {
             imgLike.setImageResource(R.drawable.ic_like_outline);
+            numLike -= 1;
         }
+        tvLikes.setText(numLike + " lượt thích");
 
     }
 
     @SuppressLint("SetTextI18n")
     private void setLike() {
-        if (isLike) {
-            numLike += 1;
-        } else {
-            numLike -= 1;
-        }
-        tvLikes.setText(numLike + " lượt thích");
-        spotsDialog.show();
-        dao_like.setLike(idPost, "post", new Helper_Callback() {
+        dao_like.setLike(helper_sp.getAccessToken(), idPost, "post", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 spotsDialog.dismiss();
@@ -224,13 +223,36 @@ public class Fragment_Post_Details extends Fragment {
 
             @Override
             public void failedReq(String msg) {
-                spotsDialog.dismiss();
-                if (isLike) {
-                    toast("Lỗi hệ thống, không thể yêu thích bài viết, vui lòng thử lại");
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotsDialog.dismiss();
+                    helper_common.logOut(getContext());
                 } else {
-                    toast("Lỗi hệ thống, không thể bỏ yêu thích bài viết, vui lòng thử lại");
+                    spotsDialog.dismiss();
+                    if (isLike) {
+                        toast("Lỗi hệ thống, không thể yêu thích bài viết, vui lòng thử lại");
+                    } else {
+                        toast("Lỗi hệ thống, không thể bỏ yêu thích bài viết, vui lòng thử lại");
 
+                    }
                 }
+            }
+        });
+    }
+
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                setLike();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                spotsDialog.dismiss();
+                helper_common.logOut(getContext());
             }
         });
     }

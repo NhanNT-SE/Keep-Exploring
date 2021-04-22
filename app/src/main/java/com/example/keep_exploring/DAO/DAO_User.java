@@ -21,22 +21,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DAO_User {
-    private Helper_SP helper_sp;
     private Context context;
     private Api_User apiUser;
     private Helper_Image helper_image;
-    private String accessToken;
 
     public DAO_User(Context context) {
         this.context = context;
         apiUser = Retrofit_config.retrofit.create(Api_User.class);
-        helper_sp = new Helper_SP(context);
         helper_image = new Helper_Image();
-        accessToken = helper_sp.getAccessToken();
     }
 
-    public void getProfile(String idUser, Helper_Callback callback) {
-        String accessToken = helper_sp.getAccessToken();
+    public void getProfile(String accessToken,String idUser, Helper_Callback callback) {
         Call<String> callProfile = apiUser.getProfile(accessToken, idUser);
         callProfile.enqueue(new Callback<String>() {
             @Override
@@ -56,7 +51,7 @@ public class DAO_User {
         });
     }
 
-    public void updateProfile(String path, HashMap<String, RequestBody> map, Helper_Callback callback) {
+    public void updateProfile(String accessToken, String path, HashMap<String, RequestBody> map, Helper_Callback callback) {
         Call<String> call = apiUser.updateProfile(accessToken, map, helper_image.uploadSingle(path, "image_user"));
         call.enqueue(new Callback<String>() {
             @Override
@@ -74,7 +69,7 @@ public class DAO_User {
             }
         });
     }
-    public void changePassword(String oldPass, String newPass, Helper_Callback callback) {
+    public void changePassword(String accessToken,String oldPass, String newPass, Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         map.put("oldPass", oldPass);
         map.put("newPass", newPass);

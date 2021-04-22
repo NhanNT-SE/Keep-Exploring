@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_ProfileBlog;
@@ -18,7 +19,6 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
-import com.example.keep_exploring.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,7 @@ public class Fragment_Profile_BlogList extends Fragment {
     private RecyclerView rvBlog;
     private SwipeRefreshLayout swipeRefreshLayout;
     //    DAO & Helper
+    private DAO_Auth dao_auth;
     private DAO_Blog dao_blog;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
@@ -39,7 +40,6 @@ public class Fragment_Profile_BlogList extends Fragment {
     private Adapter_RV_ProfileBlog adapterBlog;
     private List<Blog> blogList;
     private String idUser;
-    private String type;
     private Bundle bundle;
 
     public Fragment_Profile_BlogList() {
@@ -58,12 +58,12 @@ public class Fragment_Profile_BlogList extends Fragment {
         return view;
     }
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
         bundle = getParentFragment().getArguments();
         blogList = new ArrayList<>();
-        type = "owner";
     }
 
     private void handlerEvent() {
@@ -87,21 +87,22 @@ public class Fragment_Profile_BlogList extends Fragment {
 
     private void loadData() {
         helper_common.setBadgeNotify(getContext());
-        dao_blog.getBlogByUser(idUser, new Helper_Callback() {
+        dao_blog.getBlogByUser(helper_sp.getAccessToken(), idUser, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 blogList = (List<Blog>) response;
                 log(blogList.toString());
                 refreshRV();
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void failedReq(String msg) {
-                if (swipeRefreshLayout.isRefreshing()){
-                    swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else {
+                    helper_common.logOut(getContext());
                 }
             }
         });
@@ -109,8 +110,21 @@ public class Fragment_Profile_BlogList extends Fragment {
 
 
     private void refreshRV() {
-        adapterBlog = new Adapter_RV_ProfileBlog(getContext(),blogList);
+        adapterBlog = new Adapter_RV_ProfileBlog(getContext(), blogList);
         rvBlog.setAdapter(adapterBlog);
+    }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                loadData();
+            }
+            @Override
+            public void failedReq(String msg) {
+                helper_common.logOut(getContext());
+            }
+        });
     }
 
     private void toast(String s) {

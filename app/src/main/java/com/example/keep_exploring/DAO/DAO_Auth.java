@@ -12,6 +12,7 @@ import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -135,10 +136,15 @@ public class DAO_Auth {
             public void onResponse(Call<String> call, Response<String> response) {
                 String err = callback.getResponseError(response);
                 if (err.isEmpty()) {
-                    JSONObject data = callback.getJsonObject(response);
-                    String newAccessToken = data.toString();
-                    helper_sp.setAccessToken(newAccessToken);
-                    callback.successReq(newAccessToken);
+                    try {
+                        JSONObject responseData = new JSONObject(response.body());
+                        String newAccessToken = responseData.getString("data");
+                        helper_sp.setAccessToken(newAccessToken);
+                        callback.successReq(newAccessToken);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
             @Override

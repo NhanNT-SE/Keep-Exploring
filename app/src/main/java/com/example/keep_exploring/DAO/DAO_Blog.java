@@ -46,7 +46,6 @@ public class DAO_Blog {
     private Api_Blog api_blog;
     private Helper_Image helper_image;
 
-    private String accessToken;
 
 
     public DAO_Blog(Context context) {
@@ -56,7 +55,6 @@ public class DAO_Blog {
         helper_date = new Helper_Date();
         helper_image = new Helper_Image();
         api_blog = Retrofit_config.retrofit.create(Api_Blog.class);
-        accessToken = helper_sp.getAccessToken();
         if (helper_sp.getUser() != null) {
             storageRef = FirebaseStorage
                     .getInstance()
@@ -143,6 +141,7 @@ public class DAO_Blog {
     }
 
     public void createBlog(
+            String accessToken,
             List<Blog_Details> blogDetailsList,
             String titleBlog,
             String path,
@@ -181,7 +180,8 @@ public class DAO_Blog {
 
     }
 
-    public void deleteBlog(String idBlog, Helper_Callback callback) {
+    public void deleteBlog(String accessToken,
+                           String idBlog, Helper_Callback callback) {
         Call<String> call = api_blog.deleteBlog(accessToken, idBlog);
         call.enqueue(new Callback<String>() {
             @Override
@@ -232,7 +232,9 @@ public class DAO_Blog {
         });
 
     }
-    public void getBlogByUser(String idUser, Helper_Callback callback) {
+
+    public void getBlogByUser(String accessToken,
+                              String idUser, Helper_Callback callback) {
         Call<String> call = api_blog.getBlogByUser(accessToken, idUser);
         call.enqueue(new Callback<String>() {
             @Override
@@ -255,6 +257,7 @@ public class DAO_Blog {
         });
     }
     public void updateBlog(
+            String accessToken,
             String idBlog,
             String titleBlog,
             String folder_storage,
