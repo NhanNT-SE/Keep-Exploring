@@ -56,7 +56,7 @@ const getBlogByID = async (req, res, next) => {
     const { idBlog } = req.params;
     const blogFound = await Blog.findById(idBlog)
       .populate("blog_detail")
-      .populate("owner", ["displayName", "imgUser", "email"]);
+      .populate("owner", ["displayName", "imgUser", "email","post","blog"]);
     if (blogFound) {
       return res.send({ data: blogFound, status: 200, message: "" });
     }
@@ -114,6 +114,8 @@ const getPostById = async (req, res, next) => {
       "displayName",
       "imgUser",
       "email",
+      "blog",
+      "post",
     ]);
     if (post) {
       return res
