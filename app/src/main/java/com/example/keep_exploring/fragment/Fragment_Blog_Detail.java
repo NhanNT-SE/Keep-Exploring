@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.DAO.DAO_Like;
 import com.example.keep_exploring.R;
@@ -46,6 +47,7 @@ public class Fragment_Blog_Detail extends Fragment {
     private LinearLayout layoutComment, layoutLike;
     private Dialog spotDialog;
     //    DAO & Helpers
+    private DAO_Auth dao_auth;
     private DAO_Blog dao_blog;
     private DAO_Like dao_like;
     private Helper_Common helper_common;
@@ -94,6 +96,7 @@ public class Fragment_Blog_Detail extends Fragment {
     }
 
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_like = new DAO_Like(getContext());
         dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(view.getContext());
@@ -138,7 +141,7 @@ public class Fragment_Blog_Detail extends Fragment {
                 if (user == null) {
                     helper_common.dialogRequireLogin(getContext());
                 } else {
-                    isLike = !isLike;
+
                     toggleLike();
                     setLike();
                 }
@@ -181,23 +184,20 @@ public class Fragment_Blog_Detail extends Fragment {
         tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
         tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
     }
-
     private void toggleLike() {
+        spotDialog.show();
+        isLike = !isLike;
         if (isLike) {
             imgLike.setImageResource(R.drawable.ic_like_red);
-        } else {
-            imgLike.setImageResource(R.drawable.ic_like_outline);
-        }
-    }
-
-    private void setLike() {
-        if (isLike) {
             numLike += 1;
         } else {
+            imgLike.setImageResource(R.drawable.ic_like_outline);
             numLike -= 1;
         }
-        spotDialog.show();
-        dao_like.setLike(idBlog, "blog", new Helper_Callback() {
+        tvLike.setText(numLike + " lượt thích");
+    }
+    private void setLike() {
+        dao_like.setLike(helper_sp.getAccessToken(), idBlog, "blog", new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 spotDialog.dismiss();
@@ -207,15 +207,24 @@ public class Fragment_Blog_Detail extends Fragment {
                     toast(" Đã bỏ yêu thích bài viết");
                 }
             }
+
             @Override
             public void failedReq(String msg) {
-                spotDialog.dismiss();
-                if (isLike) {
-                    toast("Lỗi hệ thống, không thể yêu thích bài viết, vui lòng thử lại");
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
                 } else {
-                    toast("Lỗi hệ thống, không thể bỏ yêu thích bài viết, vui lòng thử lại");
+                    spotDialog.dismiss();
+                    if (isLike) {
+                        toast("Lỗi hệ thống, không thể yêu thích bài viết, vui lòng thử lại");
+                    } else {
+                        toast("Lỗi hệ thống, không thể bỏ yêu thích bài viết, vui lòng thử lại");
 
+                    }
                 }
+
             }
         });
     }
@@ -223,6 +232,20 @@ public class Fragment_Blog_Detail extends Fragment {
     private void refreshListView() {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
+    }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                setLike();
+            }
+            @Override
+            public void failedReq(String msg) {
+                spotDialog.dismiss();
+                helper_common.logOut(getContext());
+            }
+        });
     }
 
     private void toast(String msg) {

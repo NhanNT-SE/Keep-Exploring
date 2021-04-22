@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Post;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_ProfilePost;
@@ -17,7 +18,6 @@ import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
-import com.example.keep_exploring.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ public class Fragment_Profile_PostList extends Fragment {
     private DAO_Post dao_post;
     private Helper_SP helper_sp;
     private Helper_Common helper_common;
+    private DAO_Auth dao_auth;
     //    Variable
     private Adapter_RV_ProfilePost adapterPost;
     private List<Post> listPost;
@@ -55,6 +56,7 @@ public class Fragment_Profile_PostList extends Fragment {
         return view;
     }
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_post = new DAO_Post(getContext());
         helper_sp = new Helper_SP(getContext());
         helper_common = new Helper_Common();
@@ -81,24 +83,44 @@ public class Fragment_Profile_PostList extends Fragment {
     }
     private void loadData() {
         helper_common.setBadgeNotify(getContext());
-        dao_post.getPostByUser(idUser, new Helper_Callback() {
+        dao_post.getPostByUser(helper_sp.getAccessToken(), idUser, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 listPost = (List<Post>) response;
                 refreshRV();
-                    swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void failedReq(String msg) {
-                    swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else {
+                    helper_common.logOut(getContext());
+                }
             }
         });
     }
+
     private void refreshRV() {
         adapterPost = new Adapter_RV_ProfilePost(getContext(), listPost);
         rvPost.setAdapter(adapterPost);
     }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                loadData();
+            }
+            @Override
+            public void failedReq(String msg) {
+                helper_common.logOut(getContext());
+            }
+        });
+    }
+
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }

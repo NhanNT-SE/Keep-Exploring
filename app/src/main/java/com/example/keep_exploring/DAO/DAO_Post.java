@@ -26,20 +26,16 @@ import retrofit2.Response;
 
 public class DAO_Post {
     private final Api_Post api_post;
-    private final Helper_SP helper_sp;
     private Helper_Image helper_image;
     private Context context;
-    private String accessToken;
 
     public DAO_Post(Context context) {
         this.context = context;
         api_post = Retrofit_config.retrofit.create(Api_Post.class);
-        helper_sp = new Helper_SP(context);
         helper_image = new Helper_Image();
-        accessToken = helper_sp.getAccessToken();
     }
 
-    public void createPost(HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback callback) {
+    public void createPost(String accessToken,HashMap<String, RequestBody> map, List<String> imageSubmitList, Helper_Callback callback) {
         Call<String> call = api_post.createPost(accessToken, map, helper_image.uploadMulti(imageSubmitList, "image_post"));
         call.enqueue(new Callback<String>() {
             @Override
@@ -60,7 +56,7 @@ public class DAO_Post {
 
     }
 
-    public void deletePost(String postId, Helper_Callback callback) {
+    public void deletePost(String accessToken, String postId, Helper_Callback callback) {
         Call<String> call = api_post.deletePost(accessToken, postId);
         call.enqueue(new Callback<String>() {
             @Override
@@ -149,7 +145,7 @@ public class DAO_Post {
         });
     }
 
-    public void getPostByUser(String idUser, Helper_Callback callback) {
+    public void getPostByUser(String  accessToken,String idUser, Helper_Callback callback) {
         Call<String> call = api_post.getPostByUser(accessToken, idUser);
         call.enqueue(new Callback<String>() {
             @Override
@@ -173,6 +169,7 @@ public class DAO_Post {
 
 
     public void updatePost(
+            String accessToken,
             HashMap<String, RequestBody> map,
             String idPost,
             List<String> imageSubmitList,

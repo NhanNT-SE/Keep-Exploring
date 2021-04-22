@@ -23,17 +23,13 @@ import retrofit2.Response;
 
 public class DAO_Notification {
     private Api_Notification api_notification;
-    private Helper_SP helper_sp;
     private Context context;
-    private String accessToken;
     public DAO_Notification(Context context) {
         this.context = context;
         api_notification = Retrofit_config.retrofit.create(Api_Notification.class);
-        helper_sp = new Helper_SP(context);
-        accessToken = helper_sp.getAccessToken();
     }
 
-    public void getAll(Helper_Callback callback) {
+    public void getAll(String accessToken, Helper_Callback callback) {
         Call<String> call = api_notification.getAll(accessToken);
         call.enqueue(new Callback<String>() {
             @Override
@@ -56,7 +52,7 @@ public class DAO_Notification {
         });
     }
 
-    public void changeSeenStatusNotify(Helper_Callback callback){
+    public void changeSeenStatusNotify(String accessToken,Helper_Callback callback){
         Call<String> call = api_notification.changeSeenStatusNotify(accessToken);
         call.enqueue(new Callback<String>() {
             @Override
@@ -75,7 +71,7 @@ public class DAO_Notification {
         });
     }
 
-    public void changeNewStatusNotify(String idNotify, Helper_Callback callback) {
+    public void changeNewStatusNotify(String accessToken,String idNotify, Helper_Callback callback) {
         Call<String> call = api_notification.changeNewStatusNotify(accessToken, idNotify);
         call.enqueue(new Callback<String>() {
             @Override
@@ -94,7 +90,7 @@ public class DAO_Notification {
         });
     }
 
-    public void deleteNotify(String idNotify, Helper_Callback callback) {
+    public void deleteNotify(String accessToken,String idNotify, Helper_Callback callback) {
         Call<String> call = api_notification.deleteNotify(accessToken, idNotify);
         call.enqueue(new Callback<String>() {
             @Override

@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_Blog_Detail;
@@ -25,12 +26,12 @@ import com.example.keep_exploring.fragment.Fragment_Post_Details;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.Post;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.ViewHolder> {
@@ -39,13 +40,19 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
     private Helper_Common helper_common;
     private Helper_Date helper_date;
     private DAO_Notification dao_notification;
+    private Helper_SP helper_sp;
+    private DAO_Auth dao_auth;
+
     public Adapter_RV_Notify(Context context, List<Notification> notificationList) {
         this.context = context;
         this.notificationList = notificationList;
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
         dao_notification = new DAO_Notification(context);
+        helper_sp = new Helper_SP(context);
+        dao_auth = new DAO_Auth(context);
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -142,17 +149,34 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         notificationList.remove(notification);
         notifyDataSetChanged();
 
-        dao_notification.deleteNotify(notification.getId(), new Helper_Callback() {
+        dao_notification.deleteNotify(helper_sp.getAccessToken(), notification.getId(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
             }
+
             @Override
             public void failedReq(String msg) {
-                notificationList.set(index,notification);
+                notificationList.set(index, notification);
                 notifyDataSetChanged();
-                Toast.makeText(context,
-                        "Lỗi hệ thống, xóa thông báo không thành công. Vui lòng thử lại",
-                        Toast.LENGTH_SHORT).show();
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            deleteNotify(notification);
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            helper_common.logOut(context);
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    helper_common.logOut(context);
+                } else {
+                    Toast.makeText(context,
+                            "Lỗi hệ thống, xóa thông báo không thành công. Vui lòng thử lại",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -161,7 +185,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
     private void changeStatusNotify(Notification notification) {
         notification.setStatus("new");
         notifyDataSetChanged();
-        dao_notification.changeNewStatusNotify(notification.getId(), new Helper_Callback() {
+        dao_notification.changeNewStatusNotify(helper_sp.getAccessToken(), notification.getId(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
             }
@@ -170,9 +194,24 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
             public void failedReq(String msg) {
                 notification.setStatus("seen");
                 notifyDataSetChanged();
-                Toast.makeText(context,
-                        "Lỗi hệ thống, cập nhật thông báo không thành công. Vui lòng thử lại",
-                        Toast.LENGTH_SHORT).show();
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            changeStatusNotify(notification);
+                        }
+                        @Override
+                        public void failedReq(String msg) {
+                            helper_common.logOut(context);
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    helper_common.logOut(context);
+                } else {
+                    Toast.makeText(context,
+                            "Lỗi hệ thống, cập nhật thông báo không thành công. Vui lòng thử lại",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -282,4 +321,9 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         }
         return desc.toString();
     }
+
+    private void refreshToken(Helper_Callback callback) {
+        dao_auth.refreshToken(callback);
+    }
+
 }

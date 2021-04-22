@@ -15,7 +15,12 @@
         android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/testUI_btnGetPost"
-        android:text="Get user list"
+        android:text="Get post by user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/testUI_btnRefreshToken"
+        android:text="Refresh Token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

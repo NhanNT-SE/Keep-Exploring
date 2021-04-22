@@ -23,15 +23,11 @@ import retrofit2.Response;
 
 public class DAO_Like {
     private Api_Like api_like;
-    private Helper_SP helper_sp;
     private Context context;
-    private String accessToken;
 
     public DAO_Like(Context context) {
         this.context = context;
         api_like = Retrofit_config.retrofit.create(Api_Like.class);
-        helper_sp = new Helper_SP(context);
-        accessToken = helper_sp.getAccessToken();
     }
 
     public void getLikeList(String id, String type, Helper_Callback callback) {
@@ -81,7 +77,7 @@ public class DAO_Like {
         }
     }
 
-    public void setLike(String id, String type, Helper_Callback callback) {
+    public void setLike(String accessToken, String id, String type, Helper_Callback callback) {
         HashMap<String, String> map = new HashMap<>();
         if (type.equals("post")) {
             map.put("idPost", id);

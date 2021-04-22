@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
@@ -57,6 +58,13 @@ public class Fragment_AddBlog extends Fragment {
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
     private Dialog spotDialog;
+    //    DAO & HELPER
+    private DAO_Auth dao_auth;
+    private DAO_Blog dao_blog;
+    private Helper_SP helper_sp;
+    private Helper_Common helper_common;
+    private Helper_Image helper_image;
+    private Helper_Date helper_date;
     //    VARIABLES
     private User user;
     private Blog_Details blogDetails;
@@ -65,12 +73,7 @@ public class Fragment_AddBlog extends Fragment {
     public static final int CHOOSE_IMAGE_POST = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
     private String imageBlog = "";
-    //    DAO & HELPER
-    private DAO_Blog dao_blog;
-    private Helper_SP helper_sp;
-    private Helper_Common helper_common;
-    private Helper_Image helper_image;
-    private Helper_Date helper_date;
+
 
     public Fragment_AddBlog() {
         // Required empty public constructor
@@ -100,6 +103,7 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     private void initVariables() {
+        dao_auth = new DAO_Auth(getContext());
         dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(view.getContext());
         helper_common = new Helper_Common();
@@ -296,7 +300,7 @@ public class Fragment_AddBlog extends Fragment {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void uploadData() {
+    private void createBlog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         if (imgPost.getDrawable().getConstantState() ==
                 getContext().getDrawable(R.drawable.add_image).getConstantState()
@@ -312,20 +316,28 @@ public class Fragment_AddBlog extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String title = etTitle.getText().toString();
-                    spotDialog.show();
-                    dao_blog.createBlog(blogDetailsList, title, imageBlog, new Helper_Callback() {
+                    dao_blog.createBlog(helper_sp.getAccessToken(), blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
                         public void successReq(Object data) {
                             toast("Tạo bài viết thành công, bài viết hiện trong quá trình kiểm duyệt");
-                            clearBlog();
                             refreshListView();
                             spotDialog.dismiss();
+                            helper_common.replaceFragment(getContext(), new Fragment_BlogList());
                         }
 
                         @Override
                         public void failedReq(String msg) {
-                            spotDialog.dismiss();
-                            toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
+                            if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                                refreshToken();
+                            } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                                spotDialog.dismiss();
+                                helper_common.logOut(getContext());
+                            } else {
+                                spotDialog.dismiss();
+                                toast("Có lỗi xảy ra, tạo bài viết không thành công, vui lòng thử lại sau ít phút");
+
+                            }
+
                         }
                     });
                 }
@@ -344,8 +356,8 @@ public class Fragment_AddBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                uploadData();
-
+                spotDialog.show();
+                createBlog();
                 break;
             case R.id.menu_post_clear:
                     clearBlog();
@@ -377,12 +389,19 @@ public class Fragment_AddBlog extends Fragment {
     }
 
 
-    private void replaceFragment(Fragment fragment) {
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_FrameLayout, fragment)
-                .commit();
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                createBlog();
+            }
 
+            @Override
+            public void failedReq(String msg) {
+                spotDialog.dismiss();
+                helper_common.logOut(getContext());
+            }
+        });
     }
 
     private void toast(String s) {

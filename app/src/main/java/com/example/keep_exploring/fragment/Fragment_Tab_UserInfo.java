@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -26,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_User;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.activities.SignInActivity;
@@ -44,7 +43,6 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
@@ -65,6 +63,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private MaterialButton mBtn_submit;
     //DAO & Helper
     private DAO_User dao_user;
+    private DAO_Auth dao_auth;
     private Helper_Common helper_common;
     private Helper_SP helper_sp;
     private Helper_Date helper_date;
@@ -117,6 +116,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
         helper_sp = new Helper_SP(getContext());
         helper_date = new Helper_Date();
         helper_image = new Helper_Image(getContext());
+        dao_auth = new DAO_Auth(getContext());
         viewPager.setAdapter(new Adapter_Tab_User(getChildFragmentManager(), 1));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_post_black);
@@ -194,7 +194,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 String oldPass = tIL_currentPassword.getEditText().getText().toString();
                 String newPass = tIL_newPassword.getEditText().getText().toString();
                 spotDialog.show();
-                dao_user.changePassword(oldPass, newPass, new Helper_Callback() {
+                dao_user.changePassword(helper_sp.getAccessToken(), oldPass, newPass, new Helper_Callback() {
                     @Override
                     public void successReq(Object response) {
                         toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
@@ -204,7 +204,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                getContext().startActivity(new Intent(getContext(),SignInActivity.class));
+                                getContext().startActivity(new Intent(getContext(), SignInActivity.class));
                             }
                         }, 2000);
                     }
@@ -313,7 +313,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                     map.put("gender", bGender);
                     map.put("displayName", bDisplayName);
                     spotDialog.show();
-                    dao_user.updateProfile(imageUser, map, new Helper_Callback() {
+                    dao_user.updateProfile(helper_sp.getAccessToken(), imageUser, map, new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
                             toast("Cập nhật thông tin cá nhân thành công");
@@ -436,7 +436,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
     }
 
     private void loadData() {
-        dao_user.getProfile(idUser,new Helper_Callback() {
+        dao_user.getProfile(helper_sp.getAccessToken(),idUser,new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 user = (User) response;
@@ -445,6 +445,11 @@ public class Fragment_Tab_UserInfo extends Fragment {
 
             @Override
             public void failedReq(String msg) {
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else {
+                    helper_common.logOut(getContext());
+                }
             }
         } );
     }
@@ -457,7 +462,19 @@ public class Fragment_Tab_UserInfo extends Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                loadData();
+            }
 
+            @Override
+            public void failedReq(String msg) {
+                helper_common.logOut(getContext());
+            }
+        });
+    }
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }

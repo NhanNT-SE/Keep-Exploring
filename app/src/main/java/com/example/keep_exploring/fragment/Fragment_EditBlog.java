@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_LV_Content;
@@ -58,6 +59,13 @@ public class Fragment_EditBlog extends Fragment {
     private ImageView imgBlog, imgContent;
     private CircleImageView imgAvatarUser;
     private Dialog spotDialog;
+    //    DAO & Helpers
+    private DAO_Auth dao_auth;
+    private DAO_Blog dao_blog;
+    private Helper_Common helper_common;
+    private Helper_SP helper_sp;
+    private Helper_Image helper_image;
+    private Helper_Date helper_date;
     //    Variables
     public static final int CHOOSE_IMAGE_BLOG = 2;
     public static final int CHOOSE_IMAGE_CONTENT = 3;
@@ -67,16 +75,10 @@ public class Fragment_EditBlog extends Fragment {
     private List<Blog_Details> blogDetailsList;
     private List<Blog_Details> deleteDetailList;
     private Adapter_LV_Content adapterContent;
-    private int index = -1;
-    private String imageBlog = "";
+    private String imageBlog, title;
     private User user;
     private String folder_storage;
-    //    DAO & Helpers
-    private DAO_Blog dao_blog;
-    private Helper_Common helper_common;
-    private Helper_SP helper_sp;
-    private Helper_Image helper_image;
-    private Helper_Date helper_date;
+
 
     public Fragment_EditBlog() {
         // Required empty public constructor
@@ -106,6 +108,7 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_blog = new DAO_Blog(getContext());
         helper_sp = new Helper_SP(view.getContext());
         helper_common = new Helper_Common();
@@ -114,6 +117,8 @@ public class Fragment_EditBlog extends Fragment {
         blogDetailsList = new ArrayList<>();
         deleteDetailList = new ArrayList<>();
         user = helper_sp.getUser();
+        imageBlog = "";
+        title = "";
         idBlog = "6073060019c68e0b99291ffb";
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -139,7 +144,6 @@ public class Fragment_EditBlog extends Fragment {
         lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                index = position;
                 blogDetails = blogDetailsList.get(position);
                 dialogLongClick();
             }
@@ -294,10 +298,12 @@ public class Fragment_EditBlog extends Fragment {
 
         dialog.show();
     }
+
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void uploadData() {
+    private void dialogUpdateBlog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        if (etTitle.getText().toString().isEmpty()) {
+        title = etTitle.getText().toString();
+        if (title.isEmpty()) {
             toast("Vui lòng thêm thông tin mô tả cho bài viết");
 
         } else if (blogDetailsList.size() == 0) {
@@ -309,22 +315,7 @@ public class Fragment_EditBlog extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     spotDialog.show();
-                    String title = etTitle.getText().toString();
-                    dao_blog.updateBlog(idBlog, title, folder_storage, imageBlog, blogDetailsList, new Helper_Callback() {
-                        @Override
-                        public void successReq(Object response) {
-                            spotDialog.dismiss();
-                            toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
-                            dao_blog.deleteFolderImage(folder_storage,deleteDetailList);
-                            loadData();
-                        }
-
-                        @Override
-                        public void failedReq(String msg) {
-                            spotDialog.dismiss();
-                            toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
-                        }
-                    });
+                    updateBlog();
                 }
             });
             dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
@@ -338,7 +329,44 @@ public class Fragment_EditBlog extends Fragment {
     }
 
 
+    private void updateBlog() {
+        dao_blog.updateBlog(helper_sp.getAccessToken(), idBlog, title,
+                folder_storage, imageBlog, blogDetailsList, new Helper_Callback() {
+                    @Override
+                    public void successReq(Object response) {
+                        spotDialog.dismiss();
+                        toast("Cập nhật bài viết thành công, bài viết hiện đang trong quá trình kiểm duyệt");
+                        dao_blog.deleteFolderImage(folder_storage, deleteDetailList);
+                        helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
+                    }
 
+                    @Override
+                    public void failedReq(String msg) {
+                        if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                            refreshToken(new Helper_Callback() {
+                                @Override
+                                public void successReq(Object response) {
+                                    updateBlog();
+                                }
+
+                                @Override
+                                public void failedReq(String msg) {
+                                    spotDialog.dismiss();
+                                    helper_common.logOut(getContext());
+                                }
+                            });
+                        } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        } else {
+                            spotDialog.dismiss();
+                            toast("Có lỗi xảy ra, cập nhật bài viết không thành công, vui lòng thử lại sau ít phút");
+
+                        }
+
+                    }
+                });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -357,7 +385,7 @@ public class Fragment_EditBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                uploadData();
+                dialogUpdateBlog();
                 break;
             case R.id.menu_post_clear:
                 loadData();
@@ -368,26 +396,52 @@ public class Fragment_EditBlog extends Fragment {
                     @Override
                     public void onSubmitAlertDialog() {
                         spotDialog.show();
-                        dao_blog.deleteBlog(idBlog, new Helper_Callback() {
-                            @Override
-                            public void successReq(Object data) {
-                                toast("Đã xóa bài viết");
-                                dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
-                                spotDialog.dismiss();
-                                helper_common.replaceFragment(getContext(),new Fragment_Tab_UserInfo());
-                            }
-                            @Override
-                            public void failedReq(String msg) {
-                                spotDialog.dismiss();
-                                toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
-                            }
-                        });
+                        deleteBlog();
                     }
                 });
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteBlog() {
+        dao_blog.deleteBlog(helper_sp.getAccessToken(), idBlog, new Helper_Callback() {
+            @Override
+            public void successReq(Object data) {
+                toast("Đã xóa bài viết");
+                dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
+                spotDialog.dismiss();
+                helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            deleteBlog();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
+                } else {
+                    spotDialog.dismiss();
+                    toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
+
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -417,7 +471,6 @@ public class Fragment_EditBlog extends Fragment {
                 folder_storage = blog.getFolder_storage();
                 tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
                 refreshListView();
-
                 spotDialog.dismiss();
             }
 
@@ -431,6 +484,10 @@ public class Fragment_EditBlog extends Fragment {
     private void refreshListView() {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
+    }
+
+    private void refreshToken(Helper_Callback callback) {
+        dao_auth.refreshToken(callback);
     }
 
     private void log(String s) {

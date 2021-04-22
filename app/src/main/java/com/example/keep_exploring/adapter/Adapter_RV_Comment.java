@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.helpers.Helper_Callback;
@@ -32,6 +33,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
     private Helper_Date helper_date;
     private Helper_SP helper_sp;
     private DAO_Comment dao_comment;
+    private DAO_Auth dao_auth;
     private String type;
     private User user;
 
@@ -39,6 +41,7 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         this.context = context;
         this.commentList = commentList;
         this.type = type;
+        dao_auth = new DAO_Auth(context);
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
         helper_sp = new Helper_SP(context);
@@ -122,17 +125,32 @@ public class Adapter_RV_Comment extends RecyclerView.Adapter<Adapter_RV_Comment.
         int index = commentList.indexOf(comment);
         commentList.remove(comment);
         notifyDataSetChanged();
-        dao_comment.deleteComment(comment.get_id(), new Helper_Callback() {
+        dao_comment.deleteComment(helper_sp.getAccessToken(), comment.get_id(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-
             }
 
             @Override
             public void failedReq(String msg) {
-                Toast.makeText(context, "Lỗi hệ thống xóa bình luận không thành công, vui lòng thử lại", Toast.LENGTH_SHORT).show();
                 commentList.add(index, comment);
                 notifyDataSetChanged();
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    dao_auth.refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            deleteComment(comment);
+                        }
+                        @Override
+                        public void failedReq(String msg) {
+                            helper_common.logOut(context);
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    helper_common.logOut(context);
+                } else {
+                    Toast.makeText(context, "Lỗi hệ thống xóa bình luận không thành công, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
     }

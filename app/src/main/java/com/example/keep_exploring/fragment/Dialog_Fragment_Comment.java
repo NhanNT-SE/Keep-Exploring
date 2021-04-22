@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Comment;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Comment;
@@ -48,6 +49,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     private ImageView imgSend, imgCamera;
     private SwipeRefreshLayout swipeRefreshLayout;
     //    DAO & Helper
+    private DAO_Auth dao_auth;
     private DAO_Comment dao_comment;
     private Helper_Common helper_common;
     private Helper_Image helper_image;
@@ -60,7 +62,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
     private String path;
     private Uri uriImage;
     private User user;
-    private String id, type;
+    private String id, type, content;
 
     public static Dialog_Fragment_Comment newInstance(String id, String type) {
         Dialog_Fragment_Comment dialog = new Dialog_Fragment_Comment();
@@ -107,6 +109,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
 
     }
     private void initVariable() {
+        dao_auth = new DAO_Auth(getContext());
         dao_comment = new DAO_Comment(getContext());
         helper_common = new Helper_Common();
         helper_image = new Helper_Image(getContext());
@@ -114,6 +117,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         helper_sp = new Helper_SP(getContext());
         commentList = new ArrayList<>();
         path = "";
+        content = "";
         user = helper_sp.getUser();
         if (user == null) {
             layoutAddComment.setVisibility(View.GONE);
@@ -155,11 +159,11 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         imgSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String content = etContent.getText().toString();
+                content = etContent.getText().toString();
                 if (content.isEmpty()) {
                     Toast.makeText(getContext(), "Vui lòng nhập nội dùng bình luận", Toast.LENGTH_SHORT).show();
                 } else {
-                    addComment(content);
+                    addComment();
                 }
             }
         });
@@ -203,7 +207,7 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         });
     }
 
-    private void addComment(String content) {
+    private void addComment() {
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setUriImg(uriImage);
@@ -212,20 +216,25 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         refreshRV();
         layoutImage.setVisibility(View.GONE);
         etContent.setText("");
-        dao_comment.addComment(id, type, content, path, new Helper_Callback() {
+        dao_comment.addComment(helper_sp.getAccessToken(), id, type, content, path, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 path = "";
                 uriImage = null;
             }
-
             @Override
             public void failedReq(String msg) {
                 commentList.remove(comment);
                 refreshRV();
-                Toast.makeText(getContext(),
-                        "Lỗi hệ thống, thêm bình luận không thành công, vui lòng thử lại",
-                        Toast.LENGTH_SHORT).show();
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    helper_common.logOut(getContext());
+                } else {
+                    Toast.makeText(getContext(),
+                            "Lỗi hệ thống, thêm bình luận không thành công, vui lòng thử lại",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -248,10 +257,26 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     @Override
     public int getTheme() {
         return R.style.DialogCommentTheme;
     }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                addComment();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                helper_common.logOut(getContext());
+            }
+        });
+    }
+
     private void log(String s) {
         Log.d("log", s);
     }

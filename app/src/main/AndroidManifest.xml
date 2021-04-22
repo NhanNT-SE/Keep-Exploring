@@ -20,7 +20,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".TestUI">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".activities.SplashScreen" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
@@ -29,14 +32,27 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.SignInActivity" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-
+        <activity
+            android:name=".activities.SignInActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".activities.SignUpActivity" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".activities.MainActivity">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>

@@ -15,15 +15,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.adapter.Adapter_RV_Notify;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
+import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Notification;
-import com.example.keep_exploring.model.User;
 import com.google.android.material.button.MaterialButton;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,10 @@ public class Fragment_Notification extends Fragment {
     private MaterialButton mBtnAll, mBtnSeen, mBtnNew;
     private SwipeRefreshLayout swipeRefreshLayout;
     //    DAO & Helper
+    private DAO_Auth dao_auth;
     private DAO_Notification dao_notification;
     private Helper_Common helper_common;
+    private Helper_SP helper_sp;
     // Variable
     private List<Notification> defaultList, filterList;
     private int total, totalSeen, totalNew;
@@ -71,12 +73,15 @@ public class Fragment_Notification extends Fragment {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fNotification_refreshLayout);
     }
 
+    @SuppressLint("ResourceType")
     private void initVariable() {
-        filter = "";
+        dao_auth = new DAO_Auth(getContext());
         helper_common = new Helper_Common();
+        helper_sp = new Helper_SP(getContext());
         dao_notification = new DAO_Notification(getContext());
         defaultList = new ArrayList<>();
         filterList = new ArrayList<>();
+        filter = "";
         colorStateList = ColorStateList
                 .valueOf(Color.parseColor(getResources().getString(R.color.colorPrimary)));
     }
@@ -118,23 +123,23 @@ public class Fragment_Notification extends Fragment {
     private void loadData() {
         helper_common.showSkeleton(rvNotify, adapterNotify, R.layout.row_skeleton_notify);
         helper_common.setBadgeNotify(getContext());
-        dao_notification.getAll(new Helper_Callback() {
+        dao_notification.getAll(helper_sp.getAccessToken(), new Helper_Callback() {
             @SuppressLint("SetTextI18n")
             @Override
             public void successReq(Object response) {
                 defaultList = (List<Notification>) response;
                 setBadgeMButton();
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+                swipeRefreshLayout.setRefreshing(false);
                 setFilterList();
-
             }
 
             @Override
             public void failedReq(String msg) {
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken();
+                } else {
+                    helper_common.logOut(getContext());
                 }
             }
         });
@@ -207,7 +212,7 @@ public class Fragment_Notification extends Fragment {
     }
 
     private void changeSeenStatusNotify() {
-        dao_notification.changeSeenStatusNotify(new Helper_Callback() {
+        dao_notification.changeSeenStatusNotify(helper_sp.getAccessToken(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 helper_common.setBadgeNotify(getContext());
@@ -216,6 +221,21 @@ public class Fragment_Notification extends Fragment {
             @Override
             public void failedReq(String msg) {
 
+            }
+        });
+    }
+
+    private void refreshToken() {
+        dao_auth.refreshToken(new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                loadData();
+
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                helper_common.logOut(getContext());
             }
         });
     }
