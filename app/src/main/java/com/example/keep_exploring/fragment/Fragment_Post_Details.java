@@ -58,6 +58,7 @@ public class Fragment_Post_Details extends Fragment {
     private String idPost;
     private User user;
     private int numLike;
+    private Post post;
 
     public Fragment_Post_Details() {
         // Required empty public constructor
@@ -141,7 +142,12 @@ public class Fragment_Post_Details extends Fragment {
                 loadData();
             }
         });
-
+        civUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_common.dialogViewProfile(getContext(), post.getOwner());
+            }
+        });
         tvComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,17 +158,22 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void loadData() {
+        spotsDialog.show();
         dao_post.getPostById(idPost, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                Post post = (Post) response;
+                post = (Post) response;
                 List<String> likeList = post.getLikes();
-                displayInfo(post);
+                displayInfo();
                 numLike = likeList.size();
                 if (user != null) {
                     int checkLike = (int) likeList.stream().filter(e -> e.equals(user.getId())).count();
                     isLike = checkLike == 1;
-                    toggleLike();
+                    if (isLike) {
+                        imgLike.setImageResource(R.drawable.ic_like_red);
+                    } else {
+                        imgLike.setImageResource(R.drawable.ic_like_outline);
+                    }
                 }
                 spotsDialog.dismiss();
 
@@ -175,7 +186,7 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     @SuppressLint("SetTextI18n")
-    private void displayInfo(Post post) {
+    private void displayInfo() {
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(civUser);
         tvDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));

@@ -55,12 +55,12 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
     public String REFRESH_TOKEN() {
         return "REFRESH TOKEN";
@@ -310,7 +310,6 @@ public class Helper_Common {
         });
         dialog.show();
     }
-
     public void replaceFragment(Context context, Fragment fragment) {
         ((FragmentActivity) context).getSupportFragmentManager()
                 .beginTransaction()
@@ -318,12 +317,10 @@ public class Helper_Common {
                 .replace(R.id.main_FrameLayout, fragment)
                 .commit();
     }
-
     public void logOut(Context context) {
         Helper_SP helper_sp = new Helper_SP(context);
         helper_sp.clearSP();
         Toast.makeText(context, "Vui lòng đăng nhập lại để tiếp tục", Toast.LENGTH_SHORT).show();
         context.startActivity(new Intent(context, SignInActivity.class));
-        Animatoo.animateSlideUp(context);
     }
 }

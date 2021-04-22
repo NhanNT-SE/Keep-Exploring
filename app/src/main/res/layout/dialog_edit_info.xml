@@ -4,15 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragment.Fragment_Profile_BlogList"
     android:orientation="vertical"
-    android:paddingHorizontal="3dp"
+   android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    <TextView
+        android:text="Cập nhật thông tin cá nhân"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:fontFamily="@font/bungee"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/dEditInfo_imgAvatar"
-        android:layout_marginTop="10dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/avatar_header" />
 
@@ -35,72 +43,90 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
                 android:text="male" />
             <RadioButton
                 android:id="@+id/dEditInfo_radioFemale"
+                android:buttonTint="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="female" />
         </RadioGroup>
     </LinearLayout>
-    <EditText
-        android:id="@+id/dEditInfo_etDisplayName"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/border_tv"
-        android:hint="Display Name"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
 
-    <EditText
-        android:id="@+id/dEditInfo_etBirthday"
-        android:hint="Birthday"
-        android:gravity="center"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/border_tv"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dEditInfo_tILDisplayName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        android:layout_marginVertical="5dp"
+        app:counterEnabled="true"
+        android:hint="Tên hiển thị"
         android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dEditInfo_etAddress"
-        android:hint="Address"
-        android:paddingVertical="3dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/border_tv"
-        android:gravity="center"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dEditInfo_tILBirthday"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        android:layout_marginVertical="5dp"
+        android:hint="Ngày sinh"
         android:layout_width="match_parent"
-        android:layout_height="40dp"/>
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dEditInfo_tILDAddress"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        android:layout_marginVertical="5dp"
+        android:hint="Địa chỉ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/dEditInfo_btnUpdate"
-            app:cornerRadius="10dp"
-            android:textColor="#FFFFFF"
             android:layout_width="match_parent"
             android:textSize="12sp"
             android:layout_height="0dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"
             android:layout_weight="1"
-            android:text="Update profile"
+            android:text="Cập nhật"
             android:textAllCaps="false" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/dEditInfo_btnChangePassword"
             android:layout_width="match_parent"
-            app:cornerRadius="10dp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"
             android:textSize="12sp"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Change password"
+            android:text="Đổi mật khẩu"
             android:textAllCaps="false" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/dEditInfo_btnCancel"
-            android:text="Cancel"
-            app:cornerRadius="10dp"
-            android:textColor="#FFFFFF"
+            android:text="Đóng"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"
             android:textSize="12sp"
             android:layout_width="match_parent"
             android:layout_weight="1"
