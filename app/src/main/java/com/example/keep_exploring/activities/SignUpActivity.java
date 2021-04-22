@@ -96,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String displayName = tilDisplayName.getEditText().getText().toString();
 
                 if (email.isEmpty() || pass.isEmpty() || displayName.isEmpty()) {
-                    toast("Vui lòng điền đầy đủ thông tin");
+                    validateRequire(email, pass, displayName);
                 } else {
                     spotsDialog.show();
                     dao_auth.signUp(path, email, pass, displayName, new Helper_Callback() {
@@ -203,6 +203,29 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void validateRequire(String email, String pass, String displayName) {
+        if (pass.isEmpty()) {
+            tilPassword.setError("Mật khẩu không được để trống");
+            tilPassword.setErrorEnabled(true);
+        } else {
+            tilPassword.setErrorEnabled(false);
+        }
+        if (email.isEmpty()) {
+            tilEmail.setError("Email không được để trống");
+            tilEmail.setErrorEnabled(true);
+        } else {
+            tilEmail.setErrorEnabled(false);
+        }
+        if (displayName.isEmpty()) {
+            tilDisplayName.setError("Tên hiển thị không được để trống");
+            tilDisplayName.setErrorEnabled(true);
+        } else {
+            tilDisplayName.setErrorEnabled(false);
+        }
+        isValid = false;
+        toggleBtnSignUp();
     }
 
     private void toggleBtnSignUp() {

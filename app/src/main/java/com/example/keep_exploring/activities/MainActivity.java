@@ -28,7 +28,6 @@ import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
-import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -81,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         animFromBottom = AnimationUtils.loadAnimation(this, R.anim.fab_from_bottom_anim);
         animToBottom = AnimationUtils.loadAnimation(this, R.anim.fab_to_bottom_anim);
         user = helper_sp.getUser();
+        if (user != null) {
+            toast("Xin chào " + user.getDisplayName());
+        }
     }
     private void handlerEvent() {
         helper_common.runtimePermission(this);
@@ -119,11 +121,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onClick(View v) {
                 toggleAnim();
-                replaceFragment(new Fragment_AddBlog());
+                replaceFragment(new Fragment_Tab_UserInfo());
             }
         });
         helper_common.setBadgeNotify(this);
-        replaceFragment(new Fragment_Category());
+        replaceFragment(new Fragment_Tab_UserInfo());
     }
 
     @SuppressLint("NonConstantResourceId")

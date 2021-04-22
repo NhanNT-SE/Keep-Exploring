@@ -87,15 +87,13 @@ public class SignInActivity extends AppCompatActivity {
                 String email = tilEmail.getEditText().getText().toString();
                 String pass = tilPassword.getEditText().getText().toString();
                 if (email.isEmpty() || pass.isEmpty()) {
-                    toast("Vui lòng điền đầy đủ email và mật khẩu");
+                        validateRequire(email, pass);
                 } else {
                     spotsDialog.show();
                     dao_auth.signIn(email + suffixEmil, pass, new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
-                            User user = (User) response;
                             spotsDialog.dismiss();
-                            toast("Xin chào " + user.getDisplayName());
                             helper_sp.setIsRemember(isRemember);
                             moveToMain();
 
@@ -165,6 +163,23 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+    private void validateRequire(String email, String pass) {
+        if (pass.isEmpty()) {
+            tilPassword.setError("Mật khẩu không được để trống");
+            tilPassword.setErrorEnabled(true);
+        } else {
+            tilPassword.setErrorEnabled(false);
+        }
+        if (email.isEmpty()) {
+            tilEmail.setError("Email không được để trống");
+            tilEmail.setErrorEnabled(true);
+        } else {
+            tilEmail.setErrorEnabled(false);
+        }
+        isValid = false;
+        toggleBtnSignIn();
+    }
+
     private void validateEmail() {
         tilEmail.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -183,11 +198,13 @@ public class SignInActivity extends AppCompatActivity {
                 }
                 toggleBtnSignIn();
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
     }
+
 
     private void toggleBtnSignIn() {
         btnSignIn.setEnabled(isValid);

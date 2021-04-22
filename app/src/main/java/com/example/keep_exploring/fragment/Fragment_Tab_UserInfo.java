@@ -35,7 +35,6 @@ import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_Image;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
@@ -60,7 +59,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private ImageView imgAvatar;
     private CircleImageView imgAvatarUser;
     private Dialog spotDialog;
-    private MaterialButton mBtn_submit;
+    private Button mBtn_submit;
     //DAO & Helper
     private DAO_User dao_user;
     private DAO_Auth dao_auth;
@@ -72,8 +71,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
     private User user;
     private String gender;
     private String idUser;
-    private String imageUser;
-    private boolean isValidRequire, isValidMatch;
+    private String imageUser, oldPass, newPass, birthDay, displayName, address;
+    private boolean isValid;
 
     public Fragment_Tab_UserInfo() {
         // Required empty public constructor
@@ -108,15 +107,20 @@ public class Fragment_Tab_UserInfo extends Fragment {
     }
 
     private void initVariable() {
-        imageUser = "";
-        isValidRequire = false;
-        isValidMatch = false;
-        user = new User();
+
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(getContext());
         helper_date = new Helper_Date();
         helper_image = new Helper_Image(getContext());
         dao_auth = new DAO_Auth(getContext());
+        user = new User();
+        isValid = false;
+        imageUser = "";
+        oldPass = "";
+        newPass = "";
+        birthDay = "";
+        displayName = "";
+        address = "";
         viewPager.setAdapter(new Adapter_Tab_User(getChildFragmentManager(), 1));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_post_black);
@@ -175,11 +179,10 @@ public class Fragment_Tab_UserInfo extends Fragment {
         TextInputLayout tIL_currentPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILCurrentPassword);
         TextInputLayout tIL_newPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILNewPassword);
         TextInputLayout tIL_confirmPassword = (TextInputLayout) dialog.findViewById(R.id.dChangePassword_tILConfirmPassword);
-        mBtn_submit = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnSubmit);
-        MaterialButton mBtn_cancel = (MaterialButton) dialog.findViewById(R.id.dChangePassword_btnCancel);
-        toggleEnableButton();
-        validateRequiredAndLength(tIL_currentPassword);
-        validateRequiredAndLength(tIL_newPassword);
+        mBtn_submit = (Button) dialog.findViewById(R.id.dChangePassword_btnSubmit);
+        Button mBtn_cancel = (Button) dialog.findViewById(R.id.dChangePassword_btnCancel);
+        validateLength(tIL_currentPassword);
+        validateLength(tIL_newPassword);
         validateMatchPassword(tIL_confirmPassword, tIL_newPassword);
         mBtn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,30 +194,25 @@ public class Fragment_Tab_UserInfo extends Fragment {
         mBtn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldPass = tIL_currentPassword.getEditText().getText().toString();
-                String newPass = tIL_newPassword.getEditText().getText().toString();
-                spotDialog.show();
-                dao_user.changePassword(helper_sp.getAccessToken(), oldPass, newPass, new Helper_Callback() {
-                    @Override
-                    public void successReq(Object response) {
-                        toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
-                        spotDialog.dismiss();
-                        dialog.dismiss();
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                getContext().startActivity(new Intent(getContext(), SignInActivity.class));
-                            }
-                        }, 2000);
+                oldPass = tIL_currentPassword.getEditText().getText().toString();
+                newPass = tIL_newPassword.getEditText().getText().toString();
+                String confirmPass = tIL_confirmPassword.getEditText().getText().toString();
+                if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
+                    if (oldPass.isEmpty()) {
+                        validateRequire(tIL_currentPassword, "Mật khẩu hiển tại không được để trống");
                     }
+                    if (newPass.isEmpty()) {
+                        validateRequire(tIL_newPassword, "Mật mới tại không được để trống");
+                    }
+                    if (confirmPass.isEmpty()) {
+                        validateRequire(tIL_confirmPassword, "Mật xác nhận tại không được để trống");
+                    }
+                } else {
+                    dialog.dismiss();
+                    spotDialog.show();
+                    updatePassword();
 
-                    @Override
-                    public void failedReq(String msg) {
-                        spotDialog.dismiss();
-                        toast(msg);
-                    }
-                });
+                }
             }
         });
 
@@ -224,13 +222,13 @@ public class Fragment_Tab_UserInfo extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_edit_info);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText etName, etBirthday, etAddress;
+        final TextInputLayout tilDisplayName, tilBirthday, tilAddress;
         Button btnUpdate, btnChangePassword, btnCancel;
         RadioButton radioMale, radioFemale;
         imgAvatarUser = (CircleImageView) dialog.findViewById(R.id.dEditInfo_imgAvatar);
-        etName = (EditText) dialog.findViewById(R.id.dEditInfo_etDisplayName);
-        etBirthday = (EditText) dialog.findViewById(R.id.dEditInfo_etBirthday);
-        etAddress = (EditText) dialog.findViewById(R.id.dEditInfo_etAddress);
+        tilDisplayName = (TextInputLayout) dialog.findViewById(R.id.dEditInfo_tILDisplayName);
+        tilBirthday = (TextInputLayout) dialog.findViewById(R.id.dEditInfo_tILBirthday);
+        tilAddress = (TextInputLayout) dialog.findViewById(R.id.dEditInfo_tILDAddress);
         btnUpdate = (Button) dialog.findViewById(R.id.dEditInfo_btnUpdate);
         btnChangePassword = (Button) dialog.findViewById(R.id.dEditInfo_btnChangePassword);
         btnCancel = (Button) dialog.findViewById(R.id.dEditInfo_btnCancel);
@@ -242,12 +240,12 @@ public class Fragment_Tab_UserInfo extends Fragment {
             radioFemale.setChecked(true);
         }
         if (user != null) {
-            etName.setText(user.getDisplayName());
+            tilDisplayName.getEditText().setText(user.getDisplayName());
             if (user.getAddress() != null) {
-                etAddress.setText(user.getAddress());
+                tilAddress.getEditText().setText(user.getAddress());
             }
             if (user.getBirthday() != null) {
-                etBirthday.setText(helper_date.formatDateDisplay(user.getBirthday()));
+                tilBirthday.getEditText().setText(helper_date.formatDateDisplay(user.getBirthday()));
             }
             Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         }
@@ -271,11 +269,11 @@ public class Fragment_Tab_UserInfo extends Fragment {
             }
         });
 
-        etBirthday.setKeyListener(null);
-        etBirthday.setOnClickListener(new View.OnClickListener() {
+        tilBirthday.getEditText().setKeyListener(null);
+        tilBirthday.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePicker(etBirthday);
+                datePicker(tilBirthday.getEditText());
             }
         });
 
@@ -292,44 +290,33 @@ public class Fragment_Tab_UserInfo extends Fragment {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String birthDay = etBirthday.getText().toString();
-                String address = etAddress.getText().toString();
-                String displayName = etName.getText().toString();
-                if (displayName == null || displayName.isEmpty()) {
-                    toast("Tên hiển thị là bắt buộc");
+                birthDay = tilBirthday.getEditText().getText().toString();
+                address = tilAddress.getEditText().getText().toString();
+                displayName = tilDisplayName.getEditText().getText().toString();
+                updateProfile();
+
+
+            }
+        });
+        tilDisplayName.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 4) {
+                    tilDisplayName.setError("Tên hiển thị phải có ít nhất 4 ký tự");
+                    tilDisplayName.setErrorEnabled(true);
+                    btnUpdate.setEnabled(false);
                 } else {
-                    HashMap<String, RequestBody> map = new HashMap<>();
-                    RequestBody bGender = helper_common.createPartFromString(gender);
-                    RequestBody bDisplayName = helper_common.createPartFromString(displayName);
-                    if (birthDay != null) {
-                        String birthDaySubmit = helper_date.convertStringToIsoDate(birthDay);
-                        RequestBody bBirthDay = helper_common.createPartFromString(birthDaySubmit);
-                        map.put("bod", bBirthDay);
-                    }
-                    if (address != null) {
-                        RequestBody bAddress = helper_common.createPartFromString(address);
-                        map.put("address", bAddress);
-                    }
-                    map.put("gender", bGender);
-                    map.put("displayName", bDisplayName);
-                    spotDialog.show();
-                    dao_user.updateProfile(helper_sp.getAccessToken(), imageUser, map, new Helper_Callback() {
-                        @Override
-                        public void successReq(Object response) {
-                            toast("Cập nhật thông tin cá nhân thành công");
-                            spotDialog.dismiss();
-                            dialog.dismiss();
-                            loadData();
-                        }
-
-                        @Override
-                        public void failedReq(String msg) {
-                            toast(msg);
-                            spotDialog.dismiss();
-                        }
-                    });
+                    tilDisplayName.setErrorEnabled(false);
+                    btnUpdate.setEnabled(true);
                 }
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
@@ -353,6 +340,55 @@ public class Fragment_Tab_UserInfo extends Fragment {
         dialog.show();
     }
 
+    private void updateProfile() {
+        HashMap<String, RequestBody> map = new HashMap<>();
+        RequestBody bGender = helper_common.createPartFromString(gender);
+        RequestBody bDisplayName = helper_common.createPartFromString(displayName);
+        if (!birthDay.isEmpty()) {
+            String birthDaySubmit = helper_date.convertStringToIsoDate(birthDay);
+            RequestBody bBirthDay = helper_common.createPartFromString(birthDaySubmit);
+            map.put("bod", bBirthDay);
+        }
+        if (!address.isEmpty()) {
+            RequestBody bAddress = helper_common.createPartFromString(address);
+            map.put("address", bAddress);
+        }
+        map.put("gender", bGender);
+        map.put("displayName", bDisplayName);
+        spotDialog.show();
+        dao_user.updateProfile(helper_sp.getAccessToken(), imageUser, map, new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                toast("Cập nhật thông tin cá nhân thành công");
+                spotDialog.dismiss();
+                loadData();
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    dao_auth.refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            updateProfile();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
+                } else {
+                    spotDialog.dismiss();
+                    toast(msg);
+                }
+            }
+        });
+    }
 
     private void datePicker(final EditText et) {
         final Calendar calendar = Calendar.getInstance();
@@ -374,10 +410,9 @@ public class Fragment_Tab_UserInfo extends Fragment {
     }
 
     private void toggleEnableButton() {
-        mBtn_submit.setEnabled(isValidMatch && isValidRequire);
+        mBtn_submit.setEnabled(isValid);
     }
     private void validateMatchPassword(TextInputLayout tIL_confirmPass, TextInputLayout tIL_newPass) {
-
         tIL_confirmPass.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -388,11 +423,11 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 String match = tIL_newPass.getEditText().getText().toString();
                 if (s.toString().equals(match)) {
                     tIL_confirmPass.setErrorEnabled(false);
-                    isValidMatch = true;
+                    isValid = true;
                 } else {
                     tIL_confirmPass.setError("Mật khẩu xác nhận của bạn không khớp với mật khẩu mới");
                     tIL_confirmPass.setErrorEnabled(true);
-                    isValidMatch = false;
+                    isValid = false;
                 }
                 toggleEnableButton();
             }
@@ -403,13 +438,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
         });
     }
 
-    private void validateRequiredAndLength(TextInputLayout textInputLayout) {
-        String length = textInputLayout.getEditText().getText().toString();
-        if (length.isEmpty()) {
-            textInputLayout.setError("Đây là trường bắt buộc");
-            textInputLayout.setErrorEnabled(true);
-            isValidRequire = false;
-        }
+    private void validateLength(TextInputLayout textInputLayout) {
         textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -420,10 +449,10 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 if (s.length() < 6) {
                     textInputLayout.setError("Mật khẩu phải có ít nhất 6 ký tự");
                     textInputLayout.setErrorEnabled(true);
-                    isValidRequire = false;
+                    isValid = false;
                 } else {
                     textInputLayout.setErrorEnabled(false);
-                    isValidRequire = true;
+                    isValid = true;
                 }
                 toggleEnableButton();
             }
@@ -435,8 +464,57 @@ public class Fragment_Tab_UserInfo extends Fragment {
         });
     }
 
+    private void validateRequire(TextInputLayout textInputLayout, String msg) {
+        textInputLayout.setError(msg);
+        textInputLayout.setErrorEnabled(true);
+        isValid = false;
+        toggleEnableButton();
+    }
+
+    private void updatePassword() {
+        dao_user.changePassword(helper_sp.getAccessToken(), oldPass, newPass, new Helper_Callback() {
+            @Override
+            public void successReq(Object response) {
+                toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
+                spotDialog.dismiss();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getContext().startActivity(new Intent(getContext(), SignInActivity.class));
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                spotDialog.dismiss();
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    dao_auth.refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            updatePassword();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
+                } else {
+                    spotDialog.dismiss();
+                    toast(msg);
+                }
+            }
+        });
+    }
+
     private void loadData() {
-        dao_user.getProfile(helper_sp.getAccessToken(),idUser,new Helper_Callback() {
+        dao_user.getProfile(helper_sp.getAccessToken(), idUser, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 user = (User) response;

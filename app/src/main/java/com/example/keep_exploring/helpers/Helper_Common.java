@@ -310,7 +310,6 @@ public class Helper_Common {
         });
         dialog.show();
     }
-
     public void replaceFragment(Context context, Fragment fragment) {
         ((FragmentActivity) context).getSupportFragmentManager()
                 .beginTransaction()
@@ -318,12 +317,10 @@ public class Helper_Common {
                 .replace(R.id.main_FrameLayout, fragment)
                 .commit();
     }
-
     public void logOut(Context context) {
         Helper_SP helper_sp = new Helper_SP(context);
         helper_sp.clearSP();
         Toast.makeText(context, "Vui lòng đăng nhập lại để tiếp tục", Toast.LENGTH_SHORT).show();
         context.startActivity(new Intent(context, SignInActivity.class));
-        Animatoo.animateSlideUp(context);
     }
 }

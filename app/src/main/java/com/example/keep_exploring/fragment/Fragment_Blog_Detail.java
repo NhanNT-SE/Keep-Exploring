@@ -64,6 +64,7 @@ public class Fragment_Blog_Detail extends Fragment {
     private User user;
     private boolean isLike;
     private int numLike;
+    private Blog blog;
 
 
     public Fragment_Blog_Detail() {
@@ -147,6 +148,12 @@ public class Fragment_Blog_Detail extends Fragment {
                 }
             }
         });
+        imgAvatarUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper_common.dialogViewProfile(getContext(), blog.getOwner());
+            }
+        });
         loadData();
     }
     private void loadData() {
@@ -154,16 +161,20 @@ public class Fragment_Blog_Detail extends Fragment {
         dao_blog.getBlogById(idBlog, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                Blog blog = (Blog) response;
+                 blog = (Blog) response;
                 List<String> likeList = blog.getLikes();
                 blogDetailsList = blog.getBlogDetails();
-                displayInfo(blog);
+                displayInfo();
                 refreshListView();
                 spotDialog.dismiss();
                 if (user != null) {
                     int checkLike = (int) likeList.stream().filter(e -> e.equals(user.getId())).count();
                     isLike = checkLike == 1;
-                    toggleLike();
+                    if (isLike) {
+                        imgLike.setImageResource(R.drawable.ic_like_red);
+                    } else {
+                        imgLike.setImageResource(R.drawable.ic_like_outline);
+                    }
                 }
             }
             @Override
@@ -173,7 +184,7 @@ public class Fragment_Blog_Detail extends Fragment {
         });
     }
 
-    private void displayInfo(Blog blog) {
+    private void displayInfo() {
         Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
         Picasso.get()
                 .load(helper_common.getBaseUrlImage() + "user/" + blog.getOwner().getImgUser())
