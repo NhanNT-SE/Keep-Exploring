@@ -2,8 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const http = require("http");
 const passport = require("passport");
 const cors = require("cors");
+const { Server } = require("socket.io");
 const { isAuth, isAdmin } = require("./src/middleware/jwtHelper");
 // ----------DEFINE ROUTER----------
 const addressRouter = require("./src/Route/AddressRoute");
@@ -16,11 +18,14 @@ const postRouter = require("./src/Route/PostRoute");
 const notifyRouter = require("./src/Route/NotificationRoute");
 const publicRouter = require("./src/Route/PublicRoute");
 const userRouter = require("./src/Route/UserRoute");
+
 // ----------ROUTER----------
 const mongoString =
   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const port = process.env.PORT || 3000;
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 app.use(express.static("src/public"));
 app.use(bodyParser.json());
 app.use(
@@ -44,6 +49,16 @@ mongoose
   .catch((err) => {
     console.error(`Error connecting to the database. \n${err}`);
   });
+io.on("connection", (socket) => {
+  console.log("User connected");
+  socket.on("disconnect", () => console.log("User has disconnected"));
+});
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+
 // ----------PUBLIC ROUTER----------
 app.use("/api-doc", apiDocRouter);
 app.use("/auth", authRouter);
@@ -83,4 +98,4 @@ app.use((error, req, res, next) => {
     },
   });
 });
-app.listen(port, console.log(`start on port ${port}`));
+server.listen(port, console.log(`start on port ${port}`));

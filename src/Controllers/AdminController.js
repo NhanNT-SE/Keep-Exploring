@@ -6,6 +6,8 @@ const Blog = require("../Models/Blog");
 const User = require("../Models/User");
 const Notification = require("../Models/Notification");
 const Comment = require("../Models/Comment");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
+
 require("../Models/Address");
 
 const deleteAllCommentPost = async (req, res, next) => {
@@ -182,10 +184,18 @@ const sendNotify = async (req, res, next) => {
     const { idUser, contentAdmin } = req.body;
     const user = {};
     const listUser = [];
+    const { io } = req;
+    const msgNotify = `Bạn có thông báo mới từ hệ thống`;
+
     idUser.forEach((e) => {
       user.idUser = e;
       user.contentAdmin = contentAdmin;
       listUser.push(user);
+      sendNotifyRealtime(io, e, {
+        message: msgNotify,
+        type: "system",
+        content: contentAdmin,
+      });
     });
     await Notification.insertMany(listUser);
     return res.send({
@@ -202,6 +212,9 @@ const updateStatus = async (req, res, next) => {
     const { idUpdate, status, type } = req.body;
     let updateFound = null;
     let notify = null;
+    let msgNotify;
+    let notifyClient = {};
+    const { io } = req;
     if (type === "post") {
       updateFound = await Post.findById(idUpdate);
     } else {
@@ -216,6 +229,7 @@ const updateStatus = async (req, res, next) => {
           idPost: idUpdate,
           status: "new",
         });
+        notifyClient.idPost = idUpdate;
       } else {
         await Blog.findByIdAndUpdate(idUpdate, updateFound);
         notify = new Notification({
@@ -223,14 +237,27 @@ const updateStatus = async (req, res, next) => {
           idBlog: idUpdate,
           status: "new",
         });
+        notifyClient.idBlog = idUpdate;
       }
 
       if (status == "done") {
         notify.content = "moderated";
+        msgNotify = `Bài viết ${updateFound.title} của đã được kiểm duyệt, và đang được hiển thị với mọi người`;
       } else {
         notify.content = "unmoderated";
+        if (status === "pending") {
+          msgNotify = `Bài viết ${updateFound.title} của bạn cần hiện đang trong quá trình kiểm duyệt`;
+        } else {
+          msgNotify = `Bài viết ${updateFound.title} của bạn cần được chỉnh sủa`;
+        }
       }
+
       const notification = await createNotification(notify);
+
+      notifyClient.message = msgNotify;
+      notifyClient.type = status;
+      sendNotifyRealtime(io, updateFound.owner, notifyClient);
+
       return res.send({
         data: notification,
         status: 200,
