@@ -5,11 +5,13 @@ const Notification = require("../Models/Notification");
 const { createNotification } = require("./NotificationController");
 const User = require("../Models/User");
 const handlerCustomError = require("../middleware/customError");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
 
 const createBlog = async (req, res, next) => {
   try {
     let { title, detail_list, folder_storage } = req.body;
     const file = req.file;
+    const { io } = req;
     const user = await User.findById(req.user._id);
     const blog = new Blog({ title, folder_storage });
     const blog_detail = new Blog_Detail({});
@@ -36,7 +38,20 @@ const createBlog = async (req, res, next) => {
     await blog.save();
     await blog_detail.save();
     await user.save();
+    const notify = new Notification({
+      idUser: user._id,
+      idBlog: blog._id,
+      status: "new",
+      content: "unmoderated",
+    });
 
+    await createNotification(notify);
+    const msgNotify = `Bài viết ${blog.title} của bạn hiện đang trong quá trình kiểm duyệt`;
+    sendNotifyRealtime(io, blog.owner, {
+      message: msgNotify,
+      type: "pending",
+      idBlog: blog._id,
+    });
     return res.status(200).send({
       status: 200,
       data: blog_detail,
@@ -82,6 +97,7 @@ const likeBlog = async (req, res, next) => {
   try {
     const { idBlog } = req.body;
     const user = req.user;
+    const { io } = req;
     const blogFound = await Blog.findById(idBlog);
     if (blogFound) {
       let like_list = [...blogFound.like_list];
@@ -99,9 +115,17 @@ const likeBlog = async (req, res, next) => {
         });
         notification = createNotification(notify);
       }
+
       blogFound.like_list = like_list;
       await Blog.findByIdAndUpdate(idBlog, { ...blogFound });
-
+      if (notification) {
+        const msgNotify = `Vừa có người yêu thích về bài viết ${blogFound.title} của bạn`;
+        sendNotifyRealtime(io, blogFound.owner, {
+          message: msgNotify,
+          type: "like",
+          idBlog,
+        });
+      }
       return res.send({
         data: blogFound,
         status: 200,
@@ -146,6 +170,7 @@ const updateBlog = async (req, res, next) => {
   try {
     const { title, created_on, detail_list } = req.body;
     const { idBlog } = req.params;
+    const { io } = req;
     const blog = await Blog.findById(idBlog);
     const blog_detail = await Blog_Detail.findById(idBlog);
     const file = req.file;
@@ -172,6 +197,19 @@ const updateBlog = async (req, res, next) => {
 
     await Blog.findByIdAndUpdate(idBlog, { ...blog });
     await Blog_Detail.findByIdAndUpdate(idBlog, { detail_list: tempList });
+    const notify = new Notification({
+      idUser: blog.owner.toString(),
+      idBlog: blog.id,
+      status: "new",
+      content: "unmoderated",
+    });
+    await createNotification(notify);
+    const msgNotify = `Bài viết ${blog.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
+    sendNotifyRealtime(io, blog.owner, {
+      message: msgNotify,
+      type: "pending",
+      idBlog: blog.id,
+    });
     return res.status(200).send({
       status: 200,
       data: blog_detail,

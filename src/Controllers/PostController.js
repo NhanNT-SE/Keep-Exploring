@@ -5,11 +5,13 @@ const Notification = require("../Models/Notification");
 const { createNotification } = require("./NotificationController");
 const User = require("../Models/User");
 const handlerCustomError = require("../middleware/customError");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
 
 const createPost = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     let img_list = new Array();
+    const { io } = req;
     //Luu string hinh anh vao database
     const files = req.files;
     const length = files.length;
@@ -33,7 +35,14 @@ const createPost = async (req, res, next) => {
       status: "new",
       content: "unmoderated",
     });
+
     const notification = await createNotification(notify);
+    const msgNotify = `Bài viết ${post.title} của bạn hiện đang trong quá trình kiểm duyệt`;
+    sendNotifyRealtime(io, post.owner, {
+      message: msgNotify,
+      type: "pending",
+      idPost: post._id,
+    });
 
     return res.status(200).send({
       data: { post, notification },
@@ -114,6 +123,7 @@ const likePost = async (req, res, next) => {
     const { idPost } = req.body;
     const user = req.user;
     const postFound = await Post.findById(idPost);
+    const io = req.io;
     if (postFound) {
       let like_list = [...postFound.like_list];
       const index = like_list.findIndex((e) => e == user._id);
@@ -132,7 +142,14 @@ const likePost = async (req, res, next) => {
       }
       postFound.like_list = like_list;
       await Post.findByIdAndUpdate(idPost, { ...postFound });
-
+      if (notification) {
+        const msgNotify = `Vừa có người yêu thích về bài viết ${postFound.title} của bạn`;
+        sendNotifyRealtime(io, postFound.owner, {
+          message: msgNotify,
+          type: "like",
+          idPost,
+        });
+      }
       return res.send({
         data: postFound,
         status: 200,
@@ -153,6 +170,7 @@ const updatePost = async (req, res, next) => {
     const { imgs_deleted } = req.body;
     const user = req.user;
     const files = req.files;
+    const { io } = req;
 
     //Kiem tra bai viet co ton tai hay khong
     const postFound = await Post.findById(idPost);
@@ -213,6 +231,13 @@ const updatePost = async (req, res, next) => {
           content: "unmoderated",
         });
         const notification = await createNotification(notify);
+        const msgNotify = 
+        `Bài viết ${postFound.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
+        sendNotifyRealtime(io, postFound.owner, {
+          message: msgNotify,
+          type: "pending",
+          idPost,
+        });
 
         return res.send({
           data: { newPost, notification },

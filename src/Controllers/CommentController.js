@@ -5,6 +5,7 @@ const Post = require("../Models/Post");
 const { createNotification } = require("./NotificationController");
 const fs = require("fs");
 const handlerCustomError = require("../middleware/customError");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
 
 const createCommentPost = async (req, res, next) => {
   try {
@@ -12,6 +13,7 @@ const createCommentPost = async (req, res, next) => {
     const { content, idPost } = req.body;
     const file = req.file;
     const user = req.user;
+    const { io } = req;
 
     //Kiem tra bai post con ton tai hay khong
     const postFound = await Post.findById(idPost);
@@ -46,8 +48,12 @@ const createCommentPost = async (req, res, next) => {
         content: "comment",
       });
       await createNotification(notify);
-      //Thanh cong tra ve status code 200
-
+      const msgNotify = `Vừa có người bình luận về bài viết ${postFound.title} của bạn`;
+      sendNotifyRealtime(io, postFound.owner, {
+        message: msgNotify,
+        type: "comment",
+        idPost,
+      });
       return res.send({
         data: comment,
         status: 200,
@@ -68,6 +74,7 @@ const createCommentBlog = async (req, res, next) => {
     const { content, idBlog } = req.body;
     const file = req.file;
     const user = req.user;
+    const { io } = req;
 
     //Kiem tra bai post con ton tai hay khong
     const blogFound = await Blog.findById(idBlog);
@@ -103,11 +110,16 @@ const createCommentBlog = async (req, res, next) => {
         status: "new",
         content: "comment",
       });
-      const notification = await createNotification(notify);
-
+      await createNotification(notify);
+      const msgNotify = `Vừa có người bình luận về bài viết ${blogFound.title} của bạn`;
+      sendNotifyRealtime(io, blogFound.owner, {
+        message: msgNotify,
+        type: "comment",
+        idBlog,
+      });
       //Thanh cong tra ve status code 200
       return res.send({
-        data: { comment, notification },
+        data: comment,
         status: 200,
         message: "Tạo bình luận thành công",
       });
