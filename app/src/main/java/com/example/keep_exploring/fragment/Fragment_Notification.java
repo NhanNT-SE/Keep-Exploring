@@ -117,18 +117,18 @@ public class Fragment_Notification extends Fragment {
             }
         });
         loadData();
+        helper_common.setBadgeNotify(getContext(),0);
         changeSeenStatusNotify();
     }
 
     private void loadData() {
         helper_common.showSkeleton(rvNotify, adapterNotify, R.layout.row_skeleton_notify);
-        helper_common.setBadgeNotify(getContext());
         dao_notification.getAll(helper_sp.getAccessToken(), new Helper_Callback() {
             @SuppressLint("SetTextI18n")
             @Override
             public void successReq(Object response) {
                 defaultList = (List<Notification>) response;
-                setBadgeMButton();
+                setBadgeNotify();
                 swipeRefreshLayout.setRefreshing(false);
                 setFilterList();
             }
@@ -169,13 +169,14 @@ public class Fragment_Notification extends Fragment {
         }
     }
 
-    private void setBadgeMButton() {
+    private void setBadgeNotify() {
         totalSeen = (int) defaultList.stream().filter(item -> item.getStatus().equals("seen")).count();
         totalNew = (int) defaultList.stream().filter(item -> item.getStatus().equals("new")).count();
         total = defaultList.size();
         mBtnAll.setText("Tất cả thông báo(" + total + ")");
         mBtnNew.setText("Thông báo chưa đọc(" + totalNew + ")");
         mBtnSeen.setText("Thông báo đã đọc(" + totalSeen + ")");
+        helper_common.setBadgeNotify(getContext(),totalNew);
     }
 
     private void setColorButton() {
@@ -215,7 +216,6 @@ public class Fragment_Notification extends Fragment {
         dao_notification.changeSeenStatusNotify(helper_sp.getAccessToken(), new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                helper_common.setBadgeNotify(getContext());
             }
 
             @Override

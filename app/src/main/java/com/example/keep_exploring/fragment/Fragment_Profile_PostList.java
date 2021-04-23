@@ -82,7 +82,6 @@ public class Fragment_Profile_PostList extends Fragment {
         loadData();
     }
     private void loadData() {
-        helper_common.setBadgeNotify(getContext());
         dao_post.getPostByUser(helper_sp.getAccessToken(), idUser, new Helper_Callback() {
             @Override
             public void successReq(Object response) {

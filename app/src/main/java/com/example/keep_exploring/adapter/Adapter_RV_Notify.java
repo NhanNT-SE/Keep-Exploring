@@ -1,6 +1,7 @@
 package com.example.keep_exploring.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.Post;
+import com.example.keep_exploring.model.User;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -321,6 +325,8 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         }
         return desc.toString();
     }
+
+
 
     private void refreshToken(Helper_Callback callback) {
         dao_auth.refreshToken(callback);
