@@ -99,7 +99,6 @@ public class Fragment_BlogList extends Fragment {
     }
 
     private void loadData() {
-        helper_common.setBadgeNotify(getContext());
         helper_common.showSkeleton(rvBlog, adapterBlog, R.layout.row_skeleton_blog);
         dao_blog.getBlogList(new Helper_Callback() {
             @Override
@@ -119,7 +118,6 @@ public class Fragment_BlogList extends Fragment {
 
     private void getBlogByQuery(String query) {
         helper_common.showSkeleton(rvBlog, adapterBlog, R.layout.row_skeleton_blog);
-        helper_common.setBadgeNotify(getContext());
         dao_blog.getBlogByQuery(query, new Helper_Callback() {
             @Override
             public void successReq(Object response) {

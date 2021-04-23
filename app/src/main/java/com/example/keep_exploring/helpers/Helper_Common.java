@@ -29,12 +29,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.ethanhua.skeleton.Skeleton;
-import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.animations.Anim_Bottom_Navigation;
 import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
-import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.User;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -114,32 +112,11 @@ public class Helper_Common {
         recyclerView.setOnTouchListener(new Anim_Bottom_Navigation(context,
                 ((Activity) context).findViewById(R.id.main_coordinatorLayout)));
     }
-    public void setBadgeNotify(Context context) {
-        DAO_Notification dao_notification = new DAO_Notification(context);
-        Helper_SP helper_sp = new Helper_SP(context);
-        User user = helper_sp.getUser();
+    public void setBadgeNotify(Context context, int number) {
         BottomNavigationView bottomNavigationView = ((Activity) context).findViewById(R.id.main_bottomNavigation);
         BadgeDrawable badgeNotify = bottomNavigationView.getOrCreateBadge(R.id.menu_bottom_notify);
-        badgeNotify.setMaxCharacterCount(3);
-        badgeNotify.setBadgeTextColor(Color.WHITE);
-        badgeNotify.setBackgroundColor(Color.parseColor("#F3BA00"));
-        if (user != null) {
-            dao_notification.getAll(helper_sp.getAccessToken(), new Helper_Callback() {
-                @Override
-                public void successReq(Object response) {
-                    List<Notification> notificationList = (List<Notification>) response;
-                    int numberBadge = (int) notificationList.stream().filter(item -> item.getStatus().equals("new")).count();
-                    badgeNotify.setNumber(numberBadge);
-                }
+        badgeNotify.setNumber(number);
 
-                @Override
-                public void failedReq(String msg) {
-
-                }
-            });
-        } else {
-            badgeNotify.setNumber(0);
-        }
     }
     public void showSkeleton(RecyclerView recyclerView, RecyclerView.Adapter adapter, int layout) {
         Skeleton.bind(recyclerView)

@@ -9,19 +9,21 @@
     android:gravity="center"
     tools:context=".TestUI">
     <Button
-        android:id="@+id/testUI_btnSignIn"
-        android:text="Sign in"
+        android:id="@+id/testUI_btnLikePost"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="Post" />
+
     <Button
-        android:id="@+id/testUI_btnGetPost"
-        android:text="Get post by user"
+        android:id="@+id/testUI_btnCommentPost"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="Blog" />
+
     <Button
-        android:id="@+id/testUI_btnRefreshToken"
-        android:text="Refresh Token"
+        android:id="@+id/testUI_btnSystem"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="System" />
 
 </LinearLayout>

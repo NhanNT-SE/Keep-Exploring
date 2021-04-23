@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -152,7 +153,6 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 }
             }
         });
-        helper_common.setBadgeNotify(getContext());
         loadData();
     }
 
