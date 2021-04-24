@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ public class SplashScreen extends AppCompatActivity {
     private TextView tvSlogan, tvAppName;
     private Animation animTop, animBottom;
     private Helper_SP helper_sp;
+    private RelativeLayout layoutMain;
     private boolean isRemember;
     private User user;
     @Override
@@ -28,14 +30,12 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        imgLogo = (ImageView) findViewById(R.id.splash_screen_imgLogo);
         tvSlogan = (TextView) findViewById(R.id.splash_screen_tvSlogan);
         tvAppName = (TextView) findViewById(R.id.splash_screen_tvAppName);
+        layoutMain = (RelativeLayout) findViewById(R.id.splash_layout_main);
         animTop = AnimationUtils.loadAnimation(this, R.anim.splash_top_anim);
         animBottom = AnimationUtils.loadAnimation(this, R.anim.splash_bottom_anim);
-        imgLogo.setAnimation(animTop);
-        tvAppName.setAnimation(animBottom);
-        tvSlogan.setAnimation(animBottom);
+        layoutMain.setAnimation(animTop);
         helper_sp = new Helper_SP(this);
         isRemember = helper_sp.getIsRemember();
         user = helper_sp.getUser();
@@ -55,7 +55,7 @@ public class SplashScreen extends AppCompatActivity {
                 Animatoo.animateSlideUp(SplashScreen.this);
 
             }
-        }, 3000);
+        }, 4000);
     }
     private void moveToSinIn() {
         new Handler().postDelayed(new Runnable() {
@@ -66,6 +66,6 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(intent);
                 Animatoo.animateSlideLeft(SplashScreen.this);
             }
-        }, 3000);
+        }, 4000);
     }
 }

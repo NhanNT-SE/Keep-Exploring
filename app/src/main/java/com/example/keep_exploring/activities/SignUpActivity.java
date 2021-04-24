@@ -23,6 +23,8 @@ import com.example.keep_exploring.api.Api_User;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
+import com.example.keep_exploring.helpers.Helper_SP;
+import com.example.keep_exploring.services.Notification_Service;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.regex.Matcher;
@@ -33,7 +35,7 @@ import dmax.dialog.SpotsDialog;
 public class SignUpActivity extends AppCompatActivity {
     //View
     private TextInputLayout tilDisplayName, tilEmail, tilPassword;
-    private Button btnSignUp, btnSignIn;
+    private Button btnSignUp, btnSignIn,btnJustGo;
     private SpotsDialog spotsDialog;
     private ImageView imgAvatar;
     //DAO & Helper;
@@ -41,8 +43,10 @@ public class SignUpActivity extends AppCompatActivity {
     private Api_User apiUser;
     private Helper_Image helper_image;
     private DAO_Auth dao_auth;
+    private Helper_SP helper_sp;
     private boolean isValid;
     private String path, suffixEmil;
+    private Intent serviceNotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
         tilPassword = (TextInputLayout) findViewById(R.id.signUp_tilPassword);
         btnSignUp = (Button) findViewById(R.id.signUp_btnSignUp);
         btnSignIn = (Button) findViewById(R.id.signUp_btnSignIn);
+        btnJustGo = (Button) findViewById(R.id.signUp_btnJustGo);
         imgAvatar = (ImageView) findViewById(R.id.signUp_imgAvatar);
         spotsDialog = new SpotsDialog(this);
     }
@@ -68,11 +73,25 @@ public class SignUpActivity extends AppCompatActivity {
         apiUser = Retrofit_config.retrofit.create(Api_User.class);
         helper_image = new Helper_Image(this);
         dao_auth = new DAO_Auth(this);
+        helper_sp = new Helper_SP(this);
         suffixEmil = tilEmail.getSuffixText().toString();
         path = "";
         isValid = false;
+        serviceNotify = new Intent(this, Notification_Service.class);
     }
     private void handlerEvent() {
+        btnJustGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (serviceNotify != null) {
+                    stopService(serviceNotify);
+                }
+                helper_sp.clearSP();
+                finish();
+                startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                Animatoo.animateSlideUp(SignUpActivity.this);
+            }
+        });
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

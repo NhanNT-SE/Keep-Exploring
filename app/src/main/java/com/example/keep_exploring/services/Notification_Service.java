@@ -66,7 +66,9 @@ public class Notification_Service extends Service {
     @Override
     public void onDestroy() {
         stopSelf();
-        mSocket.disconnect();
+        if (mSocket != null) {
+            mSocket.disconnect();
+        }
         super.onDestroy();
     }
 

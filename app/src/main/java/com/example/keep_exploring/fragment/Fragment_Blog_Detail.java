@@ -162,8 +162,13 @@ public class Fragment_Blog_Detail extends Fragment {
             @Override
             public void successReq(Object response) {
                  blog = (Blog) response;
+                if (!blog.getStatus().equalsIgnoreCase("done")) {
+                    layoutComment.setEnabled(false);
+                    layoutLike.setEnabled(false);
+                }
                 List<String> likeList = blog.getLikes();
                 blogDetailsList = blog.getBlogDetails();
+                numLike = likeList.size();
                 displayInfo();
                 refreshListView();
                 spotDialog.dismiss();

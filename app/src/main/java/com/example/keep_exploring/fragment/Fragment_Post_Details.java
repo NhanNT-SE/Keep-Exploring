@@ -74,6 +74,7 @@ public class Fragment_Post_Details extends Fragment {
         handlerEvent();
         return view;
     }
+
     private void initView() {
         spotsDialog = new SpotsDialog(getActivity());
         civUser = (CircleImageView) view.findViewById(R.id.fDetailPost_civAvatarAdmin);
@@ -109,13 +110,7 @@ public class Fragment_Post_Details extends Fragment {
     }
 
     private void handlerEvent() {
-        imgComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(idPost, "post");
-                dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
-            }
-        });
+
         tvLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,12 +118,14 @@ public class Fragment_Post_Details extends Fragment {
                 dialogFragmentLike.show(getChildFragmentManager(), dialogFragmentLike.getTag());
             }
         });
+
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (user == null) {
                     helper_common.dialogRequireLogin(getContext());
                 } else {
+
                     toggleLike();
                     setLike();
                 }
@@ -148,10 +145,18 @@ public class Fragment_Post_Details extends Fragment {
                 helper_common.dialogViewProfile(getContext(), post.getOwner());
             }
         });
+        imgComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(idPost, "post");
+                dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
+            }
+        });
         tvComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(idPost, "post");
+                dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
             }
         });
         loadData();
@@ -175,9 +180,16 @@ public class Fragment_Post_Details extends Fragment {
                         imgLike.setImageResource(R.drawable.ic_like_outline);
                     }
                 }
+                if (!post.getStatus().equalsIgnoreCase("done")) {
+                    imgLike.setEnabled(false);
+                    tvComments.setEnabled(false);
+                    imgComment.setEnabled(false);
+                    tvLikes.setEnabled(false);
+                }
                 spotsDialog.dismiss();
 
             }
+
             @Override
             public void failedReq(String msg) {
                 spotsDialog.dismiss();
@@ -193,7 +205,7 @@ public class Fragment_Post_Details extends Fragment {
         tvUserName.setText(post.getOwner().getDisplayName());
         tvTitle.setText(post.getTitle());
         tvDesc.setText(post.getDesc());
-        helper_common.displayTextViewCategory(post.getCategory(),tvCategory);
+        helper_common.displayTextViewCategory(post.getCategory(), tvCategory);
         tvLikes.setText(post.getLikes().size() + " lượt thích");
         tvComments.setText(post.getComments().size() + " lượt bình luận");
         ratingBar.setRating(post.getRating());
