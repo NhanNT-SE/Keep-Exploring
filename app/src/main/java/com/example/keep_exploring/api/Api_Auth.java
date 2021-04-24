@@ -7,14 +7,24 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface Api_Auth {
     @POST("/auth/sign-in")
     Call<String> signIn(@Body HashMap<String, String> map);
+
     @POST("/auth/sign-out")
     Call<String> signOut(@Body HashMap<String, String> map);
+
+    @PATCH("/auth/forget-pass")
+    Call<String> forgetPassword(@Body HashMap<String, String> map);
+
+    @PATCH("/auth/new-pass")
+    Call<String> getNewPassword(@Body HashMap<String, String> map);
+
     @Multipart
     @POST("/auth/sign-up")
     Call<String> signUp(
@@ -22,6 +32,7 @@ public interface Api_Auth {
             @Part("pass") RequestBody password,
             @Part("displayName") RequestBody displayName,
             @Part MultipartBody.Part single);
+
     @POST("/auth/refresh-token")
     Call<String> refreshToken(@Body HashMap<String, String> map);
 }

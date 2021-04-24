@@ -1,12 +1,10 @@
 package com.example.keep_exploring.services;
 
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -21,8 +19,6 @@ import com.example.keep_exploring.activities.MainActivity;
 import com.example.keep_exploring.api.Socket_Client;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONObject;
 
@@ -33,6 +29,8 @@ public class Notification_Service extends Service {
     private Socket mSocket;
     private int ID_NOTIFY;
     private Intent resultIntent;
+    private boolean isNotify;
+    private Helper_SP helper_sp;
 
     @Nullable
     @Override
@@ -47,7 +45,9 @@ public class Notification_Service extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        User user = new Helper_SP(this).getUser();
+        helper_sp = new Helper_SP(this);
+        User user = helper_sp.getUser();
+
         resultIntent = new Intent(this, MainActivity.class);
         NotificationChannel channel = new NotificationChannel("Notification", "Notification",
                 NotificationManager.IMPORTANCE_DEFAULT);
@@ -57,10 +57,9 @@ public class Notification_Service extends Service {
         assert manager != null;
         manager.createNotificationChannel(channel);
         mSocket = Socket_Client.getSocket();
-        if (user != null) {
-            mSocket.on("send-notify:" + user.getId(), onNotification);
-            mSocket.connect();
-        }
+        mSocket.on("send-notify:" + user.getId(), onNotification);
+        mSocket.connect();
+        Log.d("log", "onStartCommand: ");
         return START_STICKY;
     }
 

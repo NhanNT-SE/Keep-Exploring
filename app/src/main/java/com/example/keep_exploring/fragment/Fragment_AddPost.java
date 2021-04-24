@@ -266,11 +266,17 @@ public class Fragment_AddPost extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                spotDialog.show();
                 createPost();
                 break;
             case R.id.menu_post_clear:
-                toast("Quay về fragment trước đó");
+                tvAddress.setText("");
+                tvCategory.setText("");
+                ratingBar.setRating(0);
+                imageDisplayList.clear();
+                imagesSubmitList.clear();
+                etDescription.setText("");
+                etTitle.setText("");
+                refreshViewPager();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -306,6 +312,8 @@ public class Fragment_AddPost extends Fragment {
                 map.put("title", bTitle);
                 map.put("desc", bDescription);
                 map.put("rating", bRating);
+                spotDialog.show();
+
                 dao_post.createPost(helper_sp.getAccessToken(), map, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {

@@ -99,7 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
                     validateRequire(email, pass, displayName);
                 } else {
                     spotsDialog.show();
-                    dao_auth.signUp(path, email, pass, displayName, new Helper_Callback() {
+                    dao_auth.signUp(path, email + tilEmail.getSuffixText().toString(), pass, displayName, new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
                             spotsDialog.dismiss();

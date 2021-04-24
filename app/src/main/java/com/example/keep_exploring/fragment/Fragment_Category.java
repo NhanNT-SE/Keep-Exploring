@@ -58,6 +58,10 @@ public class Fragment_Category extends Fragment {
     private Adapter_RV_Post adapter_rv_post;
     private ColorStateList colorStateList;
 
+    public Fragment_Category() {
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -228,11 +232,6 @@ public class Fragment_Category extends Fragment {
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
 
     @SuppressLint({"RestrictedApi", "CheckResult"})
     @Override

@@ -22,7 +22,7 @@
         android:textColor="@color/black"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:fontFamily="@font/nabila"
+        android:fontFamily="@font/bungee"
         android:textStyle="bold"
         android:layout_height="wrap_content"/>
     <TextView

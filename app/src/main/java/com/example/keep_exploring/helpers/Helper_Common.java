@@ -53,12 +53,12 @@ public class Helper_Common {
     public String getBaseUrl() {
         String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
     public String getBaseUrlImage() {
         String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
-        return URL_GLOBAL;
+        return URL_LOCAL;
     }
     public String REFRESH_TOKEN() {
         return "REFRESH TOKEN";
@@ -155,7 +155,6 @@ public class Helper_Common {
         String statusConvert = (status.substring(0, 1).toUpperCase()
                 + status.substring(1).toLowerCase())
                 .replace("_", " ");
-        Log.d("TAG", "displayStatus: "+ statusConvert);
         tvStatus.setText(statusConvert);
         switch (status) {
             case "done":
@@ -280,6 +279,24 @@ public class Helper_Common {
             }
         });
         dialog.setPositiveButton("Đóng", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.show();
+    }
+    public void dialogExitApp(Context context) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setMessage("Bạn có muốn đóng ứng dụng");
+        dialog.setNegativeButton("Đóng", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ((Activity)context).finish();
+                Animatoo.animateSlideDown(context);
+            }
+        });
+        dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

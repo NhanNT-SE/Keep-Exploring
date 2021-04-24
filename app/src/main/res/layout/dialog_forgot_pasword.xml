@@ -5,67 +5,93 @@
     android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
     <TextView
-        android:text="Need help with your password?"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bungee"
+        android:text="Lấy lại mật khẩu"
+        android:textColor="@color/black"
         android:gravity="center"
         android:textStyle="bold"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="18sp" />
     <TextView
-        android:text="Enter the email you use for this app, and we'll help you find your password"
+        android:layout_height="wrap_content"
+        android:text="@string/note_forget_password"
+        android:textColor="#BF021E"
+        android:textStyle="bold"
         android:gravity="center"
-        android:textSize="13sp"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <EditText
-        android:id="@+id/dForgot_etEmail"
-        android:layout_marginTop="10dp"
-        android:hint="Enter your email (Required)"
-        android:paddingHorizontal="3dp"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dForgot_etPhone"
-        android:layout_marginTop="10dp"
-        android:hint="Enter your phone numbers (Required)"
-        android:paddingHorizontal="3dp"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dForgot_etBirthDay"
-        android:layout_marginTop="10dp"
-        android:hint="Enter your birthday(Required)"
-        android:paddingHorizontal="3dp"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <EditText
-        android:id="@+id/dForgot_etPass"
-        android:layout_marginTop="10dp"
-        android:hint="***********"
-        android:paddingHorizontal="3dp"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"/>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/dForgot_btnNext"
-        android:text="NEXT"
-        app:cornerRadius="10dp"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="200dp"
-        android:layout_height="60dp"/>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/dForgot_btnCancel"
-        android:text="cancel"
-        app:cornerRadius="10dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="200dp"
-        android:layout_height="60dp"/>
+        android:textSize="12sp" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dForget_tilEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:hint="Email của bạn"
+        app:suffixText="\@keep-exploring.com"
+        app:boxStrokeColor="@color/black"
+        app:counterEnabled="true"
+        app:hintTextColor="@color/black"
+        android:layout_width="match_parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dForget_tilDisplayName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:hint="Tên hiển thị"
+        app:boxStrokeColor="@color/black"
+        app:counterEnabled="true"
+        android:textSize="14sp"
+        app:hintTextColor="@color/black"
+        android:layout_width="match_parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dForget_tilBirthday"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:hint="Ngày sinh"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        android:layout_width="match_parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/dForget_btnSubmit"
+            android:text="Xác nhận"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:textAllCaps="false"
+            android:layout_marginHorizontal="5dp"
+            android:textColor="@color/white" />
+        <Button
+            android:id="@+id/dForget_btnCancel"
+            android:text="Hủy"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/black"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:textColor="@color/white" />
+    </LinearLayout>
 </LinearLayout>

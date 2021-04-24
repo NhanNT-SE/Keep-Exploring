@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/dContentPost_tvNothing"
-        android:text="Nothing to show here"
+        android:text="Không có nội dung gì để hiển thị"
         android:textColor="#090909"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -17,11 +17,11 @@
         android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/dContentPost_tvDone"
-        android:text="Done"
-        android:layout_alignParentRight="true"
+        android:text="Đóng"
+        android:layout_alignParentEnd="true"
         android:textStyle="bold"
         android:textColor="#090909"
-        android:textSize="20dp"
+        android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <ListView
