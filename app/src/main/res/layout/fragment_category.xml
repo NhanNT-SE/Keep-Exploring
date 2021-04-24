@@ -74,7 +74,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="Nothing to show here"
+        android:text="Không có bài viết nào để hiển thị"
+        android:visibility="gone"
         android:textSize="20sp"
         android:textStyle="bold" />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

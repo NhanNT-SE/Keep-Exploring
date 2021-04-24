@@ -77,6 +77,8 @@ public class Fragment_Tab_UserInfo extends Fragment {
 
     public Fragment_Tab_UserInfo() {
         // Required empty public constructor
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
 
@@ -155,6 +157,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
         });
         loadData();
     }
+
 
     private void showInfo() {
         if (user != null) {
@@ -293,6 +296,7 @@ public class Fragment_Tab_UserInfo extends Fragment {
                 birthDay = tilBirthday.getEditText().getText().toString();
                 address = tilAddress.getEditText().getText().toString();
                 displayName = tilDisplayName.getEditText().getText().toString();
+                dialog.dismiss();
                 updateProfile();
 
 

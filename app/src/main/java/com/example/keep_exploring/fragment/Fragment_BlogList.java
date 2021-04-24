@@ -58,6 +58,8 @@ public class Fragment_BlogList extends Fragment {
 
     public Fragment_BlogList() {
         // Required empty public constructor
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -144,11 +146,6 @@ public class Fragment_BlogList extends Fragment {
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
 
     @SuppressLint({"RestrictedApi", "CheckResult"})
     @Override

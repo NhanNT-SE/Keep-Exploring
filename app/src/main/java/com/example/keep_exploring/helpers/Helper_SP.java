@@ -91,4 +91,15 @@ public class Helper_SP {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("isRemember", false);
     }
+
+    public void setIsNotify(boolean isNotify) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isNotify", isNotify);
+        editor.apply();
+    }
+    public boolean getIsNotify() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sp_user", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isNotify", true);
+    }
 }

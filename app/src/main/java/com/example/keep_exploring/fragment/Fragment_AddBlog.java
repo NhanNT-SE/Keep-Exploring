@@ -315,6 +315,7 @@ public class Fragment_AddBlog extends Fragment {
             dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    spotDialog.show();
                     String title = etTitle.getText().toString();
                     dao_blog.createBlog(helper_sp.getAccessToken(), blogDetailsList, title, imageBlog, new Helper_Callback() {
                         @Override
@@ -356,7 +357,6 @@ public class Fragment_AddBlog extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                spotDialog.show();
                 createBlog();
                 break;
             case R.id.menu_post_clear:

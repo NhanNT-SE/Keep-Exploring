@@ -121,20 +121,8 @@
                 android:background="@drawable/border_tv"
                 android:gravity="center"
                 android:paddingVertical="5dp"
-                android:text="Update profile"
+                android:text="Cập nhật thông tin cá nhân"
                 android:textStyle="bold" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/fTabUser_tvFeedback"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginHorizontal="5dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:background="@drawable/border_tv"-->
-<!--                android:gravity="center"-->
-<!--                android:paddingVertical="5dp"-->
-<!--                android:text="Send Feedback"-->
-<!--                android:textStyle="bold" />-->
         </LinearLayout>
 
 

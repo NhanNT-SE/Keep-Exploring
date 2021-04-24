@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:fontFamily="@font/nabila"
+        android:fontFamily="@font/bungee"
+        android:textColor="@color/black"
         android:text="Thêm địa chỉ"
         android:textSize="18sp" />
 
@@ -94,6 +95,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             android:layout_weight="1"
             android:textAllCaps="false"
             android:text="Thêm địa chỉ" />
@@ -101,6 +104,8 @@
             android:id="@+id/dAddress_btnCancel"
             android:layout_width="0dp"
             android:textAllCaps="false"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"

@@ -21,6 +21,7 @@ import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Notification;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.api.Socket_Client;
+import com.example.keep_exploring.fragment.Fragment_AddBlog;
 import com.example.keep_exploring.fragment.Fragment_AddPost;
 import com.example.keep_exploring.fragment.Fragment_BlogList;
 import com.example.keep_exploring.fragment.Fragment_Blog_Detail;
@@ -37,8 +38,6 @@ import com.example.keep_exploring.services.Notification_Service;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private Socket mSocket;
     private Animation animOpen, animClose, animFromBottom, animToBottom;
     private boolean clicked = false;
+    private boolean isNotify = false;
     private Intent serviceNotify;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         animFromBottom = AnimationUtils.loadAnimation(this, R.anim.fab_from_bottom_anim);
         animToBottom = AnimationUtils.loadAnimation(this, R.anim.fab_to_bottom_anim);
         user = helper_sp.getUser();
-        if (user != null) {
-            toast("Xin chào " + user.getDisplayName());
+        isNotify = helper_sp.getIsNotify();
+        serviceNotify = new Intent(this, Notification_Service.class);
+        if (user != null && isNotify) {
             mSocket = Socket_Client.getSocket();
             mSocket.on("send-notify:" + user.getId(), onNotification);
-            serviceNotify = new Intent(this, Notification_Service.class);
             startService(serviceNotify);
         }
     }
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onClick(View v) {
                 toggleAnim();
-                replaceFragment(new Fragment_Tab_UserInfo());
+                replaceFragment(new Fragment_AddBlog());
             }
         });
         setBadgeNotify();
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 helper_common.replaceFragment(this, fragment);
             }
         } else {
-            replaceFragment(new Fragment_Tab_UserInfo());
+            replaceFragment(new Fragment_Category());
 
         }
     }
@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private final Emitter.Listener onNotification = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            JSONObject data = (JSONObject) args[0];
             try {
                 badgeNotify.setNumber(badgeNotify.getNumber() + 1);
 
@@ -223,42 +222,87 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
-        return super.onCreateOptionsMenu(menu);
+        MenuItem itemNotify = menu.findItem(R.id.menu_home_switchNotify);
+        MenuItem itemLogout = menu.findItem(R.id.menu_home_logout);
+        if (helper_sp.getUser() == null) {
+            itemLogout.setTitle("Đăng nhập");
+        }
+        if (helper_sp.getUser() == null) {
+            itemNotify.setEnabled(false);
+        }
+        if (helper_sp.getIsNotify()) {
+            itemNotify.setIcon(R.drawable.ic_toggle_on);
+            itemNotify.setTitle("Tắt thông báo");
+        } else {
+            itemNotify.setIcon(R.drawable.ic_toggle_off);
+            itemNotify.setTitle("Nhận thông báo");
+        }
+        return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return (true);
-        } else if (item.getItemId() == R.id.menu_home_logout) {
-            spotsDialog.show();
-            dao_auth.signOut(new Helper_Callback() {
-                @Override
-                public void successReq(Object response) {
-                    spotsDialog.dismiss();
-                    if (serviceNotify != null){
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.menu_home_main:
+                replaceFragment(new Fragment_Category());
+                break;
+            case R.id.menu_home_logout: {
+                spotsDialog.show();
+                dao_auth.signOut(new Helper_Callback() {
+                    @Override
+                    public void successReq(Object response) {
+                        spotsDialog.dismiss();
                         stopService(serviceNotify);
-
+                        startActivity(new Intent(MainActivity.this, SignInActivity.class));
                     }
-                    startActivity(new Intent(MainActivity.this, SignInActivity.class));
-                }
 
-                @Override
-                public void failedReq(String msg) {
-                    spotsDialog.dismiss();
-                }
-            });
+                    @Override
+                    public void failedReq(String msg) {
+                        spotsDialog.dismiss();
+                    }
+                });
+                break;
+            }
+            case R.id.menu_home_switchNotify:
+                toggleNotify(item);
+                break;
+            case R.id.menu_home_exit_app:
+                helper_common.dialogExitApp(this);
+                break;
         }
+
         return (super.onOptionsItemSelected(item));
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+       if (getSupportFragmentManager().getBackStackEntryCount() <= 1){
+           replaceFragment(new Fragment_Category());
+       }else {
+           super.onBackPressed();
+
+       }
     }
 
-
+    private void toggleNotify(MenuItem item) {
+        if (helper_sp.getUser() == null) {
+            item.setEnabled(false);
+        }
+        if (helper_sp.getIsNotify()) {
+            item.setIcon(R.drawable.ic_toggle_off);
+            item.setTitle("Nhận thông báo");
+            stopService(serviceNotify);
+        } else {
+            item.setIcon(R.drawable.ic_toggle_on);
+            item.setTitle("Tắt thông báo");
+            startService(serviceNotify);
+        }
+        helper_sp.setIsNotify(!helper_sp.getIsNotify());
+    }
 
     private void toggleAnim() {
         if (!clicked) {

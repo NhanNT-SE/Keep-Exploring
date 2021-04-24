@@ -147,6 +147,7 @@ public class DAO_Auth {
 
                 }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callback.failedReq(t.getMessage());
@@ -154,6 +155,59 @@ public class DAO_Auth {
         });
 
     }
+
+    public void forgetPassword(HashMap<String, String> map, Helper_Callback callback) {
+        Call<String> call = api_auth.forgetPassword(map);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty()) {
+                    try {
+                        JSONObject responseData = new JSONObject(response.body());
+                        String newAccessPassword = responseData.getString("data");
+                        callback.successReq(newAccessPassword);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+
+    }
+
+    public void getNewPassword(HashMap<String, String> map, Helper_Callback callback) {
+        Call<String> call = api_auth.getNewPassword(map);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String err = callback.getResponseError(response);
+                if (err.isEmpty()) {
+                    try {
+                        JSONObject responseData = new JSONObject(response.body());
+                        String newAccessPassword = responseData.getString("data");
+                        callback.successReq(newAccessPassword);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                callback.failedReq(t.getMessage());
+            }
+        });
+
+    }
+
     private void log(String s) {
         Log.d("log", s);
     }

@@ -266,7 +266,6 @@ public class Fragment_EditPost extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_post_complete:
-                spotDialog.show();
                 updatePost();
                 break;
             case R.id.menu_post_clear:
@@ -359,6 +358,7 @@ public class Fragment_EditPost extends Fragment {
                 map.put("rating", bRating);
                 map.put("imgs_deleted",bImageDelete);
                 map.put("created_on",bCreated_on);
+                spotDialog.show();
                 dao_post.updatePost(helper_sp.getAccessToken(), map, idPost, imagesSubmitList, new Helper_Callback() {
                     @Override
                     public void successReq(Object data) {

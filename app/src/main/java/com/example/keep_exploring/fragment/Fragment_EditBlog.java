@@ -328,6 +328,44 @@ public class Fragment_EditBlog extends Fragment {
         }
     }
 
+    private void deleteBlog() {
+        dao_blog.deleteBlog(helper_sp.getAccessToken(), idBlog, new Helper_Callback() {
+            @Override
+            public void successReq(Object data) {
+                toast("Đã xóa bài viết");
+                dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
+                spotDialog.dismiss();
+                helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
+            }
+
+            @Override
+            public void failedReq(String msg) {
+                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
+                    refreshToken(new Helper_Callback() {
+                        @Override
+                        public void successReq(Object response) {
+                            deleteBlog();
+                        }
+
+                        @Override
+                        public void failedReq(String msg) {
+                            spotDialog.dismiss();
+                            helper_common.logOut(getContext());
+                        }
+                    });
+                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
+                    spotDialog.dismiss();
+                    helper_common.logOut(getContext());
+                } else {
+                    spotDialog.dismiss();
+                    toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
+
+                }
+            }
+        });
+
+
+    }
 
     private void updateBlog() {
         dao_blog.updateBlog(helper_sp.getAccessToken(), idBlog, title,
@@ -368,17 +406,7 @@ public class Fragment_EditBlog extends Fragment {
                 });
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_post, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -404,58 +432,6 @@ public class Fragment_EditBlog extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
-
-    private void deleteBlog() {
-        dao_blog.deleteBlog(helper_sp.getAccessToken(), idBlog, new Helper_Callback() {
-            @Override
-            public void successReq(Object data) {
-                toast("Đã xóa bài viết");
-                dao_blog.deleteFolderImage(folder_storage, blogDetailsList);
-                spotDialog.dismiss();
-                helper_common.replaceFragment(getContext(), new Fragment_Tab_UserInfo());
-            }
-
-            @Override
-            public void failedReq(String msg) {
-                if (msg.equalsIgnoreCase(helper_common.REFRESH_TOKEN())) {
-                    refreshToken(new Helper_Callback() {
-                        @Override
-                        public void successReq(Object response) {
-                            deleteBlog();
-                        }
-
-                        @Override
-                        public void failedReq(String msg) {
-                            spotDialog.dismiss();
-                            helper_common.logOut(getContext());
-                        }
-                    });
-                } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
-                    spotDialog.dismiss();
-                    helper_common.logOut(getContext());
-                } else {
-                    spotDialog.dismiss();
-                    toast("Có lỗi xảy ra, xóa bài viết không thành công, vui lòng thử lại sau ít phút");
-
-                }
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CHOOSE_IMAGE_BLOG && data != null) {
-            imgBlog.setImageURI(data.getData());
-            imageBlog = helper_image.getPathFromUri(data.getData());
-        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
-            imgContent.setImageURI(data.getData());
-            blogDetails.setUriImage(data.getData());
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     private void loadData() {
         if (!spotDialog.isShowing()) {
             spotDialog.show();
@@ -485,6 +461,30 @@ public class Fragment_EditBlog extends Fragment {
         adapterContent = new Adapter_LV_Content(getActivity(), blogDetailsList);
         lvContent.setAdapter(adapterContent);
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_post, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CHOOSE_IMAGE_BLOG && data != null) {
+            imgBlog.setImageURI(data.getData());
+            imageBlog = helper_image.getPathFromUri(data.getData());
+        } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
+            imgContent.setImageURI(data.getData());
+            blogDetails.setUriImage(data.getData());
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
 
     private void refreshToken(Helper_Callback callback) {
         dao_auth.refreshToken(callback);
