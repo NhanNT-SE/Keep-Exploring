@@ -2,6 +2,8 @@ const jwtHelper = require("../middleware/jwtHelper");
 const User = require("../Models/User");
 const Token = require("../Models/Token");
 const bcrypt = require("bcryptjs");
+const Notification = require("../Models/Notification");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
 const fs = require("fs");
 const {
   ACCESS_TOKEN_SECRET,
@@ -120,6 +122,16 @@ const signUp = async (req, res, next) => {
     });
 
     await newUser.save();
+
+    const notify = new Notification({
+      idUser: newUser._id,
+      contentAdmin:
+        "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
+      status: "new",
+    });
+
+    await notify.save();
+
     return res.status(200).send({
       data: newUser,
       message: "Đăng ký thành công",
@@ -165,9 +177,52 @@ const refreshToken = async (req, res, next) => {
     next(error);
   }
 };
+const forgetPassword = async (req, res, next) => {
+  try {
+    const { bod, email, displayName } = req.body;
+    const user = await User.findOne({ email });
+   
+    if (!user) {
+      handlerCustomError(201, "Email của bạn không đúng");
+    }
+    if (user.displayName !== displayName) {
+      handlerCustomError(201, "Tên hiển thị của bạn không đúng");
+    }
+    if (user.bod.toString() != new Date(bod)) {
+      handlerCustomError(201, "Ngày sinh của bạn không đúng");
+    }
+
+    return res.status(200).send({
+      data: "Xác nhận thành công",
+      status: 200,
+      message: "Lấy mật khẩu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getNewPassword = async (req, res, next) => {
+  try {
+    const { email, newPass } = req.body;
+    const user = await User.findOne({ email });
+    const salt = await bcrypt.genSalt(10);
+    const passHashed = await bcrypt.hash(newPass, salt);
+    await User.findByIdAndUpdate(user._id, { pass: passHashed });
+    console.log(passHashed);
+    return res.status(200).send({
+      data: "Đã đổi mật khẩu thành công",
+      status: 200,
+      message: "Lấy mật khẩu thành công",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   signIn,
   signOut,
   signUp,
   refreshToken,
+  forgetPassword,
+  getNewPassword,
 };
