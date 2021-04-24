@@ -3,6 +3,7 @@ const Address = require("../Models/Address");
 const Blog = require("../Models/Blog");
 const Comment = require("../Models/Comment");
 const Post = require("../Models/Post");
+const User = require("../Models/User");
 require("../Models/User");
 require("../Models/Comment");
 require("../Models/Blog_Detail");
@@ -56,7 +57,7 @@ const getBlogByID = async (req, res, next) => {
     const { idBlog } = req.params;
     const blogFound = await Blog.findById(idBlog)
       .populate("blog_detail")
-      .populate("owner", ["displayName", "imgUser", "email","post","blog"]);
+      .populate("owner", ["displayName", "imgUser", "email", "post", "blog"]);
     if (blogFound) {
       return res.send({ data: blogFound, status: 200, message: "" });
     }
@@ -278,6 +279,7 @@ const getLikeListBlog = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getAddress,
   getBlogComment,

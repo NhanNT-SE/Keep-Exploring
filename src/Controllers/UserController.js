@@ -2,15 +2,33 @@ const User = require("../Models/User");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const handlerCustomError = require("../middleware/customError");
+const Notification = require("../Models/Notification");
+const { sendNotifyRealtime } = require("../middleware/Socket.io");
+
 const changePass = async (req, res, next) => {
   try {
     const { oldPass, newPass } = req.body;
+    const { io } = req;
     const user = await User.findById(req.user._id);
     const checkPass = await bcrypt.compare(oldPass, user.pass);
     if (checkPass) {
       const salt = await bcrypt.genSalt(10);
       const passHashed = await bcrypt.hash(newPass, salt);
       await User.findByIdAndUpdate(user._id, { pass: passHashed });
+      const msgNotify = `Mật khẩu của bạn đã được cập nhật`;
+
+      const notify = new Notification({
+        idUser: user._id,
+        contentAdmin: msgNotify,
+        status: "new",
+      });
+
+      await notify.save();
+      sendNotifyRealtime(io, user._id, {
+        message: msgNotify,
+        type: "system",
+        content: "Mật khẩu của bạn đã được cập nhật",
+      });
       return res.status(200).send({
         data: {},
         status: 200,
@@ -44,6 +62,7 @@ const updateProfile = async (req, res, next) => {
   try {
     const file = req.file;
     const user = req.user;
+    const {io} = req;
     const userFound = await User.findById(user._id);
     let avatar;
 
@@ -72,6 +91,19 @@ const updateProfile = async (req, res, next) => {
     };
 
     await User.findByIdAndUpdate(user._id, newUser);
+    const msgNotify = `Thông tin cá nhân của bạn đã được cập nhật`;
+
+      const notify = new Notification({
+        idUser: user._id,
+        contentAdmin: msgNotify,
+        status: "new",
+      });
+
+      await notify.save();
+      sendNotifyRealtime(io, user._id, {
+        message: msgNotify,
+        type: "system",
+      });
     return res.status(200).send({
       data: {
         _id: user._id,

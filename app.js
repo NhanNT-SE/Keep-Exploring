@@ -57,8 +57,6 @@ app.use((req, res, next) => {
   req.io = io;
   next();
 });
-
-
 // ----------PUBLIC ROUTER----------
 app.use("/api-doc", apiDocRouter);
 app.use("/auth", authRouter);
