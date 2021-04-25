@@ -6,15 +6,15 @@
     android:layout_marginBottom="10dp"
     android:orientation="horizontal"
     android:padding="5dp">
-    <androidx.cardview.widget.CardView
+    <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:backgroundTint="@color/light_transparent"
-        app:cardCornerRadius="30dp" />
-    <androidx.cardview.widget.CardView
+        android:background="@color/light_transparent"
+       />
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="5dp"
-        android:backgroundTint="@color/light_transparent"
-        app:cardCornerRadius="10dp" />
+        android:background="@color/light_transparent"
+       />
 </LinearLayout>

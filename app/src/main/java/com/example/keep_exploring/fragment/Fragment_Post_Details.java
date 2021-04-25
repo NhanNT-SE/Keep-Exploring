@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class Fragment_Post_Details extends Fragment {
     private CircleImageView civUser;
     private TextView tvDate, tvTitle, tvUserName, tvDesc, tvLikes, tvComments, tvCategory;
     private ImageView imgLike, imgComment, imgRefresh;
+    private RelativeLayout layoutInfo;
     private ImageSlider sliderPost;
     private SpotsDialog spotsDialog;
     private RatingBar ratingBar;
@@ -89,6 +91,7 @@ public class Fragment_Post_Details extends Fragment {
         imgRefresh = (ImageView) view.findViewById(R.id.fDetailPost_imgRefresh);
         sliderPost = (ImageSlider) view.findViewById(R.id.fDetailPost_sliderPost);
         ratingBar = (RatingBar) view.findViewById(R.id.fDetailPost_ratingBar);
+        layoutInfo = (RelativeLayout) view.findViewById(R.id.fDetailPost_layoutInfo);
     }
 
     private void initVariable() {
@@ -112,8 +115,7 @@ public class Fragment_Post_Details extends Fragment {
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(idPost, "post");
-                dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
+                dialogComment();
             }
         });
         tvLikes.setOnClickListener(new View.OnClickListener() {
@@ -151,12 +153,15 @@ public class Fragment_Post_Details extends Fragment {
         tvComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                dialogComment();
             }
         });
         loadData();
     }
-
+    private void dialogComment(){
+        dialog_fragment_comment = Dialog_Fragment_Comment.newInstance(idPost, "post");
+        dialog_fragment_comment.show(getChildFragmentManager(), dialog_fragment_comment.getTag());
+    }
     private void loadData() {
         spotsDialog.show();
         dao_post.getPostById(idPost, new Helper_Callback() {
@@ -201,9 +206,13 @@ public class Fragment_Post_Details extends Fragment {
         for (String urlPost : post.getImgs()) {
             slideModels.add(new SlideModel(URL_IMAGE + "post/" + urlPost));
         }
+        if (!post.getStatus().equalsIgnoreCase("done")){
+            layoutInfo.setVisibility(View.GONE);
+        }
         sliderPost.setImageList(slideModels, true);
     }
 
+    @SuppressLint("SetTextI18n")
     private void toggleLike() {
         spotsDialog.show();
         isLike = !isLike;

@@ -8,9 +8,11 @@
     tools:context=".fragment.Fragment_AddPost">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/fAddBlog_appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -18,83 +20,104 @@
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ScrollView
+            <RelativeLayout
+                android:id="@+id/fAddBlog_layoutContainer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
-                <RelativeLayout
-                    android:id="@+id/fAddBlog_layoutContainer"
-                    android:layout_width="match_parent"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/fAddBlog_imgAvatarUser"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp" />
+
+                <TextView
+                    android:id="@+id/fAddBlog_tvUser"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@+id/fAddBlog_imgAvatarUser"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/fAddBlog_imgAvatarUser"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:src="@drawable/avatar_facebook" />
+                <TextView
+                    android:id="@+id/fAddBlog_tvPubDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:textSize="12sp"
+                    android:textStyle="italic|bold" />
 
-                    <TextView
-                        android:id="@+id/fAddBlog_tvUser"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="3dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_toEndOf="@+id/fAddBlog_imgAvatarUser"
-                        android:text="Nguyễn Trọng Nhân"
-                        android:textSize="15sp"
-                        android:textStyle="italic" />
+                <ImageView
+                    android:id="@+id/fAddBlog_imgPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@+id/fAddBlog_CvPickImgPost"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:scaleType="fitXY"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/fAddBlog_tvPubDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="10dp"
-                        android:text="20/20/2020"
-                        android:textSize="15sp"
-                        android:textStyle="italic" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fAddBlog_CvPickImgPost"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/fAddBlog_imgAvatarUser"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginVertical="5dp"
+                    android:background="@color/white"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="1dp">
 
                     <ImageView
-                        android:id="@+id/fAddBlog_imgPost"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_below="@+id/fAddBlog_imgAvatarUser"
-                        android:layout_centerHorizontal="true"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/add_image" />
+                        android:layout_height="match_parent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_camera_avatar_black" />
+                </androidx.cardview.widget.CardView>
 
-                    <EditText
-                        android:id="@+id/fAddBlog_etTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/fAddBlog_imgPost"
-                        android:layout_marginTop="3dp"
-                        android:gravity="top"
-                        android:padding="5dp"
-                        android:background="@drawable/border_tv"
-                        android:maxLines="5"
+                <EditText
+                    android:id="@+id/fAddBlog_etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fAddBlog_imgPost"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/border_tv"
+                    android:gravity="top"
+                    android:hint="Tiêu đề"
+                    android:maxLines="5"
+                    android:padding="5dp"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="3dp"
+                    android:textSize="14sp" />
 
-                        android:hint="Title..."
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="3dp"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                <ImageView
+                    android:id="@+id/fAddBlog_imgExpanded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fAddBlog_etTitle"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_expanded_app_bar"
+                    android:visibility="gone"
+                    app:layout_collapseMode="parallax" />
+            </RelativeLayout>
 
-            </ScrollView>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/fAddBlog_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp"
+                app:elevation="0dp"
+                app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_gravity="bottom"
-            android:background="#C8C7C7"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -123,7 +146,7 @@
         app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_add_white"
         app:fabSize="mini"
-        app:maxImageSize="30dp"
+        app:maxImageSize="24dp"
         app:tint="@android:color/white"/>
 
 

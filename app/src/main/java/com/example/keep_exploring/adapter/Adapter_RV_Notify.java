@@ -231,7 +231,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
                     .load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage())
                     .into(imgNotify);
         } else {
-            imgNotify.setImageResource(R.drawable.ic_notify_system_main);
+            imgNotify.setImageResource(R.drawable.ic_custom_notify_comment);
         }
 
     }
@@ -250,7 +250,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         }
         if (contentAdmin != null) {
             cardView.setCardBackgroundColor(Color.parseColor("#B1AFAF"));
-            imgType.setBackgroundResource(R.drawable.ic_notify_system);
+            imgType.setBackgroundResource(R.drawable.ic_custom_notify_system);
         } else if (content != null) {
             switch (content) {
                 case "like": {

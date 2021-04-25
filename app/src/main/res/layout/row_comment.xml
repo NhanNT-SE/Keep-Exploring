@@ -35,7 +35,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="nhan@gmail.com"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -59,7 +58,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Comment 1 2 4 5  6 7"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
             <TextView
@@ -68,10 +66,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginTop="5dp"
-                android:text="30/03/2020 21:11"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                android:textStyle="italic" />
+                android:textStyle="italic|bold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -9,8 +9,8 @@
     <TextView
         android:text="Chọn hành động"
         android:gravity="center"
-        android:textColor="@color/black"
-        android:fontFamily="@font/bungee"
+        android:textColor="@color/colorPrimary"
+        android:fontFamily="@font/nabila"
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_width="match_parent"
@@ -25,8 +25,6 @@
             android:id="@+id/dLongClick_btnEdit"
             android:text="Sửa"
             android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
             android:textAllCaps="false"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
@@ -34,16 +32,12 @@
             android:id="@+id/dLongClick_btnDelete"
             android:text="Xóa"
             android:textAllCaps="false"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/dLongClick_btnCancel"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
             android:text="Hủy"
             android:textAllCaps="false"
             android:layout_weight="1"

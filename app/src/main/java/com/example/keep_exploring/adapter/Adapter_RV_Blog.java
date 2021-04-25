@@ -1,5 +1,6 @@
 package com.example.keep_exploring.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,9 +19,7 @@ import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_Blog_Detail;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
-import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
-import com.example.keep_exploring.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -40,6 +39,7 @@ public class Adapter_RV_Blog extends RecyclerView.Adapter<Adapter_RV_Blog.ViewHo
         helper_common = new Helper_Common();
         helper_date = new Helper_Date();
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,16 +47,18 @@ public class Adapter_RV_Blog extends RecyclerView.Adapter<Adapter_RV_Blog.ViewHo
         View view = inflater.inflate(R.layout.row_blog, parent, false);
         return new ViewHolder(view);
     }
+
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
         Blog blog = blogList.get(position);
-        adapterImage = new Adapter_LV_Image(context,blog.getBlogDetails());
+        adapterImage = new Adapter_LV_Image(context, blog.getBlogDetails());
         holder.tvUserName.setText(blog.getOwner().getDisplayName());
         holder.tvTitle.setText(blog.getTitle());
         holder.tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
-        holder.tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
-        holder.tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
+        holder.tvComment.setText(blog.getComments().size() + " lượt bình luận");
+        holder.tvLike.setText(blog.getLikes().size() + " lượt thích");
         Picasso.get().load(URL_IMAGE + "user/" + blog.getOwner().getImgUser()).into(holder.civUser);
         holder.gridView.setAdapter(adapterImage);
 

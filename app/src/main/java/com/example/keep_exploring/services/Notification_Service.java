@@ -125,7 +125,7 @@ public class Notification_Service extends Service {
         switch (type) {
             case "like":
                 ID_NOTIFY = 1;
-                resource = R.drawable.ic_custom_notify_like;
+                resource = R.drawable.ic_like_red;
                 break;
             case "comment":
                 ID_NOTIFY = 2;

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private BottomNavigationView bottomNavigationView;
     private Helper_Common helper_common;
     private FloatingActionButton fabAdd, fabAddPost, fabAddBlog;
+    private LinearLayout layoutAddPost, layoutAddBlog;
     private SpotsDialog spotsDialog;
     private BadgeDrawable badgeNotify;
     //    DAO & Helper
@@ -80,10 +82,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         fabAdd = (FloatingActionButton) findViewById(R.id.main_fabAdd);
         fabAddPost = (FloatingActionButton) findViewById(R.id.main_fabAddPost);
         fabAddBlog = (FloatingActionButton) findViewById(R.id.main_fabAddBlog);
+        layoutAddPost = (LinearLayout) findViewById(R.id.main_layoutAddPost);
+        layoutAddBlog = (LinearLayout) findViewById(R.id.main_layoutAddBlog);
         badgeNotify = bottomNavigationView.getOrCreateBadge(R.id.menu_bottom_notify);
         badgeNotify.setMaxCharacterCount(3);
         badgeNotify.setBadgeTextColor(Color.WHITE);
-        badgeNotify.setBackgroundColor(Color.parseColor("#F3BA00"));
+        badgeNotify.setBackgroundColor(Color.parseColor("#366577"));
     }
     private void initVariable() {
         dao_address = new DAO_Address(this);
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
         });
+
         fabAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 replaceFragment(new Fragment_AddPost());
             }
         });
+
         fabAddBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,21 +312,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void toggleAnim() {
         if (!clicked) {
-            fabAddPost.setVisibility(View.VISIBLE);
-            fabAddBlog.setVisibility(View.VISIBLE);
-            fabAddPost.startAnimation(animFromBottom);
-            fabAddBlog.startAnimation(animFromBottom);
+            layoutAddPost.setVisibility(View.VISIBLE);
+            layoutAddBlog.setVisibility(View.VISIBLE);
+            layoutAddPost.startAnimation(animFromBottom);
+            layoutAddBlog.startAnimation(animFromBottom);
             fabAdd.startAnimation(animOpen);
-            fabAddPost.setClickable(true);
-            fabAddBlog.setClickable(true);
+            layoutAddPost.setClickable(true);
+            layoutAddBlog.setClickable(true);
         } else {
-            fabAddPost.setVisibility(View.INVISIBLE);
-            fabAddBlog.setVisibility(View.INVISIBLE);
-            fabAddPost.startAnimation(animToBottom);
-            fabAddBlog.startAnimation(animToBottom);
+            layoutAddPost.setVisibility(View.INVISIBLE);
+            layoutAddBlog.setVisibility(View.INVISIBLE);
+            layoutAddPost.startAnimation(animToBottom);
+            layoutAddBlog.startAnimation(animToBottom);
             fabAdd.startAnimation(animClose);
-            fabAddPost.setClickable(false);
-            fabAddBlog.setClickable(false);
+            layoutAddPost.setClickable(false);
+            layoutAddBlog.setClickable(false);
         }
         clicked = !clicked;
 

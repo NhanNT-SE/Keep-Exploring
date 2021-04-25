@@ -12,8 +12,8 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:textStyle="bold"
-        android:fontFamily="@font/bungee"
-        android:textColor="@color/black"
+        android:fontFamily="@font/nabila"
+        android:textColor="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,7 +22,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/avatar_header" />
+       />
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
@@ -42,11 +42,11 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/black"
+                android:buttonTint="@color/colorPrimary"
                 android:text="male" />
             <RadioButton
                 android:id="@+id/dEditInfo_radioFemale"
-                android:buttonTint="@color/black"
+                android:buttonTint="@color/colorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="female" />
@@ -104,8 +104,6 @@
             android:layout_width="match_parent"
             android:textSize="12sp"
             android:layout_height="0dp"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/black"
             android:layout_weight="1"
             android:text="Cập nhật"
             android:textAllCaps="false" />
@@ -113,8 +111,6 @@
         <Button
             android:id="@+id/dEditInfo_btnChangePassword"
             android:layout_width="match_parent"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/black"
             android:textSize="12sp"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -124,8 +120,6 @@
         <Button
             android:id="@+id/dEditInfo_btnCancel"
             android:text="Đóng"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/black"
             android:textSize="12sp"
             android:layout_width="match_parent"
             android:layout_weight="1"
