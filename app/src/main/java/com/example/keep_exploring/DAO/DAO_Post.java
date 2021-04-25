@@ -1,13 +1,11 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.keep_exploring.api.Api_Post;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
-import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Post;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -192,7 +190,5 @@ public class DAO_Post {
         });
 
     }
-    private void log(String s) {
-        Log.d("log", s);
-    }
+
 }

@@ -1,7 +1,6 @@
 package com.example.keep_exploring.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,7 +137,4 @@ public class Dialog_Fragment_Like extends DialogFragment {
         return R.style.DialogCommentTheme;
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 }

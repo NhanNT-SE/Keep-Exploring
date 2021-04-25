@@ -4,9 +4,7 @@ import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Comment implements Serializable {
+public class Comment {
     private String _id, idPost, idBlog;
     private String date, content, img;
     @SerializedName("idUser")

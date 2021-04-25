@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -166,7 +164,6 @@ public class Fragment_Category extends Fragment {
         dao_post.getPostByQuery(query, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                postList.clear();
                 postList = (List<Post>) response;
                 refreshLV();
                 swipeRefreshLayout.setRefreshing(false);
@@ -268,8 +265,5 @@ public class Fragment_Category extends Fragment {
         }
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 
 }

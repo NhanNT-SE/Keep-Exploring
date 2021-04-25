@@ -1,13 +1,11 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.keep_exploring.api.Api_User;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Image;
-import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.User;
 import com.google.gson.Gson;
 
@@ -89,8 +87,6 @@ public class DAO_User {
             }
         });
     }
-    private void log(String s) {
-        Log.d("log", s);
-    }
+
 
 }

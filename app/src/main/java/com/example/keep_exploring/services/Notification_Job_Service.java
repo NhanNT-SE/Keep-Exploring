@@ -3,13 +3,12 @@ package com.example.keep_exploring.services;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
+import android.app.job.JobParameters;
+import android.app.job.JobService;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
@@ -25,26 +24,22 @@ import org.json.JSONObject;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class Notification_Service extends Service {
+public class MyIntentService extends JobService {
     private Socket mSocket;
     private int ID_NOTIFY;
     private Intent resultIntent;
-    private boolean isNotify;
     private Helper_SP helper_sp;
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public boolean onStartJob(JobParameters jobParameters) {
+        Log.i("log", "onStartJob");
+        doBackgroundWork();
+        mSocket = Socket_Client.getSocket();
+        mSocket.connect();
+        return true;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    private void doBackgroundWork() {
         helper_sp = new Helper_SP(this);
         User user = helper_sp.getUser();
 
@@ -59,15 +54,6 @@ public class Notification_Service extends Service {
         mSocket = Socket_Client.getSocket();
         mSocket.on("send-notify:" + user.getId(), onNotification);
         mSocket.connect();
-        Log.d("log", "onStartCommand: ");
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        stopSelf();
-        mSocket.disconnect();
-        super.onDestroy();
     }
 
     private final Emitter.Listener onNotification = new Emitter.Listener() {
@@ -152,5 +138,18 @@ public class Notification_Service extends Service {
         remoteViews.setTextViewText(R.id.customNotify_tvDesc, message);
     }
 
+    @Override
+    public boolean onStopJob(JobParameters jobParameters) {
+        Log.i("log", "onStopJob");
+        mSocket.disconnect();
+        return false;
+    }
 
+
+    @Override
+    public void onDestroy() {
+        mSocket.disconnect();
+        super.onDestroy();
+        Log.i("log", " thread Id: " + Thread.currentThread().getId());
+    }
 }

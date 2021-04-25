@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -118,7 +117,7 @@ public class Fragment_EditPost extends Fragment {
         imageDisplayList = new ArrayList<>();
         imageDefaultList = new ArrayList<>();
         user = helper_sp.getUser();
-        idPost = "6075c0fb6e5a5e20e8241100";
+        idPost = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
             idPost = bundle.getString("idPost");
@@ -442,10 +441,6 @@ public class Fragment_EditPost extends Fragment {
 
     private void refreshToken(Helper_Callback callback) {
         dao_auth.refreshToken(callback);
-    }
-
-    private void log(String s) {
-        Log.d("log", s);
     }
 
     private void toast(String s) {

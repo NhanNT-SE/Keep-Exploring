@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import dmax.dialog.SpotsDialog;
-
 public class Helper_Post {
     private Context context;
     private Helper_SP helper_sp;

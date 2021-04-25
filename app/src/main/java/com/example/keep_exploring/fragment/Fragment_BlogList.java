@@ -1,7 +1,6 @@
 package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,10 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.keep_exploring.DAO.DAO_Auth;
 import com.example.keep_exploring.DAO.DAO_Blog;
 import com.example.keep_exploring.R;
-import com.example.keep_exploring.activities.SignInActivity;
 import com.example.keep_exploring.adapter.Adapter_RV_Blog;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
@@ -123,7 +119,6 @@ public class Fragment_BlogList extends Fragment {
         dao_blog.getBlogByQuery(query, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                blogList.clear();
                 blogList = (List<Blog>) response;
                 refreshRV();
                 swipeRefreshLayout.setRefreshing(false);
@@ -179,10 +174,4 @@ public class Fragment_BlogList extends Fragment {
         }
     }
 
-    private void toast(String s) {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
-    }
-    private void log(String s) {
-        Log.d("log", s);
-    }
 }

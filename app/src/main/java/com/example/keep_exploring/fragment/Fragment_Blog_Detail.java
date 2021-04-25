@@ -3,7 +3,6 @@ package com.example.keep_exploring.fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Auth;
@@ -27,6 +27,7 @@ import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.User;
+import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -43,10 +44,12 @@ public class Fragment_Blog_Detail extends Fragment {
     private View view;
     private TextView tvTitle, tvComment, tvLike;
     private TextView tvUser, tvPubDate;
-    private ImageView imgBlog, imgRefresh, imgLike;
+    private ImageView imgBlog, imgRefresh, imgLike, imgExpanded;
     private CircleImageView imgAvatarUser;
     private LinearLayout layoutComment, layoutLike;
     private Dialog spotDialog;
+    private Toolbar toolbar;
+    private AppBarLayout appBar;
     //    DAO & Helpers
     private DAO_Auth dao_auth;
     private DAO_Blog dao_blog;
@@ -91,10 +94,13 @@ public class Fragment_Blog_Detail extends Fragment {
         imgBlog = (ImageView) view.findViewById(R.id.fBlogDetail_imgBlog);
         imgLike = (ImageView) view.findViewById(R.id.fBlogDetail_imgLike);
         imgRefresh = (ImageView) view.findViewById(R.id.fBlogDetail_imgRefresh);
+        imgExpanded = (ImageView) view.findViewById(R.id.fBlogDetail_imgExpanded);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fBlogDetail_imgAvatarUser);
         lvContent = (ListView) view.findViewById(R.id.fBlogDetail_lvContent);
         layoutComment = (LinearLayout) view.findViewById(R.id.fBlogDetail_layoutComment);
         layoutLike = (LinearLayout) view.findViewById(R.id.fBlogDetail_layoutLike);
+        appBar = (AppBarLayout) view.findViewById(R.id.fBlogDetail_appBar);
+        toolbar = (Toolbar) view.findViewById(R.id.fBlogDetail_toolbar);
     }
 
     private void initVariable() {
@@ -115,7 +121,24 @@ public class Fragment_Blog_Detail extends Fragment {
     }
 
     private void handlerEvent() {
+        appBar.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
+                    imgExpanded.setVisibility(View.VISIBLE);
+                } else {
+                    imgExpanded.setVisibility(View.GONE);
+                }
+            }
+        });
 
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appBar.setExpanded(true, true);
+
+            }
+        });
         layoutComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -272,7 +295,4 @@ public class Fragment_Blog_Detail extends Fragment {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 }

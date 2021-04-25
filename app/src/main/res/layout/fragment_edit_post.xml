@@ -118,6 +118,7 @@
                 android:layout_toEndOf="@+id/fEditPost_tvTitleRating"
                 android:layout_below="@+id/fEditPost_tvAddress"
                 android:layout_marginStart="5dp"
+                android:progressTint="@color/colorPrimary"
                 android:stepSize="1"
                 android:scaleX=".5"
                 android:scaleY=".5"
