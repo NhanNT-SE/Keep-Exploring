@@ -12,7 +12,7 @@ public class Socket_Client {
     static Socket mSocket;
     static {
         try {
-            mSocket = IO.socket(URL_LOCAL);
+            mSocket = IO.socket(URL_GLOBAL);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

@@ -260,7 +260,7 @@ public class Fragment_Category extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (!searchView.isIconified()) {
+        if (searchView != null && !searchView.isIconified()) {
             searchView.setIconified(true);
         }
     }

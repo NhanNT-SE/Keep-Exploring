@@ -61,6 +61,7 @@ public class SignInActivity extends AppCompatActivity {
         initView();
         initVariable();
         handlerEvent();
+
     }
 
     private void initView() {
@@ -105,7 +106,7 @@ public class SignInActivity extends AppCompatActivity {
                 String email = tilEmail.getEditText().getText().toString();
                 String pass = tilPassword.getEditText().getText().toString();
                 if (email.isEmpty() || pass.isEmpty()) {
-                        validateRequire(email, pass);
+                    validateRequire(email, pass);
                 } else {
                     spotsDialog.show();
                     dao_auth.signIn(email + suffixEmil, pass, new Helper_Callback() {
@@ -116,6 +117,7 @@ public class SignInActivity extends AppCompatActivity {
                             moveToMain();
 
                         }
+
                         @Override
                         public void failedReq(String message) {
                             toast(message);

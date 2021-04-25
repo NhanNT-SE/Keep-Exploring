@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class MyIntentService extends JobService {
+public class Notification_Job_Service extends JobService {
     private Socket mSocket;
     private int ID_NOTIFY;
     private Intent resultIntent;
@@ -32,10 +32,8 @@ public class MyIntentService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        Log.i("log", "onStartJob");
+        Log.d("log", "onStartJob");
         doBackgroundWork();
-        mSocket = Socket_Client.getSocket();
-        mSocket.connect();
         return true;
     }
 
@@ -140,7 +138,7 @@ public class MyIntentService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        Log.i("log", "onStopJob");
+        Log.d("log", "onStopJob");
         mSocket.disconnect();
         return false;
     }
@@ -150,6 +148,6 @@ public class MyIntentService extends JobService {
     public void onDestroy() {
         mSocket.disconnect();
         super.onDestroy();
-        Log.i("log", " thread Id: " + Thread.currentThread().getId());
+        Log.d("log", " thread Id: " + Thread.currentThread().getId());
     }
 }

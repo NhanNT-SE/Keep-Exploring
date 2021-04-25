@@ -169,7 +169,7 @@ public class Fragment_BlogList extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (!searchView.isIconified()){
+        if (searchView != null && !searchView.isIconified()) {
             searchView.setIconified(true);
         }
     }
