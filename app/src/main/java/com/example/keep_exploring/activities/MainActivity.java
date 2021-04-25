@@ -1,6 +1,9 @@
 package com.example.keep_exploring.activities;
 
 import android.annotation.SuppressLint;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Notification;
 import com.example.keep_exploring.model.User;
+import com.example.keep_exploring.services.Notification_Job_Service;
 import com.example.keep_exploring.services.Notification_Service;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -64,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private Animation animOpen, animClose, animFromBottom, animToBottom;
     private boolean clicked = false;
     private boolean isNotify = false;
-    private Intent serviceNotify;
+    private JobScheduler jobScheduler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         initView();
         initVariable();
         handlerEvent();
+
     }
     private void initView() {
         spotsDialog = new SpotsDialog(this);
@@ -94,17 +100,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         dao_notification = new DAO_Notification(this);
         helper_common = new Helper_Common();
         helper_sp = new Helper_SP(this);
+        jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         animOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open_anim);
         animClose = AnimationUtils.loadAnimation(this, R.anim.fab_close_anim);
         animFromBottom = AnimationUtils.loadAnimation(this, R.anim.fab_from_bottom_anim);
         animToBottom = AnimationUtils.loadAnimation(this, R.anim.fab_to_bottom_anim);
         user = helper_sp.getUser();
         isNotify = helper_sp.getIsNotify();
-        serviceNotify = new Intent(this, Notification_Service.class);
         if (user != null && isNotify) {
             mSocket = Socket_Client.getSocket();
             mSocket.on("send-notify:" + user.getId(), onNotification);
-            startService(serviceNotify);
+            startJob();
         }
     }
     private void handlerEvent() {
@@ -152,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setBadgeNotify();
         initFragment();
     }
-
     private void initFragment() {
         String type = getIntent().getStringExtra("type");
         String id = getIntent().getStringExtra("id");
@@ -261,10 +266,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     @Override
                     public void successReq(Object response) {
                         spotsDialog.dismiss();
-                        stopService(serviceNotify);
+                        stopJob();
                         startActivity(new Intent(MainActivity.this, SignInActivity.class));
                     }
-
                     @Override
                     public void failedReq(String msg) {
                         spotsDialog.dismiss();
@@ -285,12 +289,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onBackPressed() {
-       if (getSupportFragmentManager().getBackStackEntryCount() <= 1){
-           replaceFragment(new Fragment_Category());
-       }else {
-           super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1){
+            replaceFragment(new Fragment_Category());
+        }else {
+            super.onBackPressed();
 
-       }
+        }
     }
 
     private void toggleNotify(MenuItem item) {
@@ -300,11 +304,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (helper_sp.getIsNotify()) {
             item.setIcon(R.drawable.ic_toggle_off);
             item.setTitle("Nhận thông báo");
-            stopService(serviceNotify);
+            stopJob();
         } else {
             item.setIcon(R.drawable.ic_toggle_on);
             item.setTitle("Tắt thông báo");
-            startService(serviceNotify);
+            startJob();
         }
         helper_sp.setIsNotify(!helper_sp.getIsNotify());
     }
@@ -351,5 +355,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    private void startJob() {
+        ComponentName componentName = new ComponentName(this, Notification_Job_Service.class);
+        JobInfo jobInfo = new JobInfo.Builder(101, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(15 * 60 * 1000)
+                .setRequiresCharging(false)
+                .setPersisted(true)
+                .build();
 
+        if (jobScheduler.schedule(jobInfo) == JobScheduler.RESULT_SUCCESS) {
+            Log.i("log", "MainActivity thread id: " + Thread.currentThread().getId() + ", job successfully scheduled");
+        } else {
+            Log.i("log", "MainActivity thread id: " + Thread.currentThread().getId() + ", job could not be scheduled");
+        }
+    }
+
+    private void stopJob() {
+        jobScheduler.cancel(101);
+    }
 }
