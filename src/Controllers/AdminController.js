@@ -246,7 +246,7 @@ const updateStatus = async (req, res, next) => {
       } else {
         notify.content = "unmoderated";
         if (status === "pending") {
-          msgNotify = `Bài viết ${updateFound.title} của bạn cần hiện đang trong quá trình kiểm duyệt`;
+          msgNotify = `Bài viết ${updateFound.title} của bạn hiện đang trong quá trình kiểm duyệt`;
         } else {
           msgNotify = `Bài viết ${updateFound.title} của bạn cần được chỉnh sủa`;
         }
