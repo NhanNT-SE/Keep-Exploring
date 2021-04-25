@@ -8,10 +8,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bungee"
+        android:fontFamily="@font/nabila"
         android:gravity="center"
         android:text="Tạo mật khẩu mới"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -57,20 +57,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_weight="1"
-            android:backgroundTint="@color/black"
             android:text="Xác nhận"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textAllCaps="false" />
         <Button
             android:id="@+id/dNewPassword_btnCancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_weight="1"
-            android:backgroundTint="@color/black"
             android:text="Hủy"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>

@@ -147,9 +147,7 @@ public class Helper_Common {
                 }).check();
     }
 
-    public String displayNumber(int number) {
-        return "(" + number + ")";
-    }
+
 
     public void displayStatus(String status, TextView tvStatus) {
         String statusConvert = (status.substring(0, 1).toUpperCase()

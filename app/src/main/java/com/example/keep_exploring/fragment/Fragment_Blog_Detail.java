@@ -1,5 +1,6 @@
 package com.example.keep_exploring.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -164,7 +165,7 @@ public class Fragment_Blog_Detail extends Fragment {
                  blog = (Blog) response;
                 List<String> likeList = blog.getLikes();
                 blogDetailsList = blog.getBlogDetails();
-                displayInfo();
+                numLike = likeList.size();
                 refreshListView();
                 spotDialog.dismiss();
                 if (user != null) {
@@ -176,6 +177,8 @@ public class Fragment_Blog_Detail extends Fragment {
                         imgLike.setImageResource(R.drawable.ic_like_outline);
                     }
                 }
+                displayInfo();
+
             }
             @Override
             public void failedReq(String msg) {
@@ -184,6 +187,7 @@ public class Fragment_Blog_Detail extends Fragment {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void displayInfo() {
         Picasso.get().load(helper_common.getBaseUrlImage() + "blog/" + blog.getImage()).into(imgBlog);
         Picasso.get()
@@ -192,9 +196,14 @@ public class Fragment_Blog_Detail extends Fragment {
         tvTitle.setText(blog.getTitle());
         tvUser.setText(blog.getOwner().getDisplayName());
         tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
-        tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
-        tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
+        tvComment.setText(numLike + " lượt bình luận");
+        tvLike.setText(numLike + " lượt thích");
+        if (!blog.getStatus().equalsIgnoreCase("done")){
+            layoutLike.setVisibility(View.GONE);
+            layoutComment.setVisibility(View.GONE);
+        }
     }
+    @SuppressLint("SetTextI18n")
     private void toggleLike() {
         spotDialog.show();
         isLike = !isLike;

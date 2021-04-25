@@ -21,7 +21,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:src="@drawable/avatar_facebook" />
+              />
             <TextView
                 android:id="@+id/fEditPost_tvUser"
                 android:layout_width="wrap_content"
@@ -29,7 +29,6 @@
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="10dp"
                 android:layout_toEndOf="@+id/fEditPost_imgAvatarUser"
-                android:text="Nguyễn Trọng Nhân"
                 android:textSize="15sp"
                 android:textStyle="italic" />
             <TextView
@@ -38,9 +37,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="10dp"
-                android:text="20/20/2020"
-                android:textSize="15sp"
-                android:textStyle="italic" />
+                android:textSize="13sp"
+                android:textStyle="italic|bold" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/fEditPost_viewPager"
@@ -133,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fEditPost_tvTitleRating"
                 android:gravity="top"
-                android:hint="Title..."
+                android:hint="Tiêu đề"
                 android:background="@drawable/border_tv"
                 android:maxLines="5"
                 android:layout_marginTop="5dp"
@@ -149,9 +147,9 @@
                 android:layout_marginVertical="5dp"
                 android:gravity="top"
                 android:background="@drawable/border_tv"
-                android:hint="Descriptions..."
+                android:hint="Miêu tả"
                 android:padding="5dp"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
         </RelativeLayout>
     </ScrollView>
 
@@ -178,9 +176,9 @@
         android:layout_marginBottom="3dp"
         android:backgroundTint="@color/colorPrimary"
         app:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_camera_black_24dp"
+        android:src="@drawable/ic_camera_avatar_black"
         app:fabSize="mini"
-        app:maxImageSize="30dp"
+        app:maxImageSize="24dp"
         app:tint="@android:color/white" />
 </RelativeLayout>
 

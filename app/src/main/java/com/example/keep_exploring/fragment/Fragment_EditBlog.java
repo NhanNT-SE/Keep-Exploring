@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Auth;
@@ -38,6 +40,7 @@ import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Blog;
 import com.example.keep_exploring.model.Blog_Details;
 import com.example.keep_exploring.model.User;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
@@ -56,9 +59,12 @@ public class Fragment_EditBlog extends Fragment {
     private EditText etTitle;
     private TextView tvUser, tvPubDate;
     private FloatingActionButton fabAddContent;
-    private ImageView imgBlog, imgContent;
+    private ImageView imgBlog, imgContent, imgExpanded;
     private CircleImageView imgAvatarUser;
+    private CardView cvPickImgContent;
     private Dialog spotDialog;
+    private Toolbar toolbar;
+    private AppBarLayout appBar;
     //    DAO & Helpers
     private DAO_Auth dao_auth;
     private DAO_Blog dao_blog;
@@ -104,7 +110,10 @@ public class Fragment_EditBlog extends Fragment {
         fabAddContent = (FloatingActionButton) view.findViewById(R.id.fEditBlog_fabAddContent);
         imgBlog = (ImageView) view.findViewById(R.id.fEditBlog_imgBlog);
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fEditBlog_imgAvatarUser);
+        imgExpanded = (ImageView) view.findViewById(R.id.fEditBlog_imgExpanded);
         lvContent = (ListView) view.findViewById(R.id.fEditBlog_lvContent);
+        appBar = (AppBarLayout) view.findViewById(R.id.fEditBlog_appBar);
+        toolbar = (Toolbar) view.findViewById(R.id.fEditBlog_toolbar);
     }
 
     private void initVariable() {
@@ -127,10 +136,28 @@ public class Fragment_EditBlog extends Fragment {
     }
 
     private void handlerEvent() {
-        helper_common.toggleBottomNavigation(getContext(),false);
+        helper_common.toggleBottomNavigation(getContext(), false);
         tvUser.setText(user.getDisplayName());
         Picasso.get().load(helper_common.getBaseUrlImage() + "user/" + user.getImgUser()).into(imgAvatarUser);
         refreshListView();
+        appBar.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
+                    imgExpanded.setVisibility(View.VISIBLE);
+                } else {
+                    imgExpanded.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appBar.setExpanded(true, true);
+
+            }
+        });
         imgBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,11 +192,22 @@ public class Fragment_EditBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
         dTvTitle.setText("Thêm nội dung chi tiết");
         btnAdd.setText("Thêm");
+
+        cvPickImgContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_CONTENT);
+            }
+        });
         imgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,10 +229,8 @@ public class Fragment_EditBlog extends Fragment {
             @Override
             public void onClick(View v) {
                 String description = dEtDescription.getText().toString();
-                if (imgContent.getDrawable().getConstantState() ==
-                        getContext().getDrawable(R.drawable.add_image).getConstantState()) {
+                if (imgContent.getVisibility() != View.VISIBLE) {
                     toast("Vui lòng chọn hình ảnh để hiển thị");
-
                 } else if (description.isEmpty()) {
                     toast("Vui lòng thêm nội dung miêu tả");
                 } else {
@@ -214,9 +250,12 @@ public class Fragment_EditBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
+        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
+        imgContent.setVisibility(View.VISIBLE);
+        cvPickImgContent.setVisibility(View.GONE);
         dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
         btnAdd.setText("Cập nhật");
         dEtDescription.setText(blogDetails.getContent());
@@ -478,8 +517,11 @@ public class Fragment_EditBlog extends Fragment {
             imgBlog.setImageURI(data.getData());
             imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
+            cvPickImgContent.setVisibility(View.GONE);
+            imgContent.setVisibility(View.VISIBLE);
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

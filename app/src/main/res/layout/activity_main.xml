@@ -12,34 +12,73 @@
         android:id="@+id/main_FrameLayout"
         android:layout_above="@+id/main_coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/main_fabAddPost"
-        app:fabSize="mini"
-        android:layout_above="@+id/main_fabAddBlog"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_post_black"
-        android:layout_marginBottom="10dp"
-        android:visibility="invisible"
-        android:backgroundTint="@color/colorPrimary"
-        app:backgroundTint="@color/colorPrimary"
-        app:tint="@android:color/white"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/main_layoutAddPost"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/main_fabAddBlog"
-        app:fabSize="mini"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/main_layoutAddBlog"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/main_fabAddPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_post_black"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Post"
+            android:background="@color/black"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layoutAddBlog"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/main_coordinatorLayout"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_blog_black"
-        android:visibility="invisible"
-        android:backgroundTint="@color/colorPrimary"
-        app:backgroundTint="@color/colorPrimary"
-        app:tint="@android:color/white"
-        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
+        android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/main_fabAddBlog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_blog_black"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini"
+            app:tint="@android:color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Blog"
+            android:background="@color/black"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:elevation="1dp"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_coordinatorLayout"
         android:layout_alignParentBottom="true"
@@ -61,7 +100,6 @@
                 android:background="@android:color/transparent"
                 app:menu="@menu/menu_bottom_navigation" />
         </com.google.android.material.bottomappbar.BottomAppBar>
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/main_fabAdd"
             app:fabSize="mini"

@@ -1,5 +1,6 @@
 package com.example.keep_exploring.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -55,6 +57,7 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
@@ -64,13 +67,15 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
         holder.tvTitle.setText(post.getTitle());
         holder.tvPubDate.setText(helper_date.formatDateDisplay(post.getCreated_on()));
         holder.ratingBar.setRating(post.getRating());
-        holder.tvComment.setText(helper_common.displayNumber(post.getComments().size()));
-        holder.tvLike.setText(helper_common.displayNumber(post.getLikes().size()));
+        holder.tvComment.setText(post.getComments().size() + " lượt bình luận");
+        holder.tvLike.setText(post.getLikes().size() + " lượt thích");
         holder.tvAddress.setText(post.getAddress());
         helper_common.displayStatus(post.getStatus(),holder.tvStatus);
         Picasso.get().load(URL_IMAGE + "user/" + post.getOwner().getImgUser()).into(holder.civUser);
         Picasso.get().load(URL_IMAGE + "post/" + post.getImgs().get(0)).into(holder.imgPost);
-
+        if (!post.getStatus().equalsIgnoreCase("done")) {
+            holder.layoutContainer.setVisibility(View.GONE);
+        }
         holder.imgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +110,7 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
         private TextView tvLike, tvComment, tvStatus;
         private ImageView imgPost, imgEdit;
         private RatingBar ratingBar;
+        private LinearLayout layoutContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,6 +125,7 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
             imgPost = (ImageView) itemView.findViewById(R.id.row_postProfile_imgPost);
             imgEdit = (ImageView) itemView.findViewById(R.id.row_postProfile_imgEdit);
             ratingBar = (RatingBar) itemView.findViewById(R.id.row_postProfile_ratingBar);
+            layoutContainer = (LinearLayout) itemView.findViewById(R.id.row_postProfile_container_LikeComment);
         }
 
         public void toggleView(Post post) {

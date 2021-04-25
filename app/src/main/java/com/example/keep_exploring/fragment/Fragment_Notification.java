@@ -210,7 +210,7 @@ public class Fragment_Notification extends Fragment {
     }
 
     private void setInactiveButton(MaterialButton materialButton) {
-        materialButton.setTextColor(Color.parseColor("#F3BA00"));
+        materialButton.setTextColor(Color.parseColor("#366577"));
         materialButton.setStrokeColor(colorStateList);
         materialButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
     }

@@ -15,7 +15,6 @@
                 android:id="@+id/row_content_imgContent"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:src="@drawable/add_image"
                 android:scaleType="fitXY" />
             <TextView
                 android:id="@+id/row_content_tvDescription"

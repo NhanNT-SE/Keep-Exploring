@@ -7,9 +7,9 @@
     android:layout_height="match_parent">
     <TextView
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bungee"
+        android:fontFamily="@font/nabila"
         android:text="Lấy lại mật khẩu"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:gravity="center"
         android:textStyle="bold"
         android:layout_width="match_parent"
@@ -78,20 +78,19 @@
             android:text="Xác nhận"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
             android:textAllCaps="false"
-            android:layout_marginHorizontal="5dp"
-            android:textColor="@color/white" />
+            android:layout_marginHorizontal="5dp" />
+
         <Button
             android:id="@+id/dForget_btnCancel"
             android:text="Hủy"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
             android:textAllCaps="false"
-            android:backgroundTint="@color/black"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:textColor="@color/white" />
+            android:layout_width="0dp" />
     </LinearLayout>
 </LinearLayout>

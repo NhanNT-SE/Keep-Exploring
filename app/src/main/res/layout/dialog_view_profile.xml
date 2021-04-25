@@ -15,13 +15,12 @@
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:src="@drawable/avatar_header" />
+           />
         <TextView
             android:id="@+id/dViewProfile_tvDisplayName"
             android:layout_marginTop="5dp"
             android:textSize="15sp"
             android:fontFamily="@font/nabila"
-            android:text="Nguyễn Thị Kim Ngân"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold" />

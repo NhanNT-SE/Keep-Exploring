@@ -55,6 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="8dp" />
+
                     <ImageView
                         android:layout_marginTop="5dp"
                         android:id="@+id/fBlogDetail_imgBlog"
@@ -65,69 +66,74 @@
                         android:layout_marginBottom="2dp"
                         android:background="@color/light_transparent"
                         android:scaleType="fitXY" />
+
+                    <LinearLayout
+                        android:id="@+id/fBlogDetail_layoutComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/fBlogDetail_imgBlog"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="center"
+                        android:layout_toStartOf="@+id/fBlogDetail_layoutLike"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/topic_90px" />
+
+                        <TextView
+                            android:id="@+id/fBlogDetail_tvComment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:textSize="12sp"
+                           />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/fBlogDetail_layoutLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/fBlogDetail_imgBlog"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="3dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/fBlogDetail_imgLike"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_like_outline" />
+
+                        <TextView
+                            android:id="@+id/fBlogDetail_tvLike"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:textSize="12sp"
+                            android:layout_gravity="center_vertical"
+                             />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/fBlogDetail_tvTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fBlogDetail_imgBlog"
+                        android:layout_below="@+id/fBlogDetail_layoutLike"
                         android:layout_marginTop="3dp"
                         android:background="@drawable/border_tv"
                         android:gravity="top"
+                        android:hint="Title..."
                         android:maxLines="5"
                         android:padding="5dp"
-                        android:hint="Title..."
                         android:paddingHorizontal="5dp"
                         android:paddingVertical="3dp"
                         android:textSize="15sp"
                         android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/fBlogDetail_imgBlog"
-                        android:background="#CBC5C5C5"
-                        android:gravity="center_vertical|end"
-                        android:orientation="horizontal"
-                        android:padding="10dp">
-
-                        <LinearLayout
-                            android:id="@+id/fBlogDetail_layoutComment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_comment_black" />
-
-                            <TextView
-                                android:id="@+id/fBlogDetail_tvComment"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/fBlogDetail_layoutLike"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="5dp"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:id="@+id/fBlogDetail_imgLike"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_like_outline" />
-                            <TextView
-                                android:id="@+id/fBlogDetail_tvLike"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
                 </RelativeLayout>
             </ScrollView>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginTop="15dp"
-            android:text="Nguyen Trong Nhan"
             android:layout_toEndOf="@+id/row_blog_imgAvatarUser"
             android:textColor="@color/black"
             android:textSize="15sp"
@@ -33,10 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="20/20/2020"
             android:layout_marginTop="15dp"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:textStyle="italic|bold" />
     </RelativeLayout>
 
@@ -71,28 +69,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/row_blog_gridView"
-            android:background="#CBC5C5C5"
+            android:background="#E4C5C5C5"
             android:gravity="center_vertical|end"
             android:orientation="horizontal"
             android:padding="10dp">
 
             <LinearLayout
+                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_comment_black" />
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/topic_90px" />
 
                 <TextView
                     android:id="@+id/row_blog_tvComment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="(20)"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="2dp"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -104,15 +102,15 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_like_black" />
+                    android:src="@drawable/ic_like_outline" />
 
                 <TextView
                     android:id="@+id/row_blog_tvLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="(20)"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="2dp"
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

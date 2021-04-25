@@ -1,12 +1,13 @@
 package com.example.keep_exploring.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,6 +54,7 @@ public class Adapter_RV_ProfileBlog extends RecyclerView.Adapter<Adapter_RV_Prof
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String URL_IMAGE = helper_common.getBaseUrlImage();
@@ -61,12 +63,14 @@ public class Adapter_RV_ProfileBlog extends RecyclerView.Adapter<Adapter_RV_Prof
         holder.tvUserName.setText(blog.getOwner().getDisplayName());
         holder.tvTitle.setText(blog.getTitle());
         holder.tvPubDate.setText(helper_date.formatDateDisplay(blog.getCreated_on()));
-        holder.tvComment.setText(helper_common.displayNumber(blog.getComments().size()));
-        holder.tvLike.setText(helper_common.displayNumber(blog.getLikes().size()));
+        holder.tvComment.setText(blog.getComments().size() + " lượt bình luận");
+        holder.tvLike.setText(blog.getLikes().size() + " lượt thích");
         Picasso.get().load(URL_IMAGE + "user/" + blog.getOwner().getImgUser()).into(holder.civUser);
         Picasso.get().load(URL_IMAGE + "blog/" + blog.getImage()).into(holder.imgBlog);
         helper_common.displayStatus(blog.getStatus(), holder.tvStatus);
-
+        if (!blog.getStatus().equalsIgnoreCase("done")) {
+            holder.layoutContainer.setVisibility(View.GONE);
+        }
         holder.imgBlog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +103,7 @@ public class Adapter_RV_ProfileBlog extends RecyclerView.Adapter<Adapter_RV_Prof
         private CircleImageView civUser;
         private TextView tvUserName, tvPubDate, tvTitle, tvLike, tvComment, tvStatus;
         private ImageView imgBlog, imgEdit;
+        private LinearLayout layoutContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -111,6 +116,7 @@ public class Adapter_RV_ProfileBlog extends RecyclerView.Adapter<Adapter_RV_Prof
             tvStatus = (TextView) itemView.findViewById(R.id.row_blogProfile_tvStatus);
             imgBlog = (ImageView) itemView.findViewById(R.id.row_blogProfile_imgBlog);
             imgEdit = (ImageView) itemView.findViewById(R.id.row_blogProfile_imgEdit);
+            layoutContainer = (LinearLayout) itemView.findViewById(R.id.row_blogProfile_container_LikeComment);
         }
 
         public void toggleView(Blog blog) {
