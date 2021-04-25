@@ -2,6 +2,7 @@ package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -118,7 +119,6 @@ public class Fragment_BlogList extends Fragment {
         dao_blog.getBlogByQuery(query, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                blogList.clear();
                 blogList = (List<Blog>) response;
                 refreshRV();
                 swipeRefreshLayout.setRefreshing(false);

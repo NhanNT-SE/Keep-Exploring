@@ -164,7 +164,6 @@ public class Fragment_Category extends Fragment {
         dao_post.getPostByQuery(query, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
-                postList.clear();
                 postList = (List<Post>) response;
                 refreshLV();
                 swipeRefreshLayout.setRefreshing(false);
