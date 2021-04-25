@@ -208,7 +208,6 @@ const getNewPassword = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const passHashed = await bcrypt.hash(newPass, salt);
     await User.findByIdAndUpdate(user._id, { pass: passHashed });
-    console.log(passHashed);
     return res.status(200).send({
       data: "Đã đổi mật khẩu thành công",
       status: 200,

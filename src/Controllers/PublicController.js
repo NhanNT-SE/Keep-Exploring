@@ -161,12 +161,12 @@ const getPostByQuery = async (req, res, next) => {
     );
     if (resultList.length === 0) {
       resultList = postList.filter((e) =>
-        e.title.toLowerCase().includes(query.toLowerCase())
+        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
       );
     }
     if (resultList.length === 0) {
       resultList = postList.filter((e) =>
-        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+        e.title.toLowerCase().includes(query.toLowerCase())
       );
     }
     return res.send({
