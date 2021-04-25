@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -126,9 +125,6 @@ public class Fragment_Profile_BlogList extends Fragment {
         });
     }
 
-    private void toast(String s) {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
-    }
 
     private void log(String s) {
         Log.d("log", s);

@@ -2,7 +2,6 @@ package com.example.keep_exploring.DAO;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -302,17 +301,15 @@ public class DAO_Blog {
         mAuth.signInAnonymously().addOnSuccessListener((Activity) context, new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                log("signInAnonymously Successfully");
+
             }
         }).addOnFailureListener((Activity) context, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                log("signInAnonymously:FAILURE" + exception.toString());
+
             }
         });
     }
 
-    private void log(String msg) {
-        Log.d("log", msg);
-    }
+
 }

@@ -124,6 +124,7 @@
                         android:isIndicator="true"
                         android:scaleX="0.5"
                         android:scaleY="0.5"
+                        android:progressTint="@color/colorPrimary"
                         android:transformPivotX="20dp"
                         android:transformPivotY="30dp" />
 

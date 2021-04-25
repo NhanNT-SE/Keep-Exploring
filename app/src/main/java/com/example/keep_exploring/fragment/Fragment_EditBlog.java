@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -128,7 +127,7 @@ public class Fragment_EditBlog extends Fragment {
         user = helper_sp.getUser();
         imageBlog = "";
         title = "";
-        idBlog = "6073060019c68e0b99291ffb";
+        idBlog = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
             idBlog = bundle.getString("idBlog");
@@ -530,10 +529,6 @@ public class Fragment_EditBlog extends Fragment {
 
     private void refreshToken(Helper_Callback callback) {
         dao_auth.refreshToken(callback);
-    }
-
-    private void log(String s) {
-        Log.d("log", s);
     }
 
     private void toast(String s) {

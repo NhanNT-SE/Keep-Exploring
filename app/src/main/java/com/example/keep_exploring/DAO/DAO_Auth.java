@@ -1,7 +1,6 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.keep_exploring.api.Api_Auth;
 import com.example.keep_exploring.api.Retrofit_config;
@@ -208,7 +207,5 @@ public class DAO_Auth {
 
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
+
 }

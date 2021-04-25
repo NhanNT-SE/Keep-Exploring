@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -363,9 +362,6 @@ public class Fragment_AddPost extends Fragment {
         });
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 
     private void toast(String s) {
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();

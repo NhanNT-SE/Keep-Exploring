@@ -1,12 +1,10 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.keep_exploring.api.Api_Notification;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
-import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Notification;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -108,8 +106,6 @@ public class DAO_Notification {
         });
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
+
 
 }

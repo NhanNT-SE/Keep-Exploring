@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,7 +200,6 @@ public class Dialog_Fragment_Comment extends DialogFragment {
 
             @Override
             public void failedReq(String msg) {
-                log(msg);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -277,7 +275,4 @@ public class Dialog_Fragment_Comment extends DialogFragment {
         });
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 }

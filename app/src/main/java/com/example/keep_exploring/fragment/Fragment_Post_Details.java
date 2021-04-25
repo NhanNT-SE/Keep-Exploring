@@ -2,7 +2,6 @@ package com.example.keep_exploring.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -281,7 +280,4 @@ public class Fragment_Post_Details extends Fragment {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
 }

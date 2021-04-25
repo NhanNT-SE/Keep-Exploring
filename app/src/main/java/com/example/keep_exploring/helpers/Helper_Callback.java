@@ -1,9 +1,6 @@
 package com.example.keep_exploring.helpers;
 
-import android.content.Context;
 import android.util.Log;
-
-import com.example.keep_exploring.DAO.DAO_Auth;
 
 import org.json.JSONArray;
 import org.json.JSONException;

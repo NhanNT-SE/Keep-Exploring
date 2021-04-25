@@ -2,9 +2,7 @@ package com.example.keep_exploring.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.keep_exploring.R;
 import com.example.keep_exploring.fragment.Fragment_EditPost;
 import com.example.keep_exploring.fragment.Fragment_Post_Details;
-import com.example.keep_exploring.fragment.Fragment_Tab_UserInfo;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Date;
 import com.example.keep_exploring.helpers.Helper_SP;

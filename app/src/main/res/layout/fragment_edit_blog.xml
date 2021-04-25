@@ -18,8 +18,7 @@
             android:layout_height="match_parent"
             android:background="#FFFFFF"
             android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
             <RelativeLayout
                 android:id="@+id/fEditBlog_layoutContainer"
                 android:layout_width="match_parent"

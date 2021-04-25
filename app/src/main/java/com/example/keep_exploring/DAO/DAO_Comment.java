@@ -1,15 +1,12 @@
 package com.example.keep_exploring.DAO;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.keep_exploring.api.Api_Comment;
 import com.example.keep_exploring.api.Retrofit_config;
 import com.example.keep_exploring.helpers.Helper_Callback;
 import com.example.keep_exploring.helpers.Helper_Common;
 import com.example.keep_exploring.helpers.Helper_Image;
-import com.example.keep_exploring.helpers.Helper_SP;
 import com.example.keep_exploring.model.Comment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -137,10 +134,5 @@ public class DAO_Comment {
         }
 
     }
-    private void log(String s) {
-        Log.d("log", s);
-    }
-    private void toast(String s) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-    }
+
 }
