@@ -58,7 +58,7 @@ public class Helper_Common {
     }
     public String getBaseUrlImage() {
 //        String URL_LOCAL = "http://10.0.2.2:3000/images/";
-        String URL_LOCAL = "http://192.168.0.100:3000/images";
+        String URL_LOCAL = "http://192.168.0.100:3000/images/";
         String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
         return URL_GLOBAL;
     }

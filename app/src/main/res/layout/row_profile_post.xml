@@ -88,13 +88,13 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_below="@+id/row_postProfile_layoutContainer">
 
                 <ImageView
                     android:id="@+id/row_postProfile_imgPost"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:layout_marginHorizontal="2dp"
                     android:layout_marginBottom="2dp"
                     android:background="@color/light_transparent"
@@ -109,14 +109,15 @@
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_edit_black" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/row_postProfile_container_LikeComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/row_postProfile_imgPost"
+                    android:layout_alignParentBottom="true"
                     android:background="#E9C5C5C5"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <RatingBar
                         android:id="@+id/row_postProfile_ratingBar"
                         android:layout_width="wrap_content"
@@ -129,9 +130,11 @@
                         android:transformPivotY="30dp" />
 
                     <LinearLayout
+
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/row_postProfile_layoutLike"
                         android:orientation="horizontal">
 
                         <ImageView
@@ -148,10 +151,12 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_vertical"
+                        android:id="@+id/row_postProfile_layoutLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
                         android:orientation="horizontal">
 
                         <ImageView
@@ -166,7 +171,7 @@
                             android:layout_marginStart="2dp"
                             android:textSize="12sp" />
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -9,7 +9,7 @@ public class Notification {
     private Post post;
     @SerializedName("idBlog")
     private Blog blog;
-    private String status;
+    private String status, statusPost, statusBlog;
     private String content, contentAdmin, created_on;
 
     @Override
@@ -19,6 +19,8 @@ public class Notification {
                 ", post=" + post +
                 ", blog=" + blog +
                 ", status='" + status + '\'' +
+                ", statusPost='" + statusPost + '\'' +
+                ", statusBlog='" + statusBlog + '\'' +
                 ", content='" + content + '\'' +
                 ", contentAdmin='" + contentAdmin + '\'' +
                 ", created_on='" + created_on + '\'' +
@@ -79,5 +81,21 @@ public class Notification {
 
     public void setCreated_on(String created_on) {
         this.created_on = created_on;
+    }
+
+    public String getStatusPost() {
+        return statusPost;
+    }
+
+    public void setStatusPost(String statusPost) {
+        this.statusPost = statusPost;
+    }
+
+    public String getStatusBlog() {
+        return statusBlog;
+    }
+
+    public void setStatusBlog(String statusBlog) {
+        this.statusBlog = statusBlog;
     }
 }
