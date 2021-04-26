@@ -61,6 +61,7 @@ function LoginPage(props) {
     if (user && user.role === "admin") {
       history.push("/home");
     }
+    console.log(user);
   }, [user]);
   return (
     <div className="login-page">

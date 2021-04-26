@@ -1,15 +1,10 @@
 import { Chart } from "primereact/chart";
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { actionGetStatistics } from "redux/slices/postSlice";
-import "./chart-statistics.scss";
+import React from "react";
+import { useSelector } from "react-redux";
+import "./chart-number.scss";
 
-function ChartStatistics() {
-  const dispatch = useDispatch();
+function ChartNumber() {
   const data = useSelector((state) => state.post.statisticsData);
-  const memoData = useMemo(() => {
-    return data;
-  }, [data]);
   const configDoughnutChart = (data) => {
     return {
       labels: ["Done", "Pending", "Need Update"],
@@ -49,41 +44,36 @@ function ChartStatistics() {
       },
     };
   };
-  useEffect(() => {
-    console.log("Data:", data);
-  }, [data]);
-  useEffect(() => {
-    dispatch(actionGetStatistics());
-  }, []);
-  return memoData ? (
+
+  return data ? (
     <div className="chart-statistics-container">
       <div className="chart-container">
         <Chart
           type="pie"
-          data={configPieChart(memoData.postBlog.data, ["Post", "Blog"])}
-          options={configOptions(memoData.postBlog.title)}
+          data={configPieChart(data.postBlog.data, ["Post", "Blog"])}
+          options={configOptions(data.postBlog.title)}
         />
       </div>
 
       <div className="chart-container">
         <Chart
           type="pie"
-          data={configPieChart(memoData.user.data, ["Admin", "User"])}
-          options={configOptions(memoData.user.title)}
+          data={configPieChart(data.user.data, ["Admin", "User"])}
+          options={configOptions(data.user.title)}
         />
       </div>
       <div className="chart-container">
         <Chart
           type="doughnut"
-          data={configDoughnutChart(memoData.post.data)}
-          options={configOptions(memoData.post.title)}
+          data={configDoughnutChart(data.post.data)}
+          options={configOptions(data.post.title)}
         />
       </div>
       <div className="chart-container">
         <Chart
           type="doughnut"
-          data={configDoughnutChart(memoData.blog.data)}
-          options={configOptions(memoData.blog.title)}
+          data={configDoughnutChart(data.blog.data)}
+          options={configOptions(data.blog.title)}
         />
       </div>
     </div>
@@ -97,4 +87,4 @@ function ChartStatistics() {
   );
 }
 
-export default ChartStatistics;
+export default ChartNumber;

@@ -7,9 +7,10 @@ import {
   actionGetPost,
   actionUpdatePost,
   actionDeletePost,
-  // actionSetCommentList,
   actionSetStatistics,
+  actionSetTimeLineStatistics,
   actionGetStatistics,
+  actionGetTimeLineStatistics,
 } from "redux/slices/postSlice";
 import {
   actionFailed,
@@ -77,7 +78,18 @@ function* handlerGetStatistics() {
     yield put(actionFailed(error.message));
   }
 }
-
+function* handlerGetTimeLineStatistics() {
+  try {
+    localStorageService.setLatestAction(actionGetTimeLineStatistics.type);
+    const response = yield call(statisticsApi.getDataTimeLine);
+    const { data } = response;
+    yield put(actionSetTimeLineStatistics(data));
+    yield put(actionSuccess("Fetch timeline statistics data successfully!"));
+  } catch (error) {
+    console.log("post slice: ", error);
+    yield put(actionFailed(error.message));
+  }
+}
 function* handlerUpdatePost(action) {
   try {
     localStorageService.setLatestAction(actionUpdatePost.type);
@@ -110,5 +122,11 @@ export function* sagaUpdatePost() {
 }
 export function* sagaGetStatistics() {
   yield takeLatest(actionGetStatistics.type, handlerGetStatistics);
+}
+export function* sagaGetTimeLineStatistics() {
+  yield takeLatest(
+    actionGetTimeLineStatistics.type,
+    handlerGetTimeLineStatistics
+  );
 }
 // ***** Watcher Functions *****

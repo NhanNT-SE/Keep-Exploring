@@ -13,23 +13,31 @@ import StatisticsPage from "pages/statistics-page/statistics-page";
 import UserDetailsPage from "pages/user-page/user-details/user-details";
 import UserPage from "pages/user-page/user-page";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import "./main-page.scss";
 import BlogDetailsPage from "pages/blog-page/blog-details/blog-details";
 import ProfilePage from "pages/profile-page/proflie-page";
+import {
+  actionGetStatistics,
+  actionGetTimeLineStatistics,
+} from "redux/slices/postSlice";
 function MainPage() {
   const loadingStore = useSelector((state) => state.common.isLoading);
   const user = useSelector((state) => state.user.user);
   const classes = STYLES_GLOBAL();
   const history = useHistory();
+  const dispatch = useDispatch();
   const userStorage = JSON.parse(localStorageService.getUser());
   useEffect(() => {
     if (!userStorage) {
       history.push("/login");
     }
   }, [user]);
-
+  useEffect(() => {
+    dispatch(actionGetTimeLineStatistics());
+    dispatch(actionGetStatistics());
+  }, []);
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}

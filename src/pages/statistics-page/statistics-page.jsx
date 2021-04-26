@@ -1,25 +1,23 @@
 import React, { useState } from "react";
 import "./statistics-page.scss";
 import { TabPanel, TabView } from "primereact/tabview";
-import ChartStatistics from "./chart-page/chart-statistics";
+import ChartNumber from "./chart-number/chart-number";
 import TreeSystem from "./tree-sytem/tree-system";
+import ChartTimeLine from "./chart-time-line/chart-time-line";
 
 function StatisticsPage() {
   return (
     <div className="statistics-page-container">
       <TabView className="tab-view-statistics">
-        <TabPanel
-          header="Statistics"
-          leftIcon="pi pi-chart-bar"
-          className="tab-statistics-chart"
-        >
-          <ChartStatistics />
+        <TabPanel header="Time line" leftIcon="pi pi-chart-line">
+          <div className="timeLine-container-tab-panel">
+            <ChartTimeLine />
+          </div>
         </TabPanel>
-        <TabPanel
-          header="Tree System"
-          leftIcon="pi pi-chart-line"
-          className="tab-org-chart"
-        >
+        <TabPanel header="Number" leftIcon="pi pi-chart-bar">
+          <ChartNumber />
+        </TabPanel>
+        <TabPanel header="Tree System" leftIcon="pi pi-chart-line">
           <TreeSystem />
         </TabPanel>
       </TabView>
