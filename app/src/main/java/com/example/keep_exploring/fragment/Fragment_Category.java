@@ -44,11 +44,9 @@ public class Fragment_Category extends Fragment {
     private MaterialButton btnAll, btnFood, btnCheck_in, btnHotel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView rv_PostList;
-    private SpotsDialog spotsDialog;
     private SearchView searchView;
     //    DAO & Helper
     private DAO_Post dao_post;
-    private DAO_Auth dao_auth;
     private Helper_Common helper_common;
     //    Variable
     private String category;
@@ -72,7 +70,6 @@ public class Fragment_Category extends Fragment {
     }
 
     private void initView() {
-        spotsDialog = new SpotsDialog(getContext());
         rv_PostList = (RecyclerView) view.findViewById(R.id.fCategory_rvPostList);
         tvNothing = (TextView) view.findViewById(R.id.fCategory_tvNothing);
         btnAll = (MaterialButton) view.findViewById(R.id.fCategory_btnAll);
@@ -85,7 +82,6 @@ public class Fragment_Category extends Fragment {
     @SuppressLint("ResourceType")
     private void initVariable() {
         dao_post = new DAO_Post(getContext());
-        dao_auth = new DAO_Auth(getContext());
         helper_common = new Helper_Common();
         helper_common.configRecycleView(getContext(), rv_PostList);
         helper_common.configAnimBottomNavigation(getContext(), rv_PostList);

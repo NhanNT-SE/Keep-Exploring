@@ -37,7 +37,6 @@
             android:name=".activities.SignUpActivity"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity android:name=".activities.MainActivity" />
-
         <service android:name=".services.Notification_Service" />
         <service
             android:name=".services.Notification_Job_Service"
