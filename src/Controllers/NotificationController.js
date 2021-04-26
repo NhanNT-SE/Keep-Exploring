@@ -5,30 +5,42 @@ const Notification = require("../Models/Notification");
 const User = require("../Models/User");
 const createNotification = async (notify) => {
   try {
-    const notiFound_list = await Notification.find({ idPost: notify.idPost });
-
+    let notiFound_list;
+    if (notify.idPost) {
+      notiFound_list = await Notification.find({ idPost: notify.idPost });
+    } else {
+      notiFound_list = await Notification.find({ idBlog: notify.idBlog });
+    }
     if (notiFound_list) {
       let notiUpdate = null;
       notiFound_list.forEach((item) => {
         if (item.content == notify.content) {
-          item.status = "new";
           notiUpdate = item;
+          if (notify.statusPost) {
+            notiUpdate.statusPost = notify.statusPost;
+          } else if (notify.statusBlog) {
+            notiUpdate.statusBlog = notify.statusBlog;
+          }
+          notiUpdate.created_on = Date.now();
+          notiUpdate.status = "new";
           return;
         }
       });
 
       if (notiUpdate) {
-        await notiUpdate.save();
+        await Notification.findByIdAndUpdate(notiUpdate._id, notiUpdate);
         return notiUpdate;
       } else {
-        await notify.save();
+        await new Notification(notify).save();
         return notify;
       }
     } else {
-      await notify.save();
+      console.log("vao day");
+      await new Notification(notify).save();
       return notify;
     }
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -92,8 +104,8 @@ const getAllByUser = async (req, res, next) => {
     const notifyList = (resultList = await Notification.find({
       idUser: user._id,
     })
-      .populate("idPost",["status","imgs","title"])
-      .populate("idBlog",["status","img","title"])
+      .populate("idPost", ["status", "imgs", "title"])
+      .populate("idBlog", ["status", "img", "title"])
       .sort({ created_on: -1 }));
 
     return res.send({

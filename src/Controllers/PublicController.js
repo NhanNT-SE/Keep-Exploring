@@ -90,13 +90,13 @@ const getBlogByQuery = async (req, res, next) => {
       .populate("blog_detail")
       .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
       .sort({ created_on: -1 });
-    let resultList = blogList.filter((e) =>
-      e.title.toLowerCase().includes(query.toLowerCase())
-    );
 
+    let resultList = blogList.filter((e) =>
+      e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+    );
     if (resultList.length === 0) {
       resultList = blogList.filter((e) =>
-        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+        e.title.toLowerCase().includes(query.toLowerCase())
       );
     }
     return res.send({
@@ -157,11 +157,11 @@ const getPostByQuery = async (req, res, next) => {
       .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
       .sort({ created_on: -1 });
     let resultList = postList.filter((e) =>
-      e.address.toLowerCase().includes(query.toLowerCase())
+      e.owner.displayName.toLowerCase().includes(query.toLowerCase())
     );
     if (resultList.length === 0) {
       resultList = postList.filter((e) =>
-        e.owner.displayName.toLowerCase().includes(query.toLowerCase())
+        e.address.toLowerCase().includes(query.toLowerCase())
       );
     }
     if (resultList.length === 0) {

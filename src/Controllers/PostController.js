@@ -44,6 +44,12 @@ const createPost = async (req, res, next) => {
       idPost: post._id,
     });
 
+    io.emit("notification:admin", {
+      image: post.imgs[0],
+      type: "post",
+      id: post._id,
+      message: `Bài viết ${post.title} vừa được tạo, đang chờ kiểm duyệt`,
+    });
     return res.status(200).send({
       data: { post, notification },
       err: "",
@@ -231,12 +237,17 @@ const updatePost = async (req, res, next) => {
           content: "unmoderated",
         });
         const notification = await createNotification(notify);
-        const msgNotify = 
-        `Bài viết ${postFound.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
+        const msgNotify = `Bài viết ${postFound.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
         sendNotifyRealtime(io, postFound.owner, {
           message: msgNotify,
           type: "pending",
           idPost,
+        });
+        io.emit("notification:admin", {
+          image: postFound.imgs[0],
+          type: "post",
+          id: postFound._id,
+          message: `Bài viết ${postFound.title} vừa được chỉnh sửa, đang chờ kiểm duyệt`,
         });
 
         return res.send({

@@ -7,9 +7,8 @@ const User = require("../Models/User");
 const Notification = require("../Models/Notification");
 const Comment = require("../Models/Comment");
 const { sendNotifyRealtime } = require("../middleware/Socket.io");
-
+const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 require("../Models/Address");
-
 const deleteAllCommentPost = async (req, res, next) => {
   try {
     const { idPost } = req.params;
@@ -111,47 +110,6 @@ const getAllBlog = async (req, res, next) => {
     next(error);
   }
 };
-const getStatistics = async (req, res, next) => {
-  try {
-    const totalPost = await Post.countDocuments({});
-    const totalBlog = await Blog.countDocuments({});
-    const pendingPost = await Post.countDocuments({ status: "pending" });
-    const pendingBlog = await Blog.countDocuments({ status: "pending" });
-    const need_updatePost = await Post.countDocuments({
-      status: "need_update",
-    });
-    const need_updateBlog = await Blog.countDocuments({
-      status: "need_update",
-    });
-    const donePost = await Post.countDocuments({ status: "done" });
-    const doneBlog = await Blog.countDocuments({ status: "done" });
-    const admin = await User.countDocuments({ role: "admin" });
-    const user = await User.countDocuments({ role: "user" });
-    const data = {
-      user: {
-        title: `Users(${user + admin})`,
-        data: [user, admin],
-      },
-      postBlog: {
-        title: `Post-Blog(${totalPost + totalBlog})`,
-        data: [totalPost, totalBlog],
-      },
-      post: {
-        title: `Post(${totalPost})`,
-        data: [donePost, pendingPost, need_updatePost],
-      },
-      blog: {
-        title: `Blog(${totalBlog})`,
-        data: [doneBlog, pendingBlog, need_updateBlog],
-      },
-    };
-    return res
-      .status(200)
-      .send({ data, status: 200, message: "Lấy dữ liệu thành công" });
-  } catch (error) {
-    next(error);
-  }
-};
 const deleteUser = async (req, res, next) => {
   try {
     const { idUser } = req.params;
@@ -224,25 +182,27 @@ const updateStatus = async (req, res, next) => {
       updateFound.status = status;
       if (type === "post") {
         await Post.findByIdAndUpdate(idUpdate, updateFound);
-        notify = new Notification({
+        notify = {
           idUser: updateFound.owner.toString(),
           idPost: idUpdate,
           status: "new",
-        });
+          statusPost: status,
+        };
         notifyClient.idPost = idUpdate;
       } else {
         await Blog.findByIdAndUpdate(idUpdate, updateFound);
-        notify = new Notification({
+        notify = {
           idUser: updateFound.owner.toString(),
           idBlog: idUpdate,
           status: "new",
-        });
+          statusBlog: status,
+        };
         notifyClient.idBlog = idUpdate;
       }
 
-      if (status == "done") {
+      if (status === "done") {
         notify.content = "moderated";
-        msgNotify = `Bài viết ${updateFound.title} của đã được kiểm duyệt, và đang được hiển thị với mọi người`;
+        msgNotify = `Bài viết ${updateFound.title} của bạn đã được kiểm duyệt, và đang được hiển thị với mọi người`;
       } else {
         notify.content = "unmoderated";
         if (status === "pending") {
@@ -251,13 +211,11 @@ const updateStatus = async (req, res, next) => {
           msgNotify = `Bài viết ${updateFound.title} của bạn cần được chỉnh sủa`;
         }
       }
-
       const notification = await createNotification(notify);
 
       notifyClient.message = msgNotify;
       notifyClient.type = status;
       sendNotifyRealtime(io, updateFound.owner, notifyClient);
-
       return res.send({
         data: notification,
         status: 200,
@@ -266,8 +224,140 @@ const updateStatus = async (req, res, next) => {
     }
     return handlerCustomError(201, "Bài viết không tồn tại");
   } catch (error) {
+    console.log(error);
     next(error);
   }
+};
+const statisticsNumber = async (req, res, next) => {
+  try {
+    const totalPost = await Post.countDocuments({});
+    const totalBlog = await Blog.countDocuments({});
+    const pendingPost = await Post.countDocuments({ status: "pending" });
+    const pendingBlog = await Blog.countDocuments({ status: "pending" });
+    const need_updatePost = await Post.countDocuments({
+      status: "need_update",
+    });
+    const need_updateBlog = await Blog.countDocuments({
+      status: "need_update",
+    });
+    const donePost = await Post.countDocuments({ status: "done" });
+    const doneBlog = await Blog.countDocuments({ status: "done" });
+    const admin = await User.countDocuments({ role: "admin" });
+    const user = await User.countDocuments({ role: "user" });
+    const data = {
+      user: {
+        title: `Users(${user + admin})`,
+        data: [user, admin],
+      },
+      postBlog: {
+        title: `Post-Blog(${totalPost + totalBlog})`,
+        data: [totalPost, totalBlog],
+      },
+      post: {
+        title: `Post(${totalPost})`,
+        data: [donePost, pendingPost, need_updatePost],
+      },
+      blog: {
+        title: `Blog(${totalBlog})`,
+        data: [doneBlog, pendingBlog, need_updateBlog],
+      },
+    };
+    return res
+      .status(200)
+      .send({ data, status: 200, message: "Lấy dữ liệu thành công" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const statisticsTimeLine = async (req, res, next) => {
+  try {
+    const monthPost = await Post.aggregate([
+      {
+        $group: {
+          _id: { $month: "$created_on" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          count: 1,
+          month: "$_id",
+          _id: 0,
+        },
+      },
+    ]);
+    const monthBlog = await Blog.aggregate([
+      {
+        $group: {
+          _id: { $month: "$created_on" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          count: 1,
+          month: "$_id",
+          _id: 0,
+        },
+      },
+    ]);
+    const monthUser = await User.aggregate([
+      {
+        $match: { role: "user" },
+      },
+      {
+        $group: {
+          _id: { $month: "$created_on" },
+          count: { $sum: 1 },
+        },
+      },
+
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          count: 1,
+          month: "$_id",
+          _id: 0,
+        },
+      },
+    ]);
+
+    const resultUser = convertStaticsList(monthUser);
+    const resultPost = convertStaticsList(monthPost);
+    const resultBlog = convertStaticsList(monthBlog);
+    return res.status(200).send({
+      data: { user: resultUser, post: resultPost, blog: resultBlog },
+      status: 200,
+      message: "Lấy dữ liệu thành công",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+const convertStaticsList = (inputList) => {
+  const monthInput = inputList.map((e) => e.month);
+  const monthNull = monthList.filter((n) => !monthInput.includes(n));
+  const resultNull = [];
+  monthNull.map((e) => {
+    const item = {};
+    item.month = e;
+    item.count = 0;
+    resultNull.push(item);
+  });
+  const resultList = resultNull
+    .concat(inputList)
+    .sort((a, b) => a.month - b.month);
+  return resultList.map((e) => e.count);
 };
 module.exports = {
   deleteAllCommentBlog,
@@ -276,7 +366,8 @@ module.exports = {
   getAllBlog,
   getAllPost,
   getAllUser,
-  getStatistics,
   sendNotify,
   updateStatus,
+  statisticsNumber,
+  statisticsTimeLine,
 };
