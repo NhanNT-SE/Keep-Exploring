@@ -39,10 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Post"
-            android:background="@color/black"
+            android:background="#A8FFFFFF"
             android:paddingHorizontal="5dp"
             android:paddingVertical="2dp"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -69,11 +69,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Blog"
-            android:background="@color/black"
+            android:background="#A8FFFFFF"
+            android:textColor="@color/colorPrimaryDark"
             android:paddingHorizontal="5dp"
             android:paddingVertical="2dp"
             android:elevation="1dp"
-            android:textColor="@color/white"
             android:textStyle="bold" />
 
     </LinearLayout>
