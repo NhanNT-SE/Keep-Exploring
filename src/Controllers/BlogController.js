@@ -38,12 +38,13 @@ const createBlog = async (req, res, next) => {
     await blog.save();
     await blog_detail.save();
     await user.save();
-    const notify = new Notification({
+    const notify = {
       idUser: user._id,
       idBlog: blog._id,
       status: "new",
       content: "unmoderated",
-    });
+      statusBlog: "pending",
+    };
 
     await createNotification(notify);
     const msgNotify = `Bài viết ${blog.title} của bạn hiện đang trong quá trình kiểm duyệt`;
@@ -204,12 +205,13 @@ const updateBlog = async (req, res, next) => {
 
     await Blog.findByIdAndUpdate(idBlog, { ...blog });
     await Blog_Detail.findByIdAndUpdate(idBlog, { detail_list: tempList });
-    const notify = new Notification({
+    const notify = {
       idUser: blog.owner.toString(),
       idBlog: blog.id,
       status: "new",
       content: "unmoderated",
-    });
+      statusBlog: "pending",
+    };
     await createNotification(notify);
     const msgNotify = `Bài viết ${blog.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
     sendNotifyRealtime(io, blog.owner, {

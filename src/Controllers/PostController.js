@@ -29,12 +29,13 @@ const createPost = async (req, res, next) => {
     await user.save();
 
     //Tao notify khi co nguoi tao bai viet
-    const notify = new Notification({
+    const notify = {
       idUser: user._id,
       idPost: post._id,
       status: "new",
       content: "unmoderated",
-    });
+      statusPost: "pending",
+    };
 
     const notification = await createNotification(notify);
     const msgNotify = `Bài viết ${post.title} của bạn hiện đang trong quá trình kiểm duyệt`;
@@ -230,12 +231,13 @@ const updatePost = async (req, res, next) => {
         await Post.findByIdAndUpdate(idPost, newPost);
 
         //Tao notify
-        const notify = new Notification({
+        const notify = {
           idUser: postFound.owner.toString(),
           idPost: idPost,
           status: "new",
           content: "unmoderated",
-        });
+          statusPost: "pending",
+        };
         const notification = await createNotification(notify);
         const msgNotify = `Bài viết ${postFound.title} của bạn đã được cập nhật, bài viết hiện đang trong quá trình kiểm duyệt`;
         sendNotifyRealtime(io, postFound.owner, {
