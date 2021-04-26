@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:scrollbars="none"
+    tools:context=".fragment.Fragment_Post_Details">
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="5dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/fDetailPost_civAvatarAdmin"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/fDetailPost_tvPubDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/fDetailPost_imgRefresh"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="italic|bold" />
+        <TextView
+            android:id="@+id/fDetailPost_tvCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_tvPubDate"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="italic|bold" />
+
+        <ImageView
+            android:id="@+id/fDetailPost_imgRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:src="@drawable/ic_refresh_black" />
+
+        <TextView
+            android:id="@+id/fDetailPost_tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/fDetailPost_civAvatarAdmin"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="italic" />
+
+        <com.denzcoskun.imageslider.ImageSlider
+            android:id="@+id/fDetailPost_sliderPost"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_below="@+id/fDetailPost_civAvatarAdmin"
+            android:layout_marginTop="5dp"
+            app:placeholder="@drawable/background_grey" />
+
+        <RelativeLayout
+            android:id="@+id/fDetailPost_layoutInfo"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/fDetailPost_sliderPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RatingBar
+                android:id="@+id/fDetailPost_ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:progressTint="@color/colorPrimary"
+                android:isIndicator="true"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+              />
+            <ImageView
+                android:id="@+id/fDetailPost_imgLike"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/fDetailPost_tvLikes"
+                android:src="@drawable/ic_like_outline" />
+
+            <ImageView
+                android:id="@+id/fDetailPost_imgComment"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/fDetailPost_tvComments"
+                android:src="@drawable/topic_90px" />
+            <TextView
+                android:id="@+id/fDetailPost_tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/fDetailPost_imgComment"
+                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/fDetailPost_tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/fDetailPost_tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_layoutInfo"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/fDetailPost_tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fDetailPost_tvTitle"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</ScrollView>
+
+
+
+

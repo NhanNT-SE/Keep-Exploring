@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.card.MaterialCardView
+        app:strokeWidth="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/row_post_layoutHeader"
+                android:layout_width="match_parent"
+                android:layout_marginTop="2dp"
+                android:padding="5dp"
+                android:layout_marginHorizontal="2dp"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/row_post_imgAvatarUser"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp" />
+                <TextView
+                    android:id="@+id/row_post_tvUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_toEndOf="@+id/row_post_imgAvatarUser"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/row_post_tvPubDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/row_post_tvCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/row_post_tvPubDate"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="italic|bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/row_post_layoutContainer"
+                android:padding="5dp"
+                android:layout_marginHorizontal="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:layout_below="@+id/row_post_layoutHeader">
+
+                <TextView
+                    android:id="@+id/row_post_tvTitle"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/row_post_tvAddress"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/row_post_tvTitle"
+                    android:layout_marginBottom="3dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <com.denzcoskun.imageslider.ImageSlider
+                android:layout_width="wrap_content"
+                android:layout_height="220dp"
+                app:placeholder="@drawable/background_grey"
+                android:layout_below="@+id/row_post_layoutContainer"
+                android:id="@+id/row_post_sliderPost"
+                android:layout_marginBottom="5dp"
+            />
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</RelativeLayout>

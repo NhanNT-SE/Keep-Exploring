@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "495082793910",
+    "project_id": "keep-exploring",
+    "storage_bucket": "keep-exploring.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495082793910:android:20ad8161219dd25120ef17",
+        "android_client_info": {
+          "package_name": "com.example.keep_exploring"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "495082793910-i049d7ttfupntehfl5am870l48dif6o0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSdqClRYA3yKRV--SdgYpYRju58dlJJvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "495082793910-i049d7ttfupntehfl5am870l48dif6o0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
