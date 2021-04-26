@@ -20,6 +20,8 @@ const NotificationSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Blog",
     },
+    statusPost:{type: String},
+    statusBlog:{type: String},
     content: {
       type: String,
       enum: ["like", "comment", "moderated", "unmoderated"],

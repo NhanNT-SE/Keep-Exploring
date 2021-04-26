@@ -52,6 +52,12 @@ const createBlog = async (req, res, next) => {
       type: "pending",
       idBlog: blog._id,
     });
+    io.emit("notification:admin", {
+      image: blog.img,
+      type: "blog",
+      id: blog._id,
+      message: `Bài viết ${blog.title} vừa được tạo, đang chờ kiểm duyệt`,
+    });
     return res.status(200).send({
       status: 200,
       data: blog_detail,
@@ -182,6 +188,7 @@ const updateBlog = async (req, res, next) => {
       });
       blog.img = file.filename;
     }
+    blog.status = "pending";
     blog.title = title;
     blog.created_on = created_on;
     let tempList = [];
@@ -210,13 +217,18 @@ const updateBlog = async (req, res, next) => {
       type: "pending",
       idBlog: blog.id,
     });
+    io.emit("notification:admin", {
+      image: blog.img,
+      type: "blog",
+      id: blog._id,
+      message: `Bài ${blog.title} viết vừa chỉnh sửa, đang chờ kiểm duyệt`,
+    });
     return res.status(200).send({
       status: 200,
       data: blog_detail,
       message: "Đã cập nhật bài viết",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
