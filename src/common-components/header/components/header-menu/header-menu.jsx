@@ -1,23 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import Button from "@material-ui/core/Button";
+import { Avatar, ListItemIcon, Typography } from "@material-ui/core";
+import Badge from "@material-ui/core/Badge";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
 import { makeStyles } from "@material-ui/core/styles";
-import { PowerSettingsNew, AccountCircle } from "@material-ui/icons";
-import { Avatar, ListItemIcon, Typography } from "@material-ui/core";
-import "./header-menu.scss";
-import { useDispatch } from "react-redux";
-import { actionLogout } from "redux/slices/userSlice";
-import { useHistory } from "react-router";
-import Badge from "@material-ui/core/Badge";
+import { AccountCircle, PowerSettingsNew } from "@material-ui/icons";
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
-import GLOBAL_VARIABLE from "utils/global_variable";
-import { io } from "socket.io-client";
 import { OverlayPanel } from "primereact/overlaypanel";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
+import { actionLogout } from "redux/slices/userSlice";
+import { io } from "socket.io-client";
+import GLOBAL_VARIABLE from "utils/global_variable";
+import "./header-menu.scss";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -113,16 +112,18 @@ function HeaderMenu(props) {
   }, [notify]);
 
   return (
-    <div
-      className="header-menu-wrapper"
-      onClick={(e) => {
-        opNotify.current.toggle(e);
-        setBadge(0);
-      }}
-    >
-      <Badge badgeContent={badge} color="secondary">
-        <NotificationsActiveIcon />
-      </Badge>
+    <div className="header-menu-wrapper">
+      <div
+        className="badge-container"
+        onClick={(e) => {
+          opNotify.current.toggle(e);
+          setBadge(0);
+        }}
+      >
+        <Badge badgeContent={badge} color="secondary">
+          <NotificationsActiveIcon />
+        </Badge>
+      </div>
       <div className="header-menu-container">
         <div>
           <Avatar
