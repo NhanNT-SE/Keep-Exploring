@@ -12,12 +12,14 @@
         android:id="@+id/signIn_tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_above="@id/signIn_layoutMain"
+        android:layout_marginBottom="20dp"
         android:fontFamily="@font/nabila"
         android:text="Đăng nhập!"
         android:textColor="@color/white"
         android:textSize="40sp" />
     <LinearLayout
+        android:id="@+id/signIn_layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +58,7 @@ public class Fragment_AddBlog extends Fragment {
     private TextView tvUser, tvPubDate;
     private FloatingActionButton fabAddContent;
     private ImageView imgPost, imgContent, imgExpanded;
-    private CardView cvPickImgPost, cvPickImgContent;
+    private LinearLayout layoutPickImgPost,layoutPickImgContent;
     private CircleImageView imgAvatarUser;
     private ListView lvContent;
     private Dialog spotDialog;
@@ -106,7 +107,7 @@ public class Fragment_AddBlog extends Fragment {
         imgAvatarUser = (CircleImageView) view.findViewById(R.id.fAddBlog_imgAvatarUser);
         imgExpanded = (ImageView) view.findViewById(R.id.fAddBlog_imgExpanded);
         lvContent = (ListView) view.findViewById(R.id.fAddBlog_lvContent);
-        cvPickImgPost = (CardView) view.findViewById(R.id.fAddBlog_CvPickImgPost);
+        layoutPickImgPost = (LinearLayout) view.findViewById(R.id.fAddBlog_layoutPickImgPost);
         appBar = (AppBarLayout) view.findViewById(R.id.fAddBlog_appBar);
         toolbar = (Toolbar) view.findViewById(R.id.fAddBlog_toolbar);
 
@@ -147,7 +148,7 @@ public class Fragment_AddBlog extends Fragment {
 
             }
         });
-        cvPickImgPost.setOnClickListener(new View.OnClickListener() {
+        layoutPickImgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -165,8 +166,6 @@ public class Fragment_AddBlog extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select picture"), CHOOSE_IMAGE_POST);
             }
         });
-
-
         lvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -198,14 +197,14 @@ public class Fragment_AddBlog extends Fragment {
         blogDetails = new Blog_Details();
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
-        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
+        layoutPickImgContent = (LinearLayout) dialog.findViewById(R.id.dModifyContent_layoutPickImgContent);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         dTvTitle.setText("Thêm nội dung chi tiết");
         btnAdd.setText("Thêm");
 
-        cvPickImgContent.setOnClickListener(new View.OnClickListener() {
+        layoutPickImgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -261,14 +260,14 @@ public class Fragment_AddBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
-        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
+        layoutPickImgContent = (LinearLayout) dialog.findViewById(R.id.dModifyContent_layoutPickImgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
         dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
         btnAdd.setText("Cập nhật");
         imgContent.setVisibility(View.VISIBLE);
-        cvPickImgContent.setVisibility(View.GONE);
+        layoutPickImgContent.setVisibility(View.GONE);
         imgContent.setImageURI(blogDetails.getUriImage());
         dEtDescription.setText(blogDetails.getContent());
 
@@ -394,12 +393,12 @@ public class Fragment_AddBlog extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CHOOSE_IMAGE_POST && data != null) {
-            cvPickImgPost.setVisibility(View.GONE);
+            layoutPickImgPost.setVisibility(View.GONE);
             imgPost.setVisibility(View.VISIBLE);
             imgPost.setImageURI(data.getData());
             imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
-            cvPickImgContent.setVisibility(View.GONE);
+            layoutPickImgContent.setVisibility(View.GONE);
             imgContent.setVisibility(View.VISIBLE);
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());
@@ -440,7 +439,7 @@ public class Fragment_AddBlog extends Fragment {
         blogDetailsList.clear();
         adapterContent.notifyDataSetChanged();
         imgPost.setVisibility(View.GONE);
-        cvPickImgPost.setVisibility(View.VISIBLE);
+        layoutPickImgPost.setVisibility(View.VISIBLE);
         imageBlog = "";
     }
 

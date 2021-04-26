@@ -89,7 +89,6 @@ public class Fragment_Profile_BlogList extends Fragment {
             @Override
             public void successReq(Object response) {
                 blogList = (List<Blog>) response;
-                log(blogList.toString());
                 refreshRV();
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -126,7 +125,5 @@ public class Fragment_Profile_BlogList extends Fragment {
     }
 
 
-    private void log(String s) {
-        Log.d("log", s);
-    }
+
 }

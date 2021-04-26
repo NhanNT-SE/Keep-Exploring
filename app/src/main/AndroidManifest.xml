@@ -30,15 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.SignInActivity"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".activities.SignUpActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity android:name=".activities.MainActivity" />
 
         <service android:name=".services.Notification_Service" />
