@@ -25,10 +25,9 @@
         flex-direction: column;
         overflow: hidden;
       }
-    }
-    .tab-statistics-chart {
-    }
-    .tab-org-chart {
+      .timeLine-container-tab-panel {
+        overflow: auto;
+      }
     }
   }
 }

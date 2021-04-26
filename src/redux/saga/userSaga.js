@@ -105,6 +105,7 @@ function* handlerLogin(action) {
         email: data.email,
         displayName: data.displayName,
         imgUser: data.imgUser,
+        role: data.role,
         remember: isRemember,
       });
       yield call(() => handlerSuccessSaga("Login successfully!"));

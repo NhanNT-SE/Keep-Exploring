@@ -15,6 +15,7 @@ import {
   sagaGetAllPost,
   sagaGetPost,
   sagaGetStatistics,
+  sagaGetTimeLineStatistics,
   sagaUpdatePost,
 } from "./postSaga";
 import {
@@ -46,6 +47,7 @@ const sagaPost = [
   sagaGetPost(),
   sagaUpdatePost(),
   sagaGetStatistics(),
+  sagaGetTimeLineStatistics(),
 ];
 const sagaUser = [
   sagaChangePassword(),
