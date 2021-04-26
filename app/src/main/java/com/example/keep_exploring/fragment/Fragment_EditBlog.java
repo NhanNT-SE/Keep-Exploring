@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,7 +61,7 @@ public class Fragment_EditBlog extends Fragment {
     private FloatingActionButton fabAddContent;
     private ImageView imgBlog, imgContent, imgExpanded;
     private CircleImageView imgAvatarUser;
-    private CardView cvPickImgContent;
+    private LinearLayout layoutPickImgContent;
     private Dialog spotDialog;
     private Toolbar toolbar;
     private AppBarLayout appBar;
@@ -191,14 +192,14 @@ public class Fragment_EditBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
-        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
+        layoutPickImgContent = (LinearLayout) dialog.findViewById(R.id.dModifyContent_layoutPickImgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
         dTvTitle.setText("Thêm nội dung chi tiết");
         btnAdd.setText("Thêm");
 
-        cvPickImgContent.setOnClickListener(new View.OnClickListener() {
+        layoutPickImgContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -249,12 +250,12 @@ public class Fragment_EditBlog extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final EditText dEtDescription = (EditText) dialog.findViewById(R.id.dModifyContent_etDescriptions);
         imgContent = (ImageView) dialog.findViewById(R.id.dModifyContent_imgContent);
-        cvPickImgContent = (CardView) dialog.findViewById(R.id.dModifyContent_CvPickImgContent);
+        layoutPickImgContent = (LinearLayout) dialog.findViewById(R.id.dModifyContent_layoutPickImgContent);
         Button btnAdd = (Button) dialog.findViewById(R.id.dModifyContent_btnAdd);
         Button btnCancel = (Button) dialog.findViewById(R.id.dModifyContent_btnCancel);
         TextView dTvTitle = (TextView) dialog.findViewById(R.id.dModifyContent_tvTitle);
         imgContent.setVisibility(View.VISIBLE);
-        cvPickImgContent.setVisibility(View.GONE);
+        layoutPickImgContent.setVisibility(View.GONE);
         dTvTitle.setText("Chỉnh sửa nội dung chi tiết");
         btnAdd.setText("Cập nhật");
         dEtDescription.setText(blogDetails.getContent());
@@ -516,7 +517,7 @@ public class Fragment_EditBlog extends Fragment {
             imgBlog.setImageURI(data.getData());
             imageBlog = helper_image.getPathFromUri(data.getData());
         } else if (requestCode == CHOOSE_IMAGE_CONTENT && data != null) {
-            cvPickImgContent.setVisibility(View.GONE);
+            layoutPickImgContent.setVisibility(View.GONE);
             imgContent.setVisibility(View.VISIBLE);
             imgContent.setImageURI(data.getData());
             blogDetails.setUriImage(data.getData());

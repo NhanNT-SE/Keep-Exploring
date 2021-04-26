@@ -42,11 +42,9 @@ public class Fragment_BlogList extends Fragment {
     private RecyclerView rvBlog;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvNothing;
-    private SpotsDialog spotsDialog;
     private SearchView searchView;
     //    DAO & Helper
     private DAO_Blog dao_blog;
-    private DAO_Auth dao_auth;
     private Helper_Common helper_common;
     //    Variable
     private Adapter_RV_Blog adapterBlog;
@@ -70,7 +68,6 @@ public class Fragment_BlogList extends Fragment {
     }
 
     private void initView() {
-        spotsDialog = new SpotsDialog(getContext());
         rvBlog = (RecyclerView) view.findViewById(R.id.fBlogList_rvBlog);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fBlogList_refreshLayout);
         tvNothing = (TextView) view.findViewById(R.id.fBlogList_tvNothing);
@@ -78,7 +75,6 @@ public class Fragment_BlogList extends Fragment {
 
     private void initVariable() {
         dao_blog = new DAO_Blog(getContext());
-        dao_auth = new DAO_Auth(getContext());
         helper_common = new Helper_Common();
         blogList = new ArrayList<>();
     }

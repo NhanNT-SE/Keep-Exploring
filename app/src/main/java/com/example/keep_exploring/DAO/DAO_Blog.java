@@ -103,6 +103,8 @@ public class DAO_Blog {
 
     public void getBlogByQuery(String query, Helper_Callback callback) {
         Call<String> call = api_blog.getBlogByQuery(query);
+        Type listType = new TypeToken<List<Blog_Details>>() {
+        }.getType();
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -112,19 +114,20 @@ public class DAO_Blog {
                         JSONArray data = callback.getJsonArray(response);
                         List<Blog> blogList = new ArrayList<>();
                         int sizeList = data.length();
-                        Type listType = new TypeToken<List<Blog_Details>>() {
-                        }.getType();
-                        for (int i = 0; i < sizeList; i++) {
-                            JSONObject jsonBlog = data.getJSONObject(i);
-                            Blog blog = new Gson().fromJson(jsonBlog.toString(), Blog.class);
-                            JSONArray jsonArrayBlogDetail = jsonBlog
-                                    .getJSONObject("blog_detail")
-                                    .getJSONArray("detail_list");
-                            List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
-                            blog.setBlogDetails(blogDetailsList);
-                            blogList.add(blog);
-                            callback.successReq(blogList);
+                        if (sizeList>0){
+                            for (int i = 0; i < sizeList; i++) {
+                                JSONObject jsonBlog = data.getJSONObject(i);
+                                Blog blog = new Gson().fromJson(jsonBlog.toString(), Blog.class);
+                                JSONArray jsonArrayBlogDetail = jsonBlog
+                                        .getJSONObject("blog_detail")
+                                        .getJSONArray("detail_list");
+                                List<Blog_Details> blogDetailsList = new Gson().fromJson(jsonArrayBlogDetail.toString(), listType);
+                                blog.setBlogDetails(blogDetailsList);
+                                blogList.add(blog);
+                            }
                         }
+                        callback.successReq(blogList);
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

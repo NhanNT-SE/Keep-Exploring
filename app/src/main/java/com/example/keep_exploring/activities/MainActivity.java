@@ -363,12 +363,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .setRequiresCharging(false)
                 .setPersisted(true)
                 .build();
+        jobScheduler.schedule(jobInfo);
 
-        if (jobScheduler.schedule(jobInfo) == JobScheduler.RESULT_SUCCESS) {
-            Log.i("log", "MainActivity thread id: " + Thread.currentThread().getId() + ", job successfully scheduled");
-        } else {
-            Log.i("log", "MainActivity thread id: " + Thread.currentThread().getId() + ", job could not be scheduled");
-        }
     }
 
     private void stopJob() {

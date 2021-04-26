@@ -59,7 +59,7 @@
         <com.denzcoskun.imageslider.ImageSlider
             android:id="@+id/fDetailPost_sliderPost"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_below="@+id/fDetailPost_civAvatarAdmin"
             android:layout_marginTop="5dp"
             app:placeholder="@drawable/background_grey" />
