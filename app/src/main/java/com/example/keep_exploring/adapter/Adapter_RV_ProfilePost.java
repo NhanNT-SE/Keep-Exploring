@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -107,7 +108,7 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
         private TextView tvLike, tvComment, tvStatus;
         private ImageView imgPost, imgEdit;
         private RatingBar ratingBar;
-        private LinearLayout layoutContainer;
+        private RelativeLayout layoutContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -122,7 +123,7 @@ public class Adapter_RV_ProfilePost extends RecyclerView.Adapter<Adapter_RV_Prof
             imgPost = (ImageView) itemView.findViewById(R.id.row_postProfile_imgPost);
             imgEdit = (ImageView) itemView.findViewById(R.id.row_postProfile_imgEdit);
             ratingBar = (RatingBar) itemView.findViewById(R.id.row_postProfile_ratingBar);
-            layoutContainer = (LinearLayout) itemView.findViewById(R.id.row_postProfile_container_LikeComment);
+            layoutContainer = (RelativeLayout) itemView.findViewById(R.id.row_postProfile_container_LikeComment);
         }
 
         public void toggleView(Post post) {

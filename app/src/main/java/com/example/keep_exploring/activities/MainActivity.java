@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 helper_common.replaceFragment(this, fragment);
             }
         } else {
-            replaceFragment(new Fragment_Category());
+            replaceFragment(new Fragment_Tab_UserInfo());
 
         }
     }

@@ -143,11 +143,4 @@ public class Notification_Job_Service extends JobService {
         return false;
     }
 
-
-    @Override
-    public void onDestroy() {
-        mSocket.disconnect();
-        super.onDestroy();
-        Log.d("log", " thread Id: " + Thread.currentThread().getId());
-    }
 }

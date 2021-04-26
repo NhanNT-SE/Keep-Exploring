@@ -238,11 +238,11 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         String status = "";
         Blog blog = notification.getBlog();
         Post post = notification.getPost();
-        if (blog != null) {
-            status = blog.getStatus();
+        if (blog != null && notification.getStatusBlog() != null) {
+            status = notification.getStatusBlog();
         }
-        if (post != null) {
-            status = post.getStatus();
+        if (post != null && notification.getStatusPost() != null) {
+            status = notification.getStatusPost();
         }
         if (contentAdmin != null) {
             cardView.setCardBackgroundColor(Color.parseColor("#B1AFAF"));
@@ -285,16 +285,24 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
         StringBuilder desc = new StringBuilder();
         String status = "";
         String content = notify.getContent();
+
         if (notify.getContentAdmin() != null) {
             desc = desc.append("Thông báo từ hệ thống: ").append(notify.getContentAdmin());
         } else {
-            if (post != null) {
+            if (post != null ) {
+                if(notify.getStatusPost() != null){
+                    status = notify.getStatusPost();
+
+                }
                 desc = desc.append("Bài viết '").append(post.getTitle()).append("' của bạn.");
-                status = post.getStatus();
+
             }
             if (blog != null) {
+                if (notify.getStatusBlog() != null) {
+                    status = notify.getStatusBlog();
+
+                }
                 desc = desc.append("Bài viết '").append(blog.getTitle()).append("' của bạn.");
-                status = blog.getStatus();
             }
             switch (content) {
                 case "like": {
@@ -306,7 +314,7 @@ public class Adapter_RV_Notify extends RecyclerView.Adapter<Adapter_RV_Notify.Vi
                     break;
                 }
                 case "moderated": {
-                    desc.append("Đã được kiểm duyệt");
+                    desc.append(" đã được kiểm duyệt");
                     break;
                 }
                 case "unmoderated": {
