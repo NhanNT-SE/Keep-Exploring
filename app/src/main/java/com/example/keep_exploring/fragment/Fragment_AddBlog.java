@@ -351,7 +351,7 @@ public class Fragment_AddBlog extends Fragment {
             toast("Vui lòng thêm ít nhất 1 nội dung chi tiết cho bài viết");
         } else {
             dialog.setTitle("Bạn có muốn tạo bài viết?");
-            dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("Tạo", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     spotDialog.show();
@@ -382,7 +382,7 @@ public class Fragment_AddBlog extends Fragment {
                     });
                 }
             });
-            dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
