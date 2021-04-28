@@ -22,7 +22,7 @@ const userRouter = require("./src/Route/UserRoute");
 // ----------ROUTER----------
 const mongoString =
   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
