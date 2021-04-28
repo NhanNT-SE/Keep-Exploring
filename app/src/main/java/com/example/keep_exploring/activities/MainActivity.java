@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private DAO_Notification dao_notification;
     private User user;
     private Helper_SP helper_sp;
-    private Socket mSocket;
     private Animation animOpen, animClose, animFromBottom, animToBottom;
     private boolean clicked = false;
     private boolean isNotify = false;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Keep Exploring");
+        getSupportActionBar().setTitle("Blog Travel");
         initView();
         initVariable();
         handlerEvent();
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         user = helper_sp.getUser();
         isNotify = helper_sp.getIsNotify();
         if (user != null && isNotify) {
-            mSocket = Socket_Client.getSocket();
+            Socket mSocket = Socket_Client.getSocket();
             mSocket.on("send-notify:" + user.getId(), onNotification);
             startJob();
         }

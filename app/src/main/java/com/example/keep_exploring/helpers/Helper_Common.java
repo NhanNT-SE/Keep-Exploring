@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -53,13 +55,13 @@ public class Helper_Common {
     public String getBaseUrl() {
 //        String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_LOCAL = "http://192.168.0.100:3000";
-        String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000";
+        String URL_GLOBAL = "http://52.15.213.225:3000";
         return URL_GLOBAL;
     }
     public String getBaseUrlImage() {
 //        String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_LOCAL = "http://192.168.0.100:3000/images/";
-        String URL_GLOBAL = "http://ec2-18-223-15-195.us-east-2.compute.amazonaws.com:3000/images/";
+        String URL_GLOBAL = "http://52.15.213.225:3000/images/";
         return URL_GLOBAL;
     }
     public String REFRESH_TOKEN() {
@@ -131,10 +133,9 @@ public class Helper_Common {
         Dexter.withContext(context)
                 .withPermissions(
                         Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.PROCESS_OUTGOING_CALLS,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {

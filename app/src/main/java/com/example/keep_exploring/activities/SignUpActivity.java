@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -39,12 +40,11 @@ public class SignUpActivity extends AppCompatActivity {
     private ImageView imgAvatar;
     //DAO & Helper;
     private static final int PICK_IMAGE_CODE = 1;
-    private Api_User apiUser;
     private Helper_Image helper_image;
     private DAO_Auth dao_auth;
     private Helper_SP helper_sp;
     private boolean isValid;
-    private String path, suffixEmil;
+    private String path;
     private Intent serviceNotify;
 
     @Override
@@ -69,11 +69,9 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initVariable() {
-        apiUser = Retrofit_config.retrofit.create(Api_User.class);
         helper_image = new Helper_Image(this);
         dao_auth = new DAO_Auth(this);
         helper_sp = new Helper_SP(this);
-        suffixEmil = tilEmail.getSuffixText().toString();
         path = "";
         isValid = false;
         serviceNotify = new Intent(this, Notification_Service.class);
