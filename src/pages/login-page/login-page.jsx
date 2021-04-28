@@ -61,7 +61,6 @@ function LoginPage(props) {
     if (user && user.role === "admin") {
       history.push("/home");
     }
-    console.log(user);
   }, [user]);
   return (
     <div className="login-page">
@@ -87,14 +86,6 @@ function LoginPage(props) {
             type="password"
             onChange={(e) => handlerOnChange(e, "password", setPassword)}
           />
-          {/* <CheckBoxField
-            name="remember"
-            control={control}
-            label="remember me?"
-            checked={isRemember}
-            inputRef={register}
-            onChange={(e) => dispatch(actionSetIsRemember(e.target.checked))}
-          /> */}
           <Button variant="contained" color="primary" type="submit">
             Sign in
           </Button>
