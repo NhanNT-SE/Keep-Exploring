@@ -32,7 +32,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="@font/nabila"
             android:gravity="center"
-            android:text="Keep Exploring"
+            android:text="Blog Travel"
             android:textColor="@color/white"
             android:textSize="40sp" />
     </RelativeLayout>
