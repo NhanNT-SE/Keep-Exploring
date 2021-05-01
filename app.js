@@ -63,7 +63,7 @@ app.use((req, res, next) => {
   next();
 });
 app.get("/", (req, res) => {
-  return res.send("Hello");
+  return res.send("Hello Form Jenkins");
 });
 // ----------PUBLIC ROUTER----------
 app.use("/api-doc", apiDocRouter);
