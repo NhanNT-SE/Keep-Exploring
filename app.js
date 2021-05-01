@@ -62,6 +62,9 @@ app.use((req, res, next) => {
   req.io = io;
   next();
 });
+app.get("/", (req, res) => {
+  return res.send("Hello");
+});
 // ----------PUBLIC ROUTER----------
 app.use("/api-doc", apiDocRouter);
 app.use("/auth", authRouter);
@@ -102,4 +105,3 @@ app.use((error, req, res, next) => {
   });
 });
 server.listen(port, console.log(`start on port ${port}`));
-
