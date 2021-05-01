@@ -28,7 +28,7 @@ function LoginPage(props) {
   const user = useSelector((state) => state.user.user);
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("admin@keep-exploring.com");
   const [password, setPassword] = useState("");
   const history = useHistory();
   const dispatch = useDispatch();
