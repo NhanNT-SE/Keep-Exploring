@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import {confirmDialog } from "primereact/confirmdialog";
 import "./comment.scss";
 import { useDispatch } from "react-redux";
 import { actionDeleteComment } from "redux/slices/commentSlice";
