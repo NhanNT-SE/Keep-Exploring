@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.example.keep_exploring.DAO.DAO_Auth;
@@ -178,7 +177,12 @@ public class Fragment_EditBlog extends Fragment {
         fabAddContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogAddContent();
+                if (blogDetailsList.size() == 10) {
+                    toast("Mỗi bài viết không được vượt quá 10 hình ảnh chi tiết");
+                }else {
+                    dialogAddContent();
+
+                }
             }
         });
         loadData();
@@ -229,6 +233,7 @@ public class Fragment_EditBlog extends Fragment {
             @Override
             public void onClick(View v) {
                 String description = dEtDescription.getText().toString();
+
                 if (imgContent.getVisibility() != View.VISIBLE) {
                     toast("Vui lòng chọn hình ảnh để hiển thị");
                 } else if (description.isEmpty()) {
@@ -239,7 +244,6 @@ public class Fragment_EditBlog extends Fragment {
                     adapterContent.notifyDataSetChanged();
                     dialog.dismiss();
                 }
-
             }
         });
         dialog.show();

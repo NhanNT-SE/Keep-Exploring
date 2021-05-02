@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void initFragment() {
         String type = getIntent().getStringExtra("type");
         String id = getIntent().getStringExtra("id");
-        Log.d("TAG", "initFragment: " + type);
         if (type != null) {
             Fragment fragment;
             Bundle bundle = new Bundle();
@@ -322,8 +321,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             layoutAddPost.setClickable(true);
             layoutAddBlog.setClickable(true);
         } else {
-            layoutAddPost.setVisibility(View.INVISIBLE);
-            layoutAddBlog.setVisibility(View.INVISIBLE);
+            layoutAddPost.setVisibility(View.GONE);
+            layoutAddBlog.setVisibility(View.GONE);
             layoutAddPost.startAnimation(animToBottom);
             layoutAddBlog.startAnimation(animToBottom);
             fabAdd.startAnimation(animClose);

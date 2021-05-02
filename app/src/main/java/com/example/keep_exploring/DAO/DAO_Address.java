@@ -68,18 +68,22 @@ public class DAO_Address {
                     if (err.isEmpty()) {
                         JSONObject data = callback.getJsonObject(response);
                         JSONArray jsonDistrictList = data.getJSONArray("districtList");
-                        JSONArray jsonWardList = data.getJSONArray("wardList");
                         List<String> districtList = new ArrayList<>();
                         List<String> wardList = new ArrayList<>();
                         for (int i = 0; i < jsonDistrictList.length(); i++) {
                             districtList.add(jsonDistrictList.get(i).toString());
                         }
-                        for (int i = 0; i < jsonWardList.length(); i++) {
-                            wardList.add(jsonWardList.get(i).toString());
-                        }
                         Map<String, List<String>> map = new HashMap<>();
                         map.put("districtList", districtList);
-                        map.put("wardList", wardList);
+                        if (data.has("wardList")) {
+                            JSONArray jsonWardList = data.getJSONArray("wardList");
+                            for (int i = 0; i < jsonWardList.length(); i++) {
+                                wardList.add(jsonWardList.get(i).toString());
+                            }
+                            map.put("wardList", wardList);
+
+
+                        }
                         callback.successReq(map);
                     }
                 } catch (Exception e) {

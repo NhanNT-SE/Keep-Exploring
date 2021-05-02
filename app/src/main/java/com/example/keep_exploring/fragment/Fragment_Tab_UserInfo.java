@@ -210,9 +210,9 @@ public class Fragment_Tab_UserInfo extends Fragment {
                         validateRequire(tIL_confirmPassword, "Mật xác nhận tại không được để trống");
                     }
                 } else {
-                    dialog.dismiss();
+
                     spotDialog.show();
-                    updatePassword();
+                    updatePassword(dialog);
 
                 }
             }
@@ -474,12 +474,13 @@ public class Fragment_Tab_UserInfo extends Fragment {
         toggleEnableButton();
     }
 
-    private void updatePassword() {
+    private void updatePassword(Dialog dialog) {
         dao_user.changePassword(helper_sp.getAccessToken(), oldPass, newPass, new Helper_Callback() {
             @Override
             public void successReq(Object response) {
                 toast("Đổi mật khẩu thành công, vui lòng đăng nhập lại để tiếp tục");
                 spotDialog.dismiss();
+                dialog.dismiss();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -496,17 +497,19 @@ public class Fragment_Tab_UserInfo extends Fragment {
                     dao_auth.refreshToken(new Helper_Callback() {
                         @Override
                         public void successReq(Object response) {
-                            updatePassword();
+                            updatePassword(dialog);
                         }
 
                         @Override
                         public void failedReq(String msg) {
                             spotDialog.dismiss();
+                            dialog.dismiss();
                             helper_common.logOut(getContext());
                         }
                     });
                 } else if (msg.equalsIgnoreCase(helper_common.LOG_OUT())) {
                     spotDialog.dismiss();
+                    dialog.dismiss();
                     helper_common.logOut(getContext());
                 } else {
                     spotDialog.dismiss();

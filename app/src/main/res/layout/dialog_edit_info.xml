@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="Gender:"
+            android:text="Giới tính:"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -43,13 +43,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/colorPrimary"
-                android:text="male" />
+                android:text="nam" />
             <RadioButton
                 android:id="@+id/dEditInfo_radioFemale"
                 android:buttonTint="@color/colorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="female" />
+                android:text="nữ" />
         </RadioGroup>
     </LinearLayout>
 
