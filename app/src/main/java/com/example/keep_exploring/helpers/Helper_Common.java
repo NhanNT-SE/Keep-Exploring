@@ -55,13 +55,13 @@ public class Helper_Common {
     public String getBaseUrl() {
 //        String URL_LOCAL = "http://10.0.2.2:3000";
         String URL_LOCAL = "http://192.168.0.100:3000";
-        String URL_GLOBAL = "http://52.15.213.225:3000";
+        String URL_GLOBAL = "http://18.191.159.74:3000";
         return URL_GLOBAL;
     }
     public String getBaseUrlImage() {
 //        String URL_LOCAL = "http://10.0.2.2:3000/images/";
         String URL_LOCAL = "http://192.168.0.100:3000/images/";
-        String URL_GLOBAL = "http://52.15.213.225:3000/images/";
+        String URL_GLOBAL = "http://18.191.159.74:3000/images/";
         return URL_GLOBAL;
     }
     public String REFRESH_TOKEN() {
@@ -174,14 +174,14 @@ public class Helper_Common {
     public void alertDialog(Context context, String message, Helper_Event event) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
         dialog.setMessage(message);
-        dialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Xác nhận", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 event.onSubmitAlertDialog();
             }
         });
 
-        dialog.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

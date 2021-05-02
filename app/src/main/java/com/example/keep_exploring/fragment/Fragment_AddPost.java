@@ -129,13 +129,18 @@ public class Fragment_AddPost extends Fragment {
             @Override
             public void onClick(View v) {
                 hideCircleMenu();
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(
-                        Intent.createChooser(intent, "Select picture"),
-                        CHOOSE_IMAGE_POST);
+                if (imageDisplayList.size() == 10) {
+                    toast("Mỗi bài viết không được vượt quá 10 hình ảnh");
+                } else {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select picture"),
+                            CHOOSE_IMAGE_POST);
+                }
+
             }
         });
 
@@ -206,6 +211,7 @@ public class Fragment_AddPost extends Fragment {
             }
         });
         hideCircleMenu();
+
     }
 
     @Override
@@ -221,7 +227,15 @@ public class Fragment_AddPost extends Fragment {
             }
             if (data.getClipData() != null) {
                 ClipData mClipData = data.getClipData();
-                for (int i = 0; i < mClipData.getItemCount(); i++) {
+                int maxClipData;
+                int maxSizeImage = mClipData.getItemCount() + imageDisplayList.size();
+                if (maxSizeImage > 10) {
+                    maxClipData = 10 - imageDisplayList.size();
+                }else {
+                    maxClipData = mClipData.getItemCount();
+                }
+
+                for (int i = 0; i < maxClipData; i++) {
                     ClipData.Item item = mClipData.getItemAt(i);
                     ImageDisplay imageDisplay = new ImageDisplay();
                     Uri uri = item.getUri();
@@ -230,6 +244,7 @@ public class Fragment_AddPost extends Fragment {
                     imageDisplay.setImageUri(uri);
                     imageDisplayList.add(imageDisplay);
                 }
+
             }
         }
         refreshViewPager();

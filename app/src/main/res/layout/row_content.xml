@@ -15,7 +15,7 @@
                 android:id="@+id/row_content_imgContent"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="fitXY" />
+                android:scaleType="fitCenter" />
             <TextView
                 android:id="@+id/row_content_tvDescription"
                 android:layout_width="match_parent"

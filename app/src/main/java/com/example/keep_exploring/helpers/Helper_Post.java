@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,10 +39,6 @@ public class Helper_Post {
         List<String> dProvinceList = new ArrayList<>();
         List<String> dDistrictList = new ArrayList<>();
         List<String> dWardList = new ArrayList<>();
-        List<String> dCategoryList = new ArrayList<>();
-        dCategoryList.add("food");
-        dCategoryList.add("hotel");
-        dCategoryList.add("check_in");
         dProvinceList.addAll(helper_sp.getProvinceList());
         TextView dTvAddress = (TextView) dialog.findViewById(R.id.dAddress_tvAddress);
         Spinner dSpProvince = (Spinner) dialog.findViewById(R.id.dAddress_spProvince);
@@ -119,16 +116,28 @@ public class Helper_Post {
                             @Override
                             public void successReq(Object response) {
                                 Map<String, List<String>> map = (Map<String, List<String>>) response;
-                                dWardList.clear();
-                                dWardList.addAll(map.get("wardList"));
-                                setSpinner(dWardList, dSpWard);
-                                setAddressToDisPLay(
-                                        dSpWard.getSelectedItem().toString()
-                                        , dSpDistrict.getSelectedItem().toString(),
-                                        dSpProvince.getSelectedItem().toString()
-                                );
+                                if (map.get("wardList") != null) {
+                                    dWardList.clear();
+                                    dWardList.addAll(map.get("wardList"));
+                                    setSpinner(dWardList, dSpWard);
+                                    setAddressToDisPLay(
+                                            dSpWard.getSelectedItem().toString()
+                                            , dSpDistrict.getSelectedItem().toString(),
+                                            dSpProvince.getSelectedItem().toString()
+                                    );
+
+                                } else {
+                                    setAddressToDisPLay(
+                                            ""
+                                            , dSpDistrict.getSelectedItem().toString(),
+                                            dSpProvince.getSelectedItem().toString()
+                                    );
+
+                                }
                                 dEdtAdditional.setText("");
                                 dTvAddress.setText(addressSubmit);
+
+
                             }
 
                             @Override
