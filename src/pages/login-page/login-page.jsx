@@ -26,7 +26,7 @@ function LoginPage(props) {
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("123456");
   const history = useHistory();
   const dispatch = useDispatch();
   const { handleSubmit, control, errors, register, setValue } = useForm({
