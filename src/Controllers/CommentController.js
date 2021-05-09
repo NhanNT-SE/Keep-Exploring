@@ -4,8 +4,8 @@ const Notification = require("../Models/Notification");
 const Post = require("../Models/Post");
 const { createNotification } = require("./NotificationController");
 const fs = require("fs");
-const handlerCustomError = require("../middleware/customError");
-const { sendNotifyRealtime } = require("../middleware/Socket.io");
+const handlerCustomError = require("../helpers/customError");
+const { sendNotifyRealtime } = require("../helpers/Socket.io");
 
 const createCommentPost = async (req, res, next) => {
   try {

@@ -1,9 +1,9 @@
-const jwtHelper = require("../middleware/jwtHelper");
+const jwtHelper = require("../helpers/jwtHelper");
 const User = require("../Models/User");
 const Token = require("../Models/Token");
 const bcrypt = require("bcryptjs");
 const Notification = require("../Models/Notification");
-const { sendNotifyRealtime } = require("../middleware/Socket.io");
+const { sendNotifyRealtime } = require("../helpers/Socket.io");
 const fs = require("fs");
 const {
   ACCESS_TOKEN_SECRET,
@@ -11,7 +11,7 @@ const {
   ACCESS_TOKEN_LIFE,
   REFRESH_TOKEN_LIFE,
 } = require("../config/index");
-const handlerCustomError = require("../middleware/customError");
+const handlerCustomError = require("../helpers/customError");
 
 const signIn = async (req, res, next) => {
   try {

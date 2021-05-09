@@ -17,12 +17,17 @@ const BlogSchema = new Schema(
     folder_storage: {
       type: String,
     },
+    view_mode: {
+      type: String,
+      enum: ["public", "hidden", "friend"],
+      default: "public",
+    },
     status: {
       type: String,
       enum: ["pending", "done", "need_update"],
       default: "pending",
     },
-    like_list: [
+    likes: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -32,7 +37,7 @@ const BlogSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    comment: [
+    comments: [
       {
         type: Schema.Types.ObjectId,
         ref: "Comment",

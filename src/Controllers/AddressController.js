@@ -1,4 +1,4 @@
-const handlerCustomError = require("../middleware/customError");
+const handlerCustomError = require("../helpers/customError");
 const Address = require("../Models/Address");
 
 const createAddress = async (req, res, next) => {

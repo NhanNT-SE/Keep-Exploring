@@ -1,4 +1,4 @@
-const handlerCustomError = require("../middleware/customError");
+const handlerCustomError = require("../helpers/customError");
 const Address = require("../Models/Address");
 const Blog = require("../Models/Blog");
 const Comment = require("../Models/Comment");

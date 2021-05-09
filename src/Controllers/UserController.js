@@ -1,9 +1,9 @@
 const User = require("../Models/User");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
-const handlerCustomError = require("../middleware/customError");
+const handlerCustomError = require("../helpers/customError");
 const Notification = require("../Models/Notification");
-const { sendNotifyRealtime } = require("../middleware/Socket.io");
+const { sendNotifyRealtime } = require("../helpers/Socket.io");
 
 const changePass = async (req, res, next) => {
   try {

@@ -1,14 +1,14 @@
 const fs = require("fs");
-const handlerCustomError = require("../middleware/customError");
-const { createNotification } = require("./NotificationController");
-const Post = require("../Models/Post");
-const Blog = require("../Models/Blog");
-const User = require("../Models/User");
-const Notification = require("../Models/Notification");
-const Comment = require("../Models/Comment");
-const { sendNotifyRealtime } = require("../middleware/Socket.io");
+const { createNotification } = require("../../Controllers/NotificationController");
+const Post = require("../../Models/Post");
+const Blog = require("../../Models/Blog");
+const User = require("../../Models/User");
+const Notification = require("../../Models/Notification");
+const Comment = require("../../Models/Comment");
+const { sendNotifyRealtime } = require("../../helpers/Socket.io");
+const handlerCustomError = require("../../helpers/customError");
 const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-require("../Models/Address");
+require("../../Models/Address");
 const deleteAllCommentPost = async (req, res, next) => {
   try {
     const { idPost } = req.params;
@@ -96,20 +96,7 @@ const getAllPost = async (req, res, next) => {
     next(error);
   }
 };
-const getAllBlog = async (req, res, next) => {
-  try {
-    const blog_list = await Blog.find({})
-      .populate("owner", ["displayName", "imgUser", "email"])
-      .sort({ created_on: -1 });
-    return res.send({
-      data: blog_list,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+
 const deleteUser = async (req, res, next) => {
   try {
     const { idUser } = req.params;
@@ -165,69 +152,7 @@ const sendNotify = async (req, res, next) => {
     next(error);
   }
 };
-const updateStatus = async (req, res, next) => {
-  try {
-    const { idUpdate, status, type } = req.body;
-    let updateFound = null;
-    let notify = null;
-    let msgNotify;
-    let notifyClient = {};
-    const { io } = req;
-    if (type === "post") {
-      updateFound = await Post.findById(idUpdate);
-    } else {
-      updateFound = await Blog.findById(idUpdate);
-    }
-    if (updateFound) {
-      updateFound.status = status;
-      if (type === "post") {
-        await Post.findByIdAndUpdate(idUpdate, updateFound);
-        notify = {
-          idUser: updateFound.owner.toString(),
-          idPost: idUpdate,
-          status: "new",
-          statusPost: status,
-        };
-        notifyClient.idPost = idUpdate;
-      } else {
-        await Blog.findByIdAndUpdate(idUpdate, updateFound);
-        notify = {
-          idUser: updateFound.owner.toString(),
-          idBlog: idUpdate,
-          status: "new",
-          statusBlog: status,
-        };
-        notifyClient.idBlog = idUpdate;
-      }
 
-      if (status === "done") {
-        notify.content = "moderated";
-        msgNotify = `Bài viết ${updateFound.title} của bạn đã được kiểm duyệt, và đang được hiển thị với mọi người`;
-      } else {
-        notify.content = "unmoderated";
-        if (status === "pending") {
-          msgNotify = `Bài viết ${updateFound.title} của bạn hiện đang trong quá trình kiểm duyệt`;
-        } else {
-          msgNotify = `Bài viết ${updateFound.title} của bạn cần được chỉnh sủa`;
-        }
-      }
-      const notification = await createNotification(notify);
-
-      notifyClient.message = msgNotify;
-      notifyClient.type = status;
-      sendNotifyRealtime(io, updateFound.owner, notifyClient);
-      return res.send({
-        data: notification,
-        status: 200,
-        message: "Cập nhật bài viết thành công",
-      });
-    }
-    return handlerCustomError(201, "Bài viết không tồn tại");
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
 const statisticsNumber = async (req, res, next) => {
   try {
     const totalPost = await Post.countDocuments({});
@@ -363,11 +288,9 @@ module.exports = {
   deleteAllCommentBlog,
   deleteAllCommentPost,
   deleteUser,
-  getAllBlog,
   getAllPost,
   getAllUser,
   sendNotify,
-  updateStatus,
   statisticsNumber,
   statisticsTimeLine,
 };

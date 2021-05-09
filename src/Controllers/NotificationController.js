@@ -1,6 +1,6 @@
 require("../Models/Blog");
 require("../Models/Post");
-const handlerCustomError = require("../middleware/customError");
+const handlerCustomError = require("../helpers/customError");
 const Notification = require("../Models/Notification");
 const User = require("../Models/User");
 const createNotification = async (notify) => {

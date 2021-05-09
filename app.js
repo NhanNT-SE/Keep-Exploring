@@ -6,9 +6,10 @@ const http = require("http");
 const passport = require("passport");
 const cors = require("cors");
 const { Server } = require("socket.io");
-const { isAuth, isAdmin } = require("./src/middleware/jwtHelper");
+const { isAuth, isAdmin } = require("./src/helpers/jwtHelper");
 // ----------DEFINE ROUTER----------
 const addressRouter = require("./src/Route/AddressRoute");
+const adminBlog = require("./src/Route/admin/AdminBlog");
 const adminRouter = require("./src/Route/AdminRoute");
 const apiDocRouter = require("./src/Route/APIDocsRoute");
 const authRouter = require("./src/Route/AuthRouter");
@@ -20,8 +21,10 @@ const publicRouter = require("./src/Route/PublicRoute");
 const userRouter = require("./src/Route/UserRoute");
 
 // ----------ROUTER----------
+// const mongoString =
+//   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const mongoString =
-  "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
+  "mongodb://localhost/keep-exploring";
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
@@ -32,9 +35,9 @@ const io = new Server(server, {
 });
 
 app.use(express.static("src/public"));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: true,
   })
 );
@@ -76,6 +79,7 @@ app.use("/user", userRouter);
 // ----------ADMIN ROUTER----------
 app.use(isAdmin);
 app.use("/admin", adminRouter);
+app.use("/admin/blog", adminBlog);
 app.use("/address", addressRouter);
 // ----------HANDLER ERROR----------
 app.use((req, res, next) => {
