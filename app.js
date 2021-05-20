@@ -1,27 +1,32 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const http = require("http");
-const passport = require("passport");
-const cors = require("cors");
-const { Server } = require("socket.io");
-const { isAuth, isAdmin } = require("./src/middleware/jwtHelper");
+import express from "express";
+import mongoose from "mongoose";
+import http from "http";
+import cors from "cors";
+import { Server } from "socket.io";
+import { isAuth, isAdmin } from "./src/helpers/JWTHelper.js";
+
 // ----------DEFINE ROUTER----------
-const addressRouter = require("./src/Route/AddressRoute");
-const adminRouter = require("./src/Route/AdminRoute");
-const apiDocRouter = require("./src/Route/APIDocsRoute");
-const authRouter = require("./src/Route/AuthRouter");
-const blogRouter = require("./src/Route/BlogRoute");
-const commentRouter = require("./src/Route/CommentRoute");
-const postRouter = require("./src/Route/PostRoute");
-const notifyRouter = require("./src/Route/NotificationRoute");
-const publicRouter = require("./src/Route/PublicRoute");
-const userRouter = require("./src/Route/UserRoute");
+import apiDocs from "./src/docs/APIDocs.js";
+import auth from "./src/routes/auth/AuthRouter.js";
+import adminAddress from "./src/routes/admin/AdminAddress.js";
+import adminBlog from "./src/routes/admin/AdminBlog.js";
+import adminPost from "./src/routes/admin/AdminPost.js";
+import adminUser from "./src/routes/admin/AdminUser.js";
+import adminStatistic from "./src/routes/admin/AdminStatistic.js";
+import publicAddress from "./src/routes/public/PublicAddress.js";
+import publicBlog from "./src/routes/public/PublicBlog.js";
+import publicPost from "./src/routes/public/PublicPost.js";
+import userComment from "./src/routes/user/UserComment.js";
+import userBlog from "./src/routes/user/UserBlog.js";
+import userPost from "./src/routes/user/UserPost.js";
+import userProfile from "./src/routes/user/UserProfile.js";
+import userNotify from "./src/routes/user/UserNotify.js";
 
 // ----------ROUTER----------
+// const mongoString =
+//   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const mongoString =
-  "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
+  "mongodb://localhost:27017,localhost:27018,localhost:27019/keep-exploring";
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
@@ -32,28 +37,28 @@ const io = new Server(server, {
 });
 
 app.use(express.static("src/public"));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: true,
   })
 );
-app.use(passport.initialize());
 app.use(cors());
 // ----------CONNECT MONGO DB----------
-mongoose
-  .connect(mongoString, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
-  .then(() => {
+
+(async function () {
+  try {
+    await mongoose.connect(mongoString, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    });
     console.log("Connected to database ");
-  })
-  .catch((err) => {
-    console.error(`Error connecting to the database. \n${err}`);
-  });
+  } catch (error) {
+    console.log(`Error connecting to the database. \n${error}`);
+  }
+})();
 io.on("connection", (socket) => {
   console.log("User connected");
   socket.on("disconnect", () => console.log("User has disconnected"));
@@ -63,20 +68,25 @@ app.use((req, res, next) => {
   next();
 });
 // ----------PUBLIC ROUTER----------
-app.use("/api-doc", apiDocRouter);
-app.use("/auth", authRouter);
-app.use("/public", publicRouter);
-// ----------AUTH ROUTER----------
+app.use("/api-doc", apiDocs);
+app.use("/auth", auth);
+app.use("/public/address", publicAddress);
+app.use("/public/blog", publicBlog);
+app.use("/public/post", publicPost);
+// // ----------AUTH ROUTER----------
 app.use(isAuth);
-app.use("/blog", blogRouter);
-app.use("/comment", commentRouter);
-app.use("/notification", notifyRouter);
-app.use("/post", postRouter);
-app.use("/user", userRouter);
+app.use("/user/comment", userComment);
+app.use("/user/blog", userBlog);
+app.use("/user/post", userPost);
+app.use("/user/profile", userProfile);
+app.use("/user/notify", userNotify);
 // ----------ADMIN ROUTER----------
 app.use(isAdmin);
-app.use("/admin", adminRouter);
-app.use("/address", addressRouter);
+app.use("/admin/address", adminAddress);
+app.use("/admin/blog", adminBlog);
+app.use("/admin/post", adminPost);
+app.use("/admin/user", adminUser);
+app.use("/admin/statistic", adminStatistic);
 // ----------HANDLER ERROR----------
 app.use((req, res, next) => {
   const error = new Error("Not found");
