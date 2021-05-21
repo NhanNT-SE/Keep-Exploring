@@ -7,14 +7,14 @@ const UserSchema = new Schema(
       type: String,
       index: true,
       required: [true, "email is required"],
-      unique: [true, "duplicate email"],
+      unique: true,
       match: [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, "invalid email"],
     },
     username: {
       type: String,
       index: true,
+      unique: true,
       required: [true, "username is required"],
-      unique: [true, "duplicate username"],
       minLength: [6, "min username"],
     },
     password: {

@@ -46,7 +46,6 @@ app.use(
 );
 app.use(cors());
 // ----------CONNECT MONGO DB----------
-
 (async function () {
   try {
     await mongoose.connect(mongoString, {

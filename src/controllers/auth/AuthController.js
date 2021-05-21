@@ -5,7 +5,7 @@ import User from "../../models/User.js";
 import Token from "../../models/Token.js";
 import Notification from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import {customError} from "../../helpers/CustomError.js";
+import { customError } from "../../helpers/CustomError.js";
 
 import {
   ACCESS_TOKEN_SECRET,
@@ -84,10 +84,7 @@ const signOut = async (req, res, next) => {
         msg: "Đăng xuất thành công",
       });
     }
-    return customError(
-      201,
-      "Không tồn tại người dùng này trong hệ thống"
-    );
+    return customError(201, "Không tồn tại người dùng này trong hệ thống");
   } catch (error) {
     next(error);
   }
@@ -112,18 +109,16 @@ const signUp = async (req, res, next) => {
       );
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passHashed = await bcrypt.hash(user.pass, salt);
-
     const newUser = new User({
       ...req.body,
       imgUser,
       role: "user",
-      pass: passHashed,
     });
 
     await newUser.save();
-
+    const salt = await bcrypt.genSalt(10);
+    const passHashed = await bcrypt.hash(user.password, salt);
+    await User.findByIdAndUpdate(newUser._id, { password: passHashed });
     const notify = new Notification({
       idUser: newUser._id,
       contentAdmin:

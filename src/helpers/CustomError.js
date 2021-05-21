@@ -6,7 +6,8 @@ const customError = (status, message, payload) => {
   throw err;
 };
 const mapErrorMessage = (message) => {
-  switch (message) {
+  const resultMsg = message.split(": ").slice(2, 3).toString();
+  switch (resultMsg) {
     case "duplicate email":
       return "This email is already registered, please choose another one.";
     case "duplicate username":
@@ -20,7 +21,7 @@ const mapErrorMessage = (message) => {
     case "min fullName":
       return "fullName should contain atleast 6 Characters";
     default:
-      return message;
+      return resultMsg;
   }
 };
 export { customError, mapErrorMessage };
