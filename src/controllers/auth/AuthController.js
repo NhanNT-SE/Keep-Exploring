@@ -5,7 +5,7 @@ import User from "../../models/User.js";
 import Token from "../../models/Token.js";
 import Notification from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import handlerCustomError from "../../helpers/CustomError.js";
+import {customError} from "../../helpers/CustomError.js";
 
 import {
   ACCESS_TOKEN_SECRET,
@@ -61,9 +61,9 @@ const signIn = async (req, res, next) => {
           message: "Đăng nhập thành công",
         });
       }
-      handlerCustomError(201, "Mật khẩu của bạn không đúng");
+      customError(201, "Mật khẩu của bạn không đúng");
     }
-    handlerCustomError(201, "Người dùng không tồn tại");
+    customError(201, "Người dùng không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -84,7 +84,7 @@ const signOut = async (req, res, next) => {
         msg: "Đăng xuất thành công",
       });
     }
-    return handlerCustomError(
+    return customError(
       201,
       "Không tồn tại người dùng này trong hệ thống"
     );
@@ -106,7 +106,7 @@ const signUp = async (req, res, next) => {
 
     const userFound = await User.findOne({ email: user.email });
     if (userFound) {
-      handlerCustomError(
+      customError(
         201,
         "Email này đã được sử dụng, vui lòng sử dụng email khác"
       );
@@ -139,7 +139,6 @@ const signUp = async (req, res, next) => {
       status: 200,
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -165,9 +164,9 @@ const refreshToken = async (req, res, next) => {
           message: "Refresh token thành công",
         });
       }
-      handlerCustomError(202, "Refresh Token của bạn không hợp lệ");
+      customError(202, "Refresh Token của bạn không hợp lệ");
     }
-    handlerCustomError(
+    customError(
       401,
       "Refresh token này không phải của bạn, vui lòng sử dụng refresh token của mình để tiếp tục"
     );
@@ -181,13 +180,13 @@ const forgetPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      handlerCustomError(201, "Email của bạn không đúng");
+      customError(201, "Email của bạn không đúng");
     }
     if (user.displayName !== displayName) {
-      handlerCustomError(201, "Tên hiển thị của bạn không đúng");
+      customError(201, "Tên hiển thị của bạn không đúng");
     }
     if (user.bod.toString() != new Date(bod)) {
-      handlerCustomError(201, "Ngày sinh của bạn không đúng");
+      customError(201, "Ngày sinh của bạn không đúng");
     }
 
     return res.status(200).send({

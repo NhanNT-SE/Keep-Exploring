@@ -2,7 +2,7 @@ import fs from "fs";
 import User from "../../models/User.js";
 import Notification from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import handlerCustomError from "../../helpers/CustomError.js";
+import {customError} from "../../helpers/CustomError.js";
 
 const getAllUser = async (req, res, next) => {
   try {
@@ -24,13 +24,13 @@ const deleteUser = async (req, res, next) => {
     const { idUser } = req.params;
     const userFound = await User.findById(idUser);
     if (!userFound) {
-      return handlerCustomError(
+      return customError(
         202,
         "Người dùng này không tồn tại hoặc đã bị xóa"
       );
     }
     if (userFound.role == "admin") {
-      return handlerCustomError(203, "Bạn không thể xóa tài khoản admin");
+      return customError(203, "Bạn không thể xóa tài khoản admin");
     }
     if (userFound.imgUser && userFound.imgUser !== "avatar-default.png") {
       fs.unlinkSync("src/public/images/user/" + userFound.imgUser);

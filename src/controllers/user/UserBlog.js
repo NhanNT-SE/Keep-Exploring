@@ -3,8 +3,8 @@ import Blog from "../../models/Blog.js";
 import Blog_Detail from "../../models/Blog_Detail.js";
 import Notification from "../../models/Notification.js";
 import User from "../../models/User.js";
-import handlerCustomError from "../../helpers/CustomError.js";
-import  createNotification  from "../../helpers/NotifyHelper.js";
+import {customError} from "../../helpers/CustomError.js";
+import  {createNotification}  from "../../helpers/NotifyHelper.js";
 
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 
@@ -92,9 +92,9 @@ const deleteBlog = async (req, res, next) => {
           message: "Xóa bài viết thành công",
         });
       }
-      handlerCustomError(201, "Bài viết không tồn tại");
+      customError(201, "Bài viết không tồn tại");
     }
-    handlerCustomError(201, "Bạn thể xóa bài viết của người khác");
+    customError(201, "Bạn thể xóa bài viết của người khác");
   } catch (error) {
     next(error);
   }
@@ -139,7 +139,7 @@ const likeBlog = async (req, res, next) => {
       });
     }
 
-    handlerCustomError(202, "Bài viết không tồn tại");
+    customError(202, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }

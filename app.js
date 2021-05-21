@@ -21,6 +21,7 @@ import userBlog from "./src/routes/user/UserBlog.js";
 import userPost from "./src/routes/user/UserPost.js";
 import userProfile from "./src/routes/user/UserProfile.js";
 import userNotify from "./src/routes/user/UserNotify.js";
+import { mapErrorMessage } from "./src/helpers/CustomError.js";
 
 // ----------ROUTER----------
 // const mongoString =
@@ -94,20 +95,19 @@ app.use((req, res, next) => {
   next(error);
 });
 app.use((error, req, res, next) => {
-  res.status(error.status || 500);
+  const message = mapErrorMessage(error.message);
+  const status = error.status || 500;
+  res.status(status);
+  let err = {
+    status,
+    message,
+  };
   if (error.payload) {
-    return res.send({
-      error: {
-        status: error.status || 500,
-        message: error.message,
-        payload: error.payload ? error.payload : "",
-      },
-    });
+    err.payload = error.payload;
   }
   res.send({
     error: {
-      status: error.status || 500,
-      message: error.message,
+      ...err,
     },
   });
 });

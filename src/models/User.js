@@ -5,16 +5,29 @@ const UserSchema = new Schema(
   {
     email: {
       type: String,
-      required: true,
-      unique: true,
+      index: true,
+      required: [true, "email is required"],
+      unique: [true, "duplicate email"],
+      match: [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, "invalid email"],
     },
-    pass: {
+    username: {
       type: String,
-      required: true,
+      index: true,
+      required: [true, "username is required"],
+      unique: [true, "duplicate username"],
+      minLength: [6, "min username"],
     },
-    displayName: {
+    password: {
       type: String,
-      required: true,
+      required: [true, "password  is required"],
+      match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "invalid password",
+      ],
+    },
+    fullName: {
+      type: String,
+      minLength: [6, "min fullName"],
     },
     role: {
       type: String,
@@ -54,14 +67,5 @@ const UserSchema = new Schema(
   },
   { collection: "User" }
 );
-
-// UserSchema.methods.joiValidate = function (obj) {
-//     const Joi = require('@hapi/joi');
-//     	const schema = {
-// 		email: Joi.string().email().required(),
-// 		pass: Joi.string().min(6).required(),
-// 	};
-// 	return Joi.validate(obj, schema);
-// };
 
 export default mongoose.model("User", UserSchema);

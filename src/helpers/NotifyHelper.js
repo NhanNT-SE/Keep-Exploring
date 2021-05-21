@@ -1,4 +1,4 @@
-import handlerCustomError from "./CustomError.js";
+import { customError } from "./CustomError.js";
 import Notification from "../models/Notification.js";
 const createNotification = async (notify) => {
   try {
@@ -40,4 +40,4 @@ const createNotification = async (notify) => {
   }
 };
 
-export default createNotification;
+export { createNotification };

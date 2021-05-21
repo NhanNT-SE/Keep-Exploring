@@ -1,4 +1,4 @@
-import handlerCustomError from "../../helpers/CustomError.js";
+import {customError} from "../../helpers/CustomError.js";
 import Comment from "../../models/Comment.js";
 import Post from "../../models/Post.js";
 import "../../models/User.js";
@@ -19,7 +19,7 @@ const getPostById = async (req, res, next) => {
         .status(200)
         .send({ data: post, status: 200, message: "Lấy dữ liệu thành công" });
     }
-    return handlerCustomError(201, "Bài viết không tồn tại");
+    return customError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -95,7 +95,7 @@ const getPostComment = async (req, res, next) => {
         message: "Lấy dữ liệu thành công",
       });
     }
-    return handlerCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
+    return customError(202, "Bài viết không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -112,7 +112,7 @@ const getLikeListPost = async (req, res, next) => {
       "blog",
     ]);
     if (!postFound) {
-      return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return customError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = postFound.like_list;
