@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const BlogDetail_Schema = new Schema(
+const ContentBlog = new Schema(
   {
     _id: {
       type: String,
@@ -15,7 +15,7 @@ const BlogDetail_Schema = new Schema(
       },
     ],
   },
-  { collection: "Blog_Detail" }
+  { collection: "content_blog" }
 );
 
-export default mongoose.model("Blog_Detail", BlogDetail_Schema);
+export default mongoose.model("content_blog", ContentBlog);

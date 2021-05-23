@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const NotificationSchema = new Schema(
+const notification = new Schema(
   {
     idUser: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
     },
     status: {
       type: String,
@@ -14,11 +14,11 @@ const NotificationSchema = new Schema(
     },
     idPost: {
       type: Schema.Types.ObjectId,
-      ref: "Post",
+      ref: "post",
     },
     idBlog: {
       type: Schema.Types.ObjectId,
-      ref: "Blog",
+      ref: "blog",
     },
     statusPost: { type: String },
     statusBlog: { type: String },
@@ -34,7 +34,7 @@ const NotificationSchema = new Schema(
       default: Date.now,
     },
   },
-  { collection: "Notification" }
+  { collection: "notification" }
 );
 
-export default mongoose.model("Notification", NotificationSchema);
+export default mongoose.model("notification", notification);

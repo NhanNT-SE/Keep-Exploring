@@ -3,6 +3,7 @@ import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
 import User from "../../models/User.js";
 import Token from "../../models/Token.js";
+import MFA from "../../models/MFA.js";
 import Notification from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customError } from "../../helpers/CustomError.js";
@@ -100,34 +101,25 @@ const signUp = async (req, res, next) => {
       imgUser = "avatar-default.png";
     }
     const user = req.body;
-
-    const userFound = await User.findOne({ email: user.email });
-    if (userFound) {
-      customError(
-        201,
-        "Email này đã được sử dụng, vui lòng sử dụng email khác"
-      );
-    }
-
+    const salt = await bcrypt.genSalt(10);
+    const passHashed = await bcrypt.hash(user.password, salt);
     const newUser = new User({
       ...req.body,
       imgUser,
+      password: passHashed,
       role: "user",
     });
-
     await newUser.save();
-    const salt = await bcrypt.genSalt(10);
-    const passHashed = await bcrypt.hash(user.password, salt);
-    await User.findByIdAndUpdate(newUser._id, { password: passHashed });
-    const notify = new Notification({
-      idUser: newUser._id,
-      contentAdmin:
-        "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
-      status: "new",
-    });
+    await new MFA({ owner: newUser._id }).save();
+    await new Token({ owner: newUser._id }).save();
 
-    await notify.save();
-
+    // const notify = new Notification({
+    //   idUser: newUser._id,
+    //   contentAdmin:
+    //     "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
+    //   status: "new",
+    // });
+    // await notify.save();
     return res.status(200).send({
       data: newUser,
       message: "Đăng ký thành công",
@@ -137,6 +129,7 @@ const signUp = async (req, res, next) => {
     next(error);
   }
 };
+
 const refreshToken = async (req, res, next) => {
   try {
     const { refreshToken, userId } = req.body;

@@ -1,54 +1,53 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema(
+const user = new Schema(
   {
     email: {
       type: String,
-      index: true,
-      required: [true, "email is required"],
-      unique: true,
-      match: [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, "invalid email"],
+      required: [true, `{PATH} is required`],
+      match: [
+        /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+        `{PATH}: {VALUE} is not a valid email address`,
+      ],
     },
     username: {
       type: String,
-      index: true,
-      unique: true,
-      required: [true, "username is required"],
-      minLength: [6, "min username"],
+      required: [true, "{PATH} is required"],
+      minLength: [6, "username should contain atleast 6 characters"],
     },
     password: {
       type: String,
-      required: [true, "password  is required"],
+      required: [true, "{PATH} is required"],
       match: [
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-        "invalid password",
+        "password should contain atleast 8 characters, 1 number, 1 special character , 1 upper and 1 lowercase",
       ],
     },
     fullName: {
       type: String,
-      minLength: [6, "min fullName"],
+      minLength: [6, "fullName password should contain atleast 6 characters"],
     },
     role: {
       type: String,
       enum: ["admin", "user"],
       default: "user",
+      message: "{VALUE} is not supported",
     },
-    enableMFA: { type: Boolean, default: false },
-    secretMFA: { type: String },
+
     imgUser: {
       type: String,
     },
     post: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "post",
       },
     ],
     blog: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Blog",
+        ref: "blog",
       },
     ],
     address: { type: String },
@@ -57,15 +56,16 @@ const UserSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female"],
+      enum: ["male", "female", "unknown"],
       default: "male",
+      message: "{VALUE} is not supported",
     },
     created_on: {
       type: Date,
       default: Date.now,
     },
   },
-  { collection: "User" }
+  { collection: "user" }
 );
-
-export default mongoose.model("User", UserSchema);
+user.index({ email: 1, username: 1 }, { unique: true });
+export default mongoose.model("user", user);

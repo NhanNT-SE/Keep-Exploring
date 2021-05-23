@@ -94,7 +94,8 @@ app.use((req, res, next) => {
   next(error);
 });
 app.use((error, req, res, next) => {
-  const message = mapErrorMessage(error.message);
+  
+  const message = mapErrorMessage(error);
   const status = error.status || 500;
   res.status(status);
   let err = {

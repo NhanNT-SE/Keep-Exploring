@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const token = new Schema(
+const MFASchema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
@@ -9,15 +9,11 @@ const token = new Schema(
       index: true,
       unique: true,
     },
-    accessToken: {
-      type: String,
-    },
-    refreshToken: {
-      type: String,
-    },
+    enableMFA: { type: Boolean, default: false },
+    secretMFA: { type: String },
   },
 
-  { collection: "token" }
+  { collection: "mfa" }
 );
 
-export default mongoose.model("token", token);
+export default mongoose.model("mfa", MFASchema);
