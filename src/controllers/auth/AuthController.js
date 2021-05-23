@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
-import User from "../../models/User.js";
-import Token from "../../models/Token.js";
-import Notification from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { Token } from "../../models/Token.js";
+import { MFA } from "../../models/MFA.js";
+import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import handlerCustomError from "../../helpers/CustomError.js";
+import { customError } from "../../helpers/CustomError.js";
 
 import {
   ACCESS_TOKEN_SECRET,
@@ -61,14 +62,13 @@ const signIn = async (req, res, next) => {
           message: "Đăng nhập thành công",
         });
       }
-      handlerCustomError(201, "Mật khẩu của bạn không đúng");
+      customError(201, "Mật khẩu của bạn không đúng");
     }
-    handlerCustomError(201, "Người dùng không tồn tại");
+    customError(201, "Người dùng không tồn tại");
   } catch (error) {
     next(error);
   }
 };
-
 const signOut = async (req, res, next) => {
   try {
     const { userId } = req.body;
@@ -84,65 +84,62 @@ const signOut = async (req, res, next) => {
         msg: "Đăng xuất thành công",
       });
     }
-    return handlerCustomError(
-      201,
-      "Không tồn tại người dùng này trong hệ thống"
-    );
+    return customError(201, "Không tồn tại người dùng này trong hệ thống");
   } catch (error) {
     next(error);
   }
 };
-
 const signUp = async (req, res, next) => {
+  const { file, session, opts } = req;
+  session.startTransaction();
   try {
-    const file = req.file;
-    var imgUser;
+    let imgUser;
     if (file) {
       imgUser = file.filename;
     } else {
       imgUser = "avatar-default.png";
     }
-    const user = req.body;
-
-    const userFound = await User.findOne({ email: user.email });
-    if (userFound) {
-      handlerCustomError(
-        201,
-        "Email này đã được sử dụng, vui lòng sử dụng email khác"
-      );
-    }
-
     const salt = await bcrypt.genSalt(10);
-    const passHashed = await bcrypt.hash(user.pass, salt);
-
-    const newUser = new User({
-      ...req.body,
-      imgUser,
-      role: "user",
-      pass: passHashed,
-    });
-
-    await newUser.save();
-
-    const notify = new Notification({
-      idUser: newUser._id,
-      contentAdmin:
-        "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
-      status: "new",
-    });
-
-    await notify.save();
-
+    const passHashed = await bcrypt.hash(req.body.password, salt);
+    const user = await User.create(
+      [
+        {
+          ...req.body,
+          imgUser,
+          password: passHashed,
+          role: "user",
+        },
+      ],
+      opts
+    );
+    const owner = user[0]._id;
+    await Token.create([{ owner }], opts);
+    await MFA.create([{ owner }], opts);
+    // await Notification.create(
+    //   [
+    //     {
+    //       idUser: user[0]._id,
+    //       contentAdmin:
+    //         "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
+    //       status: "new",
+    //     },
+    //   ],
+    //   opts
+    // );
+    await session.commitTransaction();
+    session.endSession();
     return res.status(200).send({
-      data: newUser,
+      data: user,
       message: "Đăng ký thành công",
       status: 200,
     });
   } catch (error) {
-    console.log(error);
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
+
 const refreshToken = async (req, res, next) => {
   try {
     const { refreshToken, userId } = req.body;
@@ -165,9 +162,9 @@ const refreshToken = async (req, res, next) => {
           message: "Refresh token thành công",
         });
       }
-      handlerCustomError(202, "Refresh Token của bạn không hợp lệ");
+      customError(202, "Refresh Token của bạn không hợp lệ");
     }
-    handlerCustomError(
+    customError(
       401,
       "Refresh token này không phải của bạn, vui lòng sử dụng refresh token của mình để tiếp tục"
     );
@@ -181,13 +178,13 @@ const forgetPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      handlerCustomError(201, "Email của bạn không đúng");
+      customError(201, "Email của bạn không đúng");
     }
     if (user.displayName !== displayName) {
-      handlerCustomError(201, "Tên hiển thị của bạn không đúng");
+      customError(201, "Tên hiển thị của bạn không đúng");
     }
     if (user.bod.toString() != new Date(bod)) {
-      handlerCustomError(201, "Ngày sinh của bạn không đúng");
+      customError(201, "Ngày sinh của bạn không đúng");
     }
 
     return res.status(200).send({

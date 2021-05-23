@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema(
+const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
@@ -26,7 +26,6 @@ const PostSchema = new Schema(
     },
 
     imgs: {
-      // required: true,
       type: [String],
     },
 
@@ -63,7 +62,7 @@ const PostSchema = new Schema(
     like_list: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "user",
       },
     ],
 
@@ -75,10 +74,10 @@ const PostSchema = new Schema(
     comment: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "comment",
       },
     ],
   },
-  { collection: "Post" }
+  { collection: "post" }
 );
-export default mongoose.model("Post", PostSchema);
+export const Post = mongoose.model("post", schema);

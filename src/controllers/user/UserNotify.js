@@ -1,15 +1,15 @@
 import "../../models/Blog.js";
 import "../../models/Post.js";
-import handlerCustomError from "../../helpers/CustomError.js";
-import Notification from "../../models/Notification.js";
-import User from "../../models/User.js";
+import {customError} from "../../helpers/CustomError.js";
+import {Notification} from "../../models/Notification.js";
+import {User} from "../../models/User.js";
 
 const changeNewStatusNotify = async (req, res, next) => {
   try {
     const { idNotify } = req.params;
     const notifyFound = await Notification.findById(idNotify);
     if (!notifyFound) {
-      handlerCustomError(201, "Thông báo không tồn tại");
+      customError(201, "Thông báo không tồn tại");
     }
     await await Notification.findByIdAndUpdate(idNotify, { status: "new" });
     return res.send({
@@ -43,7 +43,7 @@ const deleteNotifyById = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     const notifyFound = await Notification.findById(idNotify);
     if (!notifyFound) {
-      return handlerCustomError(201, "Thông báo không tồn tại hoặc đã bị xóa");
+      return customError(201, "Thông báo không tồn tại hoặc đã bị xóa");
     }
     if (user.role === "admin" || user._id == notifyFound.idUser.toString()) {
       await Notification.findByIdAndDelete(idNotify);
@@ -53,7 +53,7 @@ const deleteNotifyById = async (req, res, next) => {
         message: "Đã xóa thông báo",
       });
     }
-    return handlerCustomError(202, "Bạn không thể xóa thông báo này");
+    return customError(202, "Bạn không thể xóa thông báo này");
   } catch (error) {
     next(error);
   }

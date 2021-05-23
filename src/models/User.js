@@ -1,41 +1,57 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema(
+const schema = new Schema(
   {
     email: {
       type: String,
-      required: true,
+      required: [true, `{PATH} is required`],
+      index: true,
       unique: true,
+      match: [
+        /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+        `{PATH}: {VALUE} is not a valid email address`,
+      ],
     },
-    pass: {
+    username: {
       type: String,
-      required: true,
+      index: true,
+      unique: true,
+      required: [true, "{PATH} is required"],
+      minLength: [6, "username should contain atleast 6 characters"],
     },
-    displayName: {
+    password: {
       type: String,
-      required: true,
+      required: [true, "{PATH} is required"],
+      match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "password should contain atleast 8 characters, 1 number, 1 special character , 1 upper and 1 lowercase",
+      ],
+    },
+    fullName: {
+      type: String,
+      minLength: [6, "fullName password should contain atleast 6 characters"],
     },
     role: {
       type: String,
       enum: ["admin", "user"],
       default: "user",
+      message: "{VALUE} is not supported",
     },
-    enableMFA: { type: Boolean, default: false },
-    secretMFA: { type: String },
+
     imgUser: {
       type: String,
     },
     post: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "post",
       },
     ],
     blog: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Blog",
+        ref: "blog",
       },
     ],
     address: { type: String },
@@ -44,24 +60,15 @@ const UserSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female"],
+      enum: ["male", "female", "unknown"],
       default: "male",
+      message: "{VALUE} is not supported",
     },
     created_on: {
       type: Date,
       default: Date.now,
     },
   },
-  { collection: "User" }
+  { collection: "user" }
 );
-
-// UserSchema.methods.joiValidate = function (obj) {
-//     const Joi = require('@hapi/joi');
-//     	const schema = {
-// 		email: Joi.string().email().required(),
-// 		pass: Joi.string().min(6).required(),
-// 	};
-// 	return Joi.validate(obj, schema);
-// };
-
-export default mongoose.model("User", UserSchema);
+export const User = mongoose.model("user", schema);

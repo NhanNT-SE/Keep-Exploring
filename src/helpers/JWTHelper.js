@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import Token from "../models/Token.js";
+import {Token} from "../models/Token.js";
 import { ACCESS_TOKEN_SECRET } from "../config/index.js";
-import handlerCustomError from "./CustomError.js";
+import {customError} from "./CustomError.js";
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
@@ -14,7 +14,7 @@ const generateToken = async (user, secretSignature, tokenLife) => {
     });
     return token;
   } catch (error) {
-    handlerCustomError(401, error.message);
+    customError(401, error.message);
   }
 };
 
@@ -26,9 +26,9 @@ const verifyToken = async (token, secretKey) => {
     const message = error.message;
     if (message === "jwt expired") {
       const dateExpired = getNumberDateExpired(error.expiredAt);
-      handlerCustomError(401, message, dateExpired);
+      customError(401, message, dateExpired);
     }
-    handlerCustomError(401, message);
+    customError(401, message);
   }
 };
 
@@ -44,9 +44,9 @@ const isAuth = async (req, res, next) => {
         req.user = decoded;
         return next();
       }
-      handlerCustomError(401, "Vui lòng đăng nhập lại để tiếp tục");
+      customError(401, "Vui lòng đăng nhập lại để tiếp tục");
     }
-    handlerCustomError(401, "Không nhận được token.");
+    customError(401, "Không nhận được token.");
   } catch (error) {
     next(error);
   }
@@ -57,7 +57,7 @@ const isAdmin = async (req, res, next) => {
     if (user.role === "admin") {
       return next();
     }
-    handlerCustomError(
+    customError(
       401,
       "Tài khoản hiện tại của bạn không đủ quyền để thực hiện hành động này"
     );

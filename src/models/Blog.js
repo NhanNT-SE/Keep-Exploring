@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const BlogSchema = new Schema(
+const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
     },
     title: {
       type: String,
@@ -30,7 +30,7 @@ const BlogSchema = new Schema(
     likes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "user",
       },
     ],
     created_on: {
@@ -40,15 +40,14 @@ const BlogSchema = new Schema(
     comments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "comment",
       },
     ],
-    blog_detail: {
+    content: {
       type: Schema.Types.ObjectId,
-      ref: "Blog_Detail",
+      ref: "content_blog",
     },
   },
-  { collection: "Blog" }
+  { collection: "blog" }
 );
-
-export default mongoose.model("Blog", BlogSchema);
+export const Blog = mongoose.model("blog", schema);

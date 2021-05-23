@@ -1,10 +1,10 @@
 import fs from "fs";
-import Blog from "../../models/Blog.js";
-import Comment from "../../models/Comment.js";
-import Notification from "../../models/Notification.js";
-import Post from "../../models/Post.js";
-import createNotification from "../../helpers/NotifyHelper.js";
-import handlerCustomError from "../../helpers/CustomError.js";
+import {Blog} from "../../models/Blog.js";
+import {Comment} from "../../models/Comment.js";
+import {Notification} from "../../models/Notification.js";
+import {Post} from "../../models/Post.js";
+import {createNotification} from "../../helpers/NotifyHelper.js";
+import {customError} from "../../helpers/CustomError.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 
 const createCommentPost = async (req, res, next) => {
@@ -54,7 +54,7 @@ const createCommentPost = async (req, res, next) => {
       });
     }
 
-    return handlerCustomError(201, "Bài viết không tồn tại");
+    return customError(201, "Bài viết không tồn tại");
   } catch (error) {
     return res.status(202).send(error.message);
   }
@@ -108,7 +108,7 @@ const createCommentBlog = async (req, res, next) => {
       });
     }
 
-    return handlerCustomError(201, "Bài viết không tồn tại");
+    return customError(201, "Bài viết không tồn tại");
   } catch (error) {
     return res.status(202).send(error.message);
   }
@@ -157,7 +157,7 @@ const deleteCommentByID = async (req, res, next) => {
       });
     }
 
-    return handlerCustomError(201, "Bạn không phải admin/chủ comment này");
+    return customError(201, "Bạn không phải admin/chủ comment này");
   } catch (error) {
     next(error);
   }
@@ -170,11 +170,11 @@ const editCommentBlog = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return handlerCustomError(201, "Bình luận không tồn tại");
+      return customError(201, "Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return handlerCustomError(
+      return customError(
         202,
         "Bạn không có quyền chỉnh sửa comment này"
       );
@@ -208,11 +208,11 @@ const editCommentPost = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return handlerCustomError(201, "Bình luận không tồn tại");
+      return customError(201, "Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return handlerCustomError(
+      return customError(
         202,
         "Bạn không có quyền chỉnh sửa comment này"
       );

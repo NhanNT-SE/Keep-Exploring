@@ -1,8 +1,8 @@
 import fs from "fs";
-import Post from "../../models/Post.js";
-import Blog from "../../models/Blog.js";
-import User from "../../models/User.js";
-import handlerCustomError from "../../helpers/CustomError.js";
+import {Post} from "../../models/Post.js";
+import {Blog} from "../../models/Blog.js";
+import {User} from "../../models/User.js";
+import {customError} from "../../helpers/CustomError.js";
 const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const statisticsNumber = async (req, res, next) => {

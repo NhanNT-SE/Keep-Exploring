@@ -1,5 +1,5 @@
-import handlerCustomError from "../../helpers/CustomError.js";
-import Address from "../../models/Address.js";
+import { customError } from "../../helpers/CustomError.js";
+import { Address } from "../../models/Address.js";
 
 const createAddress = async (req, res, next) => {
   try {
@@ -64,7 +64,7 @@ const updateDistrict = async (req, res, next) => {
       );
 
       if (index < 0) {
-        handlerCustomError(
+        customError(
           201,
           `Không tìm thấy địa điểm '${district}' trong ${province}`
         );
@@ -83,7 +83,7 @@ const updateDistrict = async (req, res, next) => {
         message: "Cập nhật địa điểm thành công",
       });
     }
-    handlerCustomError(
+    customError(
       201,
       `Địa điểm ${province} chưa tồn tại trong hệ thống, vui lòng tạo mới hoặc cập nhật lại`
     );

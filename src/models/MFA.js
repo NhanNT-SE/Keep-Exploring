@@ -9,14 +9,10 @@ const schema = new Schema(
       index: true,
       unique: true,
     },
-    accessToken: {
-      type: String,
-    },
-    refreshToken: {
-      type: String,
-    },
+    enableMFA: { type: Boolean, default: false },
+    secretMFA: { type: String },
   },
 
-  { collection: "token" }
+  { collection: "mfa" }
 );
-export const Token = mongoose.model("token", schema);
+export const MFA = mongoose.model("mfa", schema);

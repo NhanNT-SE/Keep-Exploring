@@ -1,9 +1,9 @@
 import fs from "fs";
-import Post from "../../models/Post.js";
-import Notification from "../../models/Notification.js";
-import User from "../../models/User.js";
-import handlerCustomError from "../../helpers/CustomError.js";
-import  createNotification  from "../../helpers/NotifyHelper.js";
+import {Post} from "../../models/Post.js";
+import {Notification} from "../../models/Notification.js";
+import {User} from "../../models/User.js";
+import {customError} from "../../helpers/CustomError.js";
+import  {createNotification}  from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 
 const createPost = async (req, res, next) => {
@@ -88,10 +88,10 @@ const deletePost = async (req, res, next) => {
           message: "Đã xóa bài viết",
         });
       }
-      return handlerCustomError(202, "Bạn không phải admin/owner bài viết này");
+      return customError(202, "Bạn không phải admin/owner bài viết này");
     }
 
-    return handlerCustomError(201, "Bài viết không tồn tại");
+    return customError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -160,7 +160,7 @@ const likePost = async (req, res, next) => {
       });
     }
 
-    return handlerCustomError(202, "Bài viết không tồn tại");
+    return customError(202, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -201,7 +201,7 @@ const updatePost = async (req, res, next) => {
         if (files) {
           const len_files = files.length;
           if (postFound.imgs.lenth - length_deleted + len_files > 20) {
-            handlerCustomError(
+            customError(
               202,
               "Vượt quá số lượng hình ảnh không được vượt quá 20"
             );
@@ -247,7 +247,7 @@ const updatePost = async (req, res, next) => {
         });
       }
 
-      return handlerCustomError(201, "Bạn không thể cập nhật bài viết này");
+      return customError(201, "Bạn không thể cập nhật bài viết này");
     }
   } catch (error) {
     console.log(error);

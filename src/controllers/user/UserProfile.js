@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
-import User from "../../models/User.js";
-import Notification from "../../models/Notification.js";
-import handlerCustomError from "../../helpers/CustomError.js";
-import createNotification from "../../helpers/NotifyHelper.js";
+import {User} from "../../models/User.js";
+import {Notification} from "../../models/Notification.js";
+import {customError} from "../../helpers/CustomError.js";
+import {createNotification} from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 const changePass = async (req, res, next) => {
   try {
@@ -35,7 +35,7 @@ const changePass = async (req, res, next) => {
         message: "Đổi mật khẩu thành công",
       });
     }
-    handlerCustomError(201, "Mật khẩu của bạn không đúng");
+    customError(201, "Mật khẩu của bạn không đúng");
   } catch (error) {
     next(error);
   }
@@ -52,7 +52,7 @@ const getAnotherProfile = async (req, res, next) => {
         message: "Lấy dữ liệu thành công",
       });
     }
-    return handlerCustomError(201, "Người dùng không tồn tại hoặc đã bị xóa");
+    return customError(201, "Người dùng không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -67,7 +67,7 @@ const updateProfile = async (req, res, next) => {
     let avatar;
 
     if (!userFound) {
-      handlerCustomError(201, "Người dùng không tồn tại");
+      customError(201, "Người dùng không tồn tại");
     }
 
     if (file) {

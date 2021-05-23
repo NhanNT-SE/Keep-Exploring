@@ -1,5 +1,5 @@
-import handlerCustomError from "../../helpers/CustomError.js";
-import Address from "../../models/Address.js";
+import {customError} from "../../helpers/CustomError.js";
+import {Address} from "../../models/Address.js";
 
 const getAddress = async (req, res, next) => {
   try {
@@ -24,7 +24,7 @@ const getAddress = async (req, res, next) => {
         message: "Lấy dữ liệu thành công",
       });
     }
-    handlerCustomError(
+    customError(
       201,
       `Không tìm thấy địa điểm ${province} trong hệ thống`
     );

@@ -1,9 +1,9 @@
-import handlerCustomError from "../../helpers/CustomError.js";
-import Blog from "../../models/Blog.js";
-import Comment from "../../models/Comment.js";
+import {customError} from "../../helpers/CustomError.js";
+import {Blog} from "../../models/Blog.js";
+import {Comment} from "../../models/Comment.js";
 import "../../models/User.js";
 import "../../models/Comment.js";
-import "../../models/Blog_Detail.js";
+import "../../models/ContentBlog.js";
 
 const getBlogByID = async (req, res, next) => {
   try {
@@ -15,7 +15,7 @@ const getBlogByID = async (req, res, next) => {
       return res.send({ data: blogFound, status: 200, message: "" });
     }
 
-    return handlerCustomError(201, "Bài viết không tồn tại");
+    return customError(201, "Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -82,7 +82,7 @@ const getBlogComment = async (req, res, next) => {
         message: "Lấy dữ liệu thành công",
       });
     }
-    return handlerCustomError(202, "Bài viết không tồn tại hoặc đã bị xóa");
+    return customError(202, "Bài viết không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -99,7 +99,7 @@ const getLikeListBlog = async (req, res, next) => {
       "blog",
     ]);
     if (!blogFound) {
-      return handlerCustomError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return customError(201, "Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = blogFound.like_list;

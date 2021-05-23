@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const addressSchema = new Schema(
+const schema = new Schema(
   {
     province: {
       type: String,
@@ -18,7 +18,7 @@ const addressSchema = new Schema(
       },
     ],
   },
-  { collection: "Address" }
+  { collection: "address" }
 );
 
-export default mongoose.model("Address", addressSchema);
+export const Address = mongoose.model("address", schema);
