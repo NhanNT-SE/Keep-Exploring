@@ -1,4 +1,4 @@
-import Blog from "../../models/Blog.js";
+import {Blog} from "../../models/Blog.js";
 import {customError} from "../../helpers/CustomError.js";
 const getAllBlog = async (req, res, next) => {
   try {

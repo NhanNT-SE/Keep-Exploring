@@ -1,8 +1,8 @@
 import fs from "fs";
-import Blog from "../../models/Blog.js";
-import Blog_Detail from "../../models/Blog_Detail.js";
-import Notification from "../../models/Notification.js";
-import User from "../../models/User.js";
+import {Blog} from "../../models/Blog.js";
+import {ContentBlog} from "../../models/ContentBlog.js";
+import {Notification} from "../../models/Notification.js";
+import {User} from "../../models/User.js";
 import {customError} from "../../helpers/CustomError.js";
 import  {createNotification}  from "../../helpers/NotifyHelper.js";
 
@@ -15,7 +15,7 @@ const createBlog = async (req, res, next) => {
     const { io } = req;
     const user = await User.findById(req.user._id);
     const blog = new Blog({ title, folder_storage });
-    const blog_detail = new Blog_Detail({});
+    const contentBlog = new ContentBlog({});
     if (file) {
       blog.img = file.filename;
     }
@@ -29,15 +29,15 @@ const createBlog = async (req, res, next) => {
     tempList.forEach((element) => {
       delete element.uriImage;
     });
-    blog_detail.detail_list = [...tempList];
-    blog_detail._id = blog._id;
+    contentBlog.detail_list = [...tempList];
+    contentBlog._id = blog._id;
 
     blog.owner = user._id;
-    blog.blog_detail = blog._id;
+    blog.contentBlog = blog._id;
     user.blog.push(blog._id);
 
     await blog.save();
-    await blog_detail.save();
+    await contentBlog.save();
     await user.save();
     const notify = {
       idUser: user._id,
@@ -62,7 +62,7 @@ const createBlog = async (req, res, next) => {
     });
     return res.status(200).send({
       status: 200,
-      data: blog_detail,
+      data: ContentBlog,
       message: "Tạo bài viết thành công",
     });
   } catch (error) {
@@ -75,7 +75,7 @@ const deleteBlog = async (req, res, next) => {
     const { idBlog } = req.params;
 
     const blogFound = await Blog.findById(idBlog);
-    const detailFound = await Blog_Detail.findById(idBlog);
+    const detailFound = await ContentBlog.findById(idBlog);
     if (user.role === "admin" || user._id == blogFound.owner.toString()) {
       if (blogFound && detailFound) {
         fs.unlink("src/public/images/blog/" + blogFound.img, (err) => {
@@ -83,7 +83,7 @@ const deleteBlog = async (req, res, next) => {
             console.log(err);
           }
         });
-        await Blog_Detail.findByIdAndDelete(idBlog);
+        await ContentBlog.findByIdAndDelete(idBlog);
         await Blog.findByIdAndDelete(idBlog);
         await User.findByIdAndUpdate(user._id, { $pull: { blog: idBlog } });
         return res.status(200).send({
@@ -177,7 +177,7 @@ const updateBlog = async (req, res, next) => {
     const { idBlog } = req.params;
     const { io } = req;
     const blog = await Blog.findById(idBlog);
-    const blog_detail = await Blog_Detail.findById(idBlog);
+    const contentBlog = await ContentBlog.findById(idBlog);
     const file = req.file;
     if (file) {
       fs.unlink(`src/public/images/blog/${blog.img}`, (err) => {
@@ -202,7 +202,7 @@ const updateBlog = async (req, res, next) => {
     });
 
     await Blog.findByIdAndUpdate(idBlog, { ...blog });
-    await Blog_Detail.findByIdAndUpdate(idBlog, { detail_list: tempList });
+    await ContentBlog.findByIdAndUpdate(idBlog, { detail_list: tempList });
     const notify = {
       idUser: blog.owner.toString(),
       idBlog: blog.id,
@@ -225,7 +225,7 @@ const updateBlog = async (req, res, next) => {
     });
     return res.status(200).send({
       status: 200,
-      data: blog_detail,
+      data: contentBlog,
       message: "Đã cập nhật bài viết",
     });
   } catch (error) {

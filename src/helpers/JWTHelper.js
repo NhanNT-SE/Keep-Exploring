@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Token from "../models/Token.js";
+import {Token} from "../models/Token.js";
 import { ACCESS_TOKEN_SECRET } from "../config/index.js";
 import {customError} from "./CustomError.js";
 const generateToken = async (user, secretSignature, tokenLife) => {

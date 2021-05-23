@@ -63,9 +63,17 @@ io.on("connection", (socket) => {
   console.log("User connected");
   socket.on("disconnect", () => console.log("User has disconnected"));
 });
-app.use((req, res, next) => {
-  req.io = io;
-  next();
+app.use(async (req, res, next) => {
+  try {
+    const session = await mongoose.startSession();
+    const opts = { session, returnOriginal: false };
+    req.io = io;
+    req.session = session;
+    req.opts = opts;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 // ----------PUBLIC ROUTER----------
 app.use("/api-doc", apiDocs);
@@ -94,7 +102,6 @@ app.use((req, res, next) => {
   next(error);
 });
 app.use((error, req, res, next) => {
-  
   const message = mapErrorMessage(error);
   const status = error.status || 500;
   res.status(status);

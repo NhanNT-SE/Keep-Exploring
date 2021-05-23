@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const MFASchema = new Schema(
+const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
@@ -15,5 +15,4 @@ const MFASchema = new Schema(
 
   { collection: "mfa" }
 );
-
-export default mongoose.model("mfa", MFASchema);
+export const MFA = mongoose.model("mfa", schema);

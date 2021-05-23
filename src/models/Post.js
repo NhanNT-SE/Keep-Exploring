@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const post = new Schema(
+const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
@@ -80,4 +80,4 @@ const post = new Schema(
   },
   { collection: "post" }
 );
-export default mongoose.model("post", post);
+export const Post = mongoose.model("post", schema);

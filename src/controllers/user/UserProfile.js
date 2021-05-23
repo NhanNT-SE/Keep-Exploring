@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
-import User from "../../models/User.js";
-import Notification from "../../models/Notification.js";
+import {User} from "../../models/User.js";
+import {Notification} from "../../models/Notification.js";
 import {customError} from "../../helpers/CustomError.js";
 import {createNotification} from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";

@@ -1,8 +1,8 @@
 import fs from "fs";
-import Blog from "../../models/Blog.js";
-import Comment from "../../models/Comment.js";
-import Notification from "../../models/Notification.js";
-import Post from "../../models/Post.js";
+import {Blog} from "../../models/Blog.js";
+import {Comment} from "../../models/Comment.js";
+import {Notification} from "../../models/Notification.js";
+import {Post} from "../../models/Post.js";
 import {createNotification} from "../../helpers/NotifyHelper.js";
 import {customError} from "../../helpers/CustomError.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";

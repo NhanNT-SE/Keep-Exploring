@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const comment = new Schema(
+const schema = new Schema(
   {
     idPost: {
       type: Schema.Types.ObjectId,
@@ -30,5 +30,4 @@ const comment = new Schema(
   },
   { collection: "comment" }
 );
-
-export default mongoose.model("comment", comment);
+export const Comment = mongoose.model("comment", schema);

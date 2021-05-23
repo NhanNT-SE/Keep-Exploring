@@ -1,8 +1,8 @@
 import "../../models/Blog.js";
 import "../../models/Post.js";
 import {customError} from "../../helpers/CustomError.js";
-import Notification from "../../models/Notification.js";
-import User from "../../models/User.js";
+import {Notification} from "../../models/Notification.js";
+import {User} from "../../models/User.js";
 
 const changeNewStatusNotify = async (req, res, next) => {
   try {

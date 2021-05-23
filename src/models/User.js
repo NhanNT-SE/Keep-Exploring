@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const user = new Schema(
+const schema = new Schema(
   {
     email: {
       type: String,
       required: [true, `{PATH} is required`],
+      index: true,
+      unique: true,
       match: [
         /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
         `{PATH}: {VALUE} is not a valid email address`,
@@ -13,6 +15,8 @@ const user = new Schema(
     },
     username: {
       type: String,
+      index: true,
+      unique: true,
       required: [true, "{PATH} is required"],
       minLength: [6, "username should contain atleast 6 characters"],
     },
@@ -67,5 +71,4 @@ const user = new Schema(
   },
   { collection: "user" }
 );
-user.index({ email: 1, username: 1 }, { unique: true });
-export default mongoose.model("user", user);
+export const User = mongoose.model("user", schema);

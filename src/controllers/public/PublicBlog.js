@@ -1,9 +1,9 @@
 import {customError} from "../../helpers/CustomError.js";
-import Blog from "../../models/Blog.js";
-import Comment from "../../models/Comment.js";
+import {Blog} from "../../models/Blog.js";
+import {Comment} from "../../models/Comment.js";
 import "../../models/User.js";
 import "../../models/Comment.js";
-import "../../models/Blog_Detail.js";
+import "../../models/ContentBlog.js";
 
 const getBlogByID = async (req, res, next) => {
   try {

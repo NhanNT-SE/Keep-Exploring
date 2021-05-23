@@ -1,5 +1,5 @@
 import {customError} from "../../helpers/CustomError.js";
-import Address from "../../models/Address.js";
+import {Address} from "../../models/Address.js";
 
 const getAddress = async (req, res, next) => {
   try {

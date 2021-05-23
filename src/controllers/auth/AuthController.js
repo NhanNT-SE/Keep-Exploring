@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
-import User from "../../models/User.js";
-import Token from "../../models/Token.js";
-import MFA from "../../models/MFA.js";
-import Notification from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { Token } from "../../models/Token.js";
+import { MFA } from "../../models/MFA.js";
+import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customError } from "../../helpers/CustomError.js";
 
@@ -69,7 +69,6 @@ const signIn = async (req, res, next) => {
     next(error);
   }
 };
-
 const signOut = async (req, res, next) => {
   try {
     const { userId } = req.body;
@@ -90,42 +89,53 @@ const signOut = async (req, res, next) => {
     next(error);
   }
 };
-
 const signUp = async (req, res, next) => {
+  const { file, session, opts } = req;
+  session.startTransaction();
   try {
-    const file = req.file;
-    var imgUser;
+    let imgUser;
     if (file) {
       imgUser = file.filename;
     } else {
       imgUser = "avatar-default.png";
     }
-    const user = req.body;
     const salt = await bcrypt.genSalt(10);
-    const passHashed = await bcrypt.hash(user.password, salt);
-    const newUser = new User({
-      ...req.body,
-      imgUser,
-      password: passHashed,
-      role: "user",
-    });
-    await newUser.save();
-    await new MFA({ owner: newUser._id }).save();
-    await new Token({ owner: newUser._id }).save();
-
-    // const notify = new Notification({
-    //   idUser: newUser._id,
-    //   contentAdmin:
-    //     "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
-    //   status: "new",
-    // });
-    // await notify.save();
+    const passHashed = await bcrypt.hash(req.body.password, salt);
+    const user = await User.create(
+      [
+        {
+          ...req.body,
+          imgUser,
+          password: passHashed,
+          role: "user",
+        },
+      ],
+      opts
+    );
+    const owner = user[0]._id;
+    await Token.create([{ owner }], opts);
+    await MFA.create([{ owner }], opts);
+    // await Notification.create(
+    //   [
+    //     {
+    //       idUser: user[0]._id,
+    //       contentAdmin:
+    //         "Tài khoản của bạn đã được kích hoạt, cảm ơn bạn đã sử dụng hệ thống của chúng tôi",
+    //       status: "new",
+    //     },
+    //   ],
+    //   opts
+    // );
+    await session.commitTransaction();
+    session.endSession();
     return res.status(200).send({
-      data: newUser,
+      data: user,
       message: "Đăng ký thành công",
       status: 200,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };

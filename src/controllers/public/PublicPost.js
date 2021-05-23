@@ -1,6 +1,6 @@
 import {customError} from "../../helpers/CustomError.js";
-import Comment from "../../models/Comment.js";
-import Post from "../../models/Post.js";
+import {Comment} from "../../models/Comment.js";
+import {Post} from "../../models/Post.js";
 import "../../models/User.js";
 import "../../models/Comment.js";
 

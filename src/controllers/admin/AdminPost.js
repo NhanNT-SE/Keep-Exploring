@@ -1,6 +1,6 @@
 import fs from "fs";
 import {customError} from "../../helpers/CustomError.js";
-import Post from "../../models/Post.js";
+import {Post} from "../../models/Post.js";
 
 const getAllPost = async (req, res, next) => {
   try {

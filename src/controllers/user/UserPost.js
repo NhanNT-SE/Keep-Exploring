@@ -1,7 +1,7 @@
 import fs from "fs";
-import Post from "../../models/Post.js";
-import Notification from "../../models/Notification.js";
-import User from "../../models/User.js";
+import {Post} from "../../models/Post.js";
+import {Notification} from "../../models/Notification.js";
+import {User} from "../../models/User.js";
 import {customError} from "../../helpers/CustomError.js";
 import  {createNotification}  from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";

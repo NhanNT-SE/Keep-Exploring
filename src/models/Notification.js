@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const notification = new Schema(
+const schema = new Schema(
   {
     idUser: {
       type: Schema.Types.ObjectId,
@@ -36,5 +36,4 @@ const notification = new Schema(
   },
   { collection: "notification" }
 );
-
-export default mongoose.model("notification", notification);
+export const Notification = mongoose.model("notification", schema);

@@ -10,9 +10,8 @@ const mapErrorMessage = (error) => {
   const { name, errors, code } = error;
   let message = error.message;
   if (name === "MongoError" && code === 11000) {
-    const err = { ...error.keyValue };
-    const path = Object.keys(err).toString();
-    const msg = err[path];
+    const path = Object.keys(error.keyValue)[0];
+    const msg = error.keyValue[path];
     message = `${path}: ${msg} is already registered, please choose another one`;
   }
   if (errors) {
