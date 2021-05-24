@@ -38,22 +38,10 @@ const schema = new Schema(
       default: "user",
       message: "{VALUE} is not supported",
     },
-
     imgUser: {
       type: String,
     },
-    post: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "post",
-      },
-    ],
-    blog: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "blog",
-      },
-    ],
+
     address: { type: String },
     bod: {
       type: Date,
@@ -67,6 +55,10 @@ const schema = new Schema(
     created_on: {
       type: Date,
       default: Date.now,
+    },
+    userInfo: {
+      type: Schema.Types.ObjectId,
+      ref: "userInfo",
     },
   },
   { collection: "user" }

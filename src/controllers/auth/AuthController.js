@@ -2,12 +2,12 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
 import { User } from "../../models/User.js";
+import { UserInfo } from "../../models/UserInfo.js";
 import { Token } from "../../models/Token.js";
 import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customError } from "../../helpers/CustomError.js";
-
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
@@ -115,6 +115,9 @@ const signUp = async (req, res, next) => {
     const owner = user[0]._id;
     await Token.create([{ owner }], opts);
     await MFA.create([{ owner }], opts);
+    const userInfo = await UserInfo.create([{ owner }], opts);
+
+    await User.findByIdAndUpdate(owner, { userInfo: userInfo[0]._id }, opts);
     // await Notification.create(
     //   [
     //     {
@@ -129,7 +132,7 @@ const signUp = async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
     return res.status(200).send({
-      data: user,
+      data: userInfo,
       message: "Đăng ký thành công",
       status: 200,
     });
