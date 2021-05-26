@@ -5,16 +5,16 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./src/modules/login/login.module').then((m) => m.LoginModule),
+      import('./modules/login/login.module').then((m) => m.LoginModule),
   },
   {
     path: 'register',
     loadChildren: () =>
-      import('./src/modules/register/register.module').then(
+      import('./modules/register/register.module').then(
         (m) => m.RegisterModule
       ),
   },
-  { path: 'home', loadChildren: () => import('./src/modules/home/home.module').then(m => m.HomeModule) },
+  { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule) },
 ];
 
 @NgModule({

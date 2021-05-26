@@ -1,4 +1,4 @@
-import { RegisterComponent } from './../../components/register-component/register.component';
+import { RegisterComponent } from '../../components/register-component/register.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

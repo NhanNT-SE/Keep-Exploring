@@ -1,4 +1,4 @@
-import { User } from './../../model/user.model';
+import { User } from '../../model/user.model';
 import { ActionType, createAction, props } from '@ngrx/store';
 export const GET_USER_LIST = '[Auth] get user list';
 export const GET_USER_LIST_SUCCESS = '[Auth] get user list success';
