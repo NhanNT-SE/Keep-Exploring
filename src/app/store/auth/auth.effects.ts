@@ -7,12 +7,11 @@ import {
 import { AuthService } from './../../services/auth.service';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, takeLast } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Injectable()
 export class AuthEffects {
-
   getUserList$ = createEffect(() =>
     this.action$.pipe(
       ofType(getUserList),
