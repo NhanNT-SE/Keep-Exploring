@@ -38,12 +38,22 @@
         cursor: pointer;
       }
     }
+    .err-message {
+      margin-top: 4px;
+      background-color: #f2dede;
+      padding: 8px;
+      border-radius: 4px;
+      color: #a94442;
+    }
     .custom-password {
       width: 100%;
     }
 
     p {
       margin-bottom: 8px;
+      span {
+        color: red;
+      }
     }
   }
   .btn-social {

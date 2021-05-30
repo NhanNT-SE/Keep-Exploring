@@ -7,7 +7,7 @@ import { LoginComponent } from '../../components/login-component/login.component
 
 import { HttpClientModule } from '@angular/common/http';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -28,6 +28,8 @@ import { RippleModule } from 'primeng/ripple';
     CheckboxModule,
     ButtonModule,
     RippleModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
 })
 export class LoginModule {}
