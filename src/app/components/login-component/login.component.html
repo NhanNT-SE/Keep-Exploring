@@ -1,0 +1,61 @@
+<!-- <p>Login works</p>
+<h4>status: {{ status$ | async }}</h4> -->
+
+<div class="login-container p-shadow-3">
+  <h2 class="title">Keep Exploring</h2>
+  <div class="input-container">
+    <p>Username/Email:</p>
+    <div class="p-inputgroup">
+      <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+      <input type="text" pInputText placeholder="Username or Email Address" />
+    </div>
+  </div>
+
+  <div class="input-container">
+    <p>Password:</p>
+    <div class="p-inputgroup">
+      <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
+      <p-password
+        [toggleMask]="true"
+        placeholder="Password"
+        class="custom-password"
+      >
+        <ng-template pTemplate="footer">
+          <p-divider></p-divider>
+          <p class="p-mt-2">Suggestions</p>
+          <ul class="p-pl-2 p-ml-2 p-mt-0" style="line-height: 1.5">
+            <li>At least one lowercase</li>
+            <li>At least one uppercase</li>
+            <li>At least one numeric</li>
+            <li>Minimum 8 characters</li>
+          </ul>
+        </ng-template>
+      </p-password>
+    </div>
+  </div>
+  <div class="input-container check-box">
+    <div class="check-box">
+      <p-checkbox></p-checkbox>
+      <label for="ny">&nbsp; Remember Me</label>
+    </div>
+    <h3>Forgotten Password?</h3>
+  </div>
+  <button pButton type="button" label="SIGN IN"></button>
+  <p-divider class="divider"></p-divider>
+  <div class="btn-social facebook p-shadow-3" pRipple>
+    <div class="icon">
+      <i class="pi pi-facebook"></i>
+    </div>
+    <p>SIGN IN WITH FACEBOOK</p>
+  </div>
+  <div class="btn-social google p-shadow-3" pRipple>
+    <div class="icon">
+      <i class="pi pi-google"></i>
+    </div>
+    <p>SIGN IN WITH GOOGLE</p>
+  </div>
+  <p-divider></p-divider>
+  <p class="footer">
+    Don't you have account? <span (click)="signUp()">Sign Up Here</span>
+  </p>
+</div>

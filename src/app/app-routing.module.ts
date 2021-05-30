@@ -1,20 +1,27 @@
+import { NotFoundComponent } from './components/not-found-component/not-found.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   {
-    path: '',
+    path: 'login',
     loadChildren: () =>
-      import('./src/modules/login/login.module').then((m) => m.LoginModule),
+      import('./modules/login/login.module').then((m) => m.LoginModule),
   },
   {
     path: 'register',
     loadChildren: () =>
-      import('./src/modules/register/register.module').then(
+      import('./modules/register/register.module').then(
         (m) => m.RegisterModule
       ),
   },
-  { path: 'home', loadChildren: () => import('./src/modules/home/home.module').then(m => m.HomeModule) },
+  {
+    path: 'home',
+    loadChildren: () =>
+      import('./modules/home/home.module').then((m) => m.HomeModule),
+  },
+  { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({
