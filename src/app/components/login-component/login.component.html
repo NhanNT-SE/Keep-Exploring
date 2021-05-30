@@ -4,15 +4,15 @@
 <div class="login-container p-shadow-3">
   <h2 class="title">Keep Exploring</h2>
   <div class="input-container">
-    <p>Username/Email</p>
+    <p>Username/Email:</p>
     <div class="p-inputgroup">
       <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
-      <input type="text" pInputText placeholder="Username/Email" />
+      <input type="text" pInputText placeholder="Username or Email Address" />
     </div>
   </div>
 
   <div class="input-container">
-    <p>Password</p>
+    <p>Password:</p>
     <div class="p-inputgroup">
       <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
       <p-password
@@ -42,8 +42,20 @@
   </div>
   <button pButton type="button" label="SIGN IN"></button>
   <p-divider class="divider"></p-divider>
-  <button pButton type="button" class="btn-facebook" label="SIGN IN WITH FACEBOOK"></button>
-
-  <button pButton type="button" class="btn-google" label="SIGN IN WITH GOOGLE"></button>
-
+  <div class="btn-social facebook p-shadow-3" pRipple>
+    <div class="icon">
+      <i class="pi pi-facebook"></i>
+    </div>
+    <p>SIGN IN WITH FACEBOOK</p>
+  </div>
+  <div class="btn-social google p-shadow-3" pRipple>
+    <div class="icon">
+      <i class="pi pi-google"></i>
+    </div>
+    <p>SIGN IN WITH GOOGLE</p>
+  </div>
+  <p-divider></p-divider>
+  <p class="footer">
+    Don't you have account? <span (click)="signUp()">Sign Up Here</span>
+  </p>
 </div>

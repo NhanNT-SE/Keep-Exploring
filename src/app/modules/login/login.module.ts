@@ -12,6 +12,7 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -26,6 +27,7 @@ import { ButtonModule } from 'primeng/button';
     DividerModule,
     CheckboxModule,
     ButtonModule,
+    RippleModule,
   ],
 })
 export class LoginModule {}
