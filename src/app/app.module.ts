@@ -1,3 +1,4 @@
+import { RippleModule } from 'primeng/ripple';
 import { HttpClientModule } from '@angular/common/http';
 import { EffectsModule } from '@ngrx/effects';
 import { RootStoreModule } from './store/root-store.module';
@@ -9,9 +10,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { NotFoundComponent } from './components/not-found-component/not-found.component';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, NotFoundComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -19,6 +22,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     HttpClientModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
+    ButtonModule,
+    RippleModule,
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
