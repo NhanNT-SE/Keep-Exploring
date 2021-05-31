@@ -1,0 +1,59 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.register-container {
+  width: 40%;
+  max-height: 80%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--light);
+  border-radius: 4px;
+  padding: 16px 8px;
+  h2.title {
+    align-self: center;
+  }
+  .input-container,
+  .divider,
+  button {
+    margin: 0px 8px;
+  }
+  .input-container {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    &.check-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .err-message {
+      margin-top: 4px;
+      background-color: #f2dede;
+      padding: 8px;
+      border-radius: 4px;
+      color: #a94442;
+    }
+    .custom-password {
+      width: 100%;
+    }
+
+    p {
+      margin-bottom: 8px;
+      span {
+        color: red;
+      }
+    }
+  }
+
+  .footer {
+    text-align: center;
+    span {
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--red);
+    }
+  }
+}
