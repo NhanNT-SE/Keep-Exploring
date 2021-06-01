@@ -3,10 +3,6 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export const feature_auth = createFeatureSelector<AuthState>('feature_auth');
 
-export const auth_userListSelector = createSelector(
-  feature_auth,
-  (state) => state.userList
-);
 export const auth_userSelector = createSelector(
   feature_auth,
   (state) => state.user
@@ -18,8 +14,4 @@ export const auth_statusSelector = createSelector(
 export const auth_errorSelector = createSelector(
   feature_auth,
   (state) => state.error
-);
-export const auth_sortSelector = createSelector(
-  feature_auth,
-  (state) => state.sort
 );

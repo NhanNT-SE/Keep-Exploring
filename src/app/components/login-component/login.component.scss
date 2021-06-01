@@ -4,11 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  ::ng-deep {
-    .p-password {
-      width: 100%;
-    }
-  }
+  
 }
 .login-container {
   width: 40%;
@@ -38,12 +34,22 @@
         cursor: pointer;
       }
     }
+    .err-message {
+      margin-top: 4px;
+      background-color: #f2dede;
+      padding: 8px;
+      border-radius: 4px;
+      color: #a94442;
+    }
     .custom-password {
       width: 100%;
     }
 
     p {
       margin-bottom: 8px;
+      span {
+        color: red;
+      }
     }
   }
   .btn-social {
@@ -81,13 +87,7 @@
       color: white;
     }
   }
-  button {
-    margin-top: 8px;
-    &.btn-facebook {
-      background-color: #4272d7;
-      border-color: #4272d7;
-    }
-  }
+ 
   .footer {
     text-align: center;
     span {

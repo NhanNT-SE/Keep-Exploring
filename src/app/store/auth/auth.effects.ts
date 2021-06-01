@@ -1,8 +1,8 @@
 import { User } from './../../model/user.model';
 import {
-  getUserList,
-  getUserListSuccess,
-  getUserListFail,
+  signIn,
+  setUser,
+  signInFail,
 } from './auth.actions';
 import { AuthService } from './../../services/auth.service';
 import { Injectable } from '@angular/core';
@@ -14,10 +14,10 @@ import { of } from 'rxjs';
 export class AuthEffects {
   getUserList$ = createEffect(() =>
     this.action$.pipe(
-      ofType(getUserList),
+      ofType(signIn),
       mergeMap(() => this.authService.getUserList()),
-      map((userList: any) => getUserListSuccess({ userList })),
-      catchError((error) => of(getUserListFail({ error })))
+      map((user: User) => setUser({ user })),
+      catchError((error) => of(signInFail({ error })))
     )
   );
   constructor(private action$: Actions, private authService: AuthService) {}

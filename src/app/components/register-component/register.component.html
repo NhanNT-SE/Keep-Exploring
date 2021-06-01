@@ -1,1 +1,92 @@
-<p>register works!</p>
+<div class="register-container p-shadow-3">
+  <h2 class="title">Keep Exploring</h2>
+  <form [formGroup]="registerForm">
+    <div class="input-container">
+      <p>Username<span> *</span></p>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+        <input
+          type="text"
+          formControlName="username"
+          name="username"
+          [(ngModel)]="user.username"
+          pInputText
+          placeholder="Username"
+        />
+      </div>
+      <div class="err-message" *ngIf="getErrorValidation('username')">
+        {{ getErrorValidation("username") }}
+      </div>
+    </div>
+    <div class="input-container">
+      <p>Email<span> *</span></p>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-inbox"></i></span>
+        <input
+          type="text"
+          formControlName="email"
+          [(ngModel)]="user.email"
+          pInputText
+          placeholder="Email address"
+        />
+      </div>
+      <div class="err-message" *ngIf="getErrorValidation('email')">
+        {{ getErrorValidation("email") }}
+      </div>
+    </div>
+
+    <div class="input-container">
+      <p>Password<span> *</span></p>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
+        <input
+          type="password"
+          formControlName="password"
+          [(ngModel)]="user.password"
+          pInputText
+          placeholder="Password"
+        />
+      </div>
+      <div class="err-message" *ngIf="getErrorValidation('password')">
+        {{ getErrorValidation("password") }}
+      </div>
+    </div>
+    <div class="input-container">
+      <p>Confirm Password<span> *</span></p>
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          pInputText
+          placeholder="Confirm your password"
+        />
+      </div>
+      <div class="err-message" *ngIf="getErrorValidation('confirmPassword')">
+        {{ getErrorValidation("confirmPassword") }}
+      </div>
+    </div>
+  </form>
+  <div class="input-container check-box">
+    <div class="check-box">
+      <p-checkbox
+        [(ngModel)]="isAccept"
+        [binary]="true"
+        inputId="binary"
+      ></p-checkbox>
+      <label for="binary">&nbsp; Agree the terms and policy</label>
+    </div>
+  </div>
+  <button
+    pButton
+    type="button"
+    [disabled]="(registerForm.valid && isAccept) ? false : true"
+    (click)="signUp()"
+    label="SIGN UP"
+  ></button>
+  <p-divider class="divider"></p-divider>
+
+  <p class="footer">
+    Already have an account? <span (click)="signIn()">Sign In Here</span>
+  </p>
+</div>
