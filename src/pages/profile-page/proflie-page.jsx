@@ -26,7 +26,7 @@ function ProfilePage() {
   const [file, setFile] = useState("");
   const [imageSubmit, setImageSubmit] = useState(undefined);
   const updateProfile = () => {
-    const profile = { displayName, address, gender, image_user: imageSubmit };
+    const profile = { displayName, address, gender, avatar: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
@@ -69,7 +69,7 @@ function ProfilePage() {
                   src={
                     file
                       ? file
-                      : `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.imgUser}`
+                      : `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.avatar}`
                   }
                   alt="avatar"
                 />

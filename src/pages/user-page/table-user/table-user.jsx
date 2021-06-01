@@ -86,17 +86,17 @@ function TableUser() {
         key={col.field}
         field={col.field}
         filter={
-          col.field === "post.length" ||
-          col.field === "blog.length" ||
-          col.field === "imgUser"
+          col.field === "userInfo.postList.length" ||
+          col.field === "userInfo.blogList.length" ||
+          col.field === "avatar"
             ? false
             : true
         }
         filterMatchMode="contains"
-        sortable={col.field === "imgUser" ? false : true}
+        sortable={col.field === "avatar" ? false : true}
         header={col.header}
         body={
-          col.field === "imgUser"
+          col.field === "avatar"
             ? AvatarBodyTemplate
             : col.header === "Post"
             ? (rowData) => PostBodyTemplate(rowData, onPostClick)
@@ -109,13 +109,16 @@ function TableUser() {
             : null
         }
         filterElement={col.field === "gender" ? genderFilter : null}
-        style={col.field === "imgUser" ? { width: "4rem" } : null}
+        style={col.field === "avatar" ? { width: "4rem" } : null}
       />
     );
   });
   useEffect(() => {
     dispatch(actionGetListUser());
   }, []);
+  useEffect(() => {
+    console.log(userList);
+  }, [userList]);
   return (
     <div className="table-user-container">
       <TableComponent

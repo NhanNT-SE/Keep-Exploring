@@ -2,11 +2,11 @@ import axiosClient from "./axiosClient";
 
 const postApi = {
   deletePost: (postId) => {
-    const url = `/post/delete/${postId}`;
+    const url = `/admin/post/${postId}`;
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/admin/posts";
+    const url = "/admin/post";
     return axiosClient.get(url);
   },
   getPost: (postId) => {
@@ -14,7 +14,7 @@ const postApi = {
     return axiosClient.get(url);
   },
   updatePost: (body) => {
-    const url = "/admin/update-status";
+    const url = `/admin/post`;
     return axiosClient.patch(url, body);
   },
 };

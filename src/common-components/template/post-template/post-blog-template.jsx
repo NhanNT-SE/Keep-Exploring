@@ -2,7 +2,7 @@ import "./post-blog-template.scss";
 export const PostBodyTemplate = (rowData, onPostClick) => {
   return (
     <div>
-      {rowData.post.map((e) => (
+      {rowData.userInfo.postList.map((e) => (
         <div
           className="body-template-post"
           key={e}
@@ -18,7 +18,7 @@ export const PostBodyTemplate = (rowData, onPostClick) => {
 export const BlogBodyTemplate = (rowData, onBlogClick) => {
   return (
     <div>
-      {rowData.blog.map((e) => (
+      {rowData.userInfo.blogList.map((e) => (
         <div
           className="body-template-blog"
           key={e}
