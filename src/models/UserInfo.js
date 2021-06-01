@@ -11,8 +11,8 @@ const schema = new Schema(
     },
     onlineStatus: {
       type: String,
-      enum: ["online", "offline"],
-      default: "offline",
+      enum: ["online", "offline","idle"],
+      default: "idle",
       message: "{VALUE} is not supported",
     },
     stars: {
@@ -31,6 +31,15 @@ const schema = new Schema(
       enum: ["active", "inactive", "blocked"],
       default: "inactive",
       message: "{VALUE} is not supported",
+    },
+    periodBlocked: {
+      type: Object,
+      dayBlocked: { type: Number, min: 0 },
+      dateStart: { type: Date },
+      dateEnd: { type: Date },
+      required: function () {
+        return this.accountStatus === "blocked";
+      },
     },
     follower: [{ type: Schema.Types.ObjectId, ref: "user" }],
     following: [{ type: Schema.Types.ObjectId, ref: "user" }],
