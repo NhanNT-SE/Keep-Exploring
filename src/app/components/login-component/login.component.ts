@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from './../../store/app.state';
-import { getUserList } from './../../store/auth/auth.actions';
 import { auth_statusSelector } from './../../store/auth/auth.selector';
 import * as lodash from 'lodash';
 
@@ -31,7 +30,6 @@ export class LoginComponent implements OnInit {
   constructor(private store: Store<AppState>, private router: Router) {}
 
   ngOnInit(): void {
-    this.store.dispatch(getUserList());
     this.user = {
       username: '',
       password: '',
