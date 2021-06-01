@@ -53,7 +53,7 @@ function UserDetailsPage() {
           <DialogDeleteUser user={user} />
           <div className="container-header">
             <Avatar
-              image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.imgUser}`}
+              image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.avatar}`}
               className="avatar-user"
               shape="circle"
             />
@@ -102,14 +102,14 @@ function UserDetailsPage() {
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Post:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.post.length} />
+                  <InputText type="text" disabled value={user.userInfo.postList.length} />
                 </div>
               </div>
 
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Blog:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.blog.length} />
+                  <InputText type="text" disabled value={user.userInfo.blogList.length} />
                 </div>
               </div>
               <div className="p-field p-grid">

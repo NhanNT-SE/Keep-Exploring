@@ -37,6 +37,7 @@
   },
   "scripts": {
     "start": "set PORT=4200 && react-scripts start",
+    "linux": "PORT=4200 react-scripts start",
     "build": "react-scripts build",
     "test-build": "react-scripts build && serve -s build",
     "test": "react-scripts test",

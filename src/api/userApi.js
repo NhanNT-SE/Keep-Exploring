@@ -10,13 +10,14 @@ const userApi = {
     return axiosClient.delete(url);
   },
   getAllUser: () => {
-    const url = "/admin/users";
+    const url = "/admin/user/users";
     return axiosClient.get(url);
   },
   getUser: (userId) => {
-    const url = `/user/${userId}`;
+    const url = `/admin/user/${userId}`;
     return axiosClient.get(url);
   },
+
   login: (user) => {
     const url = "/auth/sign-in";
     return axiosClient.post(url, user);
@@ -30,7 +31,7 @@ const userApi = {
     return axiosClient.post(url, data);
   },
   updateProfile: (data) => {
-    const url = "/user";
+    const url = "/user/profile";
     const formData = new FormData();
     for (const [key, value] of Object.entries(data)) {
       formData.append(key, value);

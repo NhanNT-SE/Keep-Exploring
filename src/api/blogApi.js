@@ -2,11 +2,11 @@ import axiosClient from "./axiosClient";
 
 const blogApi = {
   deleteBlog: (blogId) => {
-    const url = `/blog/delete/${blogId}`;
+    const url = `/admin/blog/${blogId}`;
     return axiosClient.delete(url);
   },
   getAll: () => {
-    const url = "/admin/blogs";
+    const url = "/admin/blog";
     return axiosClient.get(url);
   },
   getBlog: (blogId) => {
@@ -14,7 +14,7 @@ const blogApi = {
     return axiosClient.get(url);
   },
   updateBlog: (body) => {
-    const url = "/admin/update-status";
+    const url = `/admin/blog`;
     return axiosClient.patch(url, body);
   },
 };

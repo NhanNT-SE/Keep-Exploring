@@ -11,27 +11,29 @@ import { actionLogin } from "redux/slices/userSlice";
 import * as yup from "yup";
 import "./login-page.scss";
 const schema = yup.object().shape({
-  email: yup
+  username: yup
     .string()
     .required("Email address is a required field")
     .email("Invalid email address"),
-  password: yup.string().required().min(6),
-  // .matches(
-  //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-  //   "Password must contain at least 8 characters, one uppercase, one number and one special case character"
-  // ),
+  password: yup
+    .string()
+    .required()
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+    ),
 });
 function LoginPage(props) {
   const user = useSelector((state) => state.user.user);
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("nhan@keep-exploring.com");
+  const [password, setPassword] = useState("Nhanvippro320377@");
   const history = useHistory();
   const dispatch = useDispatch();
   const { handleSubmit, control, errors, register, setValue } = useForm({
     defaultValues: {
-      email,
+      username,
       password,
     },
     resolver: yupResolver(schema),
@@ -39,21 +41,16 @@ function LoginPage(props) {
   });
 
   const onSubmit = (data) => {
-    const userLogin = { email, pass: password };
+    const userLogin = { username, password };
     dispatch(actionLogin(userLogin));
   };
 
   const handlerOnChange = (e, name, callBack) => {
-    const { value, checked } = e.target;
+    const { value } = e.target;
     setValue(name, value);
-    callBack(value || checked);
+    callBack(value);
   };
 
-  useEffect(() => {
-    if (user && user.remember) {
-      history.push("/home");
-    }
-  }, []);
   useEffect(() => {
     if (user && user.role === "admin") {
       history.push("/home");
@@ -67,12 +64,12 @@ function LoginPage(props) {
         <p className="content-title">Keep Exploring Admin</p>
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputField
-            name="email"
+            name="username"
             control={control}
-            placeholder="Email"
-            label="Email address"
-            message={errors.email ? errors.email.message : ""}
-            onChange={(e) => handlerOnChange(e, "email", setEmail)}
+            placeholder="Username or Email address"
+            label="Username/Email"
+            message={errors.username ? errors.username.message : ""}
+            onChange={(e) => handlerOnChange(e, "username", setUsername)}
           />
           <InputField
             name="password"

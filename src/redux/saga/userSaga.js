@@ -93,7 +93,7 @@ function* handlerLogin(action) {
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => userApi.login(action.payload));
     const { data } = response;
-    data.imgUser = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.imgUser}`;
+    data.avatar = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.avatar}`;
     if (data.role !== "admin") {
       yield call(() =>
         handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")
@@ -101,11 +101,7 @@ function* handlerLogin(action) {
     } else {
       localStorageService.setToken(data.accessToken, data.refreshToken);
       localStorageService.setUser({
-        _id: data._id,
-        email: data.email,
-        displayName: data.displayName,
-        imgUser: data.imgUser,
-        role: data.role,
+        ...data,
         remember: isRemember,
       });
       yield call(() => handlerSuccessSaga("Login successfully!"));
@@ -156,7 +152,7 @@ function* handlerRefreshToken(action) {
       localStorageService.setAccessToken(data);
       axiosClient.defaults.headers.common[
         "Authorization"
-      ] = localStorageService.getAccessToken();
+      ] = `Bearer ${localStorageService.getAccessToken()}`;
       yield put({ type: latestAction });
       yield call(() => actionSuccess("Refresh token successfully!"));
     }
