@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import {Token} from "../models/Token.js";
+import { Token } from "../models/Token.js";
 import { ACCESS_TOKEN_SECRET } from "../config/index.js";
-import {customError} from "./CustomError.js";
+import { customError } from "./CustomError.js";
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
@@ -33,12 +33,14 @@ const verifyToken = async (token, secretKey) => {
 };
 
 const isAuth = async (req, res, next) => {
-  const TOKEN_FROM_CLIENT = req.headers["authorization"];
+  const bearerHeader = req.headers["authorization"];
+  const bearer = bearerHeader.split(" ");
+  const TOKEN_FROM_CLIENT = bearer[1];
   // const userId = req.headers["user-id"];
   try {
     if (TOKEN_FROM_CLIENT) {
       const decoded = await verifyToken(TOKEN_FROM_CLIENT, ACCESS_TOKEN_SECRET);
-      const token = await Token.findById(decoded._id);
+      const token = await Token.findOne({ owner: decoded._id });
       if (token.accessToken === TOKEN_FROM_CLIENT) {
         req.jwtDecoded = decoded;
         req.user = decoded;

@@ -94,7 +94,7 @@ app.use("/admin/address", adminAddress);
 app.use("/admin/blog", adminBlog);
 app.use("/admin/post", adminPost);
 app.use("/admin/user", adminUser);
-app.use("/admin/statistic", adminStatistic);
+app.use("/admin/statistics", adminStatistic);
 // ----------HANDLER ERROR----------
 app.use((req, res, next) => {
   const error = new Error("Not found");
@@ -103,6 +103,7 @@ app.use((req, res, next) => {
 });
 app.use((error, req, res, next) => {
   const message = mapErrorMessage(error);
+  // const message = error.message;
   const status = error.status || 500;
   res.status(status);
   let err = {

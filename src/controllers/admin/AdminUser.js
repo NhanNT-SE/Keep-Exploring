@@ -1,15 +1,15 @@
 import fs from "fs";
-import {User} from "../../models/User.js";
-import {Notification} from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import {customError} from "../../helpers/CustomError.js";
+import { customError } from "../../helpers/CustomError.js";
+import "../../models/UserInfo.js";
 
 const getAllUser = async (req, res, next) => {
   try {
-    const userList = await User.find(
-      { role: "user" },
-      { pass: 0, role: 0 }
-    ).sort({ created_on: -1 });
+    const userList = await User.find({ role: "user" }, { pass: 0, role: 0 })
+      .populate("userInfo")
+      .sort({ created_on: -1 });
     return res.send({
       data: userList,
       status: 201,
@@ -19,21 +19,36 @@ const getAllUser = async (req, res, next) => {
     next(error);
   }
 };
+const getUser = async (req, res, next) => {
+  try {
+    const { idUser } = req.params;
+    const user = await User.findById(idUser, { pass: 0, role: 0 }).populate(
+      "userInfo"
+    );
+    if (user) {
+      return res.send({
+        data: user,
+        status: 200,
+        message: "Fetch data successfully",
+      });
+    }
+    return customError(500, "User not found");
+  } catch (error) {
+    next(error);
+  }
+};
 const deleteUser = async (req, res, next) => {
   try {
     const { idUser } = req.params;
     const userFound = await User.findById(idUser);
     if (!userFound) {
-      return customError(
-        202,
-        "Người dùng này không tồn tại hoặc đã bị xóa"
-      );
+      return customError(202, "Người dùng này không tồn tại hoặc đã bị xóa");
     }
     if (userFound.role == "admin") {
       return customError(203, "Bạn không thể xóa tài khoản admin");
     }
-    if (userFound.imgUser && userFound.imgUser !== "avatar-default.png") {
-      fs.unlinkSync("src/public/images/user/" + userFound.imgUser);
+    if (userFound.avatar && userFound.avatar !== "avatar-default.png") {
+      fs.unlinkSync("src/public/images/user/" + userFound.avatar);
     }
     await User.findByIdAndDelete(idUser);
     return res.send({
@@ -74,4 +89,4 @@ const sendNotify = async (req, res, next) => {
   }
 };
 
-export { deleteUser, getAllUser, sendNotify };
+export { deleteUser, getAllUser, getUser, sendNotify };

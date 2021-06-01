@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
-import {User} from "../../models/User.js";
-import {Notification} from "../../models/Notification.js";
-import {customError} from "../../helpers/CustomError.js";
-import {createNotification} from "../../helpers/NotifyHelper.js";
+import { User } from "../../models/User.js";
+import { Notification } from "../../models/Notification.js";
+import { customError } from "../../helpers/CustomError.js";
+import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 const changePass = async (req, res, next) => {
   try {
@@ -44,7 +44,7 @@ const changePass = async (req, res, next) => {
 const getAnotherProfile = async (req, res, next) => {
   try {
     const { idUser } = req.params;
-    const user = await User.findById(idUser);
+    const user = await User.one({ _id: idUser, role: "user" });
     if (user) {
       return res.status(200).send({
         data: user,
@@ -58,10 +58,11 @@ const getAnotherProfile = async (req, res, next) => {
   }
 };
 
+
 const updateProfile = async (req, res, next) => {
   try {
     const file = req.file;
-    const user = req.user;
+    const { user } = req;
     const { io } = req;
     const userFound = await User.findById(user._id);
     let avatar;
@@ -72,7 +73,7 @@ const updateProfile = async (req, res, next) => {
 
     if (file) {
       if (userFound.imgUser !== "avatar-default.png") {
-        fs.unlink("src/public/images/user/" + userFound.imgUser, (err) => {
+        fs.unlink("src/public/images/user/" + userFound.avatar, (err) => {
           if (err) {
             console.log(err);
           }
@@ -80,12 +81,12 @@ const updateProfile = async (req, res, next) => {
       }
       avatar = file.filename;
     } else {
-      avatar = userFound.imgUser;
+      avatar = userFound.avatar;
     }
 
     const newUser = {
       ...req.body,
-      imgUser: avatar,
+      avatar,
     };
 
     await User.findByIdAndUpdate(user._id, newUser);

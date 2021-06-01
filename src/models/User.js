@@ -28,7 +28,7 @@ const schema = new Schema(
         "password should contain atleast 8 characters, 1 number, 1 special character , 1 upper and 1 lowercase",
       ],
     },
-    fullName: {
+    displayName: {
       type: String,
       minLength: [6, "fullName password should contain atleast 6 characters"],
     },
@@ -38,22 +38,10 @@ const schema = new Schema(
       default: "user",
       message: "{VALUE} is not supported",
     },
-
-    imgUser: {
+    avatar: {
       type: String,
     },
-    post: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "post",
-      },
-    ],
-    blog: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "blog",
-      },
-    ],
+
     address: { type: String },
     bod: {
       type: Date,
@@ -67,6 +55,10 @@ const schema = new Schema(
     created_on: {
       type: Date,
       default: Date.now,
+    },
+    userInfo: {
+      type: Schema.Types.ObjectId,
+      ref: "userInfo",
     },
   },
   { collection: "user" }

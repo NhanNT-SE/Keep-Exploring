@@ -19,9 +19,9 @@ const getAllPost = async (req, res, next) => {
 const deletePost = async (req, res, next) => {
   try {
     const { idPost } = req.params;
-    const post = await Post.findById(idBlog);
+    const post = await Post.findById(idPost);
     if (post) {
-      await Post.findByIdAndDelete(idBlog);
+      await Post.findByIdAndDelete(idPost);
       return res.status(200).send({
         data: post,
         status: 200,
