@@ -29,7 +29,7 @@ const schema = new Schema(
     accountStatus: {
       type: String,
       enum: ["active", "inactive", "blocked"],
-      default: "inactive",
+      default: "active",
       message: "{VALUE} is not supported",
     },
     periodBlocked: {

@@ -37,6 +37,9 @@ const schema = new Schema(
       type: Date,
       default: Date.now,
     },
+    last_modify: {
+      type: Date,
+    },
     comments: [
       {
         type: Schema.Types.ObjectId,

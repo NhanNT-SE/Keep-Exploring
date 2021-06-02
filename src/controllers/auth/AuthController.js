@@ -9,6 +9,7 @@ import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customError } from "../../helpers/CustomError.js";
 import lodash from "lodash";
+import * as mfaHelper from "../../helpers/MFAHelper.js";
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
@@ -78,7 +79,7 @@ const signIn = async (req, res, next) => {
         const data = {
           accessToken,
           refreshToken,
-          mfa: mfa.enableMFA,
+          mfa: mfa.status,
           ...lodash.pick(user, [
             "_id",
             "username",

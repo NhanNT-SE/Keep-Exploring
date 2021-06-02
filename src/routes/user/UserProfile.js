@@ -16,7 +16,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.patch("",upload.single("image_user"), controller.updateProfile);
+router
+  .route("")
+  .get(controller.getMyProfile)
+  .patch(upload.single("image_user"), controller.updateProfile);
 router.get("/:idUser", controller.getAnotherProfile);
 
 router.patch("/changePass", controller.changePass);

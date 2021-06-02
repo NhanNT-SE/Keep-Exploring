@@ -22,7 +22,7 @@ const getAllUser = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const { idUser } = req.params;
-    const user = await User.findById(idUser, { pass: 0, role: 0 }).populate(
+    const user = await User.findById(idUser, { password: 0, role: 0 }).populate(
       "userInfo"
     );
     if (user) {
