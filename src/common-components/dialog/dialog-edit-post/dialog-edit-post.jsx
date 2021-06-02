@@ -8,11 +8,11 @@ import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/commonSlice";
+import { actionHideDialog } from "redux/slices/common.slice";
 import "./dialog-edit-post.scss";
-import { actionDeletePost, actionUpdatePost } from "redux/slices/postSlice";
+import { actionDeletePost, actionUpdatePost } from "redux/slices/post.slice";
 import { useHistory } from "react-router";
-import { actionDeleteBlog, actionUpdateBlog } from "redux/slices/blogSlice";
+import { actionDeleteBlog, actionUpdateBlog } from "redux/slices/blog.slice";
 function DialogEditPost(props) {
   const { post, type } = props;
   const { owner } = post;

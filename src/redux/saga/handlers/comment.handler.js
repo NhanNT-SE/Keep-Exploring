@@ -1,21 +1,21 @@
 import { call, put, takeLatest } from "@redux-saga/core/effects";
-import commentApi from "api/commentApi";
+import commentApi from "api/comment.api";
 import {
   actionDeleteComment,
   actionGetCommentList,
   actionGetLikeList,
   actionSetCommentList,
   actionSetLikeList,
-} from "redux/slices/commentSlice";
+} from "redux/slices/comment.slice";
 import {
   actionFailed,
   actionLoading,
   actionSuccess,
-} from "redux/slices/commonSlice";
+} from "redux/slices/common.slice";
 import localStorageService from "utils/localStorageService";
-import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
+import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
 
-function* handlerDeleteComment(action) {
+export function* handlerDeleteComment(action) {
   try {
     localStorageService.setLatestAction(actionDeleteComment.type);
     const commentId = action.payload;
@@ -27,7 +27,7 @@ function* handlerDeleteComment(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-function* handlerGetCommentList(action) {
+export function* handlerGetCommentList(action) {
   try {
     localStorageService.setLatestAction(actionGetCommentList.type);
     const { id, type } = action.payload;
@@ -42,7 +42,7 @@ function* handlerGetCommentList(action) {
   }
 }
 
-function* handlerGetLikeList(action) {
+export function* handlerGetLikeList(action) {
   try {
     localStorageService.setLatestAction(actionGetLikeList.type);
     const { body, type } = action.payload;
@@ -56,16 +56,3 @@ function* handlerGetLikeList(action) {
     yield put(actionFailed(error.message));
   }
 }
-// ***** Watcher Functions *****
-
-export function* sagaDeleteComment() {
-  yield takeLatest(actionDeleteComment.type, handlerDeleteComment);
-}
-export function* sagaGetCommentList() {
-  yield takeLatest(actionGetCommentList.type, handlerGetCommentList);
-}
-
-export function* sagaGetLikeList() {
-  yield takeLatest(actionGetLikeList.type, handlerGetLikeList);
-}
-// ***** Watcher Functions *****

@@ -13,7 +13,7 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { actionLogout } from "redux/slices/userSlice";
+import { actionLogout } from "redux/slices/auth.slice";
 import { io } from "socket.io-client";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import "./header-menu.scss";
@@ -194,7 +194,7 @@ function HeaderMenu(props) {
                         <ListItemIcon>
                           <AccountCircle />
                         </ListItemIcon>
-                        <Typography variant="inherit">Account</Typography>
+                        <Typography variant="inherit">Profile</Typography>
                       </MenuItem>
                       <MenuItem
                         onClick={(event) => {

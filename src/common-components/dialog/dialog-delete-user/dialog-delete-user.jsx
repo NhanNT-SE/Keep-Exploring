@@ -4,10 +4,10 @@ import { InputText } from "primereact/inputtext";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { actionHideDialog } from "redux/slices/commonSlice";
+import { actionHideDialog } from "redux/slices/common.slice";
 import {
     actionDeleteUser
-} from "redux/slices/userSlice";
+} from "redux/slices/user.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import "./dialog-delete-user.scss";
 function DialogDeleteUser(props) {

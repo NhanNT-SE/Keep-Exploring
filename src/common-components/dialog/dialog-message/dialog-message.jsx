@@ -3,7 +3,7 @@ import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/commonSlice";
+import { actionHideDialog } from "redux/slices/common.slice";
 import "./dialog-message.scss";
 
 const Transition = React.forwardRef(function Transition(props, ref) {

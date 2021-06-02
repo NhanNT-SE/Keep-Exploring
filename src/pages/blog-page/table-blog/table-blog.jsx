@@ -11,7 +11,7 @@ import DateBodyTemplate from "common-components/template/date-template/date-temp
 import { StatusItemTemplate } from "common-components/template/status-template/status-template";
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
 import "./table-blog.scss";
-import { actionGetAllBlog } from "redux/slices/blogSlice";
+import { actionGetAllBlog } from "redux/slices/blog.slice";
 import DisplayNameBodyTemplate from "common-components/template/display-name-template/display-name-template";
 import TableComponent from "common-components/table/table";
 function TableBlogComponent() {

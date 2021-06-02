@@ -11,13 +11,13 @@ import { Tag } from "primereact/tag";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
 import "./post-details.scss";
-import { actionGetPost } from "redux/slices/postSlice";
+import { actionGetPost } from "redux/slices/post.slice";
 import {
   actionGetCommentList,
   actionGetLikeList,
-} from "redux/slices/commentSlice";
+} from "redux/slices/comment.slice";
 function PostDetailsPage() {
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);

@@ -17,7 +17,7 @@ import { MultiSelect } from "primereact/multiselect";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { actionGetListUser } from "redux/slices/userSlice";
+import { actionGetUserList } from "redux/slices/user.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import "./table-user.scss";
 function TableUser() {
@@ -114,7 +114,7 @@ function TableUser() {
     );
   });
   useEffect(() => {
-    dispatch(actionGetListUser());
+    dispatch(actionGetUserList());
   }, []);
   useEffect(() => {
     console.log(userList);

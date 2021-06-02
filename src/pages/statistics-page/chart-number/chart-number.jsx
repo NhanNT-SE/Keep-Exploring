@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import "./chart-number.scss";
 
 function ChartNumber() {
-  const data = useSelector((state) => state.post.statisticsData);
+  const data = useSelector((state) => state.statistics.numberData);
   const configDoughnutChart = (data) => {
     return {
       labels: ["Done", "Pending", "Need Update"],

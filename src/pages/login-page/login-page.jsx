@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { actionLogin } from "redux/slices/userSlice";
+import { actionLogin } from "redux/slices/auth.slice";
 import * as yup from "yup";
 import "./login-page.scss";
 const schema = yup.object().shape({
@@ -24,7 +24,7 @@ const schema = yup.object().shape({
     ),
 });
 function LoginPage(props) {
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.auth.user);
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
   const [username, setUsername] = useState("nhan@keep-exploring.com");

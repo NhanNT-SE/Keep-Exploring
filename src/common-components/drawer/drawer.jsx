@@ -16,14 +16,13 @@ import {
   PictureInPictureAlt,
   PowerSettingsNew,
 } from "@material-ui/icons";
-import localStorageService from "utils/localStorageService";
 import clsx from "clsx";
 import { STYLES_GLOBAL } from "common-components/styles-global";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { actionCloseDrawer, actionOpenDrawer } from "redux/slices/commonSlice";
-import { actionLogout } from "redux/slices/userSlice";
+import { actionLogout } from "redux/slices/auth.slice";
+import { actionCloseDrawer, actionOpenDrawer } from "redux/slices/common.slice";
 import DrawerTooltip from "./components/drawer-tooltip/drawer-tooltip";
 import "./drawer.scss";
 

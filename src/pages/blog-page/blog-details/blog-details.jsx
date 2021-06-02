@@ -7,12 +7,12 @@ import { Tag } from "primereact/tag";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { actionGetBlog } from "redux/slices/blogSlice";
+import { actionGetBlog } from "redux/slices/blog.slice";
 import {
   actionGetCommentList,
   actionGetLikeList,
-} from "redux/slices/commentSlice";
-import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
+} from "redux/slices/comment.slice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
 import "./blog-details.scss";

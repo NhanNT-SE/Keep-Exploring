@@ -5,7 +5,7 @@ import {
   actionHideDialog,
   actionShowDialog,
   actionSuccess,
-} from "redux/slices/commonSlice";
+} from "redux/slices/common.slice";
 
 export function* handlerSuccessSaga(message) {
   yield put(actionSuccess(message));

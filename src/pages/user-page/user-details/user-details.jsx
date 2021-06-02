@@ -3,11 +3,11 @@ import { Button } from "primereact/button";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { actionGetUser } from "redux/slices/userSlice";
+import { actionGetSelectedUser } from "redux/slices/user.slice";
 import { InputText } from "primereact/inputtext";
 import "./user-details.scss";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
 import { convertDate } from "utils/helper";
@@ -21,7 +21,7 @@ function UserDetailsPage() {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    dispatch(actionGetUser(userId));
+    dispatch(actionGetSelectedUser(userId));
     return () => {
       dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
       dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));

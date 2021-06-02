@@ -1,5 +1,5 @@
-import blogApi from "api/blogApi";
-import notifyApi from "api/notifyApi";
+import blogApi from "api/blog.api";
+import notifyApi from "api/notify.api";
 import { call, put, takeLatest } from "redux-saga/effects";
 import {
   actionDeleteBlog,
@@ -8,17 +8,17 @@ import {
   actionSetBlogList,
   actionSetSelectedBlog,
   actionUpdateBlog,
-} from "redux/slices/blogSlice";
+} from "redux/slices/blog.slice";
 import {
   actionFailed,
   actionHideDialog,
   actionLoading,
   actionSuccess,
-} from "redux/slices/commonSlice";
+} from "redux/slices/common.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
-import { handlerFailSaga, handlerSuccessSaga } from "./commonSaga";
-function* handlerDeleteBlog(action) {
+import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+export function* handlerDeleteBlog(action) {
   try {
     localStorageService.setLatestAction(actionDeleteBlog.type);
 
@@ -35,7 +35,7 @@ function* handlerDeleteBlog(action) {
   }
 }
 
-function* handlerGetAllBlog() {
+export function* handlerGetAllBlog() {
   try {
     localStorageService.setLatestAction(actionGetAllBlog.type);
     yield put(actionLoading("Loading get all blog list ...!"));
@@ -48,7 +48,7 @@ function* handlerGetAllBlog() {
     yield put(actionFailed(error.message));
   }
 }
-function* handlerGetBlog(action) {
+export function* handlerGetBlog(action) {
   const { blogId, history } = action.payload;
   localStorageService.setLatestAction(actionGetBlog.type);
   try {
@@ -64,7 +64,7 @@ function* handlerGetBlog(action) {
   }
 }
 
-function* handlerUpdateBlog(action) {
+export function* handlerUpdateBlog(action) {
   try {
     localStorageService.setLatestAction(actionUpdateBlog.type);
     const { contentAdmin } = action.payload;
@@ -81,19 +81,3 @@ function* handlerUpdateBlog(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-// ***** Watcher Functions *****
-
-export function* sagaDeleteBlog() {
-  yield takeLatest(actionDeleteBlog.type, handlerDeleteBlog);
-}
-
-export function* sagaGetAllBlog() {
-  yield takeLatest(actionGetAllBlog.type, handlerGetAllBlog);
-}
-export function* sagaGetBlog() {
-  yield takeLatest(actionGetBlog.type, handlerGetBlog);
-}
-export function* sagaUpdateBlog() {
-  yield takeLatest(actionUpdateBlog.type, handlerUpdateBlog);
-}
-// ***** Watcher Functions *****

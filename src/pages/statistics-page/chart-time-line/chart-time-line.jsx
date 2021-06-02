@@ -1,11 +1,12 @@
 import { Chart } from "primereact/chart";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionGetStatistics } from "redux/slices/postSlice";
+import { actionGetStatistics } from "redux/slices/post.slice";
 import "./chart-time-line.scss";
 
 function ChartTimeLine() {
-  const data = useSelector((state) => state.post.timeLineData);
+  const data = useSelector((state) => state.statistics.timeLineData);
+
   const [dataPost, setDataPost] = useState([]);
   const [dataBlog, setDataBlog] = useState([]);
   const [dataUser, setDataUser] = useState([]);
