@@ -25,7 +25,7 @@ import {
   actionGetAllPost,
   actionSetSelectedPost,
   actionSetSelectedPostList,
-} from "redux/slices/postSlice";
+} from "redux/slices/post.slice";
 import "./table-post.scss";
 import DisplayNameBodyTemplate from "common-components/template/display-name-template/display-name-template";
 import TableComponent from "common-components/table/table";

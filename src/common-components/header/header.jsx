@@ -11,7 +11,7 @@ import clsx from "clsx";
 import { STYLES_GLOBAL } from "common-components/styles-global";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionOpenDrawer } from "redux/slices/commonSlice";
+import { actionOpenDrawer } from "redux/slices/common.slice";
 import HeaderMenu from "./components/header-menu/header-menu";
 import "./header.scss";
 function HeaderComponent(props) {

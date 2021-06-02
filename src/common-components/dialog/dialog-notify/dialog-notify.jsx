@@ -3,10 +3,10 @@ import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/commonSlice";
+import { actionHideDialog } from "redux/slices/common.slice";
 import {
   actionSendNotify
-} from "redux/slices/userSlice";
+} from "redux/slices/user.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import "./dialog-notify.scss";
 function DialogNotify(props) {

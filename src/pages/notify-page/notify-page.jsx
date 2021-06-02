@@ -2,14 +2,14 @@ import { MultiSelect } from "primereact/multiselect";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { actionGetListUser } from "redux/slices/userSlice";
+import { actionGetUserList } from "redux/slices/user.slice";
 import TableComponent from "common-components/table/table";
 import { Column } from "primereact/column";
 import { Chip } from "primereact/chip";
 import "./notify-page.scss";
 import { Button } from "primereact/button";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
-import { actionHideDialog, actionShowDialog } from "redux/slices/commonSlice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
 import { Dropdown } from "primereact/dropdown";
 import { GenderItemTemplate } from "common-components/template/gender-template/gender-template";
 import { SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
@@ -66,7 +66,7 @@ function NotifyPage() {
     );
   });
   useEffect(() => {
-    dispatch(actionGetListUser());
+    dispatch(actionGetUserList());
     return () => {
       dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
     };

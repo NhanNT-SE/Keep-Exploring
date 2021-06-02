@@ -1,9 +1,9 @@
 import axios from "axios";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import queryString from "query-string";
-import { actionRefreshToken, actionSetUser } from "redux/slices/userSlice";
 import rootStore from "rootStore";
 import localStorageService from "../utils/localStorageService";
+import { actionRefreshToken, actionSetUser } from "redux/slices/auth.slice";
 
 const axiosClient = axios.create({
   baseURL: GLOBAL_VARIABLE.BASE_URL,

@@ -4,12 +4,12 @@ import {
   sagaGetAllBlog,
   sagaGetBlog,
   sagaUpdateBlog,
-} from "./blogSaga";
+} from "./watchers/blog.watcher";
 import {
   sagaDeleteComment,
   sagaGetCommentList,
   sagaGetLikeList,
-} from "./commentSaga";
+} from "./watchers/comment.watcher";
 import {
   sagaDeletePost,
   sagaGetAllPost,
@@ -17,18 +17,28 @@ import {
   sagaGetStatistics,
   sagaGetTimeLineStatistics,
   sagaUpdatePost,
-} from "./postSaga";
+} from "./watchers/post.watcher";
+
 import {
-  sagaDeleteUser,
-  sagaGetUser,
-  sagaGetUserList,
   sagaLogin,
   sagaLogout,
   sagaRefreshToken,
-  sagaSendNotify,
-  sagaUpdateProfile,
+} from "./watchers/auth.watcher";
+import {
   sagaChangePassword,
-} from "./userSaga";
+  sagaGetMyProfile,
+  sagaUpdateProfile,
+} from "./watchers/profile.watcher";
+import {
+  sagaDeleteUser,
+  sagaGetSelectedUser,
+  sagaGetUserList,
+  sagaSendNotify,
+} from "./watchers/user.watcher";
+import {
+  sagaGetStatisticsNumber,
+  sagaGetStatisticsTimeLine,
+} from "./watchers/statistics.watcher";
 
 const sagaComment = [
   sagaDeleteComment(),
@@ -46,21 +56,28 @@ const sagaPost = [
   sagaGetAllPost(),
   sagaGetPost(),
   sagaUpdatePost(),
-  sagaGetStatistics(),
-  sagaGetTimeLineStatistics(),
 ];
+const sagaStatistics = [sagaGetStatisticsNumber(), sagaGetStatisticsTimeLine()];
 const sagaUser = [
-  sagaChangePassword(),
   sagaDeleteUser(),
-  sagaGetUser(),
+  sagaGetSelectedUser(),
   sagaGetUserList(),
-  sagaLogin(),
-  sagaLogout(),
   sagaSendNotify(),
-  sagaRefreshToken(),
+];
+const sagaProfile = [
+  sagaChangePassword(),
+  sagaGetMyProfile(),
   sagaUpdateProfile(),
 ];
-const sagaList = sagaUser.concat(sagaComment, sagaBlog, sagaPost);
+const sagaAuth = [sagaLogin(), sagaLogout(), sagaRefreshToken()];
+const sagaList = sagaUser.concat(
+  sagaAuth,
+  sagaProfile,
+  sagaComment,
+  sagaBlog,
+  sagaPost,
+  sagaStatistics
+);
 
 export default function* rootSaga() {
   yield all(sagaList);

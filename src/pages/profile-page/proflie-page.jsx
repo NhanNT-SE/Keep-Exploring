@@ -5,18 +5,21 @@ import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import ImageUploader from "react-images-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { actionShowDialog } from "redux/slices/commonSlice";
-import { actionGetUser, actionUpdateProfile } from "redux/slices/userSlice";
+import { actionShowDialog } from "redux/slices/common.slice";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import {
+  actionGetMyProfile,
+  actionUpdateProfile,
+} from "redux/slices/profile.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { convertDate } from "utils/helper";
-import localStorageService from "utils/localStorageService";
 import "./profile-page.scss";
 function ProfilePage() {
   const genderList = [
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
   ];
-  const userStorage = localStorageService.getUser();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.selectedUser);
   const [displayName, setDisplayName] = useState("");
@@ -24,28 +27,35 @@ function ProfilePage() {
   const [gender, setGender] = useState("");
   const [created, setCreated] = useState("");
   const [file, setFile] = useState("");
+  const [mfa, setMFA] = useState(false);
   const [imageSubmit, setImageSubmit] = useState(undefined);
   const updateProfile = () => {
     const profile = { displayName, address, gender, avatar: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
-    if (userStorage) {
-      const userId = JSON.parse(userStorage)._id;
-      dispatch(actionGetUser(userId));
-    }
+    dispatch(actionGetMyProfile());
   }, []);
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName);
       setCreated(convertDate(user.created_on));
       setGender(user.gender);
-      if (user.address) {
-        setAddress(user.address);
+      setAddress(user.address);
+      if (user.mfa === "active") {
+        setMFA(true);
       }
     }
   }, [user]);
-
+  const toggleMFA = (e) => {
+    const statusMFA = user.mfa;
+    const isMFA = e.target.checked;
+    setMFA(isMFA);
+    console.log({
+      statusMFA,
+      isMFA,
+    });
+  };
   const onImage = async (e) => {
     setFile(URL.createObjectURL(e[0]));
     setImageSubmit(e[0]);
@@ -90,6 +100,14 @@ function ProfilePage() {
               <span className="display-name">{user.displayName}</span>
               <span className="email">{user.email}</span>
               <span className="role">Role: ADMINISTRATOR</span>
+            </div>
+            <div className="header-info">
+              <FormControlLabel
+                control={
+                  <Switch checked={mfa} onChange={toggleMFA} name="checkedA" />
+                }
+                label="MFA"
+              />
             </div>
           </div>
           <div className="container-info">

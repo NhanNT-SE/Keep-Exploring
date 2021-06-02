@@ -6,7 +6,7 @@ import GLOBAL_VARIABLE from "utils/global_variable";
 import {confirmDialog } from "primereact/confirmdialog";
 import "./comment.scss";
 import { useDispatch } from "react-redux";
-import { actionDeleteComment } from "redux/slices/commentSlice";
+import { actionDeleteComment } from "redux/slices/comment.slice";
 function CommentComponent(props) {
   const { commentList, type } = props;
   const history = useHistory();
