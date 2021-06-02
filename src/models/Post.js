@@ -28,18 +28,6 @@ const schema = new Schema(
     imgs: {
       type: [String],
     },
-
-    min_price: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
-
-    max_price: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
     address: {
       type: String,
       lowercase: true,
@@ -65,12 +53,13 @@ const schema = new Schema(
         ref: "user",
       },
     ],
-
     created_on: {
       type: Date,
       default: Date.now(),
     },
-
+    last_modify: {
+      type: Date,
+    },
     comment: [
       {
         type: Schema.Types.ObjectId,

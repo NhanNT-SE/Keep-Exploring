@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import { User } from "../../models/User.js";
+import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
 import { customError } from "../../helpers/CustomError.js";
 import { createNotification } from "../../helpers/NotifyHelper.js";
@@ -57,7 +58,23 @@ const getAnotherProfile = async (req, res, next) => {
     next(error);
   }
 };
-
+const getMyProfile = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const profile = await User.findById(user._id, { password: 0 }).populate(
+      "userInfo"
+    );
+    const mfa = await MFA.findOne({ owner: user._id });
+    const data = JSON.parse(JSON.stringify(profile));
+    return res.status(200).send({
+      data: { mfa: mfa.status,...data },
+      status: 200,
+      message: "Fetch data successfully!",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const updateProfile = async (req, res, next) => {
   try {
@@ -117,4 +134,4 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-export { changePass, getAnotherProfile, updateProfile };
+export { changePass, getAnotherProfile, getMyProfile, updateProfile };

@@ -56,6 +56,9 @@ const schema = new Schema(
       type: Date,
       default: Date.now,
     },
+    last_modify: {
+      type: Date,
+    },
     userInfo: {
       type: Schema.Types.ObjectId,
       ref: "userInfo",

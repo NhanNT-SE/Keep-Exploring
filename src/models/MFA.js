@@ -9,7 +9,11 @@ const schema = new Schema(
       index: true,
       unique: true,
     },
-    enableMFA: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["idle", "active", "inactive"],
+      default: "idle",
+    },
     secretMFA: { type: String },
   },
 
