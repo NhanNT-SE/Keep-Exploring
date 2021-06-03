@@ -7,7 +7,7 @@ import { actionGetSelectedUser } from "redux/slices/user.slice";
 import { InputText } from "primereact/inputtext";
 import "./user-details.scss";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
 import { convertDate } from "utils/helper";
@@ -102,14 +102,22 @@ function UserDetailsPage() {
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Post:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.userInfo.postList.length} />
+                  <InputText
+                    type="text"
+                    disabled
+                    value={user.userInfo.postList.length}
+                  />
                 </div>
               </div>
 
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Blog:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.userInfo.blogList.length} />
+                  <InputText
+                    type="text"
+                    disabled
+                    value={user.userInfo.blogList.length}
+                  />
                 </div>
               </div>
               <div className="p-field p-grid">

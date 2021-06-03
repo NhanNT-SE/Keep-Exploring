@@ -1,13 +1,16 @@
 import notifyApi from "api/notify.api";
 import postApi from "api/post.api";
 import { call, put } from "redux-saga/effects";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionGetAllPost,
   actionGetPost,

@@ -8,7 +8,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import "./dialog-edit-post.scss";
 import { actionDeletePost, actionUpdatePost } from "redux/slices/post.slice";
 import { useHistory } from "react-router";
@@ -19,7 +19,7 @@ function DialogEditPost(props) {
   const history = useHistory();
   const [selectedStatus, setSelectedStatus] = useState(null);
   const isShowDialog = useSelector(
-    (state) => state.common.isShowDialogEditPost
+    (state) => state.dialog.isShowDialogEditPost
   );
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");

@@ -1,20 +1,17 @@
-import { MultiSelect } from "primereact/multiselect";
+import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
+import TableComponent from "common-components/table/table";
+import DateBodyTemplate from "common-components/template/date-template/date-template";
+import { GenderBodyTemplate, GenderItemTemplate, SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
+import { Button } from "primereact/button";
+import { Chip } from "primereact/chip";
+import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import { actionGetUserList } from "redux/slices/user.slice";
-import TableComponent from "common-components/table/table";
-import { Column } from "primereact/column";
-import { Chip } from "primereact/chip";
+import GLOBAL_VARIABLE from "utils/global_variable";
 import "./notify-page.scss";
-import { Button } from "primereact/button";
-import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
-import { Dropdown } from "primereact/dropdown";
-import { GenderItemTemplate } from "common-components/template/gender-template/gender-template";
-import { SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
-import DateBodyTemplate from "common-components/template/date-template/date-template";
-import { GenderBodyTemplate } from "common-components/template/gender-template/gender-template";
 
 function NotifyPage() {
   const dt = useRef(null);

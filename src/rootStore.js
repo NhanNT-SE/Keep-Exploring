@@ -3,6 +3,7 @@ import commentReducer from "redux/slices/comment.slice";
 import commonReducer from "redux/slices/common.slice";
 import userReducer from "redux/slices/user.slice";
 import authReducer from "redux/slices/auth.slice";
+import dialogReducer from "redux/slices/dialog.slice";
 import profileReducer from "redux/slices/profile.slice";
 import blogReducer from "redux/slices/blog.slice";
 import postReducer from "redux/slices/post.slice";
@@ -16,6 +17,7 @@ const rootStore = configureStore({
     blog: blogReducer,
     comment: commentReducer,
     common: commonReducer,
+    dialog: dialogReducer,
     post: postReducer,
     profile: profileReducer,
     statistics: statisticsReducer,

@@ -1,5 +1,9 @@
-import { call, put, takeLatest } from "@redux-saga/core/effects";
+import { call, put } from "@redux-saga/core/effects";
 import commentApi from "api/comment.api";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionDeleteComment,
   actionGetCommentList,
@@ -13,7 +17,6 @@ import {
   actionSuccess,
 } from "redux/slices/common.slice";
 import localStorageService from "utils/localStorageService";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
 
 export function* handlerDeleteComment(action) {
   try {

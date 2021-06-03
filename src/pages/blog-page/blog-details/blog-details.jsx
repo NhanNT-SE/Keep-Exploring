@@ -12,7 +12,7 @@ import {
   actionGetCommentList,
   actionGetLikeList,
 } from "redux/slices/comment.slice";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
 import "./blog-details.scss";

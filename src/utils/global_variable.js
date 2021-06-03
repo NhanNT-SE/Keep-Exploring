@@ -8,6 +8,7 @@ const GLOBAL_VARIABLE = {
   DIALOG_NOTIFY: "DIALOG_NOTIFY",
   DIALOG_DELETE_USER: "DIALOG_DELETE_USER",
   DIALOG_CHANGE_PASSWORD: "DIALOG_CHANGE_PASSWORD",
+  DIALOG_QR_CODE: "DIALOG_QR_CODE",
   STATUS_LIST: ["pending", "done", "need_update"],
   CATEGORY_LIST: ["hotel", "food", "check_in"],
   GENDER_LIST: ["female", "male"],

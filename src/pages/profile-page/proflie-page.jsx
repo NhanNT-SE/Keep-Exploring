@@ -5,7 +5,7 @@ import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import ImageUploader from "react-images-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { actionShowDialog } from "redux/slices/common.slice";
+import { actionShowDialog } from "redux/slices/dialog.slice";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import {
@@ -15,6 +15,7 @@ import {
 import GLOBAL_VARIABLE from "utils/global_variable";
 import { convertDate } from "utils/helper";
 import "./profile-page.scss";
+import DialogQRCode from "common-components/dialog/dialog-qr-code/dialog-qr-code";
 function ProfilePage() {
   const genderList = [
     { label: "Male", value: "male" },
@@ -65,6 +66,7 @@ function ProfilePage() {
   return (
     <div className="profile-page-container">
       <DialogChangePassword />
+      <DialogQRCode />
       <div className="header">
         <div className="title">My Profile</div>
       </div>

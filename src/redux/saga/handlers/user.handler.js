@@ -1,13 +1,16 @@
 import notifyApi from "api/notify.api";
 import userApi from "api/user.api";
 import { call, put } from "redux-saga/effects";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionDeleteUser,
   actionGetSelectedUser,
@@ -16,7 +19,6 @@ import {
   actionSetSelectedUser,
   actionSetUserList,
 } from "redux/slices/user.slice";
-
 import GLOBAL_VARIABLE from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 

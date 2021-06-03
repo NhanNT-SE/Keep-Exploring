@@ -1,11 +1,7 @@
 import { delay, put } from "@redux-saga/core/effects";
+import { actionFailed, actionSuccess } from "redux/slices/common.slice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
-import {
-  actionFailed,
-  actionHideDialog,
-  actionShowDialog,
-  actionSuccess,
-} from "redux/slices/common.slice";
 
 export function* handlerSuccessSaga(message) {
   yield put(actionSuccess(message));

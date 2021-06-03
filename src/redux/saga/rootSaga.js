@@ -1,5 +1,10 @@
 import { all } from "redux-saga/effects";
 import {
+  sagaLogin,
+  sagaLogout,
+  sagaRefreshToken,
+} from "./watchers/auth.watcher";
+import {
   sagaDeleteBlog,
   sagaGetAllBlog,
   sagaGetBlog,
@@ -14,31 +19,23 @@ import {
   sagaDeletePost,
   sagaGetAllPost,
   sagaGetPost,
-  sagaGetStatistics,
-  sagaGetTimeLineStatistics,
   sagaUpdatePost,
 } from "./watchers/post.watcher";
-
-import {
-  sagaLogin,
-  sagaLogout,
-  sagaRefreshToken,
-} from "./watchers/auth.watcher";
 import {
   sagaChangePassword,
   sagaGetMyProfile,
   sagaUpdateProfile,
 } from "./watchers/profile.watcher";
 import {
+  sagaGetStatisticsNumber,
+  sagaGetStatisticsTimeLine,
+} from "./watchers/statistics.watcher";
+import {
   sagaDeleteUser,
   sagaGetSelectedUser,
   sagaGetUserList,
   sagaSendNotify,
 } from "./watchers/user.watcher";
-import {
-  sagaGetStatisticsNumber,
-  sagaGetStatisticsTimeLine,
-} from "./watchers/statistics.watcher";
 
 const sagaComment = [
   sagaDeleteComment(),

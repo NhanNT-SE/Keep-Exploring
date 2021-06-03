@@ -3,7 +3,7 @@ import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionSendNotify
 } from "redux/slices/user.slice";
@@ -13,7 +13,7 @@ function DialogNotify(props) {
   const { userList } = props;
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");
-  const isShowDialog = useSelector((state) => state.common.isShowDialogNotify);
+  const isShowDialog = useSelector((state) => state.dialog.isShowDialogNotify);
   const hideDialog = () => {
     dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
   };

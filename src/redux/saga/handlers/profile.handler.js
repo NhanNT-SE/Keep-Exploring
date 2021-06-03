@@ -1,14 +1,21 @@
 import profileApi from "api/profile.api";
 import { call, put } from "redux-saga/effects";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import { actionSetUser } from "redux/slices/auth.slice";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
-import { actionChangePassword, actionGetMyProfile, actionUpdateProfile } from "redux/slices/profile.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
+import {
+  actionChangePassword,
+  actionGetMyProfile,
+  actionUpdateProfile,
+} from "redux/slices/profile.slice";
 import { actionSetSelectedUser } from "redux/slices/user.slice";
 import rootStore from "rootStore";
 import GLOBAL_VARIABLE from "utils/global_variable";

@@ -1,6 +1,10 @@
 import blogApi from "api/blog.api";
 import notifyApi from "api/notify.api";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionDeleteBlog,
   actionGetAllBlog,
@@ -11,13 +15,12 @@ import {
 } from "redux/slices/blog.slice";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import GLOBAL_VARIABLE from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
 export function* handlerDeleteBlog(action) {
   try {
     localStorageService.setLatestAction(actionDeleteBlog.type);
