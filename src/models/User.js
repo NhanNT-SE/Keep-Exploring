@@ -59,6 +59,10 @@ const schema = new Schema(
     last_modify: {
       type: Date,
     },
+    mfa: {
+      type: Schema.Types.ObjectId,
+      ref: "mfa",
+    },
     userInfo: {
       type: Schema.Types.ObjectId,
       ref: "userInfo",

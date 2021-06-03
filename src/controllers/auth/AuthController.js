@@ -79,16 +79,18 @@ const signIn = async (req, res, next) => {
         const data = {
           accessToken,
           refreshToken,
-          mfa: mfa.status,
-          ...lodash.pick(user, [
-            "_id",
-            "username",
-            "email",
-            "displayName",
-            "avatar",
-            "role",
-          ]),
-          ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
+          user: {
+            mfa: mfa.status,
+            ...lodash.pick(user, [
+              "_id",
+              "username",
+              "email",
+              "displayName",
+              "avatar",
+              "role",
+            ]),
+            ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
+          },
         };
         await session.commitTransaction();
         session.endSession();
@@ -148,9 +150,13 @@ const signUp = async (req, res, next) => {
     }).save({ session });
     const owner = user._id;
     await new Token({ owner }).save({ session });
-    await new MFA({ owner }).save({ session });
+    const mfa = await new MFA({ owner }).save({ session });
     const userInfo = await new UserInfo({ owner }).save({ session });
-    await User.findByIdAndUpdate(owner, { userInfo: userInfo._id }, opts);
+    await User.findByIdAndUpdate(
+      owner,
+      { userInfo: userInfo._id, mfa: mfa._id },
+      opts
+    );
     await session.commitTransaction();
     session.endSession();
     return res.status(200).send({

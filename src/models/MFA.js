@@ -11,7 +11,7 @@ const schema = new Schema(
     },
     status: {
       type: String,
-      enum: ["idle", "active", "inactive"],
+      enum: ["idle", "enable", "disable"],
       default: "idle",
     },
     secretMFA: { type: String },

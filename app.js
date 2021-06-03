@@ -13,6 +13,7 @@ import adminBlog from "./src/routes/admin/AdminBlog.js";
 import adminPost from "./src/routes/admin/AdminPost.js";
 import adminUser from "./src/routes/admin/AdminUser.js";
 import adminStatistic from "./src/routes/admin/AdminStatistic.js";
+import mfa from "./src/routes/auth/MFARouter.js";
 import publicAddress from "./src/routes/public/PublicAddress.js";
 import publicBlog from "./src/routes/public/PublicBlog.js";
 import publicPost from "./src/routes/public/PublicPost.js";
@@ -81,8 +82,9 @@ app.use("/auth", auth);
 app.use("/public/address", publicAddress);
 app.use("/public/blog", publicBlog);
 app.use("/public/post", publicPost);
-// // ----------AUTH ROUTER----------
+// // ----------PROTECT ROUTER----------
 app.use(isAuth);
+app.use("/mfa", mfa);
 app.use("/user/comment", userComment);
 app.use("/user/blog", userBlog);
 app.use("/user/post", userPost);
