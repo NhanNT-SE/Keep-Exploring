@@ -1,11 +1,12 @@
 import fs from "fs";
-import {Blog} from "../../models/Blog.js";
-import {Comment} from "../../models/Comment.js";
-import {Notification} from "../../models/Notification.js";
-import {Post} from "../../models/Post.js";
-import {createNotification} from "../../helpers/NotifyHelper.js";
-import {customError} from "../../helpers/CustomError.js";
+import { Blog } from "../../models/Blog.js";
+import { Comment } from "../../models/Comment.js";
+import { Notification } from "../../models/Notification.js";
+import { Post } from "../../models/Post.js";
+import { createNotification } from "../../helpers/NotifyHelper.js";
+import { customError } from "../../helpers/CustomError.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const createCommentPost = async (req, res, next) => {
   try {
@@ -47,16 +48,12 @@ const createCommentPost = async (req, res, next) => {
         type: "comment",
         idPost,
       });
-      return res.send({
-        data: comment,
-        status: 200,
-        message: "Tạo bình luận thành công",
-      });
+      return res.send(customResponse(comment, "Tạo bình luận thành công"));
     }
 
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
-    return res.status(202).send(error.message);
+    next(error);
   }
 };
 
@@ -101,16 +98,12 @@ const createCommentBlog = async (req, res, next) => {
         type: "comment",
         idBlog,
       });
-      return res.send({
-        data: comment,
-        status: 200,
-        message: "Tạo bình luận thành công",
-      });
+      return res.send(customResponse(comment, "Tạo bình luận thành công"));
     }
 
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
-    return res.status(202).send(error.message);
+    next(error);
   }
 };
 
@@ -150,14 +143,12 @@ const deleteCommentByID = async (req, res, next) => {
       }
 
       await Comment.findByIdAndDelete(idComment);
-      return res.send({
-        data: commentFound,
-        status: 200,
-        message: "Đã xóa bình luận thành công ",
-      });
+      return res.send(
+        customResponse(commentFound, "Đã xóa bình luận thành công ")
+      );
     }
 
-    return customError(201, "Bạn không phải admin/chủ comment này");
+    return customError("Bạn không the comment này");
   } catch (error) {
     next(error);
   }
@@ -170,14 +161,11 @@ const editCommentBlog = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return customError(201, "Bình luận không tồn tại");
+      return customError("Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return customError(
-        202,
-        "Bạn không có quyền chỉnh sửa comment này"
-      );
+      return customError("Bạn không có quyền chỉnh sửa comment này");
     }
 
     if (commentFound.img && deleteImg) {
@@ -190,11 +178,9 @@ const editCommentBlog = async (req, res, next) => {
     commentFound.content = content;
 
     await commentFound.save();
-    return res.send({
-      data: commentFound,
-      status: 200,
-      message: "Chỉnh sửa bình luận thành công",
-    });
+    return res.send(
+      customResponse(commentFound, "Chỉnh sửa bình luận thành công")
+    );
   } catch (error) {
     next(error);
   }
@@ -208,14 +194,11 @@ const editCommentPost = async (req, res, next) => {
     const commentFound = await Comment.findById(idComment);
 
     if (!commentFound) {
-      return customError(201, "Bình luận không tồn tại");
+      return customError("Bình luận không tồn tại");
     }
 
     if (user._id != commentFound.idUser.toString()) {
-      return customError(
-        202,
-        "Bạn không có quyền chỉnh sửa comment này"
-      );
+      return customError("Bạn không có quyền chỉnh sửa comment này");
     }
 
     if (commentFound.img && deleteImg) {
@@ -228,11 +211,9 @@ const editCommentPost = async (req, res, next) => {
     commentFound.content = content;
 
     await commentFound.save();
-    return res.send({
-      data: commentFound,
-      status: 200,
-      message: "Chỉnh sửa bình luận thành công",
-    });
+    return res.send(
+      customResponse(commentFound, "Chỉnh sửa bình luận thành công")
+    );
   } catch (error) {
     next(error);
   }

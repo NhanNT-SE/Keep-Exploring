@@ -1,9 +1,10 @@
-import {customError} from "../../helpers/CustomError.js";
-import {Blog} from "../../models/Blog.js";
-import {Comment} from "../../models/Comment.js";
+import { customError } from "../../helpers/CustomError.js";
+import { Blog } from "../../models/Blog.js";
+import { Comment } from "../../models/Comment.js";
 import "../../models/User.js";
 import "../../models/Comment.js";
 import "../../models/ContentBlog.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const getBlogByID = async (req, res, next) => {
   try {
@@ -12,10 +13,9 @@ const getBlogByID = async (req, res, next) => {
       .populate("blog_detail")
       .populate("owner", ["displayName", "imgUser", "email", "post", "blog"]);
     if (blogFound) {
-      return res.send({ data: blogFound, status: 200, message: "" });
+      return res.send(customResponse(blogFound));
     }
-
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -26,11 +26,7 @@ const getBlogList = async (req, res, next) => {
       .populate("blog_detail")
       .populate("owner", ["displayName", "imgUser", "email", "blog", "post"])
       .sort({ created_on: -1 });
-    return res.status(200).send({
-      data: blogList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(blogList));
   } catch (error) {
     next(error);
   }
@@ -52,11 +48,7 @@ const getBlogByQuery = async (req, res, next) => {
         e.title.toLowerCase().includes(query.toLowerCase())
       );
     }
-    return res.send({
-      data: resultList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(resultList));
   } catch (error) {
     next(error);
   }
@@ -76,13 +68,11 @@ const getBlogComment = async (req, res, next) => {
         "post",
         "blog",
       ]);
-      return res.send({
-        data: commentList.reverse(),
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
+      return res.send(
+        customResponse(commentList.reverse())
+      );
     }
-    return customError(202, "Bài viết không tồn tại hoặc đã bị xóa");
+    return customError("Bài viết không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -99,15 +89,11 @@ const getLikeListBlog = async (req, res, next) => {
       "blog",
     ]);
     if (!blogFound) {
-      return customError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      customError("Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = blogFound.like_list;
-    return res.send({
-      data: likeList,
-      status: 200,
-      message: "Danh sách những người like bài viết",
-    });
+    return res.send(customResponse(likeList));
   } catch (error) {
     next(error);
   }

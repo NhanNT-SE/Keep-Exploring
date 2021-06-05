@@ -1,8 +1,9 @@
 import fs from "fs";
-import {Post} from "../../models/Post.js";
-import {Blog} from "../../models/Blog.js";
-import {User} from "../../models/User.js";
-import {customError} from "../../helpers/CustomError.js";
+import { Post } from "../../models/Post.js";
+import { Blog } from "../../models/Blog.js";
+import { User } from "../../models/User.js";
+import { customError } from "../../helpers/CustomError.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const statisticsNumber = async (req, res, next) => {
@@ -39,9 +40,7 @@ const statisticsNumber = async (req, res, next) => {
         data: [doneBlog, pendingBlog, need_updateBlog],
       },
     };
-    return res
-      .status(200)
-      .send({ data, status: 200, message: "Lấy dữ liệu thành công" });
+    return res.send(customResponse(data));
   } catch (error) {
     next(error);
   }
@@ -111,11 +110,8 @@ const statisticsTimeLine = async (req, res, next) => {
     const resultUser = convertStaticsList(monthUser);
     const resultPost = convertStaticsList(monthPost);
     const resultBlog = convertStaticsList(monthBlog);
-    return res.status(200).send({
-      data: { user: resultUser, post: resultPost, blog: resultBlog },
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    const data = { user: resultUser, post: resultPost, blog: resultBlog };
+    return res.send(customResponse(data));
   } catch (error) {
     console.log(error);
     next(error);

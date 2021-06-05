@@ -1,7 +1,13 @@
 import _ from "lodash";
-const customError = (status, message, payload) => {
+const customError = (message) => {
   const err = new Error();
-  err.status = status || 500;
+  err.status = 501;
+  err.message = message;
+  throw err;
+};
+const errorAuth = (message, payload) => {
+  const err = new Error();
+  err.status = 401;
   err.message = message;
   err.payload = payload;
   throw err;
@@ -24,4 +30,4 @@ const mapErrorMessage = (error) => {
   }
   return message;
 };
-export { customError, mapErrorMessage };
+export { customError, errorAuth, mapErrorMessage };

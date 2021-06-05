@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Token } from "../models/Token.js";
 import { ACCESS_TOKEN_SECRET } from "../config/index.js";
-import { customError } from "./CustomError.js";
+import { errorAuth } from "./CustomError.js";
 const generateToken = async (user, secretSignature, tokenLife) => {
   try {
     const userData = {
@@ -14,7 +14,7 @@ const generateToken = async (user, secretSignature, tokenLife) => {
     });
     return token;
   } catch (error) {
-    customError(401, error.message);
+    errorAuth(error.message);
   }
 };
 
@@ -26,9 +26,9 @@ const verifyToken = async (token, secretKey) => {
     const message = error.message;
     if (message === "jwt expired") {
       const dateExpired = getNumberDateExpired(error.expiredAt);
-      customError(401, message, dateExpired);
+      errorAuth(message, dateExpired);
     }
-    customError(401, message);
+    errorAuth(message);
   }
 };
 
@@ -41,14 +41,14 @@ const isAuth = async (req, res, next) => {
     if (TOKEN_FROM_CLIENT) {
       const decoded = await verifyToken(TOKEN_FROM_CLIENT, ACCESS_TOKEN_SECRET);
       const token = await Token.findOne({ owner: decoded._id });
-      if (token.accessToken === TOKEN_FROM_CLIENT) {
+      if (token.accessToken && token.accessToken === TOKEN_FROM_CLIENT) {
         req.jwtDecoded = decoded;
         req.user = decoded;
         return next();
       }
-      customError(401, "Vui lòng đăng nhập lại để tiếp tục");
+      errorAuth("Vui lòng đăng nhập lại để tiếp tục");
     }
-    customError(401, "Không nhận được token.");
+    errorAuth("Không nhận được token.");
   } catch (error) {
     next(error);
   }
@@ -59,8 +59,7 @@ const isAdmin = async (req, res, next) => {
     if (user.role === "admin") {
       return next();
     }
-    customError(
-      401,
+    errorAuth(
       "Tài khoản hiện tại của bạn không đủ quyền để thực hiện hành động này"
     );
   } catch (error) {

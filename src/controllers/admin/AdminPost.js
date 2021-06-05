@@ -1,17 +1,14 @@
 import fs from "fs";
-import {customError} from "../../helpers/CustomError.js";
-import {Post} from "../../models/Post.js";
+import { customError } from "../../helpers/CustomError.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
+import { Post } from "../../models/Post.js";
 
 const getAllPost = async (req, res, next) => {
   try {
     const post_list = await Post.find({})
       .populate("owner", ["displayName", "imgUser", "email"])
       .sort({ created_on: -1 });
-    return res.status(200).send({
-      data: post_list,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(post_list));
   } catch (error) {
     next(error);
   }
@@ -22,12 +19,9 @@ const deletePost = async (req, res, next) => {
     const post = await Post.findById(idPost);
     if (post) {
       await Post.findByIdAndDelete(idPost);
-      return res.status(200).send({
-        data: post,
-        status: 200,
-      });
+      return res.send(customResponse(post, "Xoa bai viet thanh cong"));
     }
-    customError(500, "Bai viet khong ton tai");
+    customError("Bai viet khong ton tai");
   } catch (error) {
     next(error);
   }
@@ -42,14 +36,10 @@ const updateStatus = async (req, res, next) => {
         status,
         view_mode: "public",
       };
-      await Post.findByIdAndUpdate(idPost, postUpdate);
-      return res.send({
-        data: post,
-        status: 200,
-        message: "Cập nhật bài viết thành công",
-      });
+      await post.updateOne({ ...postUpdate }, { returnOriginal: false });
+      return res.send(customResponse(post, "Cập nhật bài viết thành công"));
     }
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
     console.log(error);
     next(error);

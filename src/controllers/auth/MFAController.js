@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { customError } from "../../helpers/CustomError.js";
 import { User } from "../../models/User.js";
-
 import { SERVER_NAME } from "../../config/index.js";
 import { MFA } from "../../models/MFA.js";
 import {
@@ -10,6 +9,7 @@ import {
   generateSecretUser,
   verifyOTPToken,
 } from "../../helpers/MFAHelper.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const getQRCode = async (req, res, next) => {
   try {
@@ -18,20 +18,16 @@ const getQRCode = async (req, res, next) => {
     const mfa = await MFA.findOne({ owner: user._id });
     const checkPass = await bcrypt.compare(password, user.password);
     if (checkPass) {
-      if (mfa.status === "idle") {
+      if (mfa.status === "disable") {
         const secretMFA = generateSecretUser();
         await mfa.updateOne({ secretMFA });
         const otpAuth = generateOTPToken(user.username, SERVER_NAME, secretMFA);
         const qrCode = await generateQRCode(otpAuth);
-        return res.status(200).send({
-          data: { qrCode },
-          status: 200,
-          message: "QR code was generated",
-        });
+        return res.send(customResponse(qrCode, "QR code was generated"));
       }
-      customError(500, "MFA is already active");
+      customError("MFA is already active");
     }
-    customError(500, "Your password incorrect");
+    customError("Your password incorrect");
   } catch (error) {
     next(error);
   }
@@ -43,13 +39,9 @@ const enableMFA = async (req, res, next) => {
     const mfa = await MFA.findOne({ owner: user._id });
     if (userId === user._id) {
       await mfa.updateOne({ status: "enable" });
-      return res.status(200).send({
-        data: { isEnable: true },
-        status: 200,
-        message: "MFA was activated",
-      });
+      return res.send(customResponse({ isEnable: true }, "MFA was activated"));
     }
-    customError(500, "You can not active MFA for anther account");
+    customError("You can not active MFA for anther account");
   } catch (error) {
     next(error);
   }
@@ -64,16 +56,17 @@ const disableMFA = async (req, res, next) => {
       const mfa = user.mfa;
       const isValid = verifyOTPToken(otp, mfa.secretMFA);
       if (isValid) {
-        await MFA.findOneAndUpdate({ status: "disable", secretMFA: null });
-        return res.status(200).send({
-          data: { isDisable: true },
-          status: 200,
-          message: "MFA was disabled",
-        });
+        await MFA.findOneAndUpdate(
+          { owner: user._id },
+          { status: "disable", $unset: { secretMFA: 1 } }
+        );
+        return res.send(
+          customResponse({ isDisable: true }, "MFA was disabled")
+        );
       }
-      customError(500, "Oops...Your OTP code is not correct!");
+      customError("Your OTP code is not correct!");
     }
-    customError(500, "Password incorrect");
+    customError("Password incorrect");
   } catch (error) {
     next(error);
   }
@@ -84,15 +77,16 @@ const verifyOTP = async (req, res, next) => {
     const { otp } = req.body;
     const { user } = req;
     const mfa = await MFA.findOne({ owner: user._id });
-    const isValid = verifyOTPToken(otp, mfa.secretMFA);
-    if (isValid) {
-      return res.status(200).send({
-        data: { isValid },
-        status: 200,
-        message: "Verify OTP code successfully",
-      });
+    if (mfa.secretMFA) {
+      const isValid = verifyOTPToken(otp, mfa.secretMFA);
+      if (isValid) {
+        return res.send(
+          customResponse({ isValid }, "Verify OTP code successfully")
+        );
+      }
+      customError("Oops...Your OTP code is not correct!");
     }
-    customError(500, "Oops...Your OTP code is not correct!");
+    customError("Your MFA not enabled");
   } catch (error) {
     next(error);
   }

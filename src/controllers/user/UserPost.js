@@ -1,10 +1,11 @@
 import fs from "fs";
-import {Post} from "../../models/Post.js";
-import {Notification} from "../../models/Notification.js";
-import {User} from "../../models/User.js";
-import {customError} from "../../helpers/CustomError.js";
-import  {createNotification}  from "../../helpers/NotifyHelper.js";
+import { Post } from "../../models/Post.js";
+import { Notification } from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { customError } from "../../helpers/CustomError.js";
+import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const createPost = async (req, res, next) => {
   try {
@@ -48,12 +49,9 @@ const createPost = async (req, res, next) => {
       id: post._id,
       message: `Bài viết ${post.title} vừa được tạo, đang chờ kiểm duyệt`,
     });
-    return res.status(200).send({
-      data: { post, notification },
-      err: "",
-      status: 200,
-      msg: "Tạo bài viết thành công, bài viết đang được kiểm duyệt",
-    });
+    return res.send(
+      customResponse({ post, notification }, "Tạo bài viết thành công")
+    );
   } catch (error) {
     next(error);
   }
@@ -81,17 +79,12 @@ const deletePost = async (req, res, next) => {
 
         await User.findByIdAndUpdate(user._id, { $pull: { post: postID } });
 
-        return res.status(200).send({
-          data: postFound,
-          err: "",
-          status: 200,
-          message: "Đã xóa bài viết",
-        });
+        return res.send(customResponse(postFound, "Đã xóa bài viết"));
       }
-      return customError(202, "Bạn không phải admin/owner bài viết này");
+      customError("Bạn không the xoa bài viết này");
     }
 
-    return customError(201, "Bài viết không tồn tại");
+    customError("Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -111,11 +104,8 @@ const getPostListByUser = async (req, res, next) => {
         .populate("owner", ["displayName", "imgUser", "email"])
         .sort({ created_on: -1 });
     }
-    return res.send({
-      data: postList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+
+    return res.send(customResponse(postList));
   } catch (error) {
     next(error);
   }
@@ -153,14 +143,13 @@ const likePost = async (req, res, next) => {
           idPost,
         });
       }
-      return res.send({
-        data: postFound,
-        status: 200,
-        message: notification ? "Đã thích bài viết" : "Đã bỏ thích bài viết",
-      });
+      const resMsg = notification
+        ? "Đã thích bài viết"
+        : "Đã bỏ thích bài viết";
+      return res.send(customResponse(postFound, resMsg));
     }
 
-    return customError(202, "Bài viết không tồn tại");
+    customError("Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -201,10 +190,7 @@ const updatePost = async (req, res, next) => {
         if (files) {
           const len_files = files.length;
           if (postFound.imgs.lenth - length_deleted + len_files > 20) {
-            customError(
-              202,
-              "Vượt quá số lượng hình ảnh không được vượt quá 20"
-            );
+            customError("Số lượng hình ảnh không được vượt quá 20");
           }
 
           for (i = 0; i < len_files; i++) {
@@ -239,18 +225,17 @@ const updatePost = async (req, res, next) => {
           message: `Bài viết ${postFound.title} vừa được chỉnh sửa, đang chờ kiểm duyệt`,
         });
 
-        return res.send({
-          data: { newPost, notification },
-          status: 200,
-          message:
-            "Cập nhật bài viết thành công, bài viết của bạn đang được kiểm duyệt",
-        });
+        return res.send(
+          customResponse(
+            { newPost, notification },
+            "Cập nhật bài viết thành công"
+          )
+        );
       }
 
-      return customError(201, "Bạn không thể cập nhật bài viết này");
+      return customError("Bạn không thể cập nhật bài viết này");
     }
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
