@@ -1,0 +1,63 @@
+.profile-header-container {
+  display: flex;
+  flex: 1;
+
+  .main-container {
+    display: flex;
+    flex: 1;
+    padding-top: 16px;
+    .avatar-user-container {
+      position: relative;
+      .avatar-user {
+        width: 8rem;
+        height: 8rem;
+        border-radius: 50%;
+        border: 1px solid #cbd2e2;
+        overflow: hidden;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .fileUploader {
+        position: absolute;
+        right: 0px;
+        width: fit-content;
+        bottom: -16px;
+        .fileContainer {
+          padding: 0px;
+          margin: 0px;
+          box-shadow: none;
+          background-color: transparent;
+          button {
+            padding: 0px 18px;
+          }
+        }
+      }
+    }
+
+    .header-info {
+      padding-left: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      flex: 1;
+      .info-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        span,
+        p {
+          font-variant: all-petite-caps;
+          font-weight: bold;
+          font-size: 16px;
+          &.email {
+            color: #4272d7;
+            text-decoration: underline;
+            font-size: 15px;
+          }
+        }
+      }
+    }
+  }
+}

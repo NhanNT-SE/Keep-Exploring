@@ -6,11 +6,11 @@ import { Steps } from "primereact/steps";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog } from "redux/slices/dialog.slice";
-import { actionActiveMFA } from "redux/slices/mfa.slice";
-import {DIALOG} from "utils/global_variable";
+import { actionEnableMFA } from "redux/slices/mfa.slice";
+import { DIALOG } from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 import "./dialog-enable-mfa.scss";
-function DialogEnableMFA(props) {
+function DialogEnableMFA() {
   const iShowDialog = useSelector((state) => state.dialog.dialogEnableMFA);
   const user = JSON.parse(localStorageService.getUser());
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ function DialogEnableMFA(props) {
   const stepConfirmPassword = async () => {
     try {
       const response = await mfaAPI.getQRCode(password);
-      setQRCode(response.data.qrCode);
+      setQRCode(response.data);
       setActiveStep(1);
     } catch (error) {
       setErr(error.message);
@@ -46,7 +46,7 @@ function DialogEnableMFA(props) {
   };
   const stepVerifyOTP = async () => {
     try {
-      dispatch(actionActiveMFA({ userId: user._id, otp }));
+      dispatch(actionEnableMFA({ userId: user._id, otp }));
     } catch (error) {
       console.log(error);
     }
@@ -78,7 +78,6 @@ function DialogEnableMFA(props) {
       visible={iShowDialog}
       style={{ width: "50vw" }}
       onHide={hideDialog}
-      className="dialog-notify"
     >
       <Steps model={items} activeIndex={activeStep} />
       <div className="dialog-enable-mfa-container">

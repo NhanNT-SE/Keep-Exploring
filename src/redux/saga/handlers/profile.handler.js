@@ -2,22 +2,23 @@ import profileApi from "api/profile.api";
 import { call, put } from "redux-saga/effects";
 import {
   handlerFailSaga,
-  handlerSuccessSaga
+  handlerSuccessSaga,
 } from "redux/saga/handlers/common.handler";
 import { actionSetUser } from "redux/slices/auth.slice";
 import {
   actionFailed,
   actionLoading,
-  actionSuccess
+  actionSuccess,
 } from "redux/slices/common.slice";
 import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionChangePassword,
   actionGetMyProfile,
-  actionUpdateProfile
+  actionSetProfile,
+  actionUpdateProfile,
 } from "redux/slices/profile.slice";
 import rootStore from "rootStore";
-import {DIALOG,CONFIG_URL} from "utils/global_variable";
+import { DIALOG, CONFIG_URL } from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 
 export function* handlerChangePassword(action) {
@@ -45,7 +46,7 @@ export function* handlerGetMyProfile() {
     const response = yield call(profileApi.getProfile);
     const { data } = response;
     data.avatar = `${CONFIG_URL.BASE_URL_IMAGE}/user/${data.avatar}`;
-    yield put(actionSetUser(data));
+    yield put(actionSetProfile(data));
     yield put(actionSuccess("Get my profile successfully!"));
   } catch (error) {
     console.log("user saga: ", error);
@@ -70,7 +71,7 @@ export function* handlerUpdateProfile(action) {
       remember: isRemember,
     });
     yield call(() => handlerSuccessSaga("Update Profile successfully!"));
-    yield put(actionSetUser(data));
+    yield put(actionSetProfile(data));
   } catch (error) {
     console.log("user saga: ", error);
     yield call(() => handlerFailSaga(error));

@@ -1,0 +1,25 @@
+.dialog-disable-mfa-container {
+  display: flex;
+  flex-direction: column;
+  .input-container {
+    margin: 8px 0px;
+    display: flex;
+    flex-direction: column;
+    .label{
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .p-input-icon-left,
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+  .button-container {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    button {
+      width: 48%;
+    }
+  }
+}

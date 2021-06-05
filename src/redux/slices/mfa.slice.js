@@ -3,14 +3,12 @@ const mfaSlice = createSlice({
   name: "mfa",
   initialState: {},
   reducers: {
-    actionActiveMFA() {},
     actionVerifyOTP() {},
     actionEnableMFA() {},
     actionDisableMFA() {},
   },
 });
 export const {
-  actionActiveMFA,
   actionEnableMFA,
   actionDisableMFA,
   actionVerifyOTP,

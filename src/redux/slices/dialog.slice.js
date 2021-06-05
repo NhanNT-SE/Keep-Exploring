@@ -9,6 +9,7 @@ const dialogSlice = createSlice({
     dialogDeleteUser: false,
     dialogChangePassword: false,
     dialogEnableMFA: false,
+    dialogDisableMFA: false,
   },
   reducers: {
     actionShowDialog: (state, action) => {
@@ -31,6 +32,9 @@ const dialogSlice = createSlice({
           break;
         case DIALOG.DIALOG_ENABLE_MFA:
           state.dialogEnableMFA = true;
+          break;
+        case DIALOG.DIALOG_DISABLE_MFA:
+          state.dialogDisableMFA = true;
           break;
         default:
           break;
@@ -56,6 +60,9 @@ const dialogSlice = createSlice({
           break;
         case DIALOG.DIALOG_ENABLE_MFA:
           state.dialogEnableMFA = false;
+          break;
+        case DIALOG.DIALOG_DISABLE_MFA:
+          state.dialogDisableMFA = false;
           break;
         default:
           break;
