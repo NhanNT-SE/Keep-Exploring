@@ -3,8 +3,9 @@ import * as controller from "../../controllers/auth/MFAController.js";
 
 const router = express.Router();
 
-router.post("/enable", controller.enableMFA);
-router.post("/disable", controller.disableMFA);
+router.post("/qr-code", controller.getQRCode);
 router.post("/verify", controller.verifyOTP);
+router.patch("/enable", controller.enableMFA);
+router.patch("/disable", controller.disableMFA);
 
 export default router;

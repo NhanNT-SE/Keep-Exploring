@@ -67,7 +67,7 @@ const getMyProfile = async (req, res, next) => {
     const mfa = await MFA.findOne({ owner: user._id });
     const data = JSON.parse(JSON.stringify(profile));
     return res.status(200).send({
-      data: { mfa: mfa.status,...data },
+      data: { ...data, mfa: mfa.status },
       status: 200,
       message: "Fetch data successfully!",
     });
