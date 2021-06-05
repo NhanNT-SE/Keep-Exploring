@@ -49,32 +49,13 @@
             box-shadow: none;
             background-color: transparent;
             button {
-              padding: 0px 8px;
+              padding: 0px 18px;
             }
           }
         }
       }
 
-      .header-info {
-        padding-left: 32px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        span {
-          font-variant: all-petite-caps;
-          font-weight: bold;
-        }
-        .display-name {
-          font-size: 20px;
-        }
-        .email {
-          color: #4272d7;
-          text-decoration: underline;
-        }
-        .role {
-          font-size: 18px;
-        }
-      }
+      
     }
     &-info {
       flex: 1;

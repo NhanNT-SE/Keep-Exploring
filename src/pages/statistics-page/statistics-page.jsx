@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import "./statistics-page.scss";
 import { TabPanel, TabView } from "primereact/tabview";
+import React from "react";
 import ChartNumber from "./chart-number/chart-number";
-import TreeSystem from "./tree-sytem/tree-system";
 import ChartTimeLine from "./chart-time-line/chart-time-line";
+import "./statistics-page.scss";
+import TreeSystem from "./tree-sytem/tree-system";
 
 function StatisticsPage() {
   return (

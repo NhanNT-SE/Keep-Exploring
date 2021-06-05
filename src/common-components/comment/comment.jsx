@@ -1,12 +1,12 @@
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router";
-import GLOBAL_VARIABLE from "utils/global_variable";
-import {confirmDialog } from "primereact/confirmdialog";
-import "./comment.scss";
+import { confirmDialog } from "primereact/confirmdialog";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 import { actionDeleteComment } from "redux/slices/comment.slice";
+import { CONFIG_URL } from "utils/global_variable";
+import "./comment.scss";
 function CommentComponent(props) {
   const { commentList, type } = props;
   const history = useHistory();
@@ -51,7 +51,7 @@ function CommentComponent(props) {
     <div key={item._id} className="comment-item">
       <div className="comment-header">
         <Avatar
-          image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${item.idUser.imgUser}`}
+          image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${item.idUser.imgUser}`}
           imageAlt="avatar"
           className="p-mr-2"
           shape="circle"
@@ -78,7 +78,7 @@ function CommentComponent(props) {
         <div
           className="comment-image"
           style={{
-            background: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/comment/${type}/${item.img})`,
+            background: `url(${CONFIG_URL.BASE_URL_IMAGE}/comment/${type}/${item.img})`,
           }}
         ></div>
       )}

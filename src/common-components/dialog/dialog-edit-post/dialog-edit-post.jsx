@@ -1,6 +1,6 @@
 import { StatusItemTemplate } from "common-components/template/status-template/status-template";
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG,TEMPLATE_TABLE,CONFIG_URL} from "utils/global_variable";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -8,7 +8,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import "./dialog-edit-post.scss";
 import { actionDeletePost, actionUpdatePost } from "redux/slices/post.slice";
 import { useHistory } from "react-router";
@@ -19,12 +19,12 @@ function DialogEditPost(props) {
   const history = useHistory();
   const [selectedStatus, setSelectedStatus] = useState(null);
   const isShowDialog = useSelector(
-    (state) => state.common.isShowDialogEditPost
+    (state) => state.dialog.dialogEditPost
   );
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");
   const hideDialog = () => {
-    dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
   };
   const onStatusChange = (e) => {
     if (e.value) {
@@ -93,7 +93,7 @@ function DialogEditPost(props) {
     >
       <div className="owner">
         <Avatar
-          image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${owner.imgUser}`}
+          image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${owner.imgUser}`}
           imageAlt="avatar"
           className="p-mr-2"
           style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
@@ -103,7 +103,7 @@ function DialogEditPost(props) {
       </div>
       <Dropdown
         value={selectedStatus}
-        options={GLOBAL_VARIABLE.STATUS_LIST.filter((e) => e != post.status)}
+        options={TEMPLATE_TABLE.STATUS_LIST.filter((e) => e !== post.status)}
         onChange={onStatusChange}
         placeholder={post.status.toUpperCase().replace("_", " ")}
         itemTemplate={StatusItemTemplate}

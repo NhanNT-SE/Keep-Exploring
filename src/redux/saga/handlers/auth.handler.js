@@ -1,7 +1,10 @@
 import axiosClient from "api/axiosClient";
 import authApi from "api/auth.api";
 import { call, put } from "redux-saga/effects";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import { actionSetUser } from "redux/slices/auth.slice";
 import {
   actionFailed,
@@ -9,7 +12,7 @@ import {
   actionSuccess,
 } from "redux/slices/common.slice";
 import rootStore from "rootStore";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {CONFIG_URL} from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 
 export function* handlerLogin(action) {
@@ -19,19 +22,20 @@ export function* handlerLogin(action) {
     yield put(actionLoading("Loading login user ...!"));
     const response = yield call(() => authApi.login(action.payload));
     const { data } = response;
-    data.avatar = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${data.avatar}`;
-    if (data.role !== "admin") {
+    const user = data.user;
+    user.avatar = `${CONFIG_URL.BASE_URL_IMAGE}/user/${user.avatar}`;
+    if (user.role !== "admin") {
       yield call(() =>
         handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")
       );
     } else {
       localStorageService.setToken(data.accessToken, data.refreshToken);
       localStorageService.setUser({
-        ...data,
+        ...user,
         remember: isRemember,
       });
       yield call(() => handlerSuccessSaga("Login successfully!"));
-      yield put(actionSetUser(data));
+      yield put(actionSetUser(user));
     }
   } catch (error) {
     console.log("user saga error: ", error);

@@ -1,5 +1,10 @@
 import { all } from "redux-saga/effects";
 import {
+  sagaLogin,
+  sagaLogout,
+  sagaRefreshToken,
+} from "./watchers/auth.watcher";
+import {
   sagaDeleteBlog,
   sagaGetAllBlog,
   sagaGetBlog,
@@ -11,34 +16,31 @@ import {
   sagaGetLikeList,
 } from "./watchers/comment.watcher";
 import {
+  sagaDisableMFA,
+  sagaEnableMFA,
+  sagaVerifyOTP,
+} from "./watchers/mfa.watcher";
+import {
   sagaDeletePost,
   sagaGetAllPost,
   sagaGetPost,
-  sagaGetStatistics,
-  sagaGetTimeLineStatistics,
   sagaUpdatePost,
 } from "./watchers/post.watcher";
-
-import {
-  sagaLogin,
-  sagaLogout,
-  sagaRefreshToken,
-} from "./watchers/auth.watcher";
 import {
   sagaChangePassword,
   sagaGetMyProfile,
   sagaUpdateProfile,
 } from "./watchers/profile.watcher";
 import {
+  sagaGetStatisticsNumber,
+  sagaGetStatisticsTimeLine,
+} from "./watchers/statistics.watcher";
+import {
   sagaDeleteUser,
   sagaGetSelectedUser,
   sagaGetUserList,
   sagaSendNotify,
 } from "./watchers/user.watcher";
-import {
-  sagaGetStatisticsNumber,
-  sagaGetStatisticsTimeLine,
-} from "./watchers/statistics.watcher";
 
 const sagaComment = [
   sagaDeleteComment(),
@@ -69,12 +71,15 @@ const sagaProfile = [
   sagaGetMyProfile(),
   sagaUpdateProfile(),
 ];
+const sagaMFA = [sagaEnableMFA(), sagaDisableMFA(), sagaVerifyOTP()];
+
 const sagaAuth = [sagaLogin(), sagaLogout(), sagaRefreshToken()];
 const sagaList = sagaUser.concat(
   sagaAuth,
   sagaProfile,
   sagaComment,
   sagaBlog,
+  sagaMFA,
   sagaPost,
   sagaStatistics
 );

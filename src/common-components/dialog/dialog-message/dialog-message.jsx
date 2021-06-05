@@ -3,7 +3,7 @@ import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actionHideDialog } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import "./dialog-message.scss";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -11,7 +11,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 function DialogMessage() {
   const commonState = useSelector((state) => state.common);
-  const { isError, isSuccess, message, isShowDialogMessage } = commonState;
+  const isShowDialogMessage = useSelector(
+    (state) => state.dialog.dialogMessage
+  );
+  const { isError, isSuccess, message } = commonState;
   const dispatch = useDispatch();
   const handleClose = () => {
     dispatch(actionHideDialog("message"));

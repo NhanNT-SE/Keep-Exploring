@@ -42,12 +42,14 @@ function MainPage() {
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
       <DialogMessage />
-      <HeaderComponent user={user} />
+      <HeaderComponent />
       <DrawerComponent user={user} />
       <main className={`${classes.content} page-container`}>
         <div>
           <Switch>
-            <Route exact path="/home" component={HomePage}></Route>
+            {/* <Route exact path="/home" component={HomePage}></Route> */}
+            <Route exact path="/home" component={ProfilePage}></Route>
+
             <Route exact path="/user" component={UserPage}></Route>
             <Route
               exact

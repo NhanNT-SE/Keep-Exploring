@@ -1,12 +1,12 @@
 import axios from "axios";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { CONFIG_URL } from "utils/global_variable";
 import queryString from "query-string";
 import rootStore from "rootStore";
 import localStorageService from "../utils/localStorageService";
 import { actionRefreshToken, actionSetUser } from "redux/slices/auth.slice";
 
 const axiosClient = axios.create({
-  baseURL: GLOBAL_VARIABLE.BASE_URL,
+  baseURL: CONFIG_URL.BASE_URL,
   headers: {
     "content-type": "application/json",
   },
@@ -39,6 +39,9 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     const err = error.response.data.error || error;
+    if (err.status === 500) {
+      err.message = "Internal Server Error";
+    }
     if (err.status === 401) {
       if (err.message === "jwt expired") {
         if (+err.payload > 7) {
@@ -49,7 +52,7 @@ axiosClient.interceptors.response.use(
         err.message = "Vui lòng đăng nhập lại để tiếp tục";
         localStorageService.clearStorage();
         localStorageService.clearUser();
-          rootStore.dispatch(actionSetUser(null));
+        rootStore.dispatch(actionSetUser(null));
       }
     }
     console.log("error axios", err);

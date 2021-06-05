@@ -56,7 +56,7 @@ export const STYLES_GLOBAL = makeStyles((theme) => ({
 
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    // padding: theme.spacing(3),
     overflow: "hidden",
     height: "calc(100% - 2px)",
     display: "flex",

@@ -3,7 +3,6 @@ import DialogEditPost from "common-components/dialog/dialog-edit-post/dialog-edi
 import OverlayUserLike from "common-components/overlay-panels/ovelay-user-like/overlay-user-like";
 import OverLayPanelImagePost from "common-components/overlay-panels/overlay-image-post/overlay-images-post";
 import { PostImageTemplate } from "common-components/template/post-image-template/post-image-template";
-import GLOBAL_VARIABLE from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Carousel } from "primereact/carousel";
 import { TabPanel, TabView } from "primereact/tabview";
@@ -11,13 +10,14 @@ import { Tag } from "primereact/tag";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
-import "./post-details.scss";
-import { actionGetPost } from "redux/slices/post.slice";
 import {
   actionGetCommentList,
   actionGetLikeList,
 } from "redux/slices/comment.slice";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
+import { actionGetPost } from "redux/slices/post.slice";
+import { DIALOG, RESPONSIVE_OPTIONS } from "utils/global_variable";
+import "./post-details.scss";
 function PostDetailsPage() {
   const { postId } = useParams();
   const post = useSelector((state) => state.post.selectedPost);
@@ -49,7 +49,7 @@ function PostDetailsPage() {
     );
     dispatch(actionGetLikeList({ type: "post", body: { idPost: postId } }));
     return () => {
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+      dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     };
   }, []);
 
@@ -61,7 +61,7 @@ function PostDetailsPage() {
             value={post.imgs}
             numVisible={post.imgs.length >= 4 ? 3 : post.imgs.length}
             numScroll={2}
-            responsiveOptions={GLOBAL_VARIABLE.RESPONSIVE_OPTIONS}
+            responsiveOptions={RESPONSIVE_OPTIONS}
             itemTemplate={(img) => (
               <PostImageTemplate
                 img={img}
@@ -107,9 +107,7 @@ function PostDetailsPage() {
                     icon="pi pi-pencil"
                     className="p-button-rounded p-button-success p-mr-2"
                     onClick={() =>
-                      dispatch(
-                        actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST)
-                      )
+                      dispatch(actionShowDialog(DIALOG.DIALOG_EDIT_POST))
                     }
                   />
                   <Button

@@ -1,12 +1,12 @@
 import {
   AppBar,
-  Badge,
+
   IconButton,
   Toolbar,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { Menu, Mail, Notifications } from "@material-ui/icons";
+import { Menu } from "@material-ui/icons";
 import clsx from "clsx";
 import { STYLES_GLOBAL } from "common-components/styles-global";
 import React from "react";
@@ -14,7 +14,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionOpenDrawer } from "redux/slices/common.slice";
 import HeaderMenu from "./components/header-menu/header-menu";
 import "./header.scss";
-function HeaderComponent(props) {
+function HeaderComponent() {
+  const user = useSelector((state) => state.auth.user);
+
   const classes = STYLES_GLOBAL();
   const open = useSelector((state) => state.common.isOpenDrawer);
   const dispatch = useDispatch();
@@ -51,7 +53,7 @@ function HeaderComponent(props) {
             <Notifications />
           </Badge> */}
           <div className="user-action">
-            <HeaderMenu user={props.user} />
+            <HeaderMenu user={user} />
           </div>
         </div>
       </AppBar>

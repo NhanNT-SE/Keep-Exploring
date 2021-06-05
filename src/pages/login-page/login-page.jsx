@@ -15,20 +15,18 @@ const schema = yup.object().shape({
     .string()
     .required("Email address is a required field")
     .email("Invalid email address"),
-  password: yup
-    .string()
-    .required()
-    .matches(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
-    ),
+  password: yup.string().required(),
+  // .matches(
+  //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+  //   "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+  // ),
 });
 function LoginPage(props) {
   const user = useSelector((state) => state.auth.user);
   const isRemember = useSelector((state) => state.common.isRemember);
   const loadingStore = useSelector((state) => state.common.isLoading);
-  const [username, setUsername] = useState("nhan@keep-exploring.com");
-  const [password, setPassword] = useState("Nhanvippro320377@");
+  const [username, setUsername] = useState("nhannt@keep-exploring.com");
+  const [password, setPassword] = useState("KeepExploring@");
   const history = useHistory();
   const dispatch = useDispatch();
   const { handleSubmit, control, errors, register, setValue } = useForm({

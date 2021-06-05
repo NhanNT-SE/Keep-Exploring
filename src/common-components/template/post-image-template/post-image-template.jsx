@@ -1,5 +1,4 @@
-import { useState } from "react";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { CONFIG_URL } from "utils/global_variable";
 import "./post-image-template.scss";
 export const PostImageTemplate = (props) => {
   const { img, op, setUrlImageOverlayPanel } = props;
@@ -9,11 +8,11 @@ export const PostImageTemplate = (props) => {
         <div
           className="image"
           style={{
-            backgroundImage: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/post/${img})`,
+            backgroundImage: `url(${CONFIG_URL.BASE_URL_IMAGE}/post/${img})`,
           }}
           onClick={(e) => {
             setUrlImageOverlayPanel(
-              `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/post/${img})`
+              `url(${CONFIG_URL.BASE_URL_IMAGE}/post/${img})`
             );
             op.current.toggle(e);
           }}

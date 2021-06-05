@@ -1,24 +1,21 @@
-import { MultiSelect } from "primereact/multiselect";
+import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
+import TableComponent from "common-components/table/table";
+import DateBodyTemplate from "common-components/template/date-template/date-template";
+import { GenderBodyTemplate, GenderItemTemplate, SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
+import { Button } from "primereact/button";
+import { Chip } from "primereact/chip";
+import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import { actionGetUserList } from "redux/slices/user.slice";
-import TableComponent from "common-components/table/table";
-import { Column } from "primereact/column";
-import { Chip } from "primereact/chip";
+import {COL_TABLE,TEMPLATE_TABLE,CONFIG_URL,DIALOG} from "utils/global_variable";
 import "./notify-page.scss";
-import { Button } from "primereact/button";
-import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
-import { Dropdown } from "primereact/dropdown";
-import { GenderItemTemplate } from "common-components/template/gender-template/gender-template";
-import { SelectedGenderTemplate } from "common-components/template/gender-template/gender-template";
-import DateBodyTemplate from "common-components/template/date-template/date-template";
-import { GenderBodyTemplate } from "common-components/template/gender-template/gender-template";
 
 function NotifyPage() {
   const dt = useRef(null);
-  const columns = GLOBAL_VARIABLE.COLUMNS_NOTIFY;
+  const columns = COL_TABLE.COLUMNS_NOTIFY;
   const dispatch = useDispatch();
   const [selectedData, setSelectedData] = useState(null);
   const [selectedUser, setSelectedUser] = useState([]);
@@ -31,12 +28,12 @@ function NotifyPage() {
   };
   const sendNotify = () => {
     console.log(selectedUser);
-    dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+    dispatch(actionShowDialog(DIALOG.DIALOG_NOTIFY));
   };
   const genderFilter = (
     <Dropdown
       value={selectedGender}
-      options={GLOBAL_VARIABLE.GENDER_LIST}
+      options={TEMPLATE_TABLE.GENDER_LIST}
       onChange={onGenderChange}
       itemTemplate={GenderItemTemplate}
       valueTemplate={SelectedGenderTemplate}
@@ -68,7 +65,7 @@ function NotifyPage() {
   useEffect(() => {
     dispatch(actionGetUserList());
     return () => {
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+      dispatch(actionHideDialog(DIALOG.DIALOG_NOTIFY));
     };
   }, []);
   useEffect(() => {
@@ -96,7 +93,7 @@ function NotifyPage() {
             <Chip
               key={e._id}
               label={e.email}
-              image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${e.imgUser}`}
+              image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${e.imgUser}`}
               className="custom-chip p-mb-2"
               removable
               onRemove={() => {

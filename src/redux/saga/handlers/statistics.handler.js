@@ -7,7 +7,6 @@ import {
   actionSetStatisticsNumber,
   actionSetStatisticsTimeLine,
 } from "redux/slices/statistics.slice";
-
 import localStorageService from "utils/localStorageService";
 
 export function* handlerGetStatisticsNumber() {

@@ -6,8 +6,8 @@ import { useHistory, useParams } from "react-router";
 import { actionGetSelectedUser } from "redux/slices/user.slice";
 import { InputText } from "primereact/inputtext";
 import "./user-details.scss";
-import GLOBAL_VARIABLE from "utils/global_variable";
-import { actionHideDialog, actionShowDialog } from "redux/slices/common.slice";
+import {DIALOG,CONFIG_URL} from "utils/global_variable";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
 import { convertDate } from "utils/helper";
@@ -23,8 +23,8 @@ function UserDetailsPage() {
   useEffect(() => {
     dispatch(actionGetSelectedUser(userId));
     return () => {
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+      dispatch(actionHideDialog(DIALOG.DIALOG_NOTIFY));
+      dispatch(actionHideDialog(DIALOG.DIALOG_DELETE_USER));
     };
   }, []);
   useEffect(() => {
@@ -53,7 +53,7 @@ function UserDetailsPage() {
           <DialogDeleteUser user={user} />
           <div className="container-header">
             <Avatar
-              image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.avatar}`}
+              image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${user.avatar}`}
               className="avatar-user"
               shape="circle"
             />
@@ -69,7 +69,7 @@ function UserDetailsPage() {
                 icon="pi pi-send"
                 iconPos="right"
                 onClick={() =>
-                  dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY))
+                  dispatch(actionShowDialog(DIALOG.DIALOG_NOTIFY))
                 }
               />
               <Button
@@ -78,7 +78,7 @@ function UserDetailsPage() {
                 icon="pi pi-trash"
                 iconPos="right"
                 onClick={() =>
-                  dispatch(actionShowDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER))
+                  dispatch(actionShowDialog(DIALOG.DIALOG_DELETE_USER))
                 }
               />
             </div>
@@ -102,14 +102,22 @@ function UserDetailsPage() {
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Post:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.userInfo.postList.length} />
+                  <InputText
+                    type="text"
+                    disabled
+                    value={user.userInfo.postList.length}
+                  />
                 </div>
               </div>
 
               <div className="p-field p-grid">
                 <label className="p-col-12 p-md-2">Blog:</label>
                 <div className="p-col-12 p-md-10">
-                  <InputText type="text" disabled value={user.userInfo.blogList.length} />
+                  <InputText
+                    type="text"
+                    disabled
+                    value={user.userInfo.blogList.length}
+                  />
                 </div>
               </div>
               <div className="p-field p-grid">

@@ -1,5 +1,5 @@
 import React from "react";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {CONFIG_URL} from "utils/global_variable";
 import "./blog-content.scss";
 function BlogContent(props) {
   const { blog } = props;
@@ -10,7 +10,7 @@ function BlogContent(props) {
         <div
           className="image-content"
           style={{
-            backgroundImage: `url(${GLOBAL_VARIABLE.BASE_URL_IMAGE}/blog/${blog.img})`,
+            backgroundImage: `url(${CONFIG_URL.BASE_URL_IMAGE}/blog/${blog.img})`,
           }}
         ></div>
         <div className="desc-content">

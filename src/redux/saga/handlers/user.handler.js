@@ -1,13 +1,16 @@
 import notifyApi from "api/notify.api";
 import userApi from "api/user.api";
 import { call, put } from "redux-saga/effects";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
+import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionDeleteUser,
   actionGetSelectedUser,
@@ -16,8 +19,7 @@ import {
   actionSetSelectedUser,
   actionSetUserList,
 } from "redux/slices/user.slice";
-
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG} from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 
 export function* handlerDeleteUser(action) {
@@ -27,7 +29,7 @@ export function* handlerDeleteUser(action) {
     yield put(actionLoading("Loading deleting user...!"));
     yield call(() => userApi.deleteUser(userId));
     yield call(() => handlerSuccessSaga("Delete user successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    yield put(actionHideDialog(DIALOG.DIALOG_DELETE_USER));
     history.push("/user");
   } catch (error) {
     console.log("user saga: ", error);
@@ -67,7 +69,7 @@ export function* handlerSendNotify(action) {
     yield put(actionLoading("Loading send notify for user...!"));
     yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Send notify successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+    yield put(actionHideDialog(DIALOG.DIALOG_NOTIFY));
   } catch (error) {
     console.log("user saga: ", error);
     yield call(() => handlerFailSaga(error));

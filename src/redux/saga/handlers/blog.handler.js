@@ -1,6 +1,10 @@
 import blogApi from "api/blog.api";
 import notifyApi from "api/notify.api";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
+import {
+  handlerFailSaga,
+  handlerSuccessSaga,
+} from "redux/saga/handlers/common.handler";
 import {
   actionDeleteBlog,
   actionGetAllBlog,
@@ -11,13 +15,12 @@ import {
 } from "redux/slices/blog.slice";
 import {
   actionFailed,
-  actionHideDialog,
   actionLoading,
   actionSuccess,
 } from "redux/slices/common.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { actionHideDialog } from "redux/slices/dialog.slice";
+import {DIALOG} from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
-import { handlerFailSaga, handlerSuccessSaga } from "redux/saga/handlers/common.handler";
 export function* handlerDeleteBlog(action) {
   try {
     localStorageService.setLatestAction(actionDeleteBlog.type);
@@ -27,7 +30,7 @@ export function* handlerDeleteBlog(action) {
     yield call(() => blogApi.deleteBlog(blogId));
     yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Delete blog successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    yield put(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     history.push("/blog");
   } catch (error) {
     console.log("post slice: ", error);
@@ -75,7 +78,7 @@ export function* handlerUpdateBlog(action) {
       yield call(() => notifyApi.sendNotify(action.payload));
     }
     yield call(() => handlerSuccessSaga("Update blog successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    yield put(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
   } catch (error) {
     console.log("post saga: ", error);
     yield call(() => handlerFailSaga(error));

@@ -1,10 +1,10 @@
 import { Avatar } from "primereact/avatar";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {CONFIG_URL} from "utils/global_variable";
 
 export const AvatarBodyTemplate = (rowData) => {
   return (
     <Avatar
-      image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${rowData.avatar}`}
+      image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${rowData.avatar}`}
       imageAlt="avatar"
       className="p-mr-2"
       shape="circle"
