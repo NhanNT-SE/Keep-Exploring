@@ -7,15 +7,15 @@ import { Token } from "../../models/Token.js";
 import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
-import { customError } from "../../helpers/CustomError.js";
+import { customError, errorAuth } from "../../helpers/CustomError.js";
 import lodash from "lodash";
-import * as mfaHelper from "../../helpers/MFAHelper.js";
 import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_LIFE,
   REFRESH_TOKEN_LIFE,
 } from "../../config/index.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const signIn = async (req, res, next) => {
   const { session, opts } = req;
@@ -38,7 +38,7 @@ const signIn = async (req, res, next) => {
           REFRESH_TOKEN_SECRET,
           REFRESH_TOKEN_LIFE
         );
-
+        customError;
         const mfa = await MFA.findOne({ owner: user._id }).session(session);
         const userInfo = await UserInfo.findOne({ owner: user._id }).session(
           session
@@ -61,13 +61,7 @@ const signIn = async (req, res, next) => {
               status: "new",
             }).save({ session });
           }
-          infoUpdate = await UserInfo.findByIdAndUpdate(
-            userInfo._id,
-            {
-              ...userStatus,
-            },
-            opts
-          );
+          infoUpdate = await userInfo.updateOne({ ...userStatus }, opts);
         } else {
           infoUpdate = userInfo;
         }
@@ -79,28 +73,26 @@ const signIn = async (req, res, next) => {
         const data = {
           accessToken,
           refreshToken,
-          mfa: mfa.status,
-          ...lodash.pick(user, [
-            "_id",
-            "username",
-            "email",
-            "displayName",
-            "avatar",
-            "role",
-          ]),
-          ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
+          user: {
+            mfa: mfa.status,
+            ...lodash.pick(user, [
+              "_id",
+              "username",
+              "email",
+              "displayName",
+              "avatar",
+              "role",
+            ]),
+            ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
+          },
         };
         await session.commitTransaction();
         session.endSession();
-        return res.status(200).send({
-          data,
-          status: 200,
-          message: "Đăng nhập thành công",
-        });
+        return res.send(customResponse(data, "Đăng nhập thành công"));
       }
-      customError(500, "Mật khẩu của bạn không đúng");
+      customError("Mật khẩu của bạn không đúng");
     }
-    customError(500, "Người dùng không tồn tại");
+    customError("Người dùng không tồn tại");
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -112,18 +104,14 @@ const signOut = async (req, res, next) => {
     const { userId } = req.body;
     const user = await User.findById(userId);
     if (user) {
-      const data = await Token.findOneAndUpdate(
+      await Token.findOneAndUpdate(
         { owner: userId },
-        { accessToken: null, refreshToken: null },
+        { $unset: { accessToken: 1, refreshToken: 1 } },
         { returnOriginal: false }
       );
-      return res.status(200).send({
-        data,
-        status: 200,
-        message: "Đăng xuất thành công",
-      });
+      return res.send(customResponse(null, "Đăng xuất thành công"));
     }
-    return customError(500, "Không tồn tại người dùng này trong hệ thống");
+    return customError("Không tồn tại người dùng này trong hệ thống");
   } catch (error) {
     next(error);
   }
@@ -148,16 +136,12 @@ const signUp = async (req, res, next) => {
     }).save({ session });
     const owner = user._id;
     await new Token({ owner }).save({ session });
-    await new MFA({ owner }).save({ session });
+    const mfa = await new MFA({ owner }).save({ session });
     const userInfo = await new UserInfo({ owner }).save({ session });
-    await User.findByIdAndUpdate(owner, { userInfo: userInfo._id }, opts);
+    await user.update({ userInfo: userInfo._id, mfa: mfa._id }, opts);
     await session.commitTransaction();
     session.endSession();
-    return res.status(200).send({
-      data: userInfo,
-      message: "Đăng ký thành công",
-      status: 200,
-    });
+    return res.send(customResponse(userInfo, "Đăng ký thành công"));
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -170,7 +154,7 @@ const refreshToken = async (req, res, next) => {
     const { refreshToken, userId } = req.body;
 
     const decoded = await verifyToken(refreshToken, REFRESH_TOKEN_SECRET);
-    const token = await Token.findById(userId);
+    const token = await Token.findOne({ owner: userId });
     if (decoded._id === userId) {
       if (token && token.refreshToken === refreshToken) {
         const userData = decoded;
@@ -179,17 +163,15 @@ const refreshToken = async (req, res, next) => {
           ACCESS_TOKEN_SECRET,
           ACCESS_TOKEN_LIFE
         );
-        token.accessToken = accessToken;
-        await token.save();
-        return res.status(200).send({
-          data: accessToken,
-          status: 200,
-          message: "Refresh token thành công",
-        });
+
+        await token.updateOne({ accessToken });
+        return res.send(
+          customResponse(accessToken, "Refresh token thành công")
+        );
       }
-      customError(401, "Refresh Token của bạn không hợp lệ");
+      errorAuth(401, "Refresh Token của bạn không hợp lệ");
     }
-    customError(
+    errorAuth(
       401,
       "Refresh token này không phải của bạn, vui lòng sử dụng refresh token của mình để tiếp tục"
     );
@@ -203,20 +185,17 @@ const forgetPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      customError(201, "Email của bạn không đúng");
+      customError("Email của bạn không đúng");
     }
     if (user.displayName !== displayName) {
-      customError(201, "Tên hiển thị của bạn không đúng");
+      customError("Tên hiển thị của bạn không đúng");
     }
     if (user.bod.toString() != new Date(bod)) {
-      customError(201, "Ngày sinh của bạn không đúng");
+      customError("Ngày sinh của bạn không đúng");
     }
-
-    return res.status(200).send({
-      data: "Xác nhận thành công",
-      status: 200,
-      message: "Lấy mật khẩu thành công",
-    });
+    return res.send(
+      customResponse("Xác nhận thành công", "Lấy mật khẩu thành công")
+    );
   } catch (error) {
     next(error);
   }
@@ -227,12 +206,10 @@ const getNewPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
     const salt = await bcrypt.genSalt(10);
     const passHashed = await bcrypt.hash(newPass, salt);
-    await User.findByIdAndUpdate(user._id, { pass: passHashed });
-    return res.status(200).send({
-      data: "Đã đổi mật khẩu thành công",
-      status: 200,
-      message: "Lấy mật khẩu thành công",
-    });
+    await user.updateOne({ password: passHashed });
+    return res.send(
+      customResponse("Đã đổi mật khẩu thành công", "Đã đổi mật khẩu thành công")
+    );
   } catch (error) {
     next(error);
   }

@@ -1,15 +1,12 @@
-import {Blog} from "../../models/Blog.js";
-import {customError} from "../../helpers/CustomError.js";
+import { Blog } from "../../models/Blog.js";
+import { customError } from "../../helpers/CustomError.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 const getAllBlog = async (req, res, next) => {
   try {
     const blog_list = await Blog.find({})
       .populate("owner", ["displayName", "imgUser", "email"])
       .sort({ created_on: -1 });
-    return res.send({
-      data: blog_list,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(blog_list));
   } catch (error) {
     next(error);
   }
@@ -21,12 +18,9 @@ const deleteBlog = async (req, res, next) => {
     const blog = await Blog.findById(idBlog);
     if (blog) {
       await Blog.findByIdAndDelete(idBlog);
-      return res.status(200).send({
-        data: blog,
-        status: 200,
-      });
+      return res.send(customResponse(blog, "Xoa bai viet thanh cong"));
     }
-    customError(500, "Bai viet khong ton tai");
+    customError("Bai viet khong ton tai");
   } catch (error) {
     next(error);
   }
@@ -41,14 +35,10 @@ const updateStatus = async (req, res, next) => {
         status,
         view_mode: "public",
       };
-      await Blog.findByIdAndUpdate(idBlog, blogUpdate);
-      return res.send({
-        data: blog,
-        status: 200,
-        message: "Cập nhật bài viết thành công",
-      });
+      await blog.updateOne({ ...blogUpdate }, { returnOriginal: false });
+      return res.send(customResponse(blog, "Cập nhật bài viết thành công"));
     }
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
     console.log(error);
     next(error);

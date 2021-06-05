@@ -1,12 +1,13 @@
 import fs from "fs";
-import {Blog} from "../../models/Blog.js";
-import {ContentBlog} from "../../models/ContentBlog.js";
-import {Notification} from "../../models/Notification.js";
-import {User} from "../../models/User.js";
-import {customError} from "../../helpers/CustomError.js";
-import  {createNotification}  from "../../helpers/NotifyHelper.js";
+import { Blog } from "../../models/Blog.js";
+import { ContentBlog } from "../../models/ContentBlog.js";
+import { Notification } from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { customError } from "../../helpers/CustomError.js";
+import { createNotification } from "../../helpers/NotifyHelper.js";
 
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const createBlog = async (req, res, next) => {
   try {
@@ -60,11 +61,7 @@ const createBlog = async (req, res, next) => {
       id: blog._id,
       message: `Bài viết ${blog.title} vừa được tạo, đang chờ kiểm duyệt`,
     });
-    return res.status(200).send({
-      status: 200,
-      data: ContentBlog,
-      message: "Tạo bài viết thành công",
-    });
+    return res.send(customResponse(contentBlog, "Tạo bài viết thành công"));
   } catch (error) {
     next(error);
   }
@@ -86,15 +83,11 @@ const deleteBlog = async (req, res, next) => {
         await ContentBlog.findByIdAndDelete(idBlog);
         await Blog.findByIdAndDelete(idBlog);
         await User.findByIdAndUpdate(user._id, { $pull: { blog: idBlog } });
-        return res.status(200).send({
-          status: 200,
-          data: blogFound,
-          message: "Xóa bài viết thành công",
-        });
+        return res.send(customResponse(blogFound, "Xóa bài viết thành công"));
       }
-      customError(201, "Bài viết không tồn tại");
+      customError("Bài viết không tồn tại");
     }
-    customError(201, "Bạn thể xóa bài viết của người khác");
+    customError("Bạn thể xóa bài viết của người khác");
   } catch (error) {
     next(error);
   }
@@ -132,14 +125,13 @@ const likeBlog = async (req, res, next) => {
           idBlog,
         });
       }
-      return res.send({
-        data: blogFound,
-        status: 200,
-        message: notification ? "Đã thích bài viết" : "Đã bỏ thích bài viết",
-      });
+      const resMsg = notification
+        ? "Đã thích bài viết"
+        : "Đã bỏ thích bài viết";
+      return res.send(customResponse(blogFound, resMsg));
     }
 
-    customError(202, "Bài viết không tồn tại");
+    customError("Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -162,11 +154,7 @@ const getBlogListByUser = async (req, res, next) => {
         .populate("owner", ["displayName", "imgUser", "email"])
         .sort({ created_on: -1 });
     }
-    return res.send({
-      data: blogList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(blogList));
   } catch (error) {
     next(error);
   }
@@ -223,11 +211,7 @@ const updateBlog = async (req, res, next) => {
       id: blog._id,
       message: `Bài ${blog.title} viết vừa chỉnh sửa, đang chờ kiểm duyệt`,
     });
-    return res.status(200).send({
-      status: 200,
-      data: contentBlog,
-      message: "Đã cập nhật bài viết",
-    });
+    return res.send(customResponse(contentBlog, "Đã cập nhật bài viết"));
   } catch (error) {
     next(error);
   }

@@ -6,6 +6,7 @@ import { Notification } from "../../models/Notification.js";
 import { customError } from "../../helpers/CustomError.js";
 import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 const changePass = async (req, res, next) => {
   try {
     const { oldPass, newPass } = req.body;
@@ -30,13 +31,9 @@ const changePass = async (req, res, next) => {
         type: "system",
         content: "Mật khẩu của bạn đã được cập nhật",
       });
-      return res.status(200).send({
-        data: {},
-        status: 200,
-        message: "Đổi mật khẩu thành công",
-      });
+      return res.send(customResponse({}, "Đổi mật khẩu thành công"));
     }
-    customError(201, "Mật khẩu của bạn không đúng");
+    customError("Mật khẩu của bạn không đúng");
   } catch (error) {
     next(error);
   }
@@ -47,13 +44,9 @@ const getAnotherProfile = async (req, res, next) => {
     const { idUser } = req.params;
     const user = await User.one({ _id: idUser, role: "user" });
     if (user) {
-      return res.status(200).send({
-        data: user,
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
+      return res.send(customResponse(user));
     }
-    return customError(201, "Người dùng không tồn tại hoặc đã bị xóa");
+    return customError("Người dùng không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -66,11 +59,7 @@ const getMyProfile = async (req, res, next) => {
     );
     const mfa = await MFA.findOne({ owner: user._id });
     const data = JSON.parse(JSON.stringify(profile));
-    return res.status(200).send({
-      data: { mfa: mfa.status,...data },
-      status: 200,
-      message: "Fetch data successfully!",
-    });
+    return res.send(customResponse({ ...data, mfa: mfa.status }));
   } catch (error) {
     next(error);
   }
@@ -85,7 +74,7 @@ const updateProfile = async (req, res, next) => {
     let avatar;
 
     if (!userFound) {
-      customError(201, "Người dùng không tồn tại");
+      customError("Người dùng không tồn tại");
     }
 
     if (file) {
@@ -120,15 +109,15 @@ const updateProfile = async (req, res, next) => {
       message: msgNotify,
       type: "system",
     });
-    return res.status(200).send({
-      data: {
+    const data = customResponse(
+      {
         _id: user._id,
         email: user.email,
         ...newUser,
       },
-      message: "Cập nhật thông tin cá nhân thành công",
-      status: 200,
-    });
+      "Cập nhật thông tin cá nhân thành công"
+    );
+    return res.send(data);
   } catch (error) {
     next(error);
   }

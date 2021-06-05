@@ -1,15 +1,16 @@
 import "../../models/Blog.js";
 import "../../models/Post.js";
-import {customError} from "../../helpers/CustomError.js";
-import {Notification} from "../../models/Notification.js";
-import {User} from "../../models/User.js";
+import { customError } from "../../helpers/CustomError.js";
+import { Notification } from "../../models/Notification.js";
+import { User } from "../../models/User.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const changeNewStatusNotify = async (req, res, next) => {
   try {
     const { idNotify } = req.params;
     const notifyFound = await Notification.findById(idNotify);
     if (!notifyFound) {
-      customError(201, "Thông báo không tồn tại");
+      customError("Thông báo không tồn tại");
     }
     await await Notification.findByIdAndUpdate(idNotify, { status: "new" });
     return res.send({
@@ -28,11 +29,7 @@ const changeSeenStatusNotify = async (req, res, next) => {
       { idUser, status: "new" },
       { status: "seen" }
     );
-    return res.status(200).send({
-      data: {},
-      status: 200,
-      message: "Cập nhật trạng thái thành công",
-    });
+    return res.send(customResponse({}, "Cập nhật trạng thái thành công"));
   } catch (error) {
     next(error);
   }
@@ -43,17 +40,13 @@ const deleteNotifyById = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     const notifyFound = await Notification.findById(idNotify);
     if (!notifyFound) {
-      return customError(201, "Thông báo không tồn tại hoặc đã bị xóa");
+      return customError("Thông báo không tồn tại hoặc đã bị xóa");
     }
     if (user.role === "admin" || user._id == notifyFound.idUser.toString()) {
       await Notification.findByIdAndDelete(idNotify);
-      return res.send({
-        data: { idNotify },
-        status: 200,
-        message: "Đã xóa thông báo",
-      });
+      return res.send(customResponse(idNotify, "Đã xóa thông báo"));
     }
-    return customError(202, "Bạn không thể xóa thông báo này");
+    return customError("Bạn không thể xóa thông báo này");
   } catch (error) {
     next(error);
   }
@@ -67,12 +60,7 @@ const getAllByUser = async (req, res, next) => {
       .populate("idPost", ["status", "imgs", "title"])
       .populate("idBlog", ["status", "img", "title"])
       .sort({ created_on: -1 }));
-
-    return res.send({
-      data: notifyList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(notifyList));
   } catch (error) {
     next(error);
   }

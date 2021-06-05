@@ -1,5 +1,6 @@
-import {customError} from "../../helpers/CustomError.js";
-import {Address} from "../../models/Address.js";
+import { customError } from "../../helpers/CustomError.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
+import { Address } from "../../models/Address.js";
 
 const getAddress = async (req, res, next) => {
   try {
@@ -15,19 +16,11 @@ const getAddress = async (req, res, next) => {
       if (index >= 0 && district) {
         wardList = address.district[index].ward;
       }
-      return res.status(200).send({
-        data: {
-          wardList,
-          districtList,
-        },
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
+      return res.send(
+        customResponse({ wardList, districtList })
+      );
     }
-    customError(
-      201,
-      `Không tìm thấy địa điểm ${province} trong hệ thống`
-    );
+    customError(`Không tìm thấy địa điểm ${province} trong hệ thống`);
   } catch (error) {
     next(error);
   }
@@ -36,11 +29,7 @@ const getProvinceList = async (req, res, next) => {
   try {
     const address = await Address.find({});
     const provinceList = address.map((e) => e.province);
-    return res.status(200).send({
-      data: provinceList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(provinceList));
   } catch (error) {
     next(error);
   }

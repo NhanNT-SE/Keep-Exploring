@@ -1,8 +1,9 @@
-import {customError} from "../../helpers/CustomError.js";
-import {Comment} from "../../models/Comment.js";
-import {Post} from "../../models/Post.js";
+import { customError } from "../../helpers/CustomError.js";
+import { Comment } from "../../models/Comment.js";
+import { Post } from "../../models/Post.js";
 import "../../models/User.js";
 import "../../models/Comment.js";
+import { customResponse } from "../../helpers/CustomResponse.js";
 
 const getPostById = async (req, res, next) => {
   try {
@@ -15,11 +16,9 @@ const getPostById = async (req, res, next) => {
       "post",
     ]);
     if (post) {
-      return res
-        .status(200)
-        .send({ data: post, status: 200, message: "Lấy dữ liệu thành công" });
+      return res.send(customResponse(post));
     }
-    return customError(201, "Bài viết không tồn tại");
+    return customError("Bài viết không tồn tại");
   } catch (error) {
     next(error);
   }
@@ -37,11 +36,7 @@ const getPostList = async (req, res, next) => {
         .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
         .sort({ created_on: -1 });
     }
-    return res.send({
-      data: postList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(postList));
   } catch (error) {
     next(error);
   }
@@ -65,11 +60,7 @@ const getPostByQuery = async (req, res, next) => {
         e.title.toLowerCase().includes(query.toLowerCase())
       );
     }
-    return res.send({
-      data: resultList,
-      status: 200,
-      message: "Lấy dữ liệu thành công",
-    });
+    return res.send(customResponse(resultList));
   } catch (error) {
     next(error);
   }
@@ -88,14 +79,9 @@ const getPostComment = async (req, res, next) => {
         "post",
         "blog",
       ]);
-
-      return res.send({
-        data: commentList.reverse(),
-        status: 200,
-        message: "Lấy dữ liệu thành công",
-      });
+      return res.send(customResponse(commentList.reverse()));
     }
-    return customError(202, "Bài viết không tồn tại hoặc đã bị xóa");
+    return customError("Bài viết không tồn tại hoặc đã bị xóa");
   } catch (error) {
     next(error);
   }
@@ -112,15 +98,11 @@ const getLikeListPost = async (req, res, next) => {
       "blog",
     ]);
     if (!postFound) {
-      return customError(201, "Bài viết không tồn tại hoặc đã bị xóa");
+      return customError("Bài viết không tồn tại hoặc đã bị xóa");
     }
 
     const likeList = postFound.like_list;
-    return res.send({
-      data: likeList,
-      status: 200,
-      message: "Danh sách những người like bài viết",
-    });
+    return res.send(customResponse(likeList));
   } catch (error) {
     next(error);
   }
