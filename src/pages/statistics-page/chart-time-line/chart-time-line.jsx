@@ -1,7 +1,6 @@
 import { Chart } from "primereact/chart";
-import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { actionGetStatistics } from "redux/slices/post.slice";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import "./chart-time-line.scss";
 
 function ChartTimeLine() {

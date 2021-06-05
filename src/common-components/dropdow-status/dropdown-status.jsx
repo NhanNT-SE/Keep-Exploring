@@ -1,6 +1,6 @@
 import { SelectedStatusTemplate } from "common-components/template/status-template/status-template";
 import { StatusItemTemplate } from "common-components/template/status-template/status-template";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {TEMPLATE_TABLE} from "utils/global_variable";
 import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
 
@@ -21,7 +21,7 @@ function DropdownStatus(props) {
     <Dropdown
       {...props}
       value={selectedStatus}
-      options={GLOBAL_VARIABLE.STATUS_LIST}
+      options={TEMPLATE_TABLE.STATUS_LIST}
       onChange={onStatusChange}
       placeholder="Select a Status"
       itemTemplate={(option) => <StatusItemTemplate option={option} />}

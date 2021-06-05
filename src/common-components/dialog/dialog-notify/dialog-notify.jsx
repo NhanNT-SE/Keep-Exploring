@@ -7,15 +7,15 @@ import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
   actionSendNotify
 } from "redux/slices/user.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG} from "utils/global_variable";
 import "./dialog-notify.scss";
 function DialogNotify(props) {
   const { userList } = props;
   const dispatch = useDispatch();
   const [notify, setNotify] = useState("");
-  const isShowDialog = useSelector((state) => state.dialog.isShowDialogNotify);
+  const isShowDialog = useSelector((state) => state.dialog.dialogNotify);
   const hideDialog = () => {
-    dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_NOTIFY));
+    dispatch(actionHideDialog(DIALOG.DIALOG_NOTIFY));
   };
   const sendNotify = () => {
     const payload = {
@@ -59,7 +59,7 @@ function DialogNotify(props) {
       onHide={hideDialog}
       className="dialog-notify"
     >
-      {userList.length == 1 ? (
+      {userList.length === 1 ? (
         <h5>Send notification to this user</h5>
       ) : (
         <h5>Send notification to selected users</h5>

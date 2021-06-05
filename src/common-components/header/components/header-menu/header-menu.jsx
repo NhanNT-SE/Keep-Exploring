@@ -15,7 +15,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { actionLogout } from "redux/slices/auth.slice";
 import { io } from "socket.io-client";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { CONFIG_URL } from "utils/global_variable";
 import "./header-menu.scss";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,13 +35,12 @@ function HeaderMenu(props) {
   const [open, setOpen] = useState(false);
   const [badge, setBadge] = useState(0);
   const [notifyList, setNotifyList] = useState([]);
-  const [notify, setNotify] = useState(null);
   const anchorRef = useRef(null);
   const { user } = props;
   const opNotify = useRef(null);
   const isMounted = useRef(false);
   const dispatch = useDispatch();
-  const BASE_URL_IMAGE = GLOBAL_VARIABLE.BASE_URL_IMAGE;
+  const BASE_URL_IMAGE = CONFIG_URL.BASE_URL_IMAGE;
   const prevOpen = useRef(open);
 
   const handleToggle = () => {
@@ -80,36 +79,28 @@ function HeaderMenu(props) {
   }
 
   useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
-    }
-
-    prevOpen.current = open;
-  }, [open]);
-  useEffect(() => {
     if (isMounted.current) {
       opNotify.current.hide();
     }
     isMounted.current = true;
-
-    const socket = io(GLOBAL_VARIABLE.BASE_URL);
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+    prevOpen.current = open;
+  }, [open]);
+  useEffect(() => {
+    const socket = io(CONFIG_URL.BASE_URL);
     socket.on("notification:admin", (data) => {
-      setNotify(data);
+      const tempList = [...notifyList];
+      tempList.push(data);
+      const tempBadge = badge;
+      setNotifyList(tempList);
+      setBadge(tempBadge + 1);
     });
-
     return () => {
       socket.disconnect();
     };
-  }, []);
-  useEffect(() => {
-    if (notify) {
-      const tempList = [...notifyList];
-      tempList.push(notify);
-      setNotifyList(tempList);
-      setBadge(badge + 1);
-    }
-  }, [notify]);
-
+  }, [badge, notifyList]);
   return (
     <div className="header-menu-wrapper">
       <div

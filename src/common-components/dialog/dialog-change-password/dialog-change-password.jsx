@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { actionHideDialog } from "redux/slices/dialog.slice";
 import { actionChangePassword } from "redux/slices/profile.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG} from "utils/global_variable";
 import * as yup from "yup";
 import "./dialog-change-password.scss";
 const schema = yup.object().shape({
@@ -44,10 +44,10 @@ function DialogChangePassword(props) {
   const history = useHistory();
 
   const isShowDialog = useSelector(
-    (state) => state.dialog.isShowDialogChangePassword
+    (state) => state.dialog.dialogChangePassword
   );
   const hideDialog = () => {
-    dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD));
+    dispatch(actionHideDialog(DIALOG.DIALOG_CHANGE_PASSWORD));
   };
 
   const handlerOnChange = (e, name, callBack) => {

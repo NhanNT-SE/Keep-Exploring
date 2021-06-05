@@ -1,17 +1,21 @@
 import axiosClient from "./axiosClient";
 
 const mfaAPI = {
-  enableMFA: (password) => {
-    const url = "/mfa/enable";
-    return axiosClient.post(url, password);
-  },
-  disableMFA: (password) => {
+  disableMFA: (password, otp) => {
     const url = "/mfa/disable";
-    return axiosClient.post(url, password);
+    return axiosClient.patch(url, { password, otp });
+  },
+  enableMFA: (userId) => {
+    const url = "/mfa/enable";
+    return axiosClient.patch(url, { userId });
+  },
+  getQRCode: (password) => {
+    const url = "/mfa/qr-code";
+    return axiosClient.post(url, { password });
   },
   verifyOTP: (otp) => {
     const url = "/mfa/verify";
-    return axiosClient.post(url, otp);
+    return axiosClient.post(url, { otp });
   },
 };
 

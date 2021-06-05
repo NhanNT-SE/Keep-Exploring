@@ -12,7 +12,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function DialogMessage() {
   const commonState = useSelector((state) => state.common);
   const isShowDialogMessage = useSelector(
-    (state) => state.dialog.isShowDialogMessage
+    (state) => state.dialog.dialogMessage
   );
   const { isError, isSuccess, message } = commonState;
   const dispatch = useDispatch();

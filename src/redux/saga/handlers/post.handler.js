@@ -12,22 +12,25 @@ import {
 } from "redux/slices/common.slice";
 import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
+  actionDeletePost,
   actionGetAllPost,
   actionGetPost,
   actionSetPostList,
   actionSetSelectedPost,
   actionUpdatePost,
 } from "redux/slices/post.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG} from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 export function* handlerDeletePost(action) {
   try {
+    localStorageService.setLatestAction(actionDeletePost.type);
+
     const { postId, history } = action.payload;
     yield put(actionLoading("Loading deleting post...!"));
     yield call(() => postApi.deletePost(postId));
     yield call(() => notifyApi.sendNotify(action.payload));
     yield call(() => handlerSuccessSaga("Delete post successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    yield put(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     history.push("/post");
   } catch (error) {
     console.log("post slice: ", error);
@@ -74,7 +77,7 @@ export function* handlerUpdatePost(action) {
       yield call(() => notifyApi.sendNotify(action.payload));
     }
     yield call(() => handlerSuccessSaga("Update post successfully!"));
-    yield put(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+    yield put(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
   } catch (error) {
     console.log("post slice: ", error);
     yield call(() => handlerFailSaga(error));

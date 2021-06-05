@@ -1,36 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { DIALOG } from "utils/global_variable";
 const dialogSlice = createSlice({
   name: "dialog",
   initialState: {
-    isShowDialogMessage: false,
-    isShowDialogEditPost: false,
-    isShowDialogNotify: false,
-    isShowDialogDeleteUser: false,
-    isShowDialogChangePassword: false,
-    isShowDialogQRCode: true,
+    dialogMessage: false,
+    dialogEditPost: false,
+    dialogNotify: false,
+    dialogDeleteUser: false,
+    dialogChangePassword: false,
+    dialogEnableMFA: false,
   },
   reducers: {
     actionShowDialog: (state, action) => {
       const typeDialog = action.payload;
       switch (typeDialog) {
-        case GLOBAL_VARIABLE.DIALOG_MESSAGE:
-          state.isShowDialogMessage = true;
+        case DIALOG.DIALOG_MESSAGE:
+          state.dialogMessage = true;
           break;
-        case GLOBAL_VARIABLE.DIALOG_EDIT_POST:
-          state.isShowDialogEditPost = true;
+        case DIALOG.DIALOG_EDIT_POST:
+          state.dialogEditPost = true;
           break;
-        case GLOBAL_VARIABLE.DIALOG_NOTIFY:
-          state.isShowDialogNotify = true;
+        case DIALOG.DIALOG_NOTIFY:
+          state.dialogNotify = true;
           break;
-        case GLOBAL_VARIABLE.DIALOG_DELETE_USER:
-          state.isShowDialogDeleteUser = true;
+        case DIALOG.DIALOG_DELETE_USER:
+          state.dialogDeleteUser = true;
           break;
-        case GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD:
-          state.isShowDialogChangePassword = true;
+        case DIALOG.DIALOG_CHANGE_PASSWORD:
+          state.dialogChangePassword = true;
           break;
-        case GLOBAL_VARIABLE.DIALOG_QR_CODE:
-          state.isShowDialogQRCode = true;
+        case DIALOG.DIALOG_ENABLE_MFA:
+          state.dialogEnableMFA = true;
           break;
         default:
           break;
@@ -39,23 +39,23 @@ const dialogSlice = createSlice({
     actionHideDialog: (state, action) => {
       const typeDialog = action.payload;
       switch (typeDialog) {
-        case GLOBAL_VARIABLE.DIALOG_MESSAGE:
-          state.isShowDialogMessage = false;
+        case DIALOG.DIALOG_MESSAGE:
+          state.dialogMessage = false;
           break;
-        case GLOBAL_VARIABLE.DIALOG_EDIT_POST:
-          state.isShowDialogEditPost = false;
+        case DIALOG.DIALOG_EDIT_POST:
+          state.dialogEditPost = false;
           break;
-        case GLOBAL_VARIABLE.DIALOG_NOTIFY:
-          state.isShowDialogNotify = false;
+        case DIALOG.DIALOG_NOTIFY:
+          state.dialogNotify = false;
           break;
-        case GLOBAL_VARIABLE.DIALOG_DELETE_USER:
-          state.isShowDialogDeleteUser = false;
+        case DIALOG.DIALOG_DELETE_USER:
+          state.dialogDeleteUser = false;
           break;
-        case GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD:
-          state.isShowDialogChangePassword = false;
+        case DIALOG.DIALOG_CHANGE_PASSWORD:
+          state.dialogChangePassword = false;
           break;
-        case GLOBAL_VARIABLE.DIALOG_QR_CODE:
-          state.isShowDialogQRCode = false;
+        case DIALOG.DIALOG_ENABLE_MFA:
+          state.dialogEnableMFA = false;
           break;
         default:
           break;

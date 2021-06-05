@@ -15,6 +15,7 @@ import {
   sagaGetCommentList,
   sagaGetLikeList,
 } from "./watchers/comment.watcher";
+import { sagaActiveMFA, sagaVerifyOTP } from "./watchers/mfa.watcher";
 import {
   sagaDeletePost,
   sagaGetAllPost,
@@ -66,12 +67,15 @@ const sagaProfile = [
   sagaGetMyProfile(),
   sagaUpdateProfile(),
 ];
+const sagaMFA = [sagaActiveMFA(), sagaVerifyOTP()];
+
 const sagaAuth = [sagaLogin(), sagaLogout(), sagaRefreshToken()];
 const sagaList = sagaUser.concat(
   sagaAuth,
   sagaProfile,
   sagaComment,
   sagaBlog,
+  sagaMFA,
   sagaPost,
   sagaStatistics
 );

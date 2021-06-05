@@ -12,7 +12,7 @@ import {
   actionSuccess,
 } from "redux/slices/common.slice";
 import rootStore from "rootStore";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {CONFIG_URL} from "utils/global_variable";
 import localStorageService from "utils/localStorageService";
 
 export function* handlerLogin(action) {
@@ -23,7 +23,7 @@ export function* handlerLogin(action) {
     const response = yield call(() => authApi.login(action.payload));
     const { data } = response;
     const user = data.user;
-    user.avatar = `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.avatar}`;
+    user.avatar = `${CONFIG_URL.BASE_URL_IMAGE}/user/${user.avatar}`;
     if (user.role !== "admin") {
       yield call(() =>
         handlerFailSaga("Bạn không đủ quyền để truy cập vào hệ thống!!!!!")

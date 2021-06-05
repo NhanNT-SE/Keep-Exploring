@@ -8,7 +8,7 @@ import { actionHideDialog } from "redux/slices/dialog.slice";
 import {
     actionDeleteUser
 } from "redux/slices/user.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {DIALOG} from "utils/global_variable";
 import "./dialog-delete-user.scss";
 function DialogDeleteUser(props) {
   const { user } = props;
@@ -16,10 +16,10 @@ function DialogDeleteUser(props) {
   const history = useHistory();
   const [confirm, setConfirm] = useState("");
   const isShowDialog = useSelector(
-    (state) => state.dialog.isShowDialogDeleteUser
+    (state) => state.dialog.dialogDeleteUser
   );
   const hideDialog = () => {
-    dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_DELETE_USER));
+    dispatch(actionHideDialog(DIALOG.DIALOG_DELETE_USER));
   };
   const deleteUser = () => {
     const payload = {

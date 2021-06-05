@@ -16,7 +16,7 @@ import {
 } from "redux/slices/comment.slice";
 import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import { actionGetPost } from "redux/slices/post.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { DIALOG, RESPONSIVE_OPTIONS } from "utils/global_variable";
 import "./post-details.scss";
 function PostDetailsPage() {
   const { postId } = useParams();
@@ -49,7 +49,7 @@ function PostDetailsPage() {
     );
     dispatch(actionGetLikeList({ type: "post", body: { idPost: postId } }));
     return () => {
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+      dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     };
   }, []);
 
@@ -61,7 +61,7 @@ function PostDetailsPage() {
             value={post.imgs}
             numVisible={post.imgs.length >= 4 ? 3 : post.imgs.length}
             numScroll={2}
-            responsiveOptions={GLOBAL_VARIABLE.RESPONSIVE_OPTIONS}
+            responsiveOptions={RESPONSIVE_OPTIONS}
             itemTemplate={(img) => (
               <PostImageTemplate
                 img={img}
@@ -107,9 +107,7 @@ function PostDetailsPage() {
                     icon="pi pi-pencil"
                     className="p-button-rounded p-button-success p-mr-2"
                     onClick={() =>
-                      dispatch(
-                        actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST)
-                      )
+                      dispatch(actionShowDialog(DIALOG.DIALOG_EDIT_POST))
                     }
                   />
                   <Button

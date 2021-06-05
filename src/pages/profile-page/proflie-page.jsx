@@ -1,61 +1,79 @@
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 import DialogChangePassword from "common-components/dialog/dialog-change-password/dialog-change-password";
+import DialogEnableMFA from "common-components/dialog/dialog-enable-mfa/dialog-enable-mfa";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import ImageUploader from "react-images-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { actionShowDialog } from "redux/slices/dialog.slice";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
+import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import {
   actionGetMyProfile,
   actionUpdateProfile,
 } from "redux/slices/profile.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { DIALOG } from "utils/global_variable";
 import { convertDate } from "utils/helper";
 import "./profile-page.scss";
-import DialogQRCode from "common-components/dialog/dialog-qr-code/dialog-qr-code";
 function ProfilePage() {
   const genderList = [
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
   ];
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.selectedUser);
+  const user = useSelector((state) => state.auth.user);
   const [displayName, setDisplayName] = useState("");
   const [address, setAddress] = useState("");
   const [gender, setGender] = useState("");
   const [created, setCreated] = useState("");
   const [file, setFile] = useState("");
   const [mfa, setMFA] = useState(false);
-  const [imageSubmit, setImageSubmit] = useState(undefined);
+  const [imageSubmit, setImageSubmit] = useState(null);
   const updateProfile = () => {
     const profile = { displayName, address, gender, avatar: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
     dispatch(actionGetMyProfile());
+
+    return () => {
+      dispatch(actionHideDialog(DIALOG.DIALOG_ENABLE_MFA));
+      dispatch(actionHideDialog(DIALOG.DIALOG_CHANGE_PASSWORD));
+    };
   }, []);
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName);
       setCreated(convertDate(user.created_on));
       setGender(user.gender);
-      setAddress(user.address);
-      if (user.mfa === "active") {
-        setMFA(true);
+      if (user.address) {
+        setAddress(user.address);
       }
+      setStateMFA();
     }
   }, [user]);
+  const setStateMFA = () => {
+    const { mfa } = user;
+    if (mfa === "enable") {
+      setMFA(true);
+    } else {
+      setMFA(false);
+    }
+  };
   const toggleMFA = (e) => {
-    const statusMFA = user.mfa;
     const isMFA = e.target.checked;
-    setMFA(isMFA);
-    console.log({
-      statusMFA,
-      isMFA,
-    });
+    console.log(user.mfa);
+    if (isMFA && user.mfa === "disable") {
+      showDialog(DIALOG.DIALOG_ENABLE_MFA);
+    } else {
+    }
+  };
+  const showDialog = (typeDialog) => {
+    dispatch(actionShowDialog(typeDialog));
+  };
+  const hideDialog = (typeDialog) => {
+    dispatch(actionHideDialog(typeDialog));
   };
   const onImage = async (e) => {
     setFile(URL.createObjectURL(e[0]));
@@ -66,7 +84,7 @@ function ProfilePage() {
   return (
     <div className="profile-page-container">
       <DialogChangePassword />
-      <DialogQRCode />
+      <DialogEnableMFA />
       <div className="header">
         <div className="title">My Profile</div>
       </div>
@@ -78,11 +96,7 @@ function ProfilePage() {
               <div className="avatar-user">
                 <img
                   name="image_user"
-                  src={
-                    file
-                      ? file
-                      : `${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${user.avatar}`
-                  }
+                  src={file ? file : user.avatar}
                   alt="avatar"
                 />
               </div>
@@ -175,9 +189,7 @@ function ProfilePage() {
                 icon="pi pi-lock"
                 iconPos="right"
                 onClick={() => {
-                  dispatch(
-                    actionShowDialog(GLOBAL_VARIABLE.DIALOG_CHANGE_PASSWORD)
-                  );
+                  dispatch(actionShowDialog(DIALOG.DIALOG_CHANGE_PASSWORD));
                 }}
               />
             </div>

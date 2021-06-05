@@ -18,11 +18,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { actionGetUserList } from "redux/slices/user.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {COL_TABLE,TEMPLATE_TABLE} from "utils/global_variable";
 import "./table-user.scss";
 function TableUser() {
   const dt = useRef(null);
-  const columns = GLOBAL_VARIABLE.COLUMNS_USER;
+  const columns = COL_TABLE.COLUMNS_USER;
   const history = useHistory();
   const dispatch = useDispatch();
   const userList = useSelector((state) => state.user.userList);
@@ -71,7 +71,7 @@ function TableUser() {
   const genderFilter = (
     <Dropdown
       value={selectedGender}
-      options={GLOBAL_VARIABLE.GENDER_LIST}
+      options={TEMPLATE_TABLE.GENDER_LIST}
       onChange={onGenderChange}
       itemTemplate={GenderItemTemplate}
       valueTemplate={SelectedGenderTemplate}

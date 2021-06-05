@@ -1,7 +1,7 @@
 import { Avatar } from "primereact/avatar";
 import React from "react";
 import { useHistory } from "react-router";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import {CONFIG_URL} from "utils/global_variable";
 import "./like.scss";
 function LikeComponent(props) {
   const { likeList } = props;
@@ -13,7 +13,7 @@ function LikeComponent(props) {
       onClick={() => history.push(`/user/${item._id}`)}
     >
       <Avatar
-        image={`${GLOBAL_VARIABLE.BASE_URL_IMAGE}/user/${item.imgUser}`}
+        image={`${CONFIG_URL.BASE_URL_IMAGE}/user/${item.imgUser}`}
         imageAlt="avatar"
         className="p-mr-2"
         shape="circle"

@@ -13,7 +13,7 @@ import {
   actionGetLikeList,
 } from "redux/slices/comment.slice";
 import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
-import GLOBAL_VARIABLE from "utils/global_variable";
+import { DIALOG } from "utils/global_variable";
 import BlogContent from "../blog-content/blog-content";
 import "./blog-details.scss";
 function BlogDetailsPage() {
@@ -34,7 +34,7 @@ function BlogDetailsPage() {
     dispatch(actionGetCommentList({ type: "blog", id: blogId }));
     dispatch(actionGetLikeList({ type: "blog", body: { idBlog: blogId } }));
     return () => {
-      dispatch(actionHideDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST));
+      dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     };
   }, []);
   return (
@@ -76,9 +76,7 @@ function BlogDetailsPage() {
                     icon="pi pi-pencil"
                     className="p-button-rounded p-button-success p-mr-2"
                     onClick={() =>
-                      dispatch(
-                        actionShowDialog(GLOBAL_VARIABLE.DIALOG_EDIT_POST)
-                      )
+                      dispatch(actionShowDialog(DIALOG.DIALOG_EDIT_POST))
                     }
                   />
                   <Button
