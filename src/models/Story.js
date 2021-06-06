@@ -14,9 +14,6 @@ const schema = new Schema(
     img: {
       type: String,
     },
-    folder_storage: {
-      type: String,
-    },
     content: [
       {
         type: Object,

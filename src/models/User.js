@@ -28,7 +28,7 @@ const schema = new Schema(
         "password should contain atleast 8 characters, 1 number, 1 special character , 1 upper and 1 lowercase",
       ],
     },
-    displayName: {
+    fullName: {
       type: String,
       minLength: [6, "fullName password should contain atleast 6 characters"],
     },
@@ -40,17 +40,6 @@ const schema = new Schema(
     },
     avatar: {
       type: String,
-    },
-
-    address: { type: String },
-    bod: {
-      type: Date,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "unknown"],
-      default: "male",
-      message: "{VALUE} is not supported",
     },
     created_on: {
       type: Date,

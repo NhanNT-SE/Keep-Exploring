@@ -27,6 +27,9 @@ const schema = new Schema(
       enum: ["album", "story"],
       default: "album",
     },
+    folder_storage: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["pending", "done", "need_update"],

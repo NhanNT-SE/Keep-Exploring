@@ -80,7 +80,7 @@ const signIn = async (req, res, next) => {
               "_id",
               "username",
               "email",
-              "displayName",
+              "fullName",
               "avatar",
               "role",
             ]),
@@ -139,10 +139,19 @@ const signUp = async (req, res, next) => {
     await new Token({ owner }).save({ session });
     const mfa = await new MFA({ owner }).save({ session });
     const userInfo = await new UserInfo({ owner }).save({ session });
-    await user.update({ userInfo: userInfo._id, mfa: mfa._id }, opts);
+    await user.updateOne({ userInfo: userInfo._id, mfa: mfa._id }, opts);
     await session.commitTransaction();
     session.endSession();
-    return res.send(customResponse(userInfo, "Đăng ký thành công"));
+
+    const data = {
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+      avatar: user.avatar,
+      role: user.role,
+      created_on: user.created_on,
+    };
+    return res.send(customResponse(data, "Đăng ký thành công"));
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

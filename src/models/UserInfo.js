@@ -9,6 +9,19 @@ const schema = new Schema(
       index: true,
       unique: true,
     },
+    address: { type: String },
+    birthday: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "unknown"],
+      default: "male",
+      message: "{VALUE} is not supported",
+    },
+    phoneNumber:{
+      type:String,
+    },
     onlineStatus: {
       type: String,
       enum: ["online", "offline","idle"],
