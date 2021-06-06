@@ -7,10 +7,6 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "post",
     },
-    idBlog: {
-      type: Schema.Types.ObjectId,
-      ref: "blog",
-    },
     idUser: {
       type: Schema.Types.ObjectId,
       ref: "user",
@@ -24,8 +20,11 @@ const schema = new Schema(
       type: Date,
       default: Date.now(),
     },
-    img: {
-      type: String,
+    last_modify: {
+      type: Date,
+    },
+    imgs: {
+      type: [String],
     },
   },
   { collection: "comment" }

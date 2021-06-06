@@ -37,6 +37,25 @@ const schema = new Schema(
       enum: ["public", "hidden", "friends"],
       default: "public",
     },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "comment",
+      },
+    ],
+    created_on: {
+      type: Date,
+      default: Date.now,
+    },
+    last_modify: {
+      type: Date,
+    },
   },
   { collection: "post" }
 );

@@ -25,25 +25,6 @@ const schema = new Schema(
         file_name: String,
       },
     ],
-    created_on: {
-      type: Date,
-      default: Date.now,
-    },
-    last_modify: {
-      type: Date,
-    },
-    likes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "user",
-      },
-    ],
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comment",
-      },
-    ],
   },
   { collection: "story" }
 );

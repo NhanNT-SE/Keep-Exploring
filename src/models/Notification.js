@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema(
   {
-    idUser: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
     },
@@ -16,17 +16,11 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "post",
     },
-    idBlog: {
-      type: Schema.Types.ObjectId,
-      ref: "blog",
-    },
-    statusPost: { type: String },
-    statusBlog: { type: String },
-    content: {
+    type: {
       type: String,
-      enum: ["like", "comment", "moderated", "unmoderated"],
+      enum: ["like", "comment", "done", "pending", "need_update", "system"],
     },
-    contentAdmin: {
+    content: {
       type: String,
     },
     created_on: {

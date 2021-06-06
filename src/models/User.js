@@ -59,6 +59,12 @@ const schema = new Schema(
     last_modify: {
       type: Date,
     },
+    notification: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "notification",
+      },
+    ],
     mfa: {
       type: Schema.Types.ObjectId,
       ref: "mfa",
