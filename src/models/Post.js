@@ -8,64 +8,35 @@ const schema = new Schema(
       ref: "User",
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-      enum: ["food", "hotel", "check_in"],
-      default: "food",
+    album: {
+      type: Schema.Types.ObjectId,
+      ref: "album",
+      required: function () {
+        return this.type === "album";
+      },
     },
-
-    title: {
-      required: true,
-      type: String,
+    story: {
+      type: Schema.Types.ObjectId,
+      ref: "story",
+      required: function () {
+        return this.type === "story";
+      },
     },
-
-    desc: {
-      required: true,
+    type: {
       type: String,
-    },
-
-    imgs: {
-      type: [String],
-    },
-    address: {
-      type: String,
-      lowercase: true,
-      required: true,
+      enum: ["album", "story"],
+      default: "album",
     },
     status: {
       type: String,
       enum: ["pending", "done", "need_update"],
       default: "pending",
-      required: true,
     },
-
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      required: true,
+    view_mode: {
+      type: String,
+      enum: ["public", "hidden", "friends"],
+      default: "public",
     },
-
-    like_list: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "user",
-      },
-    ],
-    created_on: {
-      type: Date,
-      default: Date.now(),
-    },
-    last_modify: {
-      type: Date,
-    },
-    comment: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comment",
-      },
-    ],
   },
   { collection: "post" }
 );

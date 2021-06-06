@@ -9,16 +9,13 @@ import { isAuth, isAdmin } from "./src/helpers/JWTHelper.js";
 import apiDocs from "./src/docs/APIDocs.js";
 import auth from "./src/routes/auth/AuthRouter.js";
 import adminAddress from "./src/routes/admin/AdminAddress.js";
-import adminBlog from "./src/routes/admin/AdminBlog.js";
 import adminPost from "./src/routes/admin/AdminPost.js";
 import adminUser from "./src/routes/admin/AdminUser.js";
 import adminStatistic from "./src/routes/admin/AdminStatistic.js";
 import mfa from "./src/routes/auth/MFARouter.js";
 import publicAddress from "./src/routes/public/PublicAddress.js";
-import publicBlog from "./src/routes/public/PublicBlog.js";
 import publicPost from "./src/routes/public/PublicPost.js";
 import userComment from "./src/routes/user/UserComment.js";
-import userBlog from "./src/routes/user/UserBlog.js";
 import userPost from "./src/routes/user/UserPost.js";
 import userProfile from "./src/routes/user/UserProfile.js";
 import userNotify from "./src/routes/user/UserNotify.js";
@@ -80,20 +77,17 @@ app.use(async (req, res, next) => {
 app.use("/api-doc", apiDocs);
 app.use("/auth", auth);
 app.use("/public/address", publicAddress);
-app.use("/public/blog", publicBlog);
 app.use("/public/post", publicPost);
 // // ----------PROTECT ROUTER----------
 app.use(isAuth);
 app.use("/mfa", mfa);
 app.use("/user/comment", userComment);
-app.use("/user/blog", userBlog);
 app.use("/user/post", userPost);
 app.use("/user/profile", userProfile);
 app.use("/user/notify", userNotify);
 // ----------ADMIN ROUTER----------
 app.use(isAdmin);
 app.use("/admin/address", adminAddress);
-app.use("/admin/blog", adminBlog);
 app.use("/admin/post", adminPost);
 app.use("/admin/user", adminUser);
 app.use("/admin/statistics", adminStatistic);

@@ -45,7 +45,6 @@ const schema = new Schema(
     following: [{ type: Schema.Types.ObjectId, ref: "user" }],
     blockedList: [{ type: Schema.Types.ObjectId, ref: "user" }],
     postList: [{ type: Schema.Types.ObjectId, ref: "post" }],
-    blogList: [{ type: Schema.Types.ObjectId, ref: "blog" }],
   },
   { collection: "userInfo" }
 );

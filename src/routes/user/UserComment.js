@@ -27,17 +27,6 @@ router.post(
   uploadPost.single("image_comment"),
   controller.createCommentPost
 );
-router.post(
-  "/blog",
-  uploadBlog.single("image_comment"),
-  controller.createCommentBlog
-);
-
-router.patch(
-  "/editBlog",
-  uploadBlog.single("image_comment"),
-  controller.editCommentBlog
-);
 router.patch(
   "/editPost",
   uploadBlog.single("image_comment"),

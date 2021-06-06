@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema(
   {
-    owner: {
+    post: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "post",
     },
     title: {
       type: String,
@@ -17,20 +17,12 @@ const schema = new Schema(
     folder_storage: {
       type: String,
     },
-    view_mode: {
-      type: String,
-      enum: ["public", "hidden", "friend"],
-      default: "public",
-    },
-    status: {
-      type: String,
-      enum: ["pending", "done", "need_update"],
-      default: "pending",
-    },
-    likes: [
+    content: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "user",
+        type: Object,
+        img: String,
+        content: String,
+        file_name: String,
       },
     ],
     created_on: {
@@ -40,17 +32,19 @@ const schema = new Schema(
     last_modify: {
       type: Date,
     },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
     comments: [
       {
         type: Schema.Types.ObjectId,
         ref: "comment",
       },
     ],
-    content: {
-      type: Schema.Types.ObjectId,
-      ref: "content_blog",
-    },
   },
-  { collection: "blog" }
+  { collection: "story" }
 );
-export const Blog = mongoose.model("blog", schema);
+export const Story = mongoose.model("story", schema);
