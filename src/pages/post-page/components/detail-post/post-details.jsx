@@ -51,7 +51,7 @@ function PostDetailsPage() {
     return () => {
       dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     };
-  }, []);
+  }, [dispatch, history, postId]);
 
   return (
     post && (

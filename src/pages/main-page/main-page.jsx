@@ -28,16 +28,16 @@ function MainPage() {
   const classes = STYLES_GLOBAL();
   const history = useHistory();
   const dispatch = useDispatch();
-  const userStorage = JSON.parse(localStorageService.getUser());
   useEffect(() => {
+    const userStorage = JSON.parse(localStorageService.getUser());
     if (!userStorage) {
       history.push("/login");
     }
-  }, [user]);
+  }, [user, history]);
   useEffect(() => {
     dispatch(actionGetStatisticsTimeLine());
     dispatch(actionGetStatisticsNumber());
-  }, []);
+  }, [dispatch]);
   return (
     <div className="main-page">
       {loadingStore && <LoadingComponent />}
@@ -47,9 +47,7 @@ function MainPage() {
       <main className={`${classes.content} page-container`}>
         <div>
           <Switch>
-            {/* <Route exact path="/home" component={HomePage}></Route> */}
-            <Route exact path="/home" component={ProfilePage}></Route>
-
+            <Route exact path="/home" component={HomePage}></Route>
             <Route exact path="/user" component={UserPage}></Route>
             <Route
               exact

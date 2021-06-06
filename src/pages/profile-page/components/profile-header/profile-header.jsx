@@ -1,55 +1,16 @@
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import DialogChangePassword from "common-components/dialog/dialog-change-password/dialog-change-password";
-import DialogEnableMFA from "common-components/dialog/dialog-enable-mfa/dialog-enable-mfa";
-import DialogDisableMFA from "common-components/dialog/dialog-disable-mfa/dialog-disable-mfa";
-import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ImageUploader from "react-images-upload";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
-import {
-  actionGetMyProfile,
-  actionUpdateProfile,
-} from "redux/slices/profile.slice";
 import { DIALOG } from "utils/global_variable";
-import { convertDate } from "utils/helper";
 import "./profile-header.scss";
 function ProfileHeader(props) {
   const dispatch = useDispatch();
-  const { user, onImageSelected } = props;
+  const { user, onImageSelected, stateMFA } = props;
   const { userInfo } = user;
   const [file, setFile] = useState("");
-  const [mfa, setMFA] = useState(false);
-  const [imageSubmit, setImageSubmit] = useState(null);
-  //   const updateProfile = () => {
-  //     const profile = { displayName, address, gender, avatar: imageSubmit };
-  //     dispatch(actionUpdateProfile(profile));
-  //   };
-  useEffect(() => {
-    dispatch(actionGetMyProfile());
-
-    return () => {
-      hideDialog(DIALOG.DIALOG_ENABLE_MFA);
-      hideDialog(DIALOG.DIALOG_DISABLE_MFA);
-      hideDialog(DIALOG.DIALOG_CHANGE_PASSWORD);
-    };
-  }, []);
-  useEffect(() => {
-    if (user) {
-      setStateMFA();
-    }
-  }, [user]);
-  const setStateMFA = () => {
-    const { mfa } = user;
-    if (mfa === "enable") {
-      setMFA(true);
-    } else {
-      setMFA(false);
-    }
-  };
   const toggleMFA = (e) => {
     const isMFA = e.target.checked;
     if (isMFA && user.mfa === "disable") {
@@ -68,7 +29,6 @@ function ProfileHeader(props) {
   };
   const onImage = (e) => {
     setFile(URL.createObjectURL(e[0]));
-    setImageSubmit(e[0]);
     if (onImageSelected) {
       onImageSelected(e[0]);
     }
@@ -129,7 +89,11 @@ function ProfileHeader(props) {
               <span>MFA:&emsp;&emsp;</span>
               <FormControlLabel
                 control={
-                  <Switch checked={mfa} onChange={toggleMFA} color="primary" />
+                  <Switch
+                    checked={stateMFA}
+                    onChange={toggleMFA}
+                    color="primary"
+                  />
                 }
               />
             </div>

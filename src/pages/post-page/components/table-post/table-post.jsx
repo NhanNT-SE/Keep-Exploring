@@ -70,7 +70,7 @@ function TablePostComponent() {
   useEffect(() => {
     dispatch(actionGetAllPost());
     dispatch(actionSetSelectedPost(null));
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     const resultList = JSON.parse(JSON.stringify(postList));
     setPosts(resultList);

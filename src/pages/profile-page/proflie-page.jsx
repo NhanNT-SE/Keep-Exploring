@@ -4,7 +4,7 @@ import DialogEnableMFA from "common-components/dialog/dialog-enable-mfa/dialog-e
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import {
@@ -27,36 +27,40 @@ function ProfilePage() {
   const [gender, setGender] = useState("");
   const [created, setCreated] = useState("");
   const [imageSubmit, setImageSubmit] = useState("");
+  const [mfa, setMFA] = useState(false);
+  const hideDialog = useCallback(
+    (typeDialog) => {
+      dispatch(actionHideDialog(typeDialog));
+    },
+    [dispatch]
+  );
+
   const updateProfile = () => {
     const profile = { displayName, address, gender, avatar: imageSubmit };
     dispatch(actionUpdateProfile(profile));
   };
   useEffect(() => {
     dispatch(actionGetMyProfile());
-
     return () => {
       hideDialog(DIALOG.DIALOG_ENABLE_MFA);
       hideDialog(DIALOG.DIALOG_DISABLE_MFA);
       hideDialog(DIALOG.DIALOG_CHANGE_PASSWORD);
     };
-  }, []);
+  }, [dispatch, hideDialog]);
   useEffect(() => {
     if (user) {
       setCreated(convertDate(user.created_on));
       setGender(user.gender);
-      if (user.address) {
-        setAddress(user.address);
+      setAddress(user.address || "");
+      setDisplayName(user.displayName || "");
+      if (user.mfa === "enable") {
+        setMFA(true);
+      } else {
+        setMFA(false);
       }
-      if (user.displayName) {
-        setDisplayName(user.displayName);
-      }
-      console.log(user);
     }
   }, [user]);
 
-  const hideDialog = (typeDialog) => {
-    dispatch(actionHideDialog(typeDialog));
-  };
   const onImageSelected = (image) => {
     setImageSubmit(image);
     console.log(image);
@@ -73,7 +77,11 @@ function ProfilePage() {
       {user && (
         <div className="container">
           <div className="container-header">
-            <ProfileHeader user={user} onImageSelected={onImageSelected} />
+            <ProfileHeader
+              user={user}
+              onImageSelected={onImageSelected}
+              stateMFA={mfa}
+            />
           </div>
           <div className="container-info">
             <h2>Account</h2>

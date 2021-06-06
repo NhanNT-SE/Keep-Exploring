@@ -67,7 +67,7 @@ function NotifyPage() {
     return () => {
       dispatch(actionHideDialog(DIALOG.DIALOG_NOTIFY));
     };
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     if (selectedData && setSelectedData.length > 0) {
       const listUser = selectedData.map((e) => e._id);

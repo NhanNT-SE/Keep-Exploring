@@ -36,7 +36,7 @@ function BlogDetailsPage() {
     return () => {
       dispatch(actionHideDialog(DIALOG.DIALOG_EDIT_POST));
     };
-  }, []);
+  }, [dispatch, blogId, history]);
   return (
     blog && (
       <div className="blog-details-container">

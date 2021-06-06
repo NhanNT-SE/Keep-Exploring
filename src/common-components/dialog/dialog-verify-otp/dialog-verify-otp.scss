@@ -1,0 +1,11 @@
+.dialog-verify-mfa-container {
+  display: flex;
+  flex-direction: column;
+  .p-input-icon-left,
+  .p-inputtext {
+    width: 100%;
+  }
+  button{
+    margin-top: 16px;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {COL_TABLE,TEMPLATE_TABLE} from "utils/global_variable";
+import { COL_TABLE, TEMPLATE_TABLE } from "utils/global_variable";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
@@ -31,7 +31,7 @@ function TableBlogComponent() {
   };
   useEffect(() => {
     dispatch(actionGetAllBlog());
-  }, []);
+  }, [dispatch]);
   const displayNameClick = (userId) => {
     history.push(`/user/${userId}`);
   };

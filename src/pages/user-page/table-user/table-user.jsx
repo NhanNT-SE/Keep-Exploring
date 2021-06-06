@@ -115,7 +115,7 @@ function TableUser() {
   });
   useEffect(() => {
     dispatch(actionGetUserList());
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     console.log(userList);
   }, [userList]);

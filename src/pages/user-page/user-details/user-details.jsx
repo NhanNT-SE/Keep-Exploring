@@ -6,7 +6,7 @@ import { useHistory, useParams } from "react-router";
 import { actionGetSelectedUser } from "redux/slices/user.slice";
 import { InputText } from "primereact/inputtext";
 import "./user-details.scss";
-import {DIALOG,CONFIG_URL} from "utils/global_variable";
+import { DIALOG, CONFIG_URL } from "utils/global_variable";
 import { actionHideDialog, actionShowDialog } from "redux/slices/dialog.slice";
 import DialogNotify from "common-components/dialog/dialog-notify/dialog-notify";
 import DialogDeleteUser from "common-components/dialog/dialog-delete-user/dialog-delete-user";
@@ -26,7 +26,7 @@ function UserDetailsPage() {
       dispatch(actionHideDialog(DIALOG.DIALOG_NOTIFY));
       dispatch(actionHideDialog(DIALOG.DIALOG_DELETE_USER));
     };
-  }, []);
+  }, [dispatch, userId]);
   useEffect(() => {
     if (user) {
       setCreated(convertDate(user.created_on));
@@ -68,9 +68,7 @@ function UserDetailsPage() {
                 className="p-button-warning"
                 icon="pi pi-send"
                 iconPos="right"
-                onClick={() =>
-                  dispatch(actionShowDialog(DIALOG.DIALOG_NOTIFY))
-                }
+                onClick={() => dispatch(actionShowDialog(DIALOG.DIALOG_NOTIFY))}
               />
               <Button
                 label="Delete Account"

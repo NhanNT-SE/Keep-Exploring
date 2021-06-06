@@ -10,6 +10,7 @@ const dialogSlice = createSlice({
     dialogChangePassword: false,
     dialogEnableMFA: false,
     dialogDisableMFA: false,
+    dialogVerifyOTP: true,
   },
   reducers: {
     actionShowDialog: (state, action) => {
@@ -35,6 +36,9 @@ const dialogSlice = createSlice({
           break;
         case DIALOG.DIALOG_DISABLE_MFA:
           state.dialogDisableMFA = true;
+          break;
+        case DIALOG.DIALOG_VERIFY_OTP:
+          state.dialogVerifyOTP = true;
           break;
         default:
           break;
@@ -63,6 +67,9 @@ const dialogSlice = createSlice({
           break;
         case DIALOG.DIALOG_DISABLE_MFA:
           state.dialogDisableMFA = false;
+          break;
+        case DIALOG.DIALOG_VERIFY_OTP:
+          state.dialogVerifyOTP = false;
           break;
         default:
           break;
