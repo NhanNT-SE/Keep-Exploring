@@ -16,6 +16,7 @@ import {
   REFRESH_TOKEN_LIFE,
 } from "../../config/index.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
+import { verifyOTPToken } from "../../helpers/MFAHelper.js";
 
 const signIn = async (req, res, next) => {
   const { session, opts } = req;
@@ -148,7 +149,24 @@ const signUp = async (req, res, next) => {
     next(error);
   }
 };
-
+const verifyOTPSignIn = async (req, res, next) => {
+  try {
+    const { otp, userId } = req.body;
+    const mfa = await MFA.findOne({ owner: userId });
+    if (mfa.secretMFA) {
+      const isValid = verifyOTPToken(otp, mfa.secretMFA);
+      if (isValid) {
+        return res.send(
+          customResponse({ isValid }, "Verify OTP code successfully")
+        );
+      }
+      customError("Oops...Your OTP code is not correct!");
+    }
+    customError("Your MFA not enabled");
+  } catch (error) {
+    next(error);
+  }
+};
 const refreshToken = async (req, res, next) => {
   try {
     const { refreshToken, userId } = req.body;
@@ -221,4 +239,5 @@ export {
   refreshToken,
   forgetPassword,
   getNewPassword,
+  verifyOTPSignIn,
 };

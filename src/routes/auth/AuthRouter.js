@@ -14,6 +14,7 @@ const upload = multer({ storage: storage });
 const router = express.Router();
 
 router.post("/sign-in", controller.signIn);
+router.post("/sign-in/verify", controller.verifyOTPSignIn);
 router.post("/sign-out", controller.signOut);
 router.post("/sign-up", upload.single("image_user"), controller.signUp);
 router.post("/refresh-token", controller.refreshToken);
