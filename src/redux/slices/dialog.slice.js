@@ -10,7 +10,7 @@ const dialogSlice = createSlice({
     dialogChangePassword: false,
     dialogEnableMFA: false,
     dialogDisableMFA: false,
-    dialogVerifyOTP: true,
+    dialogVerifyOTP: false,
   },
   reducers: {
     actionShowDialog: (state, action) => {

@@ -18,7 +18,7 @@ export function* handlerEnableMFA(action) {
     const { userId, otp } = action.payload;
     const { profile } = rootState.profile;
     yield put(actionLoading("Loading enable MFA...!"));
-    const isValid = yield call(() => handlerVerifyOTP({ payload: otp }));
+    const isValid = yield call(() => handlerVerifyOTP(otp));
     if (isValid) {
       yield call(() => mfaApi.enableMFA(userId));
       const user = { ...userStorage, mfa: "enable" };
@@ -51,10 +51,9 @@ export function* handlerDisableMFA(action) {
     yield call(() => handlerFailSaga(error));
   }
 }
-
-export function* handlerVerifyOTP(action) {
+function* handlerVerifyOTP(otp, userId) {
   try {
-    const response = yield call(() => mfaApi.verifyOTP(action.payload));
+    const response = yield call(() => mfaApi.verifyOTP(otp, userId));
     const { isValid } = response.data;
     return isValid;
   } catch (error) {

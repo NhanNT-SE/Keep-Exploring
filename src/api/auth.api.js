@@ -12,5 +12,9 @@ const authApi = {
     const url = "/auth/refresh-token";
     return axiosClient.post(url, data);
   },
+  verifyOTPLogin: (otp, userId) => {
+    const url = "/auth/sign-in/verify";
+    return axiosClient.post(url, { otp, userId });
+  },
 };
 export default authApi;

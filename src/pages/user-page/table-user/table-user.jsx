@@ -18,7 +18,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { actionGetUserList } from "redux/slices/user.slice";
-import {COL_TABLE,TEMPLATE_TABLE} from "utils/global_variable";
+import { COL_TABLE, TEMPLATE_TABLE } from "utils/global_variable";
 import "./table-user.scss";
 function TableUser() {
   const dt = useRef(null);
@@ -116,9 +116,7 @@ function TableUser() {
   useEffect(() => {
     dispatch(actionGetUserList());
   }, [dispatch]);
-  useEffect(() => {
-    console.log(userList);
-  }, [userList]);
+
   return (
     <div className="table-user-container">
       <TableComponent

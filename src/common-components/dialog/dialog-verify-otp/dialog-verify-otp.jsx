@@ -4,6 +4,7 @@ import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionHideDialog } from "redux/slices/dialog.slice";
+import { actionVerifyOTP } from "redux/slices/mfa.slice";
 import { DIALOG } from "utils/global_variable";
 import "./dialog-verify-otp.scss";
 function DialogVerifyOTP() {
@@ -22,7 +23,9 @@ function DialogVerifyOTP() {
       setIsDisable(true);
     }
   }, [otp]);
-  const verifyOTP = () => {};
+  const verifyOTP = () => {
+    dispatch(actionVerifyOTP(otp));
+  };
   return (
     <Dialog
       header="Verify OTP token"
