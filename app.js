@@ -4,7 +4,10 @@ import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { isAuth, isAdmin } from "./src/helpers/JWTHelper.js";
-
+import { Storage } from "@google-cloud/storage";
+import { fileURLToPath } from "url";
+import path from "path";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ----------DEFINE ROUTER----------
 import apiDocs from "./src/docs/APIDocs.js";
 import auth from "./src/routes/auth/AuthRouter.js";
@@ -20,7 +23,11 @@ import userPost from "./src/routes/user/UserPost.js";
 import userProfile from "./src/routes/user/UserProfile.js";
 import userNotify from "./src/routes/user/UserNotify.js";
 import { mapErrorMessage } from "./src/helpers/CustomError.js";
-
+const gc = new Storage({
+  keyFilename: path.join(__dirname, "admin-storage.json"),
+  projectId: "buoyant-cargo-316014",
+});
+const bucket = gc.bucket("keep-exploring");
 // ----------ROUTER----------
 // const mongoString =
 //   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
