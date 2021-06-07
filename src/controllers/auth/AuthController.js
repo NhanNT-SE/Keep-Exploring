@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
 import { User } from "../../models/User.js";
-import { UserInfo } from "../../models/UserInfo.js";
 import { Token } from "../../models/Token.js";
 import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
@@ -18,6 +17,8 @@ import {
 import { customResponse } from "../../helpers/CustomResponse.js";
 import { verifyOTPToken } from "../../helpers/MFAHelper.js";
 import { bucket, pathImage, urlImage } from "../../helpers/Storage.js";
+import { AdvancedInfo } from "../../models/AdvancedInfo.js";
+import { BasicInfo } from "../../models/BasicInfo.js";
 
 const signIn = async (req, res, next) => {
   const { session, opts } = req;
@@ -40,21 +41,20 @@ const signIn = async (req, res, next) => {
           REFRESH_TOKEN_SECRET,
           REFRESH_TOKEN_LIFE
         );
-        customError;
         const mfa = await MFA.findOne({ owner: user._id }).session(session);
-        const userInfo = await UserInfo.findOne({ owner: user._id }).session(
-          session
-        );
+        const advancedInfo = await AdvancedInfo.findOne({
+          owner: user._id,
+        }).session(session);
         let userStatus = {};
         let infoUpdate = {};
         if (
-          userInfo.onlineStatus === "idle" ||
-          userInfo.accountStatus === "inactive"
+          advancedInfo.onlineStatus === "idle" ||
+          advancedInfo.accountStatus === "inactive"
         ) {
-          if (userInfo.onlineStatus === "idle") {
+          if (advancedInfo.onlineStatus === "idle") {
             userStatus.onlineStatus = "online";
           }
-          if (userInfo.accountStatus === "inactive") {
+          if (advancedInfo.accountStatus === "inactive") {
             userStatus.accountStatus = "active";
             await new Notification({
               idUser: user._id,
@@ -63,9 +63,9 @@ const signIn = async (req, res, next) => {
               status: "new",
             }).save({ session });
           }
-          infoUpdate = await userInfo.updateOne({ ...userStatus }, opts);
+          infoUpdate = await advancedInfo.updateOne({ ...userStatus }, opts);
         } else {
-          infoUpdate = userInfo;
+          infoUpdate = advancedInfo;
         }
         await Token.findOneAndUpdate(
           { owner: user._id },
@@ -132,9 +132,6 @@ const signUp = async (req, res, next) => {
       role: "user",
     }).save({ session });
     const owner = user._id;
-    await new Token({ owner }).save({ session });
-    const mfa = await new MFA({ owner }).save({ session });
-    const userInfo = await new UserInfo({ owner }).save({ session });
     if (file) {
       const dirUpload = `avatar/${user._id}/`;
       const blob = bucket.file(`${dirUpload}` + file);
@@ -146,20 +143,24 @@ const signUp = async (req, res, next) => {
       });
       blobStream.end(req.file.buffer);
       avatar = urlImage(path);
-      console.log(avatar);
     }
-    await user.updateOne(
-      { userInfo: userInfo._id, mfa: mfa._id, avatar },
-      opts
-    );
+    await new Token({ owner }).save({ session });
+    const mfa = await new MFA({ owner }).save({ session });
+    const basicInfo = await new BasicInfo({
+      owner,
+      avatar,
+      fullName: req.body.fullName,
+    }).save({ session });
+    const advancedInfo = await new AdvancedInfo({ owner }).save({ session });
+    await user.updateOne({ basicInfo, mfa, advancedInfo }, opts);
     await session.commitTransaction();
     session.endSession();
 
     const data = {
       username: user.username,
       email: user.email,
-      fullName: user.fullName,
-      avatar: avatar ? avatar : null,
+      fulName: basicInfo.fullName,
+      avatar: basicInfo.avatar,
       role: user.role,
       created_on: user.created_on,
     };

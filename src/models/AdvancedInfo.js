@@ -9,22 +9,9 @@ const schema = new Schema(
       index: true,
       unique: true,
     },
-    address: { type: String },
-    birthday: {
-      type: Date,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "unknown"],
-      default: "male",
-      message: "{VALUE} is not supported",
-    },
-    phoneNumber:{
-      type:String,
-    },
     onlineStatus: {
       type: String,
-      enum: ["online", "offline","idle"],
+      enum: ["online", "offline", "idle"],
       default: "idle",
       message: "{VALUE} is not supported",
     },
@@ -59,7 +46,7 @@ const schema = new Schema(
     blockedList: [{ type: Schema.Types.ObjectId, ref: "user" }],
     postList: [{ type: Schema.Types.ObjectId, ref: "post" }],
   },
-  { collection: "userInfo" }
+  { collection: "advancedInfo" }
 );
 
-export const UserInfo = mongoose.model("userInfo", schema);
+export const AdvancedInfo = mongoose.model("advancedInfo", schema);

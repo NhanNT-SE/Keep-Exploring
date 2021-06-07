@@ -37,6 +37,6 @@ const schema = new Schema(
       required: true,
     },
   },
-  { collection: "album" }
+  { collection: "albums" }
 );
 export const Album = mongoose.model("album", schema);

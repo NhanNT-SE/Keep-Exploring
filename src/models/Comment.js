@@ -27,6 +27,6 @@ const schema = new Schema(
       type: [String],
     },
   },
-  { collection: "comment" }
+  { collection: "comments" }
 );
 export const Comment = mongoose.model("comment", schema);

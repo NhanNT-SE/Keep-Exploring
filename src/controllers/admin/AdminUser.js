@@ -3,7 +3,6 @@ import { User } from "../../models/User.js";
 import { Notification } from "../../models/Notification.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customError } from "../../helpers/CustomError.js";
-import "../../models/UserInfo.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 
 const getAllUser = async (req, res, next) => {
@@ -23,7 +22,7 @@ const getUser = async (req, res, next) => {
   try {
     const { idUser } = req.params;
     const user = await User.findById(idUser, { password: 0, role: 0 })
-      .populate("userInfo")
+      .populate("basicInfo")
       .populate("mfa");
     if (user) {
       const data = JSON.parse(JSON.stringify(user));

@@ -28,6 +28,6 @@ const schema = new Schema(
       default: Date.now,
     },
   },
-  { collection: "notification" }
+  { collection: "notifications" }
 );
 export const Notification = mongoose.model("notification", schema);

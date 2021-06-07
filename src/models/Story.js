@@ -20,6 +20,6 @@ const schema = new Schema(
       },
     ],
   },
-  { collection: "story" }
+  { collection: "stories" }
 );
 export const Story = mongoose.model("story", schema);

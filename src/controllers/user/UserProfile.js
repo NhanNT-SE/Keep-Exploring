@@ -78,13 +78,6 @@ const updateProfile = async (req, res, next) => {
     }
 
     if (file) {
-      if (userFound.imgUser !== "avatar-default.png") {
-        fs.unlink("src/public/images/user/" + userFound.avatar, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
       avatar = file.filename;
     } else {
       avatar = userFound.avatar;
@@ -95,26 +88,21 @@ const updateProfile = async (req, res, next) => {
       avatar,
     };
 
-    await User.findByIdAndUpdate(user._id, newUser);
-    const msgNotify = `Thông tin cá nhân của bạn đã được cập nhật`;
+    // await User.findByIdAndUpdate(user._id, newUser);
+    // const msgNotify = `Thông tin cá nhân của bạn đã được cập nhật`;
+    // const notify = new Notification({
+    //   idUser: user._id,
+    //   contentAdmin: msgNotify,
+    //   status: "new",
+    // });
 
-    const notify = new Notification({
-      idUser: user._id,
-      contentAdmin: msgNotify,
-      status: "new",
-    });
-
-    await notify.save();
-    sendNotifyRealtime(io, user._id, {
-      message: msgNotify,
-      type: "system",
-    });
+    // await notify.save();
+    // sendNotifyRealtime(io, user._id, {
+    //   message: msgNotify,
+    //   type: "system",
+    // });
     const data = customResponse(
-      {
-        _id: user._id,
-        email: user.email,
-        ...newUser,
-      },
+      userFound,
       "Cập nhật thông tin cá nhân thành công"
     );
     return res.send(data);

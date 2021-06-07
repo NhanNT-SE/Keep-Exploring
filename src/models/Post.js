@@ -60,6 +60,6 @@ const schema = new Schema(
       type: Date,
     },
   },
-  { collection: "post" }
+  { collection: "posts" }
 );
 export const Post = mongoose.model("post", schema);
