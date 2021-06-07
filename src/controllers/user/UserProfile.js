@@ -54,9 +54,9 @@ const getAnotherProfile = async (req, res, next) => {
 const getMyProfile = async (req, res, next) => {
   try {
     const { user } = req;
-    const profile = await User.findById(user._id, { password: 0 }).populate(
-      "userInfo"
-    );
+    const profile = await User.findById(user._id, { password: 0 })
+      .populate("basicInfo")
+      .populate("advancedInfo");
     const mfa = await MFA.findOne({ owner: user._id });
     const data = JSON.parse(JSON.stringify(profile));
     return res.send(customResponse({ ...data, mfa: mfa.status }));
