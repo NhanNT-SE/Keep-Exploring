@@ -17,6 +17,7 @@ import {
 } from "../../config/index.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 import { verifyOTPToken } from "../../helpers/MFAHelper.js";
+import { bucket, pathImage, urlImage } from "../../helpers/Storage.js";
 
 const signIn = async (req, res, next) => {
   const { session, opts } = req;
@@ -122,16 +123,11 @@ const signUp = async (req, res, next) => {
   session.startTransaction();
   try {
     let avatar;
-    if (file) {
-      avatar = file.filename;
-    } else {
-      avatar = "avatar-default.png";
-    }
+
     const salt = await bcrypt.genSalt(10);
     const passHashed = await bcrypt.hash(req.body.password, salt);
     const user = await new User({
       ...req.body,
-      avatar,
       password: passHashed,
       role: "user",
     }).save({ session });
@@ -139,7 +135,23 @@ const signUp = async (req, res, next) => {
     await new Token({ owner }).save({ session });
     const mfa = await new MFA({ owner }).save({ session });
     const userInfo = await new UserInfo({ owner }).save({ session });
-    await user.updateOne({ userInfo: userInfo._id, mfa: mfa._id }, opts);
+    if (file) {
+      const dirUpload = `avatar/${user._id}/`;
+      const blob = bucket.file(`${dirUpload}` + file);
+      const path = pathImage(`${dirUpload}`, file);
+      blob.name = path;
+      const blobStream = blob.createWriteStream();
+      blobStream.on("error", (err) => {
+        next(err);
+      });
+      blobStream.end(req.file.buffer);
+      avatar = urlImage(path);
+      console.log(avatar);
+    }
+    await user.updateOne(
+      { userInfo: userInfo._id, mfa: mfa._id, avatar },
+      opts
+    );
     await session.commitTransaction();
     session.endSession();
 
@@ -147,7 +159,7 @@ const signUp = async (req, res, next) => {
       username: user.username,
       email: user.email,
       fullName: user.fullName,
-      avatar: user.avatar,
+      avatar: avatar ? avatar : null,
       role: user.role,
       created_on: user.created_on,
     };

@@ -21,7 +21,7 @@ const urlImage = (path) => {
 const pathImage = (dir, file) => {
   const uniqueSuffix = Date.now() + "-";
   const path = uniqueSuffix + file.originalname.split(" ").join("-");
-  return `${dir}/${path}`;
+  return `${dir}${path}`;
 };
 
 export { urlImage, pathImage, storage, bucket };
