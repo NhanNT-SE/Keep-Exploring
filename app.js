@@ -107,9 +107,9 @@ app.post("/single", storage.single("file"), async (req, res, next) => {
     blobStream.on("error", (err) => {
       next(err);
     });
-    blobStream.on("finish", () => {
-      // return res.send(customResponse(publicUrl, "File uploaded"));
-    });
+    // blobStream.on("finish", () => {
+    //   // return res.send(customResponse(publicUrl, "File uploaded"));
+    // });
     blobStream.end(req.file.buffer);
     publicUrl = `${BUCKET_STORAGE}/${blob.name}`;
     return res.send(publicUrl);
