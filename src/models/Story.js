@@ -11,14 +11,11 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    img: {
-      type: String,
-    },
     content: [
       {
         type: Object,
         img: String,
-        content: String,
+        desc: String,
         file_name: String,
       },
     ],

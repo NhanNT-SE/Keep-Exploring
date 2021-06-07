@@ -7,7 +7,9 @@ import { isAuth, isAdmin } from "./src/helpers/JWTHelper.js";
 import { Storage } from "@google-cloud/storage";
 import { fileURLToPath } from "url";
 import path from "path";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import { customError, mapErrorMessage } from "./src/helpers/CustomError.js";
+import { BUCKET_NAME, PROJECT_ID, BUCKET_STORAGE } from "./src/config/index.js";
+import multer from "multer";
 // ----------DEFINE ROUTER----------
 import apiDocs from "./src/docs/APIDocs.js";
 import auth from "./src/routes/auth/AuthRouter.js";
@@ -22,17 +24,15 @@ import userComment from "./src/routes/user/UserComment.js";
 import userPost from "./src/routes/user/UserPost.js";
 import userProfile from "./src/routes/user/UserProfile.js";
 import userNotify from "./src/routes/user/UserNotify.js";
-import { mapErrorMessage } from "./src/helpers/CustomError.js";
-const gc = new Storage({
-  keyFilename: path.join(__dirname, "admin-storage.json"),
-  projectId: "buoyant-cargo-316014",
-});
-const bucket = gc.bucket("keep-exploring");
+import { customResponse } from "./src/helpers/CustomResponse.js";
+import { pathImage, bucket, storage, urlImage } from "./src/helpers/Storage.js";
+
 // ----------ROUTER----------
 // const mongoString =
 //   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const mongoString =
   "mongodb://localhost:27017,localhost:27018,localhost:27019/keep-exploring";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
@@ -50,6 +50,7 @@ app.use(
   })
 );
 app.use(cors());
+
 // ----------CONNECT MONGO DB----------
 (async function () {
   try {
@@ -81,6 +82,41 @@ app.use(async (req, res, next) => {
   }
 });
 // ----------PUBLIC ROUTER----------
+// const gc = new Storage({
+//   keyFilename: path.join(__dirname, "admin-storage.json"),
+//   projectId: PROJECT_ID,
+// });
+// const bucket = gc.bucket(BUCKET_NAME);
+// const storage = multer({
+//   storage: multer.memoryStorage(),
+//   limits: {
+//     fileSize: 5 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+//   },
+// });
+app.post("/single", storage.single("file"), async (req, res, next) => {
+  try {
+    let publicUrl;
+    const { file } = req;
+    if (!req.file) {
+      customError("No file uploaded");
+    }
+    const uniqueSuffix = Date.now() + "-";
+    const blob = bucket.file("user/" + file);
+    blob.name = "user/" + uniqueSuffix + file.originalname.split(" ").join("-");
+    const blobStream = blob.createWriteStream();
+    blobStream.on("error", (err) => {
+      next(err);
+    });
+    blobStream.on("finish", () => {
+      // return res.send(customResponse(publicUrl, "File uploaded"));
+    });
+    blobStream.end(req.file.buffer);
+    publicUrl = `${BUCKET_STORAGE}/${blob.name}`;
+    return res.send(publicUrl);
+  } catch (error) {
+    next(error);
+  }
+});
 app.use("/api-doc", apiDocs);
 app.use("/auth", auth);
 app.use("/public/address", publicAddress);
