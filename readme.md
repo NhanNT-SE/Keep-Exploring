@@ -1,5 +1,5 @@
 "# Keep-Exploring" 
-"tạo file .env , khai báo các biến theo hướng dẫn trong file .dev.env"
+"tạo file .env , khai báo các biến theo hướng dẫn trong file .env.local"
 "tạo file admin-storage.json copy nội dung file credential tải về từ google cloud storage paste vào"
 "npm i"
 "npm start"

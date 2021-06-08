@@ -1,16 +1,16 @@
 import cors from "cors";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import http from "http";
 import mongoose from "mongoose";
-import path from "path";
+import helmet from "helmet";
 import { Server } from "socket.io";
-import { fileURLToPath } from "url";
 import { BUCKET_STORAGE } from "./src/config/index.js";
 // ----------DEFINE ROUTER----------
 import apiDocs from "./src/docs/APIDocs.js";
-import { customError, mapErrorMessage } from "./src/helpers/CustomError.js";
+import { mapErrorMessage } from "./src/helpers/CustomError.js";
 import { isAdmin, isAuth } from "./src/helpers/JWTHelper.js";
-import { bucket, pathImage, storage, urlImage } from "./src/helpers/Storage.js";
+import { storage } from "./src/helpers/Storage.js";
 import adminAddress from "./src/routes/admin/AdminAddress.js";
 import adminPost from "./src/routes/admin/AdminPost.js";
 import adminStatistic from "./src/routes/admin/AdminStatistic.js";
@@ -29,7 +29,12 @@ import userProfile from "./src/routes/user/UserProfile.js";
 //   "mongodb://keepExploringUser:keepExploringUser@13.58.149.178:27017/keep-exploring?authSource=keep-exploring&w=1";
 const mongoString =
   "mongodb://localhost:27017,localhost:27018,localhost:27019/keep-exploring";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const limiter = rateLimit({
+  // 15 minutes
+  windowMs: 15 * 60 * 1000,
+  // limit each IP to 100 requests per windowMs
+  max: 100,
+});
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
@@ -38,7 +43,8 @@ const io = new Server(server, {
     origin: "*",
   },
 });
-
+app.use(limiter);
+app.use(helmet());
 app.use(express.static("src/public"));
 app.use(express.json());
 app.use(
