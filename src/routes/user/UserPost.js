@@ -7,7 +7,7 @@ router.post("/album", storage.array("images"), controller.createAlbum);
 router.post("/story", storage.array("images"), controller.createStory);
 router.patch("/like", controller.likePost);
 router
-  .route("/:idPost")
+  .route("/:postId")
   .patch(storage.single("image_post"), controller.updatePost)
   .delete(controller.deletePost);
 

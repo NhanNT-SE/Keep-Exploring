@@ -139,7 +139,7 @@ const signUp = async (req, res, next) => {
       blobStream.on("error", (err) => {
         next(err);
       });
-      blobStream.end(req.file.buffer);
+      blobStream.end(file.buffer);
       avatar = urlImage(path);
     }
     await new Token({ owner }).save({ session });

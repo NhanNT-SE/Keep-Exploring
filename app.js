@@ -1,16 +1,14 @@
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import http from "http";
 import mongoose from "mongoose";
-import helmet from "helmet";
 import { Server } from "socket.io";
-import { BUCKET_STORAGE } from "./src/config/index.js";
 // ----------DEFINE ROUTER----------
 import apiDocs from "./src/docs/APIDocs.js";
 import { mapErrorMessage } from "./src/helpers/CustomError.js";
 import { isAdmin, isAuth } from "./src/helpers/JWTHelper.js";
-import { storage } from "./src/helpers/Storage.js";
 import adminAddress from "./src/routes/admin/AdminAddress.js";
 import adminPost from "./src/routes/admin/AdminPost.js";
 import adminStatistic from "./src/routes/admin/AdminStatistic.js";
@@ -30,9 +28,7 @@ import userProfile from "./src/routes/user/UserProfile.js";
 const mongoString =
   "mongodb://localhost:27017,localhost:27018,localhost:27019/keep-exploring";
 const limiter = rateLimit({
-  // 15 minutes
   windowMs: 15 * 60 * 1000,
-  // limit each IP to 100 requests per windowMs
   max: 100,
 });
 const port = process.env.PORT || 3000;
@@ -85,35 +81,7 @@ app.use(async (req, res, next) => {
   }
 });
 // ----------PUBLIC ROUTER----------
-app.post("/multi", storage.array("files"), async (req, res, next) => {
-  try {
-    const { files } = req;
-    const urlList = [
-      "https://storage.googleapis.com/keep-exploring/user/1623072896410-image1.png",
-      "https://storage.googleapis.com/keep-exploring/user/1623072896417-image3.jpg",
-      "https://storage.googleapis.com/keep-exploring/user/1623072896421-image5.jpg",
-    ];
-    const tempList = urlList.map((img) => {
-      const fileName = img.replace(`${BUCKET_STORAGE}/`, "").split("-")[1];
-      return fileName;
-    });
-    files.forEach((f) => {
-      // const blob = bucket.file("user/" + f);
-      // const path = pathImage("user", f);
-      // blob.name = path;
-      // const blobStream = blob.createWriteStream();
-      // blobStream.on("error", (err) => {
-      //   next(err);
-      // });
-      // blobStream.end(f.buffer);
-      // const publicUrl = urlImage(path);
-      // urlList.push(publicUrl);
-    });
-    res.send(tempList);
-  } catch (error) {
-    next(error);
-  }
-});
+
 app.use("/api-doc", apiDocs);
 app.use("/auth", auth);
 app.use("/public/address", publicAddress);

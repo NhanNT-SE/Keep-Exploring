@@ -1,7 +1,11 @@
 import { fileURLToPath } from "url";
 import { Storage } from "@google-cloud/storage";
 import path from "path";
-import { BUCKET_NAME, PROJECT_ID, BUCKET_STORAGE } from "../../src/config/index.js";
+import {
+  BUCKET_NAME,
+  PROJECT_ID,
+  BUCKET_STORAGE,
+} from "../../src/config/index.js";
 import multer from "multer";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const gc = new Storage({
@@ -23,5 +27,25 @@ const pathImage = (dir, file) => {
   const path = uniqueSuffix + file.originalname.split(" ").join("-");
   return `${dir}${path}`;
 };
-
-export { urlImage, pathImage, storage, bucket };
+const deleteDirectory = async (dirName) => {
+  const files = await bucket.getFiles();
+  const data = files[0].filter(
+    (e) =>
+      e.metadata.contentType.includes("image") && e.name.includes(`${dirName}`)
+  );
+  data.forEach(async (file) => {
+    await file.delete();
+  });
+};
+const convertFileName = (url) => {
+  const fileName = url.replace(`${BUCKET_STORAGE}/`, "");
+  return fileName;
+};
+export {
+  urlImage,
+  pathImage,
+  storage,
+  bucket,
+  deleteDirectory,
+  convertFileName,
+};

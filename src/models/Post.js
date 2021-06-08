@@ -11,16 +11,10 @@ const schema = new Schema(
     album: {
       type: Schema.Types.ObjectId,
       ref: "album",
-      required: function () {
-        return this.type === "album";
-      },
     },
     story: {
       type: Schema.Types.ObjectId,
       ref: "story",
-      required: function () {
-        return this.type === "story";
-      },
     },
     type: {
       type: String,
@@ -31,11 +25,13 @@ const schema = new Schema(
       type: String,
       enum: ["pending", "done", "need_update"],
       default: "pending",
+      message: "{VALUE} is not supported",
     },
     view_mode: {
       type: String,
       enum: ["public", "hidden", "friends"],
       default: "public",
+      message: "{VALUE} is not supported",
     },
     likes: [
       {
