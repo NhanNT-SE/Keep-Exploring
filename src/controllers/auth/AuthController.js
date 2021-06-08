@@ -81,7 +81,7 @@ const signIn = async (req, res, next) => {
           refreshToken,
           user: {
             mfa: mfa.status,
-            avar: basicInfo.avatar,
+            avatar: basicInfo.avatar,
             fullName: basicInfo.fullName,
             ...lodash.pick(user, ["_id", "username", "email", "role"]),
             ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),

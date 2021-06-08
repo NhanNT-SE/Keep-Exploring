@@ -5,7 +5,7 @@ const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
     album: {
@@ -26,9 +26,6 @@ const schema = new Schema(
       type: String,
       enum: ["album", "story"],
       default: "album",
-    },
-    folder_storage: {
-      type: String,
     },
     status: {
       type: String,
@@ -54,10 +51,11 @@ const schema = new Schema(
     ],
     created_on: {
       type: Date,
-      default: Date.now,
+      default: Date.now(),
     },
     last_modify: {
       type: Date,
+      default: Date.now(),
     },
   },
   { collection: "posts" }

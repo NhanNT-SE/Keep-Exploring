@@ -7,51 +7,28 @@ import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 
-const createPost = async (req, res, next) => {
+const createAlbum = async (req, res, next) => {
+  const { files, session, opts } = req;
+  // session.startTransaction();
+  try {
+    if(files.length === 0){
+      customError("Needs at least one image to create this post")
+    }
+    console.log(files.length)
+    const user = await User.findById(req.user._id);
+
+    return res.send(customResponse({ user }, "Tạo bài viết thành công"));
+  } catch (error) {
+    next(error);
+  }
+};
+const createStory = async (req, res, next) => {
+  const { files, session, opts } = req;
+  session.startTransaction();
   try {
     const user = await User.findById(req.user._id);
-    let img_list = new Array();
-    const { io } = req;
-    const files = req.files;
-    const length = files.length;
-    for (let i = 0; i < length; ++i) {
-      img_list.push(files[i].filename);
-    }
-    const post = new Post({
-      ...req.body,
-      owner: user._id,
-      imgs: img_list,
-    });
 
-    await post.save();
-    user.post.push(post._id);
-    await user.save();
-
-    const notify = {
-      idUser: user._id,
-      idPost: post._id,
-      status: "new",
-      content: "unmoderated",
-      statusPost: "pending",
-    };
-
-    const notification = await createNotification(notify);
-    const msgNotify = `Bài viết ${post.title} của bạn hiện đang trong quá trình kiểm duyệt`;
-    sendNotifyRealtime(io, post.owner, {
-      message: msgNotify,
-      type: "pending",
-      idPost: post._id,
-    });
-
-    io.emit("notification:admin", {
-      image: post.imgs[0],
-      type: "post",
-      id: post._id,
-      message: `Bài viết ${post.title} vừa được tạo, đang chờ kiểm duyệt`,
-    });
-    return res.send(
-      customResponse({ post, notification }, "Tạo bài viết thành công")
-    );
+    return res.send(customResponse({ user }, "Tạo bài viết thành công"));
   } catch (error) {
     next(error);
   }
@@ -240,4 +217,4 @@ const updatePost = async (req, res, next) => {
   }
 };
 
-export { createPost, deletePost, getPostListByUser, likePost, updatePost };
+export { createAlbum, createStory, deletePost, getPostListByUser, likePost, updatePost };

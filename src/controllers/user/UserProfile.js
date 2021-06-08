@@ -57,7 +57,7 @@ const getAnotherProfile = async (req, res, next) => {
 const getMyProfile = async (req, res, next) => {
   try {
     const { user } = req;
-    const profile = await User.findById(user._id, "username email role -_id")
+    const profile = await User.findById(user._id, "username email role created_on -_id")
       .populate("basicInfo", "-_id -__v -owner")
       .populate("advancedInfo", "-owner -__v -_id");
     const mfa = await MFA.findOne({ owner: user._id });
@@ -89,8 +89,9 @@ const updateProfile = async (req, res, next) => {
     const profileUpdate = await BasicInfo.findOneAndUpdate(
       { owner: user._id },
       { ...req.body, avatar },
-      { returnOriginal: false, fields: { _id: 0 ,__v:0, owner:0} }
+      { returnOriginal: false, fields: { _id: 0, __v: 0, owner: 0 } }
     );
+    await User.findByIdAndUpdate(user._id, { last_modify: Date.now() });
     const data = customResponse(
       profileUpdate,
       "Cập nhật thông tin cá nhân thành công"

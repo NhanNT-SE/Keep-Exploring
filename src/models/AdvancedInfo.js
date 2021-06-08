@@ -43,6 +43,7 @@ const schema = new Schema(
     },
     follower: [{ type: Schema.Types.ObjectId, ref: "user" }],
     following: [{ type: Schema.Types.ObjectId, ref: "user" }],
+    friends: [{ type: Schema.Types.ObjectId, ref: "user" }],
     blockedList: [{ type: Schema.Types.ObjectId, ref: "user" }],
     postList: [{ type: Schema.Types.ObjectId, ref: "post" }],
   },
