@@ -13,6 +13,7 @@ import {
   REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_LIFE,
   REFRESH_TOKEN_LIFE,
+  DEFAULT_AVATAR,
 } from "../../config/index.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 import { verifyOTPToken } from "../../helpers/MFAHelper.js";
@@ -25,9 +26,9 @@ const signIn = async (req, res, next) => {
   session.startTransaction();
   try {
     const { username, password } = req.body;
-    const user =
-      (await User.findOne({ email: username })) ||
-      (await User.findOne({ username }));
+    const user = await User.findOne({
+      $or: [{ username }, { email: username }],
+    });
     if (user) {
       const checkPass = await bcrypt.compare(password, user.password);
       if (checkPass) {
@@ -43,6 +44,9 @@ const signIn = async (req, res, next) => {
         );
         const mfa = await MFA.findOne({ owner: user._id }).session(session);
         const advancedInfo = await AdvancedInfo.findOne({
+          owner: user._id,
+        }).session(session);
+        const basicInfo = await BasicInfo.findOne({
           owner: user._id,
         }).session(session);
         let userStatus = {};
@@ -77,14 +81,9 @@ const signIn = async (req, res, next) => {
           refreshToken,
           user: {
             mfa: mfa.status,
-            ...lodash.pick(user, [
-              "_id",
-              "username",
-              "email",
-              "fullName",
-              "avatar",
-              "role",
-            ]),
+            avar: basicInfo.avatar,
+            fullName: basicInfo.fullName,
+            ...lodash.pick(user, ["_id", "username", "email", "role"]),
             ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
           },
         };
@@ -122,8 +121,7 @@ const signUp = async (req, res, next) => {
   const { file, session, opts } = req;
   session.startTransaction();
   try {
-    let avatar;
-
+    let avatar = DEFAULT_AVATAR;
     const salt = await bcrypt.genSalt(10);
     const passHashed = await bcrypt.hash(req.body.password, salt);
     const user = await new User({

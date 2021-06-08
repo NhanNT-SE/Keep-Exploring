@@ -45,11 +45,11 @@ const schema = new Schema(
     },
     basicInfo: {
       type: Schema.Types.ObjectId,
-      ref: "advancedInfo",
+      ref: "basicInfo",
     },
     advancedInfo: {
       type: Schema.Types.ObjectId,
-      ref: "basicInfo",
+      ref: "advancedInfo",
     },
     notification: [
       {

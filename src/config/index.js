@@ -8,6 +8,8 @@ const SERVER_NAME = process.env.SERVER_NAME;
 const PROJECT_ID = process.env.PROJECT_ID;
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const BUCKET_STORAGE = process.env.BUCKET_STORAGE;
+const DEFAULT_AVATAR =
+  "https://storage.googleapis.com/keep-exploring/avatar/avatar-default.png";
 export {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
@@ -17,4 +19,5 @@ export {
   PROJECT_ID,
   BUCKET_NAME,
   BUCKET_STORAGE,
+  DEFAULT_AVATAR,
 };
