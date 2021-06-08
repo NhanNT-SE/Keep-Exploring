@@ -10,6 +10,7 @@ import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 import { bucket, pathImage, urlImage } from "../../helpers/Storage.js";
+import { Post } from "../../models/Post.js";
 const changePass = async (req, res, next) => {
   try {
     const { oldPass, newPass } = req.body;
@@ -57,7 +58,10 @@ const getAnotherProfile = async (req, res, next) => {
 const getMyProfile = async (req, res, next) => {
   try {
     const { user } = req;
-    const profile = await User.findById(user._id, "username email role -_id")
+    const profile = await User.findById(
+      user._id,
+      "username email role created_on -_id"
+    )
       .populate("basicInfo", "-_id -__v -owner")
       .populate("advancedInfo", "-owner -__v -_id");
     const mfa = await MFA.findOne({ owner: user._id });
@@ -89,8 +93,9 @@ const updateProfile = async (req, res, next) => {
     const profileUpdate = await BasicInfo.findOneAndUpdate(
       { owner: user._id },
       { ...req.body, avatar },
-      { returnOriginal: false, fields: { _id: 0 ,__v:0, owner:0} }
+      { returnOriginal: false, fields: { _id: 0, __v: 0, owner: 0 } }
     );
+    await User.findByIdAndUpdate(user._id, { last_modify: Date.now() });
     const data = customResponse(
       profileUpdate,
       "Cập nhật thông tin cá nhân thành công"
@@ -100,5 +105,22 @@ const updateProfile = async (req, res, next) => {
     next(error);
   }
 };
-
-export { changePass, getAnotherProfile, getMyProfile, updateProfile };
+const getMyPostList = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const postList = await Post.find(
+      { owner: user._id },
+      "-_id -owner -__v"
+    ).populate("album", "-_id -post -__v");
+    return res.send(customResponse(postList));
+  } catch (error) {
+    next(error);
+  }
+};
+export {
+  changePass,
+  getAnotherProfile,
+  getMyProfile,
+  updateProfile,
+  getMyPostList,
+};

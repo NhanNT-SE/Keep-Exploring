@@ -8,13 +8,11 @@ import { customResponse } from "../../helpers/CustomResponse.js";
 const getPostById = async (req, res, next) => {
   try {
     const { idPost } = req.params;
-    const post = await Post.findById(idPost).populate("owner", [
-      "displayName",
-      "imgUser",
-      "email",
-      "blog",
-      "post",
-    ]);
+    const post = await Post.findOne({
+      _id: idPost,
+      status: "done",
+      view_mode: "public",
+    }).populate("owner", ["displayName", "imgUser", "email", "blog", "post"]);
     if (post) {
       return res.send(customResponse(post));
     }
@@ -28,7 +26,7 @@ const getPostList = async (req, res, next) => {
     const { category } = req.query;
     let postList;
     if (category === "" || !category) {
-      postList = await Post.find({ status: "done" })
+      postList = await Post.find({ status: "done", view_mode: "public" })
         .populate("owner", ["displayName", "imgUser", "email", "post", "blog"])
         .sort({ created_on: -1 });
     } else {

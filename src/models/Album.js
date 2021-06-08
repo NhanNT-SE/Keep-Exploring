@@ -34,7 +34,7 @@ const schema = new Schema(
       type: Number,
       min: 0,
       max: 5,
-      required: true,
+      default: 0,
     },
   },
   { collection: "albums" }

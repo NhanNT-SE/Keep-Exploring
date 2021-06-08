@@ -5,40 +5,33 @@ const schema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
     album: {
       type: Schema.Types.ObjectId,
       ref: "album",
-      required: function () {
-        return this.type === "album";
-      },
     },
     story: {
       type: Schema.Types.ObjectId,
       ref: "story",
-      required: function () {
-        return this.type === "story";
-      },
     },
     type: {
       type: String,
       enum: ["album", "story"],
       default: "album",
     },
-    folder_storage: {
-      type: String,
-    },
     status: {
       type: String,
       enum: ["pending", "done", "need_update"],
       default: "pending",
+      message: "{VALUE} is not supported",
     },
     view_mode: {
       type: String,
       enum: ["public", "hidden", "friends"],
       default: "public",
+      message: "{VALUE} is not supported",
     },
     likes: [
       {
@@ -54,10 +47,11 @@ const schema = new Schema(
     ],
     created_on: {
       type: Date,
-      default: Date.now,
+      default: Date.now(),
     },
     last_modify: {
       type: Date,
+      default: Date.now(),
     },
   },
   { collection: "posts" }

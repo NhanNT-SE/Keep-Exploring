@@ -6,8 +6,8 @@ router
   .route("")
   .get(controller.getMyProfile)
   .patch(storage.single("avatar"), controller.updateProfile);
-router.get("/:idUser", controller.getAnotherProfile);
-
+router.get("/posts", controller.getMyPostList);
 router.patch("/changePass", controller.changePass);
+router.get("/:idUser", controller.getAnotherProfile);
 
 export default router;
