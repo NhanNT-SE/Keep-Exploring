@@ -3,10 +3,13 @@ import fs from "fs";
 import { User } from "../../models/User.js";
 import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
+import { BasicInfo } from "../../models/BasicInfo.js";
+import { AdvancedInfo } from "../../models/AdvancedInfo.js";
 import { customError } from "../../helpers/CustomError.js";
 import { createNotification } from "../../helpers/NotifyHelper.js";
 import { sendNotifyRealtime } from "../../helpers/SocketHelper.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
+import { bucket, pathImage, urlImage } from "../../helpers/Storage.js";
 const changePass = async (req, res, next) => {
   try {
     const { oldPass, newPass } = req.body;
@@ -54,9 +57,9 @@ const getAnotherProfile = async (req, res, next) => {
 const getMyProfile = async (req, res, next) => {
   try {
     const { user } = req;
-    const profile = await User.findById(user._id, { password: 0 }).populate(
-      "userInfo"
-    );
+    const profile = await User.findById(user._id, "username email role -_id")
+      .populate("basicInfo", "-_id -__v -owner")
+      .populate("advancedInfo", "-owner -__v -_id");
     const mfa = await MFA.findOne({ owner: user._id });
     const data = JSON.parse(JSON.stringify(profile));
     return res.send(customResponse({ ...data, mfa: mfa.status }));
@@ -70,51 +73,26 @@ const updateProfile = async (req, res, next) => {
     const file = req.file;
     const { user } = req;
     const { io } = req;
-    const userFound = await User.findById(user._id);
     let avatar;
-
-    if (!userFound) {
-      customError("Người dùng không tồn tại");
-    }
-
     if (file) {
-      if (userFound.imgUser !== "avatar-default.png") {
-        fs.unlink("src/public/images/user/" + userFound.avatar, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-      avatar = file.filename;
-    } else {
-      avatar = userFound.avatar;
+      const dirUpload = `avatar/${user._id}/`;
+      const blob = bucket.file(`${dirUpload}` + file);
+      const path = pathImage(`${dirUpload}`, file);
+      blob.name = path;
+      const blobStream = blob.createWriteStream();
+      blobStream.on("error", (err) => {
+        next(err);
+      });
+      blobStream.end(file.buffer);
+      avatar = urlImage(path);
     }
-
-    const newUser = {
-      ...req.body,
-      avatar,
-    };
-
-    await User.findByIdAndUpdate(user._id, newUser);
-    const msgNotify = `Thông tin cá nhân của bạn đã được cập nhật`;
-
-    const notify = new Notification({
-      idUser: user._id,
-      contentAdmin: msgNotify,
-      status: "new",
-    });
-
-    await notify.save();
-    sendNotifyRealtime(io, user._id, {
-      message: msgNotify,
-      type: "system",
-    });
+    const profileUpdate = await BasicInfo.findOneAndUpdate(
+      { owner: user._id },
+      { ...req.body, avatar },
+      { returnOriginal: false, fields: { _id: 0 ,__v:0, owner:0} }
+    );
     const data = customResponse(
-      {
-        _id: user._id,
-        email: user.email,
-        ...newUser,
-      },
+      profileUpdate,
       "Cập nhật thông tin cá nhân thành công"
     );
     return res.send(data);

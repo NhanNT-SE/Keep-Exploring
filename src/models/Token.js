@@ -17,6 +17,6 @@ const schema = new Schema(
     },
   },
 
-  { collection: "token" }
+  { collection: "tokens" }
 );
 export const Token = mongoose.model("token", schema);

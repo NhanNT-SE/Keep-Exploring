@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import { generateToken, verifyToken } from "../../helpers/JWTHelper.js";
 import { User } from "../../models/User.js";
-import { UserInfo } from "../../models/UserInfo.js";
 import { Token } from "../../models/Token.js";
 import { MFA } from "../../models/MFA.js";
 import { Notification } from "../../models/Notification.js";
@@ -14,18 +13,22 @@ import {
   REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_LIFE,
   REFRESH_TOKEN_LIFE,
+  DEFAULT_AVATAR,
 } from "../../config/index.js";
 import { customResponse } from "../../helpers/CustomResponse.js";
 import { verifyOTPToken } from "../../helpers/MFAHelper.js";
+import { bucket, pathImage, urlImage } from "../../helpers/Storage.js";
+import { AdvancedInfo } from "../../models/AdvancedInfo.js";
+import { BasicInfo } from "../../models/BasicInfo.js";
 
 const signIn = async (req, res, next) => {
   const { session, opts } = req;
   session.startTransaction();
   try {
     const { username, password } = req.body;
-    const user =
-      (await User.findOne({ email: username })) ||
-      (await User.findOne({ username }));
+    const user = await User.findOne({
+      $or: [{ username }, { email: username }],
+    });
     if (user) {
       const checkPass = await bcrypt.compare(password, user.password);
       if (checkPass) {
@@ -39,21 +42,23 @@ const signIn = async (req, res, next) => {
           REFRESH_TOKEN_SECRET,
           REFRESH_TOKEN_LIFE
         );
-        customError;
         const mfa = await MFA.findOne({ owner: user._id }).session(session);
-        const userInfo = await UserInfo.findOne({ owner: user._id }).session(
-          session
-        );
+        const advancedInfo = await AdvancedInfo.findOne({
+          owner: user._id,
+        }).session(session);
+        const basicInfo = await BasicInfo.findOne({
+          owner: user._id,
+        }).session(session);
         let userStatus = {};
         let infoUpdate = {};
         if (
-          userInfo.onlineStatus === "idle" ||
-          userInfo.accountStatus === "inactive"
+          advancedInfo.onlineStatus === "idle" ||
+          advancedInfo.accountStatus === "inactive"
         ) {
-          if (userInfo.onlineStatus === "idle") {
+          if (advancedInfo.onlineStatus === "idle") {
             userStatus.onlineStatus = "online";
           }
-          if (userInfo.accountStatus === "inactive") {
+          if (advancedInfo.accountStatus === "inactive") {
             userStatus.accountStatus = "active";
             await new Notification({
               idUser: user._id,
@@ -62,9 +67,9 @@ const signIn = async (req, res, next) => {
               status: "new",
             }).save({ session });
           }
-          infoUpdate = await userInfo.updateOne({ ...userStatus }, opts);
+          infoUpdate = await advancedInfo.updateOne({ ...userStatus }, opts);
         } else {
-          infoUpdate = userInfo;
+          infoUpdate = advancedInfo;
         }
         await Token.findOneAndUpdate(
           { owner: user._id },
@@ -76,14 +81,9 @@ const signIn = async (req, res, next) => {
           refreshToken,
           user: {
             mfa: mfa.status,
-            ...lodash.pick(user, [
-              "_id",
-              "username",
-              "email",
-              "displayName",
-              "avatar",
-              "role",
-            ]),
+            avar: basicInfo.avatar,
+            fullName: basicInfo.fullName,
+            ...lodash.pick(user, ["_id", "username", "email", "role"]),
             ...lodash.pick(infoUpdate, ["accountStatus", "onlineStatus"]),
           },
         };
@@ -121,28 +121,48 @@ const signUp = async (req, res, next) => {
   const { file, session, opts } = req;
   session.startTransaction();
   try {
-    let avatar;
-    if (file) {
-      avatar = file.filename;
-    } else {
-      avatar = "avatar-default.png";
-    }
+    let avatar = DEFAULT_AVATAR;
     const salt = await bcrypt.genSalt(10);
     const passHashed = await bcrypt.hash(req.body.password, salt);
     const user = await new User({
       ...req.body,
-      avatar,
       password: passHashed,
       role: "user",
     }).save({ session });
     const owner = user._id;
+    if (file) {
+      const dirUpload = `avatar/${user._id}/`;
+      const blob = bucket.file(`${dirUpload}` + file);
+      const path = pathImage(`${dirUpload}`, file);
+      blob.name = path;
+      const blobStream = blob.createWriteStream();
+      blobStream.on("error", (err) => {
+        next(err);
+      });
+      blobStream.end(req.file.buffer);
+      avatar = urlImage(path);
+    }
     await new Token({ owner }).save({ session });
     const mfa = await new MFA({ owner }).save({ session });
-    const userInfo = await new UserInfo({ owner }).save({ session });
-    await user.update({ userInfo: userInfo._id, mfa: mfa._id }, opts);
+    const basicInfo = await new BasicInfo({
+      owner,
+      avatar,
+      fullName: req.body.fullName,
+    }).save({ session });
+    const advancedInfo = await new AdvancedInfo({ owner }).save({ session });
+    await user.updateOne({ basicInfo, mfa, advancedInfo }, opts);
     await session.commitTransaction();
     session.endSession();
-    return res.send(customResponse(userInfo, "Đăng ký thành công"));
+
+    const data = {
+      username: user.username,
+      email: user.email,
+      fulName: basicInfo.fullName,
+      avatar: basicInfo.avatar,
+      role: user.role,
+      created_on: user.created_on,
+    };
+    return res.send(customResponse(data, "Đăng ký thành công"));
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

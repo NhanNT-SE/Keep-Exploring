@@ -11,7 +11,7 @@ const schema = new Schema(
     },
     onlineStatus: {
       type: String,
-      enum: ["online", "offline","idle"],
+      enum: ["online", "offline", "idle"],
       default: "idle",
       message: "{VALUE} is not supported",
     },
@@ -45,9 +45,8 @@ const schema = new Schema(
     following: [{ type: Schema.Types.ObjectId, ref: "user" }],
     blockedList: [{ type: Schema.Types.ObjectId, ref: "user" }],
     postList: [{ type: Schema.Types.ObjectId, ref: "post" }],
-    blogList: [{ type: Schema.Types.ObjectId, ref: "blog" }],
   },
-  { collection: "userInfo" }
+  { collection: "advancedInfo" }
 );
 
-export const UserInfo = mongoose.model("userInfo", schema);
+export const AdvancedInfo = mongoose.model("advancedInfo", schema);

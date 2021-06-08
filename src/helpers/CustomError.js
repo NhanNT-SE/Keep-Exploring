@@ -1,7 +1,7 @@
 import _ from "lodash";
 const customError = (message) => {
   const err = new Error();
-  err.status = 501;
+  err.status = 400;
   err.message = message;
   throw err;
 };

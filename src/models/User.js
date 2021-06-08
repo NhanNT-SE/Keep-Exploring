@@ -8,6 +8,8 @@ const schema = new Schema(
       required: [true, `{PATH} is required`],
       index: true,
       unique: true,
+      lowercase: true,
+      trim: true,
       match: [
         /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
         `{PATH}: {VALUE} is not a valid email address`,
@@ -28,28 +30,10 @@ const schema = new Schema(
         "password should contain atleast 8 characters, 1 number, 1 special character , 1 upper and 1 lowercase",
       ],
     },
-    displayName: {
-      type: String,
-      minLength: [6, "fullName password should contain atleast 6 characters"],
-    },
     role: {
       type: String,
       enum: ["admin", "user"],
       default: "user",
-      message: "{VALUE} is not supported",
-    },
-    avatar: {
-      type: String,
-    },
-
-    address: { type: String },
-    bod: {
-      type: Date,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "unknown"],
-      default: "male",
       message: "{VALUE} is not supported",
     },
     created_on: {
@@ -59,15 +43,25 @@ const schema = new Schema(
     last_modify: {
       type: Date,
     },
+    basicInfo: {
+      type: Schema.Types.ObjectId,
+      ref: "basicInfo",
+    },
+    advancedInfo: {
+      type: Schema.Types.ObjectId,
+      ref: "advancedInfo",
+    },
+    notification: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "notification",
+      },
+    ],
     mfa: {
       type: Schema.Types.ObjectId,
       ref: "mfa",
     },
-    userInfo: {
-      type: Schema.Types.ObjectId,
-      ref: "userInfo",
-    },
   },
-  { collection: "user" }
+  { collection: "users" }
 );
 export const User = mongoose.model("user", schema);
